@@ -3,16 +3,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { mockUsers } = require('../config/mockDb');
 
-// Generate JWT token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'secret123', {
     expiresIn: '30d',
   });
 };
 
-// @desc    Register new user
-// @route   POST /api/auth/signup
-// @access  Public
 const signupUser = async (req, res) => {
   try {
     const { name, email, password, role, restaurantId } = req.body;
@@ -22,17 +18,14 @@ const signupUser = async (req, res) => {
     }
 
     if (process.env.USE_MOCK_DB === 'true') {
-      // Check if user exists in mock DB
       const userExists = mockUsers.find(u => u.email === email);
       if (userExists) {
         return res.status(400).json({ success: false, message: 'User already exists (Mock DB)' });
       }
 
-      // Hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Create mock user
       const user = {
         _id: 'mock_' + Date.now().toString(),
         name,
@@ -58,14 +51,12 @@ const signupUser = async (req, res) => {
         },
       });
     } else {
-      // Check if user exists
       const userExists = await User.findOne({ email });
 
       if (userExists) {
         return res.status(400).json({ success: false, message: 'User already exists' });
       }
 
-      // Create user
       const user = await User.create({
         name,
         email,
@@ -96,9 +87,6 @@ const signupUser = async (req, res) => {
   }
 };
 
-// @desc    Authenticate a user
-// @route   POST /api/auth/login
-// @access  Public
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -125,7 +113,6 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ success: false, message: 'Invalid credentials (Mock DB)' });
       }
     } else {
-      // Check for user email
       const user = await User.findOne({ email }).select('+password');
 
       if (user && (await user.matchPassword(password))) {
@@ -150,9 +137,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get user profile
-// @route   GET /api/auth/me
-// @access  Private
 const getMe = async (req, res) => {
   try {
     if (process.env.USE_MOCK_DB === 'true') {

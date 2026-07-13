@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DineFlow AI | Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      gap: 1.5rem;
+      text-align: center;
+      padding: 1.5rem;
+      z-index: 10;
+    }
+    .welcome-title {
+      font-family: var(--font-accent);
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .welcome-title span {
+      color: var(--color-primary);
+    }
+    .user-info {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    .user-info strong {
+      color: var(--text-main);
+      text-transform: capitalize;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-bg-glow"></div>
+  <div class="auth-bg-glow-bottom"></div>
+
+  <div class="dashboard-container">
+    <h2 class="welcome-title">Welcome to your Dashboard, <span id="userName">User</span>!</h2>
+    <p class="user-info">Role: <strong id="userRole">-</strong> | Email: <span id="userEmail">-</span></p>
+    <button id="logoutBtn" class="btn-primary" style="background: #ef4444; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);">
+      Log Out
+    </button>
+  </div>
+
+  <script>
+    // Security Guard: Check if token exists
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) {
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('userName').textContent = user.name || 'User';
+      document.getElementById('userRole').textContent = user.role || '-';
+      document.getElementById('userEmail').textContent = user.email || '-';
+    }
+
+    // Logout logic
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
