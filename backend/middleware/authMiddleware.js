@@ -19,7 +19,6 @@ const protect = async (req, res, next) => {
         if (!user) {
           return res.status(401).json({ success: false, message: 'Not authorized, user not found in mock DB' });
         }
-        // Exclude password
         const { password, ...userWithoutPassword } = user;
         req.user = userWithoutPassword;
       } else {
