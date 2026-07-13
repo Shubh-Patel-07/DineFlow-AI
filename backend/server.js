@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 
 // Load environment variables
@@ -19,9 +20,18 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 
-// Health check endpoint
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to DineFlow AI API' });
+// Serve Frontend Static Files
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Fallback HTML serving for routes
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/login.html'));
+});
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/signup.html'));
+});
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dashboard.html'));
 });
 
 // Error handling middleware

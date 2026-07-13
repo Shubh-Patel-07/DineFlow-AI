@@ -1,7 +1,7 @@
 {
-  "name": "dineflow-server",
+  "name": "dineflow-backend",
   "version": "1.0.0",
-  "description": "Backend server for DineFlow AI",
+  "description": "Backend API server for DineFlow AI",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

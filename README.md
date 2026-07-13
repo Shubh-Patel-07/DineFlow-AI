@@ -1,25 +1,29 @@
 # DineFlow AI - Smart QR Restaurant Ordering System
 
-DineFlow AI is a modern, high-fidelity, QR-code-based restaurant ordering and management system built using the MERN stack (MongoDB, Express, React, Node.js). It offers a seamless customer ordering flow, a kitchen execution panel, a POS administration panel, and real-time status tracking.
+DineFlow AI is a modern, high-fidelity, QR-code-based restaurant ordering and management system built using the MERN stack. 
+
+This repository is optimized for quick team development, local testing, and offline presentations. It features a hybrid design:
+1. **Static Mode (Offline)**: Open pages directly in any browser (no terminal commands or servers required!).
+2. **Server Mode**: Run the Express server to handle actual API authentication and serve web files dynamically.
 
 ---
 
 ## 📅 Presentation 1 Timeline Status
 * **Target Completion**: 30%
 * **Features Completed**:
-  - project folder structure (monorepo)
+  - project folder structure (monorepo frontend/backend split)
   - database schemas (User, Restaurant, Table, MenuItem, Order)
-  - express starter server with Mongoose connection
-  - authentication endpoints (Signup & Login APIs)
-  - glassmorphism login & signup frontend UI
-  - page routing & validation mechanics
+  - backend Express server with static file serving
+  - authentication endpoints (Signup & Login APIs with Mock fallback)
+  - glassmorphism login, signup & landing HTML UI
+  - dynamic client side authentication logic (`frontend/auth.js`)
 
 ---
 
 ## 🗃️ Database Schema Design (ER Diagram)
 
 ```mermaid
-erDiagram
+erGuide
     USER ||--o| RESTAURANT : "belongs to (optional)"
     TABLE ||--|| RESTAURANT : "belongs to"
     MENU_ITEM ||--|| RESTAURANT : "belongs to"
@@ -93,98 +97,63 @@ erDiagram
 
 ```
 DineFlow AI/
-├── client/                  # Frontend Vite React App
-│   ├── public/              # Public static assets
-│   ├── src/
-│   │   ├── assets/          # Static images & graphics
-│   │   ├── pages/           # View Pages
-│   │   │   ├── Login.jsx    # Login Page React Component
-│   │   │   ├── Login.css    # Premium auth style definitions
-│   │   │   └── Signup.jsx   # Signup Page React Component
-│   │   ├── App.css          # Global Component Layout Styles
-│   │   ├── App.jsx          # Front-end routing & component mounting
-│   │   ├── index.css        # Theme variables & Design System CSS
-│   │   └── main.jsx         # App bootstrapping entry point
-│   ├── index.html           # Main HTML shell (Outfit & Inter fonts)
-│   ├── package.json         # Client dependencies
-│   └── vite.config.js       # Vite configuration
+├── frontend/                # Static Web files (No Server needed)
+│   ├── index.html           # Landing Page UI
+│   ├── login.html           # Glassmorphism Login Page UI
+│   ├── signup.html          # Glassmorphism Signup Page UI
+│   ├── dashboard.html       # Dashboard UI placeholder
+│   ├── style.css            # Custom CSS theme with glassmorphic styles
+│   └── auth.js              # Handles Login/Signup API calls & Offline Mocks
 │
-└── server/                  # Backend Node.js / Express Server
+└── backend/                 # API Server
     ├── config/
-    │   └── db.js            # Mongoose MongoDB connection config
+    │   ├── db.js            # Mongoose MongoDB connection config
+    │   └── mockDb.js        # In-memory user database fallback
     ├── controllers/
-    │   └── authController.js# Registration, logging, and token generation
+    │   └── authController.js# Signup, login API logic
     ├── middleware/
-    │   └── authMiddleware.js# JWT Verification Route Guard
-    ├── models/              # Mongoose Data Schemas
-    │   ├── User.js          # Authentication model
-    │   ├── Restaurant.js    # Restaurant details model
-    │   ├── Table.js         # Table tracking & status model
-    │   ├── MenuItem.js      # Menu categorizations & item details model
-    │   └── Order.js         # Placed orders & status logs model
+    │   └── authMiddleware.js# JWT Verification route guard
+    ├── models/              # Mongoose database models
+    │   ├── User.js
+    │   ├── Restaurant.js
+    │   ├── Table.js
+    │   ├── MenuItem.js
+    │   └── Order.js
     ├── routes/
-    │   └── authRoutes.js    # Signin/Signup routing endpoint declarations
-    ├── .env                 # Port, Secrets and Database connection string
-    ├── package.json         # Backend core server dependencies
-    └── server.js            # Express app setup and middleware routing entry
+    │   └── authRoutes.js    # Auth API routes definition
+    ├── .env                 # Server secrets and port settings
+    ├── package.json         # Node.js dependencies
+    └── server.js            # Express app with static web asset serving
 ```
 
 ---
 
-## 🛠️ Getting Started & Installation
+## 🛠️ How to View & Run the Website
 
-### Prerequisites
-Make sure you have Node.js and MongoDB installed on your system.
+### Option 1: Static Mode (Offline - Easiest 🌟)
+1. Go to the `frontend/` folder in your file explorer.
+2. Double-click **`login.html`** or **`index.html`**.
+3. It will open immediately in your browser!
+4. *Tip*: You can register a user and log in immediately. It will simulate a working signup/login using browser local storage!
 
-### 1. Run the Backend Server
-Go to the server directory:
-```bash
-cd server
-```
-
-Install dependencies:
-```bash
-npm install
-```
-
-Ensure MongoDB is running locally, then create a `.env` file inside the `server/` folder:
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/dineflow
-JWT_SECRET=supersecretkey123
-NODE_ENV=development
-```
-
-Start the backend in developer mode:
-```bash
-npm run dev
-```
-The server will boot on `http://localhost:5000`.
-
-### 2. Run the Frontend React App
-Navigate to the client directory:
-```bash
-cd client
-```
-
-Install dependencies:
-```bash
-npm install
-```
-
-Start the Vite development web server:
-```bash
-npm run dev
-```
-Open `http://localhost:5173` in your browser.
-
----
-
-## 📋 Git Guidelines for Team Members
-- Ensure you work inside your own designated branch:
-  - `feature-teamlead`
-  - `feature-admin`
-  - `feature-fiyans`
-  - `feature-krushank`
-- Do not make commits directly to `main` or `develop`.
-- Pull changes from `develop` frequently to avoid merge conflicts.
+### Option 2: Server Mode (Connected)
+1. Open a terminal in the `backend/` folder:
+   ```bash
+   cd backend
+   ```
+2. Install packages:
+   ```bash
+   npm install
+   ```
+3. Set up a `.env` file in the `backend/` folder:
+   ```env
+   PORT=5000
+   MONGO_URI=mongodb://localhost:27017/dineflow
+   JWT_SECRET=supersecretkey123
+   NODE_ENV=development
+   ```
+4. Run the API server:
+   ```bash
+   node server.js
+   ```
+5. Open **`http://localhost:5000/`** in your browser. The server will dynamically serve the UI pages and process actual signup/login requests!
