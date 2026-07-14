@@ -24,3 +24,6 @@ backend/*.log
 *.sln
 *.sw?
 .DS_Store
+# Local helper scripts
+Run_Server.bat
+team_workload_matrix.csv
