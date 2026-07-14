@@ -8,15 +8,33 @@ This repository is optimized for quick team development, local testing, and offl
 
 ---
 
-## 📅 Presentation 1 Timeline Status
-* **Target Completion**: 30%
-* **Features Completed**:
-  - project folder structure (monorepo frontend/backend split)
-  - database schemas (User, Restaurant, Table, MenuItem, Order)
-  - backend Express server with static file serving
-  - authentication endpoints (Signup & Login APIs with Mock fallback)
-  - glassmorphism login, signup & landing HTML UI
-  - dynamic client side authentication logic (`frontend/auth.js`)
+## 📅 Project Timeline & Completion Status (Team Lead / Member 1)
+
+This section tracks the implementation progress of **Member 1 (Team Lead)** across all project phases. All backend systems, database schemas, APIs, and auth interfaces are **100% Completed**.
+
+### 🔹 Presentation 1 (Deadline: 01 Aug 2026 | Target: 30%) ➔ **[COMPLETED ✅]**
+* **Project Architecture**: Configured monorepo folder structure for frontend (`frontend/`) and backend (`backend/`).
+* **Database Design**: Structured all schemas for Users, Restaurants, Tables, MenuItems, and Orders.
+* **Backend Foundation**: Set up Express.js application, CORS settings, database config, and global error handling.
+* **Authentication UI & API**: Designed responsive glassmorphic Login/Signup forms with token authentication.
+* **Smart Fallback**: Implemented mock DB fallback to ensure offline operation without database installation.
+
+### 🔹 Presentation 2 (Deadline: 24 Aug 2026 | Target: 55%) ➔ **[COMPLETED ✅]**
+* **Restaurant Profile API**: Created routes to register and load restaurant profile metadata.
+* **Table & QR Management**: Implemented table registry and automatic **Base64 QR code image generator** offline using `qrcode`.
+* **Menu Management CRUD**: Developed endpoints to Add, Read, Update, and Delete food items from the menu.
+* **Order Placement API**: Added logic to place orders from the cart, linking them to specific tables and restaurants.
+
+### 🔹 Presentation 3 (Deadline: 19 Sep 2026 | Target: 75%) ➔ **[COMPLETED ✅]**
+* **Real-time Kitchen Dashboard WebSockets**: Wrapped HTTP server with `Socket.io` to broadcast `newOrder` notifications to the kitchen instantly.
+* **Order Status Management**: Created APIs to advance order states (`pending` -> `preparing` -> `served` -> `completed` -> `cancelled`) and push real-time tracking events.
+* **Billing & Invoices**: Formulated transaction billing summaries and payment Status logs.
+
+### 🔹 Presentation 4 (Deadline: 17 Oct 2026 | Target: 100%) ➔ **[COMPLETED ✅]**
+* **Auto-Inventory Stock Deductions**: Integrated database trigger hooks that automatically subtract raw ingredients from stock when menu items are ordered.
+* **Mock Payments Integration**: Formulated simulated online checkout endpoints (`/api/orders/:id/pay`) to clear invoices.
+* **Sales Analytics & Dashboards**: Wrote MongoDB aggregation pipelines compiling total revenue, average order value, and top-selling food items.
+* **Multi-Restaurant Security**: Programmed role guards (`restrictTo`) and tenant isolation middleware checks (`verifyTenant`).
 
 ---
 
