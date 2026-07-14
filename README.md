@@ -86,3 +86,32 @@ DineFlow AI/
    node server.js
    ```
 5. Open **`http://localhost:5000/`** in your browser. The server will dynamically serve the UI pages and process actual signup/login requests!
+
+---
+
+## 🔌 API Endpoints (Phase 2 Expanded)
+
+### Authentication (`/api/auth`)
+* `POST /api/auth/signup` - Register a new user. Returns a JWT token.
+* `POST /api/auth/login` - Authenticate credentials. Returns a JWT token.
+* `GET /api/auth/me` - Retrieve current user profile (requires JWT header).
+
+### Restaurants (`/api/restaurants`)
+* `POST /api/restaurants` - Setup a restaurant profile (requires JWT Admin header).
+* `GET /api/restaurants/:id` - Fetch restaurant profile metadata (Public).
+
+### Tables (`/api/tables`)
+* `POST /api/tables` - Create a table for a restaurant (requires JWT Admin header).
+* `GET /api/tables/restaurant/:restaurantId` - List all tables for a restaurant (requires JWT Staff header).
+* `GET /api/tables/:id/qr` - Retrieve table data and its offline generated Base64 QR code image (Public).
+
+### Menu Items (`/api/menu`)
+* `POST /api/menu` - Add food item (requires JWT Admin header).
+* `PUT /api/menu/:id` - Edit food item details (requires JWT Admin header).
+* `DELETE /api/menu/:id` - Remove food item (requires JWT Admin header).
+* `GET /api/menu/restaurant/:restaurantId` - Fetch full menu for a restaurant (Public).
+
+### Orders (`/api/orders`)
+* `POST /api/orders` - Place order from cart. Performs price sum validation (Public).
+* `GET /api/orders/restaurant/:restaurantId` - List all restaurant orders (requires JWT Staff header).
+* `GET /api/orders/:id` - View order items and payment status (Public).
