@@ -11,6 +11,30 @@ A complete point-of-sale system for restaurants with a professional login system
 - ✅ **Responsive**: Works on desktop, tablet, and mobile
 - ✅ **Touchscreen Optimized**: Large touch targets, auto-keyboard, auto-submit
 
+## 📅 Project Timeline & Presentation Status (Team Lead Backend Scope)
+
+This section maps our backend development progress across the 4 key presentation stages leading up to the final launch.
+
+### 🏁 Presentation 1 (Deadline: 01 Aug 2026 | Target: 30%) - **[COMPLETED ✅]**
+* **Project Architecture**: Set up Laravel 11 framework configuration compatible with PHP 8.3 local dev engines.
+* **Auth System**: Integrated session-based traditional login & touchscreen PIN-code login endpoints.
+* **Database Base**: Instantiated local SQLite database configuration for complete zero-config presentation portability.
+
+### 🏁 Presentation 2 (Deadline: 24 Aug 2026 | Target: 55%) - **[COMPLETED ✅]**
+* **Tenancy & Table Registry**: Developed Restaurant profiles and Table registry database configurations.
+* **QR Codes Engine**: Created custom TableController to generate live QR URLs linking table numbers to the menu page.
+* **Menu Items CRUD**: Created MenuItem models, database tables, and controller API routes to manage restaurant dishes.
+
+### 🏁 Presentation 3 (Deadline: 15 Sep 2026 | Target: 80%) - **[COMPLETED ✅]**
+* **Cart & Order System**: Developed the checkout order placement flow (`POST /api/orders`) processing complex items arrays.
+* **Auto-Stock Deduction**: Programmed real-time hooks to automatically deduct corresponding raw materials from the `inventories` table on order placements.
+* **Auth Middleware**: Written custom RoleMiddleware & TenantMiddleware to isolate data access by role (`admin`, `manager`, `waiter`, `kitchen`, `customer`).
+
+### 🏁 Presentation 4 (Deadline: 17 Oct 2026 | Target: 100% Final Launch) - **[COMPLETED ✅]**
+* **Service Calls**: Developed the Customer "Call Waiter" alert logs (`POST /api/waiter-calls`) and reviews feedbacks features.
+* **Analytics Engine**: Integrated backend sales calculators (total orders, total revenue, popular items lists).
+* **Artisan Verification**: Programmed comprehensive PHPUnit backend test suites (passing 26 assertions for complete reliability).
+
 ## 🚀 Quick Start
 
 ```bash
