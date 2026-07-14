@@ -1,6 +1,35 @@
 const Order = require('../models/Order');
 const MenuItem = require('../models/MenuItem');
-const { mockOrders, mockMenuItems } = require('../config/mockDb');
+const Inventory = require('../models/Inventory');
+const { mockOrders, mockMenuItems, mockInventory } = require('../config/mockDb');
+
+// Helper to auto-deduct stock
+const deductInventoryStock = async (restaurantId, itemName, quantity) => {
+  try {
+    if (process.env.USE_MOCK_DB === 'true') {
+      const item = mockInventory.find(i => 
+        i.restaurantId === restaurantId && 
+        i.name.toLowerCase() === itemName.toLowerCase()
+      );
+      if (item) {
+        item.quantity = Math.max(0, item.quantity - quantity);
+        console.log(`[Inventory Mock] Deducted ${quantity} from ${itemName}. New stock: ${item.quantity}`);
+      }
+    } else {
+      const item = await Inventory.findOne({
+        restaurantId,
+        name: { $regex: new RegExp(`^${itemName}$`, 'i') }
+      });
+      if (item) {
+        item.quantity = Math.max(0, item.quantity - quantity);
+        await item.save();
+        console.log(`[Inventory DB] Deducted ${quantity} from ${itemName}. New stock: ${item.quantity}`);
+      }
+    }
+  } catch (err) {
+    console.error(`Error auto-deducting inventory stock for ${itemName}:`, err.message);
+  }
+};
 
 // @desc    Place a new order from a table
 // @route   POST /api/orders
@@ -16,7 +45,6 @@ const createOrder = async (req, res) => {
     let calculatedTotal = 0;
     const validatedItems = [];
 
-    // Validate prices and fetch item names
     for (const item of items) {
       const { menuItemId, quantity } = item;
 
@@ -52,10 +80,14 @@ const createOrder = async (req, res) => {
         quantity: Number(quantity),
         price
       });
+
+      await deductInventoryStock(restaurantId, name, Number(quantity));
     }
 
+    let savedOrder;
+
     if (process.env.USE_MOCK_DB === 'true') {
-      const newOrder = {
+      savedOrder = {
         _id: 'order_' + Date.now().toString(),
         restaurantId,
         tableId,
@@ -67,10 +99,9 @@ const createOrder = async (req, res) => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      mockOrders.push(newOrder);
-      return res.status(201).json({ success: true, data: newOrder });
+      mockOrders.push(savedOrder);
     } else {
-      const order = await Order.create({
+      savedOrder = await Order.create({
         restaurantId,
         tableId,
         items: validatedItems,
@@ -79,8 +110,106 @@ const createOrder = async (req, res) => {
         paymentStatus: 'pending',
         paymentMethod: paymentMethod || 'cash'
       });
-      return res.status(201).json({ success: true, data: order });
     }
+
+    const io = req.app.get('socketio');
+    if (io) {
+      io.emit('newOrder', savedOrder);
+      console.log(`[Socket] Broadcasted newOrder event for order ${savedOrder._id}`);
+    }
+
+    return res.status(201).json({ success: true, data: savedOrder });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// @desc    Update order status
+// @route   PUT /api/orders/:id/status
+// @access  Private/Staff
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const allowedStatuses = ['pending', 'preparing', 'served', 'completed', 'cancelled'];
+
+    if (!status || !allowedStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Please specify a valid status' });
+    }
+
+    let updatedOrder;
+
+    if (process.env.USE_MOCK_DB === 'true') {
+      const orderIndex = mockOrders.findIndex(o => o._id === req.params.id);
+      if (orderIndex === -1) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+      }
+
+      mockOrders[orderIndex].status = status;
+      mockOrders[orderIndex].updatedAt = new Date();
+      updatedOrder = mockOrders[orderIndex];
+    } else {
+      updatedOrder = await Order.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedOrder) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+      }
+    }
+
+    const io = req.app.get('socketio');
+    if (io) {
+      io.emit('orderStatusUpdated', { orderId: req.params.id, status });
+      console.log(`[Socket] Broadcasted orderStatusUpdated for order ${req.params.id} -> ${status}`);
+    }
+
+    return res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// @desc    Process mock order payment
+// @route   POST /api/orders/:id/pay
+// @access  Public
+const payOrder = async (req, res) => {
+  try {
+    const { paymentMethod } = req.body;
+    let updatedOrder;
+
+    if (process.env.USE_MOCK_DB === 'true') {
+      const orderIndex = mockOrders.findIndex(o => o._id === req.params.id);
+      if (orderIndex === -1) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+      }
+
+      mockOrders[orderIndex].paymentStatus = 'paid';
+      mockOrders[orderIndex].paymentMethod = paymentMethod || 'online';
+      mockOrders[orderIndex].updatedAt = new Date();
+      updatedOrder = mockOrders[orderIndex];
+    } else {
+      updatedOrder = await Order.findByIdAndUpdate(
+        req.params.id,
+        { paymentStatus: 'paid', paymentMethod: paymentMethod || 'online' },
+        { new: true }
+      );
+
+      if (!updatedOrder) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+      }
+    }
+
+    const io = req.app.get('socketio');
+    if (io) {
+      io.emit('orderPaid', updatedOrder);
+      console.log(`[Socket] Broadcasted orderPaid for order ${req.params.id}`);
+    }
+
+    return res.status(200).json({ success: true, data: updatedOrder });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: 'Server error' });
@@ -133,6 +262,8 @@ const getOrder = async (req, res) => {
 
 module.exports = {
   createOrder,
+  updateOrderStatus,
+  payOrder,
   getRestaurantOrders,
   getOrder
 };
