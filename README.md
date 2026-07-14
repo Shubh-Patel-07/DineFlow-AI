@@ -112,6 +112,25 @@ DineFlow AI/
 * `GET /api/menu/restaurant/:restaurantId` - Fetch full menu for a restaurant (Public).
 
 ### Orders (`/api/orders`)
-* `POST /api/orders` - Place order from cart. Performs price sum validation (Public).
+* `POST /api/orders` - Place order from cart. Performs price sum validation, triggers Socket.io broadcast, and auto-deducts matching ingredients from Inventory (Public).
 * `GET /api/orders/restaurant/:restaurantId` - List all restaurant orders (requires JWT Staff header).
 * `GET /api/orders/:id` - View order items and payment status (Public).
+* `PUT /api/orders/:id/status` - Advance order status state: pending, preparing, served, completed, cancelled (requires JWT Staff header). Broadcasts updates in real-time.
+* `POST /api/orders/:id/pay` - Simulate online payment processing (Public). Sets `paymentStatus` to 'paid'.
+
+### Inventory (`/api/inventory`)
+* `GET /api/inventory` - Fetch all raw ingredient levels (requires JWT Staff header).
+* `POST /api/inventory` - Add a new stock item tracking (requires JWT Admin header).
+* `PUT /api/inventory/:id` - Update quantity of an inventory stock item (requires JWT Admin header).
+
+### Sales Analytics (`/api/analytics`)
+* `GET /api/analytics/restaurant/:restaurantId` - Fetch total orders count, sales sum, average ticket size, and top 5 best-selling menu items (requires JWT Admin header).
+
+---
+
+## ⚡ Real-Time WebSockets Events (Socket.io)
+Clients can connect to the server and listen for:
+* `joinRestaurant` (emit) - Join a socket room for a specific restaurant.
+* `newOrder` (listen) - Dispatched to kitchen rooms when a customer places an order.
+* `orderStatusUpdated` (listen) - Dispatched to tracking clients when kitchen updates an order status.
+* `orderPaid` (listen) - Dispatched when billing is completed.

@@ -3,6 +3,7 @@ const mockRestaurants = [];
 const mockTables = [];
 const mockMenuItems = [];
 const mockOrders = [];
+const mockInventory = [];
 
 module.exports = {
   mockUsers,
@@ -10,4 +11,5 @@ module.exports = {
   mockTables,
   mockMenuItems,
   mockOrders,
+  mockInventory,
 };
