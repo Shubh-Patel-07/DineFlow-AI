@@ -19,6 +19,10 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/restaurants', require('./routes/restaurantRoutes'));
+app.use('/api/tables', require('./routes/tableRoutes'));
+app.use('/api/menu', require('./routes/menuRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
 
 // Serve Frontend Static Files
 app.use(express.static(path.join(__dirname, '../frontend')));
