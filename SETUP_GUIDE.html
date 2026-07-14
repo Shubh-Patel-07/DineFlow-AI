@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestoPOS - Setup Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F8FAFC;
+            color: #1E293B;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #4F46E5;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #1E293B;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #64748B;
+            margin-bottom: 12px;
+        }
+
+        .code-block {
+            background: #1E1B4B;
+            color: #E0E7FF;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #EEF2FF;
+            color: #4F46E5;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .credentials-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+
+        .credentials-table th,
+        .credentials-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .credentials-table th {
+            background: #EEF2FF;
+            color: #4F46E5;
+            font-weight: 600;
+        }
+
+        .credentials-table tr:hover {
+            background: #F8FAFC;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4F46E5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #3730A3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #E2E8F0;
+            color: #1E293B;
+        }
+
+        .btn-secondary:hover {
+            background: #CBD5E1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 i {
+            color: #4F46E5;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            margin: 20px 0 12px;
+            color: #1E293B;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #64748B;
+            font-size: 14px;
+        }
+
+        .feature-list i {
+            color: #10B981;
+            font-size: 16px;
+        }
+
+        .flow {
+            background: #F8FAFC;
+            border: 2px dashed #E2E8F0;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            color: #64748B;
+            margin: 24px 0;
+        }
+
+        .flow-step {
+            display: inline-block;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #4F46E5;
+            color: #4F46E5;
+            font-weight: 600;
+            margin: 8px;
+        }
+
+        .flow-arrow {
+            color: #4F46E5;
+            font-size: 20px;
+            margin: 0 8px;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        .alert-info {
+            background: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+            color: #1E40AF;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            border-left: 4px solid #10B981;
+            color: #065F46;
+        }
+
+        .alert-warning {
+            background: #FFFBEB;
+            border-left: 4px solid #F59E0B;
+            color: #92400E;
+        }
+
+        .file-tree {
+            background: #1E1B4B;
+            color: #E0E7FF;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94A3B8;
+            font-size: 14px;
+            border-top: 1px solid #E2E8F0;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-utensils"></i> RestoPOS</h1>
+            <p>Complete Login System for Restaurant POS</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-play-circle"></i></div>
+                <h3>Quick Start</h3>
+                <p>Get the app running immediately</p>
+                <a href="#quick-start" class="btn">View Guide</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-sign-in-alt"></i></div>
+                <h3>Login Credentials</h3>
+                <p>Demo accounts for testing</p>
+                <a href="#credentials" class="btn">View Accounts</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-book"></i></div>
+                <h3>Documentation</h3>
+                <p>Complete setup and usage guide</p>
+                <a href="LOGIN_SETUP.md" class="btn" target="_blank">Full Docs</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-fingerprint"></i></div>
+                <h3>Features</h3>
+                <p>What's included in this system</p>
+                <a href="#features" class="btn">Learn More</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-link"></i></div>
+                <h3>Live App</h3>
+                <p>Open the login page</p>
+                <a href="http://localhost:8000/login" class="btn" target="_blank">Go to Login</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-calculator"></i></div>
+                <h3>Dashboard</h3>
+                <p>View main dashboard</p>
+                <a href="http://localhost:8000/dashboard" class="btn" target="_blank">Open Dashboard</a>
+            </div>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="section" id="quick-start">
+            <h2><i class="fas fa-rocket"></i> Quick Start</h2>
+            
+            <h3>Step 1: Navigate to Project</h3>
+            <div class="code-block">cd F:\Laravel\NEWPOS\RePOS</div>
+
+            <h3>Step 2: Start Server</h3>
+            <div class="code-block">php artisan serve --port 8000</div>
+
+            <h3>Step 3: Open in Browser</h3>
+            <p>Visit <strong>http://localhost:8000/login</strong></p>
+
+            <div class="alert alert-success">
+                <strong>✓ Ready to Go!</strong> The migration and database seeding are already complete.
+            </div>
+        </div>
+
+        <!-- Credentials -->
+        <div class="section" id="credentials">
+            <h2><i class="fas fa-key"></i> Login Credentials</h2>
+
+            <h3>Method 1: Full Login (Username + Password)</h3>
+            <table class="credentials-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>admin</strong></td>
+                        <td><code>password</code></td>
+                        <td>Administrator</td>
+                    </tr>
+                    <tr>
+                        <td><strong>manager</strong></td>
+                        <td><code>password</code></td>
+                        <td>Manager</td>
+                    </tr>
+                    <tr>
+                        <td><strong>cashier</strong></td>
+                        <td><code>password</code></td>
+                        <td>Cashier</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Method 2: Quick PIN Login</h3>
+            <p><em>After logging in once with username/password</em></p>
+            <table class="credentials-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>PIN (4-6 digits)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>admin</strong></td>
+                        <td><code>1234</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>manager</strong></td>
+                        <td><code>5678</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>cashier</strong></td>
+                        <td><code>9999</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-info">
+                <strong>💡 Tip:</strong> PIN login auto-submits when you enter 6 digits on a touchscreen!
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="section" id="features">
+            <h2><i class="fas fa-star"></i> Features</h2>
+
+            <div class="grid">
+                <div>
+                    <h3><i class="fas fa-shield-alt"></i> Security</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Password hashing</li>
+                        <li><i class="fas fa-check"></i> CSRF token protection</li>
+                        <li><i class="fas fa-check"></i> Session management</li>
+                        <li><i class="fas fa-check"></i> Auth middleware</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3><i class="fas fa-mobile-alt"></i> Mobile Ready</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Touchscreen optimized</li>
+                        <li><i class="fas fa-check"></i> Responsive design</li>
+                        <li><i class="fas fa-check"></i> Large touch targets</li>
+                        <li><i class="fas fa-check"></i> Auto keyboard</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3><i class="fas fa-lock-open"></i> Authentication</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Username + Password</li>
+                        <li><i class="fas fa-check"></i> Quick PIN login</li>
+                        <li><i class="fas fa-check"></i> Username persistence</li>
+                        <li><i class="fas fa-check"></i> Remember me option</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3><i class="fas fa-paint-brush"></i> UI/UX</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Modern design</li>
+                        <li><i class="fas fa-check"></i> Professional dashboard</li>
+                        <li><i class="fas fa-check"></i> Smooth animations</li>
+                        <li><i class="fas fa-check"></i> Dark sidebar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow -->
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> How It Works</h2>
+
+            <h3>Login Flow</h3>
+            <div class="flow">
+                <div class="flow-step">Unauthenticated</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">/login</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Username+Pass</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Dashboard</div>
+            </div>
+
+            <h3>Quick PIN Login Flow</h3>
+            <div class="flow">
+                <div class="flow-step">User Returns</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">/pin-login</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Enter PIN</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Dashboard</div>
+            </div>
+
+            <h3>Session Management</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> Username stored in session after first login</li>
+                <li><i class="fas fa-check"></i> Quick PIN login uses stored username</li>
+                <li><i class="fas fa-check"></i> Session persists across pages</li>
+                <li><i class="fas fa-check"></i> Cleared on logout</li>
+            </ul>
+        </div>
+
+        <!-- URLs -->
+        <div class="section">
+            <h2><i class="fas fa-link"></i> Important URLs</h2>
+
+            <table class="credentials-table">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>http://localhost:8000/login</code></td>
+                        <td>Full login (username + password)</td>
+                    </tr>
+                    <tr>
+                        <td><code>http://localhost:8000/pin-login</code></td>
+                        <td>Quick PIN login</td>
+                    </tr>
+                    <tr>
+                        <td><code>http://localhost:8000/dashboard</code></td>
+                        <td>Main dashboard (protected)</td>
+                    </tr>
+                    <tr>
+                        <td><code>http://localhost:8000/logout</code></td>
+                        <td>Logout (POST)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- File Structure -->
+        <div class="section">
+            <h2><i class="fas fa-folder-open"></i> Project Structure</h2>
+            <div class="file-tree">
+app/
+  ├── Http/Controllers/
+  │   └── AuthController.php              ← Authentication logic
+  └── Models/
+      └── User.php                         ← User model
+
+database/
+  ├── migrations/
+  │   └── 2026_04_04_000000_...           ← Add numeric_pin
+  └── seeders/
+      ├── UserSeeder.php                  ← Demo users
+
+resources/views/
+  ├── auth/
+  │   ├── login.blade.php                 ← Full login page
+  │   └── pin-login.blade.php             ← PIN login page
+  └── dashboard.blade.php                 ← Main dashboard
+
+routes/
+  └── web.php                              ← All routes
+            </div>
+        </div>
+
+        <!-- Support -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Need Help?</h2>
+
+            <div class="alert alert-info">
+                <strong>Documentation:</strong> See <code>LOGIN_SETUP.md</code> for complete documentation
+            </div>
+
+            <div class="alert alert-info">
+                <strong>Quick Reference:</strong> See <code>QUICK_REFERENCE.md</code> for commands and tips
+            </div>
+
+            <h3>Common Issues</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-lightbulb"></i> Server won't start? Check if port 8000 is available</li>
+                <li><i class="fas fa-lightbulb"></i> Login fails? Verify database migration ran successfully</li>
+                <li><i class="fas fa-lightbulb"></i> PIN login not appearing? Clear browser cache and login again</li>
+                <li><i class="fas fa-lightbulb"></i> Database issues? Run <code>php artisan migrate:refresh --seed</code></li>
+            </ul>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="section">
+            <h2><i class="fas fa-arrow-right"></i> Next Steps</h2>
+            <ol style="padding-left: 20px; line-height: 2;">
+                <li>Start the Laravel development server (<code>php artisan serve</code>)</li>
+                <li>Open <a href="http://localhost:8000/login">http://localhost:8000/login</a></li>
+                <li>Test full login with: <strong>admin</strong> / <strong>password</strong></li>
+                <li>Click "Quick PIN Login" button</li>
+                <li>Test PIN login with PIN <strong>1234</strong></li>
+                <li>Explore dashboard and features</li>
+                <li>Customize as needed for your restaurant</li>
+            </ol>
+
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+                <a href="http://localhost:8000/login" class="btn" target="_blank">
+                    <i class="fas fa-sign-in-alt"></i> Go to Login
+                </a>
+                <a href="LOGIN_SETUP.md" class="btn btn-secondary" target="_blank">
+                    <i class="fas fa-book"></i> Read Full Docs
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>RestoPOS v1.0</strong> — Restaurant Point of Sale System</p>
+            <p>Created: April 4, 2026 | Framework: Laravel 13</p>
+            <p style="margin-top: 20px; opacity: 0.7;">© 2026 RestoPOS. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
