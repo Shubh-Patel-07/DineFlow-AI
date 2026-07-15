@@ -12,7 +12,7 @@ use App\Models\Order;
 use App\Models\WaiterCall;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class RestoPOSTest extends TestCase
+class DineFlowAIPOSTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -33,7 +33,7 @@ class RestoPOSTest extends TestCase
 
         // 2. Create Restaurant
         $resRest = $this->postJson('/api/restaurants', [
-            'name' => 'Gourmet RestoPOS House',
+            'name' => 'Gourmet DineFlow AI POS House',
             'address' => '123 Food Street',
             'phone' => '555-0100',
         ]);

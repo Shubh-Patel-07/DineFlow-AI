@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             ['username' => 'admin'],
             [
                 'name' => 'Admin User',
-                'email' => 'admin@restopos.com',
+                'email' => 'admin@dineflow.com',
                 'password' => Hash::make('password'),
                 'numeric_pin' => '1234',
                 'role' => 'admin',
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             ['username' => 'manager'],
             [
                 'name' => 'Manager',
-                'email' => 'manager@restopos.com',
+                'email' => 'manager@dineflow.com',
                 'password' => Hash::make('password'),
                 'numeric_pin' => '5678',
                 'role' => 'manager',
@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
             ['username' => 'cashier'],
             [
                 'name' => 'Cashier',
-                'email' => 'cashier@restopos.com',
+                'email' => 'cashier@dineflow.com',
                 'password' => Hash::make('password'),
                 'numeric_pin' => '9999',
                 'role' => 'cashier',
@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
             ['username' => 'kitchen'],
             [
                 'name' => 'Head Chef',
-                'email' => 'chef@restopos.com',
+                'email' => 'chef@dineflow.com',
                 'password' => Hash::make('password'),
                 'numeric_pin' => '2580',
                 'role' => 'kitchen',
@@ -70,7 +70,7 @@ class UserSeeder extends Seeder
             ['username' => 'waiter'],
             [
                 'name' => 'Waiter John',
-                'email' => 'waiter@restopos.com',
+                'email' => 'waiter@dineflow.com',
                 'password' => Hash::make('password'),
                 'numeric_pin' => '3690',
                 'role' => 'waiter',

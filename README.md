@@ -1,4 +1,4 @@
-# 🍽️ RestoPOS - Restaurant POS System
+# 🍽️ DineFlow AI POS - Restaurant POS System
 
 A complete point-of-sale system for restaurants with a professional login system featuring both traditional username/password authentication and quick numeric PIN login for touchscreen devices.
 

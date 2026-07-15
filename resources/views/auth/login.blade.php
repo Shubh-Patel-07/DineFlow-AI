@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RestoPOS - Login</title>
+    <title>DineFlow AI POS - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -212,7 +212,7 @@
                 <div class="brand-logo">
                     <i class="fas fa-utensils"></i>
                 </div>
-                <h1>RestoPOS</h1>
+                <h1>DineFlow AI POS</h1>
                 <p>Restaurant Point of Sale</p>
             </div>
 

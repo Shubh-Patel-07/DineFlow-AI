@@ -43,7 +43,7 @@ class AuthController extends Controller
         session(['last_username' => $user->username]);
         
         Auth::login($user, $request->boolean('remember'));
-        return redirect()->route('pos.index')->with('success', 'Welcome to RestoPOS!');
+        return redirect()->route('pos.index')->with('success', 'Welcome to DineFlow AI POS!');
     }
 
     /**
