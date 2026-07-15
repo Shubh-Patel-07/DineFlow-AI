@@ -1660,6 +1660,10 @@
         lastPlacedOrderId = data.data.id;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
+        // Automatically open thermal receipt print preview after 1.5 seconds
+        setTimeout(() => {
+          printBill();
+        }, 1500);
       } else {
         showToast(data.message || 'Failed to place order', 'error');
       }

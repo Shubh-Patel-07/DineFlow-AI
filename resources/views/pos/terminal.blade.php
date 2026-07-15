@@ -1544,6 +1544,10 @@ async function checkout() {
             alert('Order placed successfully! ID: #' + lastPlacedOrderId);
             cart = {};
             updateCart();
+            // Automatically print bill
+            setTimeout(() => {
+                printBill();
+            }, 1000);
         } else {
             alert(data.message || 'Failed to place order');
         }
