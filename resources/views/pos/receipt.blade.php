@@ -164,8 +164,8 @@
             <tr>
                 <td>{{ $item->name }}</td>
                 <td class="text-right">{{ $item->quantity }}</td>
-                <td class="text-right">${{ number_format($item->price, 2) }}</td>
-                <td class="text-right">${{ number_format($item->price * $item->quantity, 2) }}</td>
+                <td class="text-right">₹{{ number_format($item->price, 2) }}</td>
+                <td class="text-right">₹{{ number_format($item->price * $item->quantity, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -176,7 +176,7 @@
     <table class="info-table total-section">
         <tr>
             <td>Subtotal:</td>
-            <td class="text-right">${{ number_format($order->total_amount, 2) }}</td>
+            <td class="text-right">₹{{ number_format($order->total_amount, 2) }}</td>
         </tr>
         @php
             $cgst = $order->total_amount * 0.025; // 2.5% CGST
@@ -185,15 +185,15 @@
         @endphp
         <tr>
             <td>CGST (2.5%):</td>
-            <td class="text-right">${{ number_format($cgst, 2) }}</td>
+            <td class="text-right">₹{{ number_format($cgst, 2) }}</td>
         </tr>
         <tr>
             <td>SGST (2.5%):</td>
-            <td class="text-right">${{ number_format($sgst, 2) }}</td>
+            <td class="text-right">₹{{ number_format($sgst, 2) }}</td>
         </tr>
         <tr style="font-size: 13px;">
             <td>GRAND TOTAL:</td>
-            <td class="text-right">${{ number_format($grandTotal, 2) }}</td>
+            <td class="text-right">₹{{ number_format($grandTotal, 2) }}</td>
         </tr>
     </table>
 
