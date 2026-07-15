@@ -120,4 +120,24 @@ class OrderController extends Controller
 
         return response()->json(['success' => true, 'data' => $order]);
     }
+
+    public function showReceipt($id)
+    {
+        $order = Order::with('items')->find($id);
+
+        if (!$order) {
+            abort(404, 'Order not found');
+        }
+
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
+            'name' => 'DineFlow AI POS House',
+            'address' => '456 Gourmet Boulevard',
+            'phone' => '555-0199'
+        ]);
+
+        $table = \App\Models\Table::find($order->table_id);
+        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+
+        return view('pos.receipt', compact('order', 'restaurant', 'tableName'));
+    }
 }
