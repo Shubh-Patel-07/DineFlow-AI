@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'POS Terminal - RestoPOS')
+@section('title', 'POS Terminal - DineFlow AI POS')
 
 @section('content')
 <div class="pos-container">
@@ -9,7 +9,7 @@
         <div class="sidebar-brand">
             <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
             <div class="brand-text">
-                <h2>RestoPOS</h2>
+                <h2>DineFlow AI POS</h2>
                 <span>POS Terminal v2.0</span>
             </div>
             <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">

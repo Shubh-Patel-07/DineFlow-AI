@@ -8,7 +8,7 @@ use App\Models\Table;
 use App\Models\MenuItem;
 use App\Models\Inventory;
 
-class RestoPOSSeeder extends Seeder
+class DineFlowAIPOSSeeder extends Seeder
 {
     public function run(): void
     {
@@ -16,7 +16,7 @@ class RestoPOSSeeder extends Seeder
         Restaurant::updateOrCreate(
             ['id' => 1],
             [
-                'name' => 'Ultimate RestoPOS House',
+                'name' => 'Ultimate DineFlow AI POS House',
                 'address' => '456 Gourmet Boulevard',
                 'phone' => '555-0199',
                 'logo' => '',

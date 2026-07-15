@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard — RestoPOS</title>
+  <title>Dashboard — DineFlow AI POS</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -213,7 +213,7 @@
   <div class="sidebar-brand">
     <div class="brand-icon"><i class="fa-solid fa-bowl-food"></i></div>
     <div class="brand-text">
-      <h2>RestoPOS</h2>
+      <h2>DineFlow AI POS</h2>
       <span>Restaurant Suite v2.0</span>
     </div>
     <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
