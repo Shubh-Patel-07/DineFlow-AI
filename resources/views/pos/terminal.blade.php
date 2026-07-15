@@ -1511,19 +1511,53 @@ function filterItems(query) {
     // Simple filter implementation
 }
 
+let lastPlacedOrderId = null;
+
 async function checkout() {
     if (Object.keys(cart).length === 0) {
         alert('Cart is empty!');
         return;
     }
 
-    alert('Order placed successfully!');
-    cart = {};
-    updateCart();
+    const payload = {
+        restaurant_id: "1",
+        table_id: "1",
+        items: Object.keys(cart).map(itemId => ({
+            menu_item_id: itemId,
+            quantity: cart[itemId]
+        }))
+    };
+
+    try {
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (data.success) {
+            lastPlacedOrderId = data.data.id;
+            alert('Order placed successfully! ID: #' + lastPlacedOrderId);
+            cart = {};
+            updateCart();
+        } else {
+            alert(data.message || 'Failed to place order');
+        }
+    } catch (err) {
+        alert('Error connecting to backend');
+    }
 }
 
 function printBill() {
-    alert('Print bill - Feature coming soon');
+    if (!lastPlacedOrderId) {
+        alert('Please place an order first to print bill!');
+        return;
+    }
+    window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
 }
 
 // Close modals on overlay click

@@ -1625,15 +1625,56 @@
 
   /* ─── ACTIONS ────────────────────────────── */
   function holdOrder() { showToast('Order placed on hold', 'warning'); }
-  function printBill() { showToast('Bill printed!', 'success'); }
+  
+  let lastPlacedOrderId = null;
+
   function checkout() {
     const cartItems = MENU.filter(i => i.qty > 0);
     if (cartItems.length === 0) {
       showToast('Cart is empty', 'error');
       return;
     }
-    showToast('Order placed successfully!', 'success');
-    setTimeout(() => { clearCart(); }, 1000);
+
+    const payload = {
+      restaurant_id: "1",
+      table_id: "1",
+      special_instructions: document.querySelector('.bottom-meta textarea')?.value || '',
+      items: cartItems.map(item => ({
+        menu_item_id: item.id,
+        quantity: item.qty
+      }))
+    };
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        lastPlacedOrderId = data.data.id;
+        showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
+        clearCart();
+      } else {
+        showToast(data.message || 'Failed to place order', 'error');
+      }
+    })
+    .catch(err => {
+      showToast('Error connecting to backend', 'error');
+    });
+  }
+
+  function printBill() {
+    if (!lastPlacedOrderId) {
+      showToast('Please place an order first to print bill!', 'error');
+      return;
+    }
+    window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
   }
 
   function logout() {
