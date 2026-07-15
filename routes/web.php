@@ -33,10 +33,12 @@ Route::middleware('auth')->group(function () {
     })->name('pos.index');
 });
 
-// Fallback Redirect
+Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
+
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('pos.index') : redirect()->route('login');
 });
+
 
 // DineFlow AI API Endpoints (Phase 1-4)
 Route::prefix('api')->group(function () {

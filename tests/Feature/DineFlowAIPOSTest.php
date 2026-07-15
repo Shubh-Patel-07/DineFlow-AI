@@ -118,6 +118,11 @@ class DineFlowAIPOSTest extends TestCase
         $resPay->assertStatus(200);
         $this->assertEquals('paid', $resPay->json('data.payment_status'));
 
+        // 9.5 Test Receipt rendering
+        $resReceipt = $this->get("/orders/{$orderId}/receipt");
+        $resReceipt->assertStatus(200);
+        $resReceipt->assertSee('GRAND TOTAL');
+
         // 10. Fetch Sales Analytics
         $resAnalytics = $this->getJson("/api/analytics/restaurant/{$restaurantId}");
         $resAnalytics->assertStatus(200);
