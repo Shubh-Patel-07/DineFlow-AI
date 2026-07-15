@@ -179,16 +179,22 @@
             <td class="text-right">₹{{ number_format($order->total_amount, 2) }}</td>
         </tr>
         @php
-            $cgst = $order->total_amount * 0.025; // 2.5% CGST
-            $sgst = $order->total_amount * 0.025; // 2.5% SGST
-            $grandTotal = $order->total_amount + $cgst + $sgst;
+            $serviceCharge = $order->total_amount * 0.05; // 5% Service Charge
+            $taxableAmount = $order->total_amount + $serviceCharge;
+            $cgst = $taxableAmount * 0.09; // 9% CGST (18% Total GST)
+            $sgst = $taxableAmount * 0.09; // 9% SGST (18% Total GST)
+            $grandTotal = $taxableAmount + $cgst + $sgst;
         @endphp
         <tr>
-            <td>CGST (2.5%):</td>
+            <td>Service Charge (5%):</td>
+            <td class="text-right">₹{{ number_format($serviceCharge, 2) }}</td>
+        </tr>
+        <tr>
+            <td>CGST (9%):</td>
             <td class="text-right">₹{{ number_format($cgst, 2) }}</td>
         </tr>
         <tr>
-            <td>SGST (2.5%):</td>
+            <td>SGST (9%):</td>
             <td class="text-right">₹{{ number_format($sgst, 2) }}</td>
         </tr>
         <tr style="font-size: 13px;">
