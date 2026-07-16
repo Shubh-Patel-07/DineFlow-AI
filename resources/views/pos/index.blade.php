@@ -1002,6 +1002,7 @@
     <div class="topbar-btn topbar-mobile-cart" title="Cart" onclick="toggleMobileCart()" style="position:relative;">
       <i class="fa-solid fa-cart-shopping"></i>
       <span class="topbar-cart-badge" id="topbarCartBadge">0</span>
+    </div>
   </div>
 
   <!-- Waiter Alert Banner -->
