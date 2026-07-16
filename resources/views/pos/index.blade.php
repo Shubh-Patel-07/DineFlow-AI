@@ -1002,7 +1002,12 @@
     <div class="topbar-btn topbar-mobile-cart" title="Cart" onclick="toggleMobileCart()" style="position:relative;">
       <i class="fa-solid fa-cart-shopping"></i>
       <span class="topbar-cart-badge" id="topbarCartBadge">0</span>
-    </div>
+  </div>
+
+  <!-- Waiter Alert Banner -->
+  <div id="waiterAlertBanner" style="display:none; background: linear-gradient(135deg, #EF4444, #F59E0B); color: white; padding: 10px 20px; font-weight: 600; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-bottom: 2px solid rgba(255,255,255,0.2);">
+      <span><i class="fa-solid fa-bell fa-bounce" style="margin-right:8px;"></i> <span id="waiterAlertText">Table VIP 1 is calling a waiter!</span></span>
+      <button onclick="dismissWaiterCall()" style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 700; transition: background 0.2s;">Mark Resolved</button>
   </div>
 
   <!-- POS Body -->
@@ -1784,5 +1789,57 @@
   updateMetaSelections();
   renderMenu();
   renderCart();
+
+  /* ─── WAITER ALERTS POLLING ──────────────── */
+  let activeWaiterCallId = null;
+
+  async function checkWaiterCalls() {
+    try {
+      const response = await fetch('/api/waiter-calls/restaurant/1');
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        // Find the first unresolved (pending) call
+        const activeCall = data.data.find(c => c.status === 'pending');
+        if (activeCall) {
+          activeWaiterCallId = activeCall.id;
+          document.getElementById('waiterAlertText').textContent = `Table #${activeCall.table_id} is calling a waiter!`;
+          document.getElementById('waiterAlertBanner').style.display = 'flex';
+          return;
+        }
+      }
+      document.getElementById('waiterAlertBanner').style.display = 'none';
+    } catch (err) {
+      // Squelch fetch errors
+    }
+  }
+
+  async function dismissWaiterCall() {
+    if (!activeWaiterCallId) return;
+    try {
+      const response = await fetch(`/api/waiter-calls/${activeWaiterCallId}/resolve`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast('Waiter call resolved!', 'success');
+        document.getElementById('waiterAlertBanner').style.display = 'none';
+        activeWaiterCallId = null;
+        // Check immediately for any other pending calls
+        checkWaiterCalls();
+      }
+    } catch (err) {
+      showToast('Failed to resolve waiter call', 'error');
+    }
+  }
+
+  // Poll for waiter calls every 4 seconds
+  setInterval(checkWaiterCalls, 4000);
+  // Initial check on load
+  checkWaiterCalls();
 </script>
 @endsection
