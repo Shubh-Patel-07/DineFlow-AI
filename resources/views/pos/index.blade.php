@@ -1793,6 +1793,10 @@
 
   /* ─── WAITER ALERTS POLLING ──────────────── */
   let activeWaiterCallId = null;
+  let isWaiterCallActive = false;
+  
+  // Professional bell ding notification sound CDN link
+  const alertSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
 
   async function checkWaiterCalls() {
     try {
@@ -1804,11 +1808,22 @@
         if (activeCall) {
           activeWaiterCallId = activeCall.id;
           document.getElementById('waiterAlertText').textContent = `Table #${activeCall.table_id} is calling a waiter!`;
+          
+          // Play sound ONLY when the notification first triggers
+          if (!isWaiterCallActive) {
+            isWaiterCallActive = true;
+            alertSound.play().catch(e => {
+              // Browser stops sound auto-play until first click anywhere on screen
+              console.log('Audio playback waiting for user interaction gesture.');
+            });
+          }
+          
           document.getElementById('waiterAlertBanner').style.display = 'flex';
           return;
         }
       }
       document.getElementById('waiterAlertBanner').style.display = 'none';
+      isWaiterCallActive = false;
     } catch (err) {
       // Squelch fetch errors
     }
