@@ -47,7 +47,7 @@ class DineFlowAIPOSSeeder extends Seeder
         $menuItems = [
             ['id' => 1,  'name' => 'Paneer Butter Masala', 'cat' => 'Mains',     'price' => 240.00, 'veg' => true,  'image' => 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=60'],
             ['id' => 2,  'name' => 'Chicken Tikka Masala',  'cat' => 'Mains',     'price' => 320.00, 'veg' => false, 'image' => 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&auto=format&fit=crop&q=60'],
-            ['id' => 3,  'name' => 'Garlic Naan',           'cat' => 'Breads',    'price' => 60.00,  'veg' => true,  'image' => 'https://images.unsplash.com/photo-1601050690597-df056fb4ce78?w=500&auto=format&fit=crop&q=60'],
+            ['id' => 3,  'name' => 'Garlic Naan',           'cat' => 'Breads',    'price' => 60.00,  'veg' => true,  'image' => 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=500&auto=format&fit=crop&q=60'],
             ['id' => 4,  'name' => 'Veg Spring Rolls',      'cat' => 'Starters',  'price' => 180.00, 'veg' => true,  'image' => 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=60'],
             ['id' => 5,  'name' => 'Chicken Biryani',       'cat' => 'Rice',      'price' => 380.00, 'veg' => false, 'image' => 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=60'],
             ['id' => 6,  'name' => 'Mango Lassi',           'cat' => 'Beverages', 'price' => 120.00, 'veg' => true,  'image' => 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&auto=format&fit=crop&q=60'],
