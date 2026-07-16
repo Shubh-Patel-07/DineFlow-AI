@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DineFlow AI | Smart QR Ordering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .landing-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      gap: 1.5rem;
+      text-align: center;
+      padding: 1.5rem;
+      z-index: 10;
+    }
+    .landing-title {
+      font-family: var(--font-accent);
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .landing-title span {
+      color: var(--color-primary);
+    }
+    .landing-desc {
+      color: var(--text-muted);
+      max-width: 550px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-bg-glow"></div>
+  <div class="auth-bg-glow-bottom"></div>
+
+  <div class="landing-container">
+    <h1 class="landing-title">Dine<span>Flow</span> AI</h1>
+    <p class="landing-desc">
+      Smart QR-based Restaurant Ordering & Management System. Experience seamless dining at your fingertips.
+    </p>
+    <div class="btn-group">
+      <a href="login.html" class="btn-primary">Log In</a>
+      <a href="signup.html" class="btn-secondary">Sign Up</a>
+    </div>
+  </div>
+</body>
+</html>

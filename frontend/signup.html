@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DineFlow AI | Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="auth-bg-glow"></div>
+  <div class="auth-bg-glow-bottom"></div>
+
+  <div class="auth-container">
+    <div class="auth-card glass-panel-glow" style="margin-top: 2rem; margin-bottom: 2rem;">
+      <div class="auth-header">
+        <a href="index.html" class="auth-logo">Dine<span>Flow</span> AI</a>
+        <p class="auth-subtitle">Create your account to get started.</p>
+      </div>
+
+      <div id="errorMessage" class="auth-error"></div>
+
+      <form id="signupForm">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-input"
+            placeholder="John Doe"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            placeholder="john@example.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="role">Sign up as</label>
+          <select id="role" class="form-select">
+            <option value="customer">Customer (Order Food)</option>
+            <option value="admin">Restaurant Owner / Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            class="form-input"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+          <span id="spinner" class="spinner"></span>
+          <span id="btnText">Sign Up</span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html" class="auth-link">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
