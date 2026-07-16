@@ -1005,10 +1005,20 @@
     </div>
   </div>
 
-  <!-- Waiter Alert Banner -->
-  <div id="waiterAlertBanner" style="display:none; background: linear-gradient(135deg, #EF4444, #F59E0B); color: white; padding: 10px 20px; font-weight: 600; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-bottom: 2px solid rgba(255,255,255,0.2);">
-      <span><i class="fa-solid fa-bell fa-bounce" style="margin-right:8px;"></i> <span id="waiterAlertText">Table VIP 1 is calling a waiter!</span></span>
-      <button onclick="dismissWaiterCall()" style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 700; transition: background 0.2s;">Mark Resolved</button>
+  <!-- CSS Animations & Floating Drawer for Waiter Alerts -->
+  <style>
+    @keyframes slideInRightAlert {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRightAlert {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(120%); opacity: 0; }
+    }
+  </style>
+
+  <!-- Floating Waiter Alerts Drawer -->
+  <div id="waiterAlertsDrawer" style="position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 12px; max-width: 320px; width: 100%; pointer-events: auto;">
   </div>
 
   <!-- POS Body -->
@@ -1831,38 +1841,60 @@
     }
   }
 
+  let activeCallsSet = new Set();
+
   async function checkWaiterCalls() {
     try {
       const response = await fetch('/api/waiter-calls/restaurant/1');
       const data = await response.json();
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        // Find the first unresolved (pending) call
-        const activeCall = data.data.find(c => c.status === 'pending');
-        if (activeCall) {
-          activeWaiterCallId = activeCall.id;
-          document.getElementById('waiterAlertText').textContent = `Table #${activeCall.table_id} is calling a waiter!`;
-          
-          // Play sound ONLY when the notification first triggers
-          if (!isWaiterCallActive) {
-            isWaiterCallActive = true;
-            playChimeSound();
+      if (data.success && Array.isArray(data.data)) {
+        // Filter unresolved (pending) calls
+        const pendingCalls = data.data.filter(c => c.status === 'pending');
+
+        // Check if there are any NEW pending calls we haven't chimed for yet
+        let hasNewCall = false;
+        const currentCallIds = new Set();
+
+        pendingCalls.forEach(call => {
+          currentCallIds.add(call.id);
+          if (!activeCallsSet.has(call.id)) {
+            hasNewCall = true;
           }
-          
-          document.getElementById('waiterAlertBanner').style.display = 'flex';
-          return;
+        });
+
+        if (hasNewCall) {
+          playChimeSound();
+        }
+
+        activeCallsSet = currentCallIds;
+
+        // Render cards inside the drawer
+        const drawer = document.getElementById('waiterAlertsDrawer');
+        if (pendingCalls.length > 0) {
+          drawer.innerHTML = pendingCalls.map(call => `
+            <div id="waiter-call-card-${call.id}" style="background: linear-gradient(135deg, #EF4444, #F59E0B); color: white; padding: 12px 16px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); display: flex; justify-content: space-between; align-items: center; animation: slideInRightAlert 0.3s ease-out; border-left: 4px solid #fff;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-bell fa-bounce" style="font-size: 16px;"></i>
+                <div>
+                  <h4 style="margin: 0; font-size: 13px; font-weight: 700;">Table #${call.table_id}</h4>
+                  <p style="margin: 2px 0 0 0; font-size: 10px; opacity: 0.85;">Requesting assistance</p>
+                </div>
+              </div>
+              <button onclick="dismissWaiterCall(${call.id})" style="background: rgba(255, 255, 255, 0.25); border: 1px solid rgba(255, 255, 255, 0.4); color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 700; transition: all 0.2s; pointer-events: auto;">Resolve</button>
+            </div>
+          `).join('');
+        } else {
+          drawer.innerHTML = '';
         }
       }
-      document.getElementById('waiterAlertBanner').style.display = 'none';
-      isWaiterCallActive = false;
     } catch (err) {
-      // Squelch fetch errors
+      console.log('Error checking waiter calls:', err);
     }
   }
 
-  async function dismissWaiterCall() {
-    if (!activeWaiterCallId) return;
+  async function dismissWaiterCall(callId) {
     try {
-      const response = await fetch(`/api/waiter-calls/${activeWaiterCallId}/resolve`, {
+      const response = await fetch(`/api/waiter-calls/${callId}/resolve`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1873,10 +1905,15 @@
       const data = await response.json();
       if (data.success) {
         showToast('Waiter call resolved!', 'success');
-        document.getElementById('waiterAlertBanner').style.display = 'none';
-        activeWaiterCallId = null;
-        // Check immediately for any other pending calls
-        checkWaiterCalls();
+        const card = document.getElementById(`waiter-call-card-${callId}`);
+        if (card) {
+          card.style.animation = 'slideOutRightAlert 0.3s ease-in forwards';
+          setTimeout(() => {
+            checkWaiterCalls();
+          }, 300);
+        } else {
+          checkWaiterCalls();
+        }
       }
     } catch (err) {
       showToast('Failed to resolve waiter call', 'error');
