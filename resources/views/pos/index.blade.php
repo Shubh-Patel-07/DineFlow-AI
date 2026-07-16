@@ -1794,9 +1794,42 @@
   /* ─── WAITER ALERTS POLLING ──────────────── */
   let activeWaiterCallId = null;
   let isWaiterCallActive = false;
-  
-  // Professional bell ding notification sound CDN link
-  const alertSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+
+  // Synthesize a beautiful, harmonious bell chime natively (no file downloads, no CORS issues)
+  function playChimeSound() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+
+      // Primary note (B5)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(987.77, ctx.currentTime);
+      gain1.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+
+      // Harmonious higher note (E6)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(1318.51, ctx.currentTime);
+      gain2.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+
+      osc1.start();
+      osc2.start();
+      osc1.stop(ctx.currentTime + 0.8);
+      osc2.stop(ctx.currentTime + 1.0);
+    } catch (e) {
+      console.log('Web Audio API chime playback error:', e);
+    }
+  }
 
   async function checkWaiterCalls() {
     try {
@@ -1812,10 +1845,7 @@
           // Play sound ONLY when the notification first triggers
           if (!isWaiterCallActive) {
             isWaiterCallActive = true;
-            alertSound.play().catch(e => {
-              // Browser stops sound auto-play until first click anywhere on screen
-              console.log('Audio playback waiting for user interaction gesture.');
-            });
+            playChimeSound();
           }
           
           document.getElementById('waiterAlertBanner').style.display = 'flex';
