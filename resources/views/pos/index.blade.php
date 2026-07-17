@@ -1047,7 +1047,7 @@
           <button type="button" class="meta-select meta-picker-btn" onclick="openModal('tableModal')">
             <span class="meta-picker-inline">
               <i class="fa-solid fa-table-cells"></i>
-              <span class="meta-picker-value">T-04</span>
+              <span class="meta-picker-value" id="selectedTableNo">T-01</span>
             </span>
             <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
           </button>
@@ -1274,18 +1274,7 @@
         </select>
       </div>
       <div class="table-grid">
-        <div class="table-cell available" onclick="selectTable(this,'T-01')">T-01<span>4 PAX</span></div>
-        <div class="table-cell available" onclick="selectTable(this,'T-02')">T-02<span>2 PAX</span></div>
-        <div class="table-cell occupied">T-03<span>Occupied</span></div>
-        <div class="table-cell selected">T-04<span>Selected</span></div>
-        <div class="table-cell reserved">T-05<span>Reserved</span></div>
-        <div class="table-cell available" onclick="selectTable(this,'T-06')">T-06<span>6 PAX</span></div>
-        <div class="table-cell occupied">T-07<span>Occupied</span></div>
-        <div class="table-cell available" onclick="selectTable(this,'T-08')">T-08<span>4 PAX</span></div>
-        <div class="table-cell available" onclick="selectTable(this,'T-09')">T-09<span>2 PAX</span></div>
-        <div class="table-cell reserved">T-10<span>Reserved</span></div>
-        <div class="table-cell available" onclick="selectTable(this,'T-11')">T-11<span>8 PAX</span></div>
-        <div class="table-cell occupied">T-12<span>Occupied</span></div>
+        <!-- Loaded dynamically from database -->
       </div>
       <div class="table-legend">
         <div class="tl-item"><div class="tl-dot" style="background:var(--border);"></div>Available</div>
@@ -1606,9 +1595,45 @@
   }
 
   /* ─── TABLE ──────────────────────────────── */
-  function selectTable(el, tno) {
+  async function loadTablesData() {
+    try {
+      const response = await fetch('/api/tables/restaurant/1');
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data)) {
+        const grid = document.querySelector('#tableModal .table-grid');
+        grid.innerHTML = data.data.map(table => {
+          let statusClass = 'available';
+          let statusText = 'Available';
+          
+          if (table.status === 'occupied') {
+            statusClass = 'occupied';
+            statusText = 'Occupied';
+          }
+          
+          const currentTableNo = document.getElementById('selectedTableNo')?.textContent || 'T-01';
+          if (table.table_number === currentTableNo) {
+            statusClass = 'selected';
+            statusText = 'Selected';
+          }
+          
+          return `
+            <div class="table-cell ${statusClass}" onclick="selectTable(this, '${table.table_number}', ${table.id})">
+              ${table.table_number}
+              <span>${statusText}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    } catch (err) {
+      console.log('Error loading tables:', err);
+    }
+  }
+
+  function selectTable(el, tno, id) {
+    selectedTableId = id;
+    document.getElementById('selectedTableNo').textContent = tno;
     document.querySelectorAll('.table-cell').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
+    el.className = 'table-cell selected';
     el.querySelector('span').textContent = 'Selected';
     showToast('Table ' + tno + ' selected', 'success');
     setTimeout(() => closeModal('tableModal'), 600);
@@ -1649,6 +1674,7 @@
   let lastPlacedOrderId = null;
   let activeOrderHasKitchen = true; // Fallback to true if manually clicked
   let activeOrderHasBar = true;
+  let selectedTableId = 1;
 
   function checkout() {
     const cartItems = MENU.filter(i => i.qty > 0);
@@ -1663,7 +1689,7 @@
 
     const payload = {
       restaurant_id: "1",
-      table_id: "1",
+      table_id: String(selectedTableId),
       special_instructions: document.querySelector('.bottom-meta textarea')?.value || '',
       items: cartItems.map(item => ({
         menu_item_id: item.id,
@@ -1733,6 +1759,9 @@
   /* ─── MODAL HELPERS ──────────────────────── */
   function openModal(id) {
     document.getElementById(id).classList.add('show');
+    if (id === 'tableModal') {
+      loadTablesData();
+    }
     if (id === 'catPopupModal') {
       document.getElementById('catPopupBtn').classList.add('open');
     }
