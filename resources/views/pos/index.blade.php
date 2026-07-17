@@ -1355,6 +1355,36 @@
   </div>
 </div>
 
+<!-- Print Hub Modal -->
+<div class="modal-overlay" id="printHubModal">
+  <div class="modal" style="width:380px; max-width:90%;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--success); font-family: 'Outfit', sans-serif;"><i class="fa-solid fa-circle-check"></i>&nbsp; Order Placed Successfully!</div>
+      <button class="modal-close" onclick="closeModal('printHubModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="text-align:center; padding:20px;">
+      <div style="font-size:36px; color:var(--success); margin-bottom:12px;"><i class="fa-solid fa-print"></i></div>
+      <h3 style="font-size:16px; font-weight:700; margin-bottom:4px; font-family: 'Outfit', sans-serif;" id="printHubOrderId">Order ID: #--</h3>
+      <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:20px;">Choose tickets to print for this order.</p>
+      
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button onclick="triggerPrintHubAction('receipt')" class="btn-submit" style="background:var(--primary); font-size:13.5px; height:38px;">
+          <i class="fa-solid fa-file-invoice-dollar"></i>&nbsp; Print Customer Receipt
+        </button>
+        <button id="printHubKitchenBtn" onclick="triggerPrintHubAction('kitchen')" class="btn-submit" style="background:var(--warning); font-size:13.5px; height:38px; display:none;">
+          <i class="fa-solid fa-fire-burner"></i>&nbsp; Print Kitchen KOT
+        </button>
+        <button id="printHubBarBtn" onclick="triggerPrintHubAction('bar')" class="btn-submit" style="background:var(--info); font-size:13.5px; height:38px; display:none;">
+          <i class="fa-solid fa-glass-water"></i>&nbsp; Print Bar KOT
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:center; padding:10px;">
+      <button class="btn-outline" style="max-width:120px; height:36px; flex:none;" onclick="closeModal('printHubModal')">Done</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1822,10 +1852,12 @@
         lastPlacedOrderId = data.data.id;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
-        // Automatically open thermal receipt print preview after 1.5 seconds
-        setTimeout(() => {
-          printBill();
-        }, 1500);
+        
+        // Open Print Hub modal for clean manual selections
+        document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
+        document.getElementById('printHubKitchenBtn').style.display = activeOrderHasKitchen ? 'flex' : 'none';
+        document.getElementById('printHubBarBtn').style.display = activeOrderHasBar ? 'flex' : 'none';
+        openModal('printHubModal');
       } else {
         showToast(data.message || 'Failed to place order', 'error');
       }
@@ -1850,6 +1882,17 @@
     
     // 3. Bar KOT (Only if order has drinks/dessert items)
     if (activeOrderHasBar) {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+    }
+  }
+
+  function triggerPrintHubAction(type) {
+    if (!lastPlacedOrderId) return;
+    if (type === 'receipt') {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
+    } else if (type === 'kitchen') {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+    } else if (type === 'bar') {
       window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
     }
   }
