@@ -979,8 +979,12 @@
   <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-title-group">
-      <div class="topbar-title">POS Terminal</div>
-      <div class="topbar-sub" id="topbarDate">Friday, 13 Mar 2026 &nbsp;·&nbsp; Shift: Morning (8:00–16:00)</div>
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
+        <div id="liveClockBadge" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); color: #818CF8; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: monospace; letter-spacing: 0.5px;">--:--:-- --</div>
+        <div id="localWeatherBadge" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34D399; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
+      </div>
+      <div class="topbar-sub" id="topbarDate">Loading date...</div>
     </div>
     <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
       <i class="fa-solid fa-bars"></i>
@@ -1941,5 +1945,40 @@
   setInterval(checkWaiterCalls, 4000);
   // Initial check on load
   checkWaiterCalls();
+
+  function updateLiveClock() {
+    const clock = document.getElementById('liveClockBadge');
+    const dateSub = document.getElementById('topbarDate');
+    if (!clock) return;
+    
+    const now = new Date();
+    
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    clock.textContent = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+    
+    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    const dateString = now.toLocaleDateString('en-US', options);
+    
+    let shift = 'General';
+    const curHour = now.getHours();
+    if (curHour >= 8 && curHour < 16) {
+      shift = 'Morning (08:00 - 16:00)';
+    } else if (curHour >= 16 && curHour < 24) {
+      shift = 'Evening (16:00 - 24:00)';
+    } else {
+      shift = 'Night (00:00 - 08:00)';
+    }
+    
+    if (dateSub) {
+      dateSub.innerHTML = `${dateString} &nbsp;·&nbsp; Shift: ${shift}`;
+    }
+  }
+  setInterval(updateLiveClock, 1000);
+  updateLiveClock();
 </script>
 @endsection
