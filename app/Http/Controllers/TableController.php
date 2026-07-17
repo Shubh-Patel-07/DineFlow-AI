@@ -30,6 +30,16 @@ class TableController extends Controller
     public function getRestaurantTables($restaurantId)
     {
         $tables = Table::where('restaurant_id', $restaurantId)->get();
+        
+        // Map tables to include dynamic occupancy status based on unpaid orders
+        $tables = $tables->map(function($table) {
+            $hasActiveOrder = \App\Models\Order::where('table_id', $table->id)
+                ->where('payment_status', 'pending')
+                ->exists();
+            $table->status = $hasActiveOrder ? 'occupied' : 'available';
+            return $table;
+        });
+
         return response()->json(['success' => true, 'data' => $tables]);
     }
 
