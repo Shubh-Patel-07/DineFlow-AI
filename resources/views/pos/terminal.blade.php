@@ -1561,7 +1561,14 @@ function printBill() {
         alert('Please place an order first to print bill!');
         return;
     }
+    // 1. Customer Bill Invoice
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
+    
+    // 2. Kitchen KOT (Only food items)
+    window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+    
+    // 3. Bar KOT (Only beverages/desserts)
+    window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
 }
 
 // Close modals on overlay click

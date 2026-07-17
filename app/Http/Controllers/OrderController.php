@@ -140,4 +140,40 @@ class OrderController extends Controller
 
         return view('pos.receipt', compact('order', 'restaurant', 'tableName'));
     }
+
+    public function showKitchenKOT($id)
+    {
+        $order = Order::with('items')->find($id);
+        if (!$order) {
+            abort(404, 'Order not found');
+        }
+
+        $table = \App\Models\Table::find($order->table_id);
+        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+
+        $kitchenItems = $order->items->filter(function($item) {
+            $cat = strtolower($item->category ?? '');
+            return in_array($cat, ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup', 'main course']);
+        });
+
+        return view('pos.kot_kitchen', compact('order', 'kitchenItems', 'tableName'));
+    }
+
+    public function showBarKOT($id)
+    {
+        $order = Order::with('items')->find($id);
+        if (!$order) {
+            abort(404, 'Order not found');
+        }
+
+        $table = \App\Models\Table::find($order->table_id);
+        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+
+        $barItems = $order->items->filter(function($item) {
+            $cat = strtolower($item->category ?? '');
+            return in_array($cat, ['beverages', 'desserts', 'drinks', 'dessert']);
+        });
+
+        return view('pos.kot_bar', compact('order', 'barItems', 'tableName'));
+    }
 }
