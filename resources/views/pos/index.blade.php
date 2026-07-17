@@ -1368,6 +1368,13 @@
       <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:20px;">Choose tickets to print for this order.</p>
       
       <div style="display:flex; flex-direction:column; gap:10px;">
+        <!-- Print All Tickets -->
+        <button onclick="triggerPrintHubAction('all')" class="btn-submit" style="background:linear-gradient(135deg, #10B981, #059669); font-size:13.5px; height:38px; font-weight:700;">
+          <i class="fa-solid fa-print"></i>&nbsp; Print All Tickets
+        </button>
+        
+        <div style="border-top: 1px dashed var(--border); margin: 4px 0;"></div>
+
         <button onclick="triggerPrintHubAction('receipt')" class="btn-submit" style="background:var(--primary); font-size:13.5px; height:38px;">
           <i class="fa-solid fa-file-invoice-dollar"></i>&nbsp; Print Customer Receipt
         </button>
@@ -1888,7 +1895,15 @@
 
   function triggerPrintHubAction(type) {
     if (!lastPlacedOrderId) return;
-    if (type === 'receipt') {
+    if (type === 'all') {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
+      if (activeOrderHasKitchen) {
+        window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+      }
+      if (activeOrderHasBar) {
+        window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+      }
+    } else if (type === 'receipt') {
       window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
     } else if (type === 'kitchen') {
       window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
