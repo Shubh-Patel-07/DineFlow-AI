@@ -1357,37 +1357,54 @@
 
 <!-- Print Hub Modal -->
 <div class="modal-overlay" id="printHubModal">
-  <div class="modal" style="width:380px; max-width:90%;">
-    <div class="modal-header">
-      <div class="modal-title" style="color:var(--success); font-family: 'Outfit', sans-serif;"><i class="fa-solid fa-circle-check"></i>&nbsp; Order Placed Successfully!</div>
-      <button class="modal-close" onclick="closeModal('printHubModal')"><i class="fa-solid fa-xmark"></i></button>
+  <div class="modal print-hub-popup" style="width:380px; max-width:92%; background:rgba(30,41,59,0.95); backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 24px 60px rgba(0,0,0,0.5); border-radius:24px; padding:0; overflow:hidden;">
+    <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.06); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; width: 100%;">
+      <div class="modal-title" style="color:#34D399; font-family:'Outfit',sans-serif; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:rgba(52,211,153,0.15); box-shadow:0 0 12px rgba(52,211,153,0.25);"><i class="fa-solid fa-check" style="font-size:12px;"></i></span>
+        Order Placed Successfully!
+      </div>
+      <button class="modal-close" onclick="closeModal('printHubModal')" style="color:var(--text-secondary); opacity:0.6; transition:opacity .18s; cursor:pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="modal-body" style="text-align:center; padding:20px;">
-      <div style="font-size:36px; color:var(--success); margin-bottom:12px;"><i class="fa-solid fa-print"></i></div>
-      <h3 style="font-size:16px; font-weight:700; margin-bottom:4px; font-family: 'Outfit', sans-serif;" id="printHubOrderId">Order ID: #--</h3>
-      <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:20px;">Choose tickets to print for this order.</p>
+    
+    <div class="modal-body" style="text-align:center; padding:24px 20px;">
+      <!-- Glowing Icon Wrapper -->
+      <div style="position:relative; width:80px; height:80px; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.1)); border:1px solid rgba(16,185,129,0.2); border-radius:50%; box-shadow:0 0 30px rgba(16,185,129,0.15);">
+        <i class="fa-solid fa-print" style="font-size:36px; color:#34D399; text-shadow:0 0 10px rgba(52,211,153,0.4);"></i>
+      </div>
       
-      <div style="display:flex; flex-direction:column; gap:10px;">
+      <h3 style="font-size:18px; font-weight:800; color:#F8FAFC; margin-bottom:4px; font-family:'Outfit',sans-serif; letter-spacing:0.3px;" id="printHubOrderId">Order ID: #--</h3>
+      <p style="font-size:12.5px; color:#94A3B8; margin-bottom:24px; font-weight:500;">Choose tickets to print for this order.</p>
+      
+      <div style="display:flex; flex-direction:column; gap:12px;">
         <!-- Print All Tickets -->
-        <button onclick="triggerPrintHubAction('all')" class="btn-submit" style="background:linear-gradient(135deg, #10B981, #059669); font-size:13.5px; height:38px; font-weight:700;">
-          <i class="fa-solid fa-print"></i>&nbsp; Print All Tickets
+        <button onclick="triggerPrintHubAction('all')" class="ph-btn" style="width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); color:#FFFFFF; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(16,185,129,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16,185,129,0.45)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.3)';">
+          <i class="fa-solid fa-print" style="font-size:14px;"></i> Print All Tickets
         </button>
         
-        <div style="border-top: 1px dashed var(--border); margin: 4px 0;"></div>
+        <div style="display:flex; align-items:center; justify-content:center; margin:6px 0;">
+          <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
+          <span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748B; letter-spacing:1px; padding:0 10px;">or print individual</span>
+          <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
+        </div>
 
-        <button onclick="triggerPrintHubAction('receipt')" class="btn-submit" style="background:var(--primary); font-size:13.5px; height:38px;">
-          <i class="fa-solid fa-file-invoice-dollar"></i>&nbsp; Print Customer Receipt
+        <!-- Receipt -->
+        <button onclick="triggerPrintHubAction('receipt')" class="ph-btn" style="width:100%; height:40px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(99,102,241,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.25)';">
+          <i class="fa-solid fa-file-invoice-dollar" style="font-size:13px;"></i> Print Customer Receipt
         </button>
-        <button id="printHubKitchenBtn" onclick="triggerPrintHubAction('kitchen')" class="btn-submit" style="background:var(--warning); font-size:13.5px; height:38px; display:none;">
-          <i class="fa-solid fa-fire-burner"></i>&nbsp; Print Kitchen KOT
+        
+        <!-- Kitchen -->
+        <button id="printHubKitchenBtn" onclick="triggerPrintHubAction('kitchen')" class="ph-btn" style="width:100%; height:40px; display:none; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(245,158,11,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(245,158,11,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.25)';">
+          <i class="fa-solid fa-fire-burner" style="font-size:13px;"></i> Print Kitchen KOT
         </button>
-        <button id="printHubBarBtn" onclick="triggerPrintHubAction('bar')" class="btn-submit" style="background:var(--info); font-size:13.5px; height:38px; display:none;">
-          <i class="fa-solid fa-glass-water"></i>&nbsp; Print Bar KOT
+        
+        <!-- Bar -->
+        <button id="printHubBarBtn" onclick="triggerPrintHubAction('bar')" class="ph-btn" style="width:100%; height:40px; display:none; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #06B6D4, #0891B2); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(6,182,212,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(6,182,212,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(6,182,212,0.25)';">
+          <i class="fa-solid fa-glass-water" style="font-size:13px;"></i> Print Bar KOT
         </button>
       </div>
     </div>
-    <div class="modal-footer" style="justify-content:center; padding:10px;">
-      <button class="btn-outline" style="max-width:120px; height:36px; flex:none;" onclick="closeModal('printHubModal')">Done</button>
+    <div class="modal-footer" style="justify-content:center; border-top:1px solid rgba(255,255,255,0.06); padding:16px 20px; background:rgba(0,0,0,0.1);">
+      <button class="btn-outline" style="min-width:110px; height:36px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); color:#E2E8F0; font-weight:600; border-radius:10px; font-size:12.5px; flex:none; transition:all 0.2s; cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#E2E8F0';" onclick="closeModal('printHubModal')">Done</button>
     </div>
   </div>
 </div>
