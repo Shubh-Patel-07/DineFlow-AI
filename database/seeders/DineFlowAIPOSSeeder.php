@@ -23,25 +23,19 @@ class DineFlowAIPOSSeeder extends Seeder
             ]
         );
 
-        // Seed Tables
-        Table::updateOrCreate(
-            ['id' => 1],
-            [
-                'restaurant_id' => '1',
-                'table_number' => 'VIP 1',
-                'qr_code_url' => 'data:image/png;base64,iVBORw0KGgoAAAANS...',
-                'status' => 'active'
-            ]
-        );
-        Table::updateOrCreate(
-            ['id' => 2],
-            [
-                'restaurant_id' => '1',
-                'table_number' => 'Table 2',
-                'qr_code_url' => 'data:image/png;base64,iVBORw0KGgoAAAANS...',
-                'status' => 'active'
-            ]
-        );
+        // Seed 12 Tables (T-01 to T-12)
+        for ($i = 1; $i <= 12; $i++) {
+            $num = str_pad($i, 2, '0', STR_PAD_LEFT);
+            Table::updateOrCreate(
+                ['id' => $i],
+                [
+                    'restaurant_id' => '1',
+                    'table_number' => 'T-' . $num,
+                    'qr_code_url' => 'http://localhost:8000/menu?restaurantId=1&tableId=' . $i,
+                    'status' => 'active'
+                ]
+            );
+        }
 
         // Seed Menu Items (Matching POS frontend MENU array exactly)
         $menuItems = [
