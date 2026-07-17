@@ -255,11 +255,11 @@
       transition: all .18s; overflow: hidden;
       box-shadow: var(--shadow-sm);
     }
-    .item-card:hover  { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79,70,229,.12); transform: translateY(-1px); }
-    .item-card.in-cart { border-color: var(--success); background: linear-gradient(135deg,#fff,var(--success-light)); }
+    .item-card:hover  { border-color: var(--primary); box-shadow: 0 4px 12px rgba(99,102,241,0.25); transform: translateY(-2px); }
+    .item-card.in-cart { border-color: var(--success); background: linear-gradient(135deg, var(--card), var(--success-light)); }
 
     .item-img {
-      height: 90px; background: linear-gradient(135deg,#f1f5f9,#e2e8f0);
+      height: 90px; background: linear-gradient(135deg, #1e293b, #0f172a);
       display: flex; align-items: center; justify-content: center;
       font-size: 34px; position: relative; overflow: hidden;
     }
@@ -268,10 +268,10 @@
       font-size: 9px; font-weight: 700; padding: 2px 6px;
       border-radius: 20px; letter-spacing: .3px;
     }
-    .item-badge.veg   { background: var(--success-light); color: var(--success); border: 1px solid #A7F3D0; }
-    .item-badge.nonveg{ background: var(--danger-light);  color: var(--danger);  border: 1px solid #FECACA; }
-    .item-badge.new   { background: var(--warning-light); color: var(--warning); border: 1px solid #FDE68A; }
-    .item-badge.best  { background: var(--primary-light); color: var(--primary); border: 1px solid #C7D2FE; }
+    .item-badge.veg   { background: var(--success-light); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .item-badge.nonveg{ background: var(--danger-light);  color: var(--danger);  border: 1px solid rgba(239, 68, 68, 0.3); }
+    .item-badge.new   { background: var(--warning-light); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .item-badge.best  { background: var(--primary-light); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.3); }
 
     .item-body { padding: 8px 9px; }
     .item-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; margin-bottom: 6px; }
@@ -330,7 +330,7 @@
     .cart-items { flex: none; overflow: visible; padding: 4px 0; }
 
     .cart-item {
-      padding: 8px 14px; border-bottom: 1px solid #F1F5F9;
+      padding: 8px 14px; border-bottom: 1px solid var(--border);
       display: flex; align-items: flex-start;
     }
     .ci-info { flex: 1; min-width: 0; }
