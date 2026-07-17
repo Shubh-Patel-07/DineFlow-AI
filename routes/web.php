@@ -34,6 +34,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
+Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen');
+Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar');
+
 
 // Simple shortcuts for testing/presentations
 Route::get('/menu', function () {
