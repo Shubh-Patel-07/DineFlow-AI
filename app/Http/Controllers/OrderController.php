@@ -143,7 +143,7 @@ class OrderController extends Controller
 
     public function showKitchenKOT($id)
     {
-        $order = Order::with('items')->find($id);
+        $order = Order::with('items.menuItem')->find($id);
         if (!$order) {
             abort(404, 'Order not found');
         }
@@ -152,7 +152,7 @@ class OrderController extends Controller
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $kitchenItems = $order->items->filter(function($item) {
-            $cat = strtolower($item->category ?? '');
+            $cat = strtolower($item->menuItem?->category ?? '');
             return in_array($cat, ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup', 'main course']);
         });
 
@@ -161,7 +161,7 @@ class OrderController extends Controller
 
     public function showBarKOT($id)
     {
-        $order = Order::with('items')->find($id);
+        $order = Order::with('items.menuItem')->find($id);
         if (!$order) {
             abort(404, 'Order not found');
         }
@@ -170,7 +170,7 @@ class OrderController extends Controller
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $barItems = $order->items->filter(function($item) {
-            $cat = strtolower($item->category ?? '');
+            $cat = strtolower($item->menuItem?->category ?? '');
             return in_array($cat, ['beverages', 'desserts', 'drinks', 'dessert']);
         });
 
