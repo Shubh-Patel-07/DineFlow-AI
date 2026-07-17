@@ -1513,11 +1513,18 @@ function filterItems(query) {
 
 let lastPlacedOrderId = null;
 
+let activeOrderHasKitchen = true;
+let activeOrderHasBar = true;
+
 async function checkout() {
     if (Object.keys(cart).length === 0) {
         alert('Cart is empty!');
         return;
     }
+
+    const menuItemsForKeys = Object.keys(cart);
+    activeOrderHasKitchen = menuItemsForKeys.some(id => [1,2,3,4,5,8,9,10,11].includes(parseInt(id)));
+    activeOrderHasBar = menuItemsForKeys.some(id => [6,7,12].includes(parseInt(id)));
 
     const payload = {
         restaurant_id: "1",
@@ -1561,14 +1568,18 @@ function printBill() {
         alert('Please place an order first to print bill!');
         return;
     }
-    // 1. Customer Bill Invoice
+    // 1. Customer Bill Invoice (Always prints)
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
     
-    // 2. Kitchen KOT (Only food items)
-    window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+    // 2. Kitchen KOT (Only if order has food items)
+    if (activeOrderHasKitchen) {
+        window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+    }
     
-    // 3. Bar KOT (Only beverages/desserts)
-    window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+    // 3. Bar KOT (Only if order has drinks/desserts)
+    if (activeOrderHasBar) {
+        window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+    }
 }
 
 // Close modals on overlay click

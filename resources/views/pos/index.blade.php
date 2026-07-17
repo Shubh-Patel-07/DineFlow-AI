@@ -1643,6 +1643,8 @@
   function holdOrder() { showToast('Order placed on hold', 'warning'); }
   
   let lastPlacedOrderId = null;
+  let activeOrderHasKitchen = true; // Fallback to true if manually clicked
+  let activeOrderHasBar = true;
 
   function checkout() {
     const cartItems = MENU.filter(i => i.qty > 0);
@@ -1650,6 +1652,10 @@
       showToast('Cart is empty', 'error');
       return;
     }
+
+    // Determine if we need to print Kitchen KOT or Bar KOT based on cart categories
+    activeOrderHasKitchen = cartItems.some(item => ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup'].includes(item.cat.toLowerCase()));
+    activeOrderHasBar = cartItems.some(item => ['beverages', 'desserts', 'drinks', 'dessert'].includes(item.cat.toLowerCase()));
 
     const payload = {
       restaurant_id: "1",
@@ -1694,14 +1700,18 @@
       showToast('Please place an order first to print bill!', 'error');
       return;
     }
-    // 1. Customer Bill Invoice
+    // 1. Customer Bill Invoice (Always prints)
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
     
-    // 2. Kitchen KOT (Only food items)
-    window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+    // 2. Kitchen KOT (Only if order has food items)
+    if (activeOrderHasKitchen) {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+    }
     
-    // 3. Bar KOT (Only beverages/desserts)
-    window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+    // 3. Bar KOT (Only if order has drinks/dessert items)
+    if (activeOrderHasBar) {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+    }
   }
 
   function logout() {
