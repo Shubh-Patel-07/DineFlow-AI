@@ -924,7 +924,7 @@
       <div class="sidebar-section-label">Main</div>
       <a class="nav-item" href="{{ route('dashboard') }}" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
       <a class="nav-item active" href="{{ route('pos.index') }}" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
-      <a class="nav-item" href="#" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge">12</span></a>
+      <a class="nav-item" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span></a>
       <a class="nav-item" href="#" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
       <a class="nav-item" href="#" data-tip="Kitchen Display"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
@@ -1328,6 +1328,33 @@
   </div>
 </div>
 
+<!-- Orders Manager Modal -->
+<div class="modal-overlay" id="ordersModal">
+  <div class="modal selection-popup-modal" style="width:780px; max-width:95%;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-receipt" style="color:var(--primary);"></i>&nbsp; Recent Orders History</div>
+      <button class="modal-close" onclick="closeModal('ordersModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:15px; overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; color:var(--text-primary);">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border); color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
+            <th style="padding:10px;">ID</th>
+            <th style="padding:10px;">Table</th>
+            <th style="padding:10px;">Items Summary</th>
+            <th style="padding:10px;">Amount</th>
+            <th style="padding:10px;">Payment</th>
+            <th style="padding:10px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersModalTableBody">
+          <!-- Loaded dynamically from API -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1639,6 +1666,89 @@
     setTimeout(() => closeModal('tableModal'), 600);
   }
 
+  /* ─── ORDERS HISTORY ──────────────────────── */
+  async function loadOrdersData() {
+    try {
+      const response = await fetch('/api/orders/restaurant/1');
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data)) {
+        const tbody = document.getElementById('ordersModalTableBody');
+        if (data.data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-secondary);">No orders found.</td></tr>`;
+          return;
+        }
+        
+        const sortedOrders = [...data.data].reverse();
+        
+        tbody.innerHTML = sortedOrders.map(order => {
+          const itemsSummary = order.items.map(item => `${item.name} (x${item.quantity})`).join(', ');
+          
+          let payBadge = `<span style="background:rgba(239,68,68,0.1); color:#FCA5A5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Unpaid</span>`;
+          let actionBtns = `
+            <button onclick="payOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 10px; height:26px; font-size:11px; color:#10B981; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.1); margin-right:5px; cursor:pointer;">
+              <i class="fa-solid fa-circle-check"></i>&nbsp;Pay
+            </button>
+          `;
+          
+          if (order.payment_status === 'paid') {
+            payBadge = `<span style="background:rgba(16,185,129,0.1); color:#34D399; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Paid</span>`;
+            actionBtns = '';
+          }
+          
+          actionBtns += `
+            <button onclick="reprintOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 10px; height:26px; font-size:11px; color:#818CF8; border-color:rgba(99,102,241,0.4); background:rgba(99,102,241,0.1); cursor:pointer;">
+              <i class="fa-solid fa-print"></i>&nbsp;Print
+            </button>
+          `;
+          
+          const tableNum = order.table ? order.table.table_number : 'Table #' + order.table_id;
+          
+          return `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px 10px; font-weight:700;">#${order.id}</td>
+              <td style="padding:12px 10px; font-weight:600;">${tableNum}</td>
+              <td style="padding:12px 10px; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary);" title="${itemsSummary}">${itemsSummary}</td>
+              <td style="padding:12px 10px; font-weight:700; color:var(--primary);">₹${parseFloat(order.total_amount).toFixed(2)}</td>
+              <td style="padding:12px 10px;">${payBadge}</td>
+              <td style="padding:12px 10px; white-space:nowrap;">${actionBtns}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    } catch (err) {
+      console.log('Error loading orders:', err);
+    }
+  }
+
+  async function payOrder(orderId) {
+    try {
+      const response = await fetch(`/api/orders/${orderId}/pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ payment_method: 'cash' })
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast('Payment verified successfully!', 'success');
+        loadOrdersData();
+        loadTablesData();
+      }
+    } catch (err) {
+      showToast('Payment verification failed', 'error');
+    }
+  }
+
+  function reprintOrder(orderId) {
+    lastPlacedOrderId = orderId;
+    activeOrderHasKitchen = true;
+    activeOrderHasBar = true;
+    printBill();
+  }
+
   /* ─── PAYMENT ────────────────────────────── */
   function selectPay(el) {
     document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
@@ -1756,11 +1866,13 @@
     }
   }
 
-  /* ─── MODAL HELPERS ──────────────────────── */
   function openModal(id) {
     document.getElementById(id).classList.add('show');
     if (id === 'tableModal') {
       loadTablesData();
+    }
+    if (id === 'ordersModal') {
+      loadOrdersData();
     }
     if (id === 'catPopupModal') {
       document.getElementById('catPopupBtn').classList.add('open');
