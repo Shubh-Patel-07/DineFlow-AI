@@ -620,6 +620,10 @@
 
     /* ─── MOBILE CART PANEL ───────────────────── */
     @media (max-width: 768px) {
+      .pos-left {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
       .pos-right {
         position: fixed;
         top: 0; right: 0; bottom: 0;
