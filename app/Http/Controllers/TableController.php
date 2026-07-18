@@ -31,12 +31,23 @@ class TableController extends Controller
     {
         $tables = Table::where('restaurant_id', $restaurantId)->get();
         
-        // Map tables to include dynamic occupancy status based on unpaid orders
+        // Map tables to include dynamic occupancy status and active order details
         $tables = $tables->map(function($table) {
-            $hasActiveOrder = \App\Models\Order::where('table_id', $table->id)
+            $activeOrder = \App\Models\Order::where('table_id', $table->id)
                 ->where('payment_status', 'pending')
-                ->exists();
-            $table->status = $hasActiveOrder ? 'occupied' : 'available';
+                ->first();
+            if ($activeOrder) {
+                $table->status = 'occupied';
+                $table->active_order_id = $activeOrder->id;
+                $subtotal = $activeOrder->total_amount;
+                $serviceCharge = $subtotal * 0.05;
+                $gst = ($subtotal + $serviceCharge) * 0.18;
+                $table->active_order_amount = round($subtotal + $serviceCharge + $gst);
+            } else {
+                $table->status = 'available';
+                $table->active_order_id = null;
+                $table->active_order_amount = 0;
+            }
             return $table;
         });
 
