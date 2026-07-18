@@ -4,40 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard — DineFlow AI POS</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
     :root {
-      --primary:        #4F46E5;
-      --primary-light:  #EEF2FF;
-      --primary-dark:   #3730A3;
+      --primary:        #6366F1;
+      --primary-light:  rgba(99, 102, 241, 0.15);
+      --primary-dark:   #4F46E5;
       --success:        #10B981;
-      --success-light:  #ECFDF5;
+      --success-light:  rgba(16, 185, 129, 0.15);
       --danger:         #EF4444;
-      --danger-light:   #FEF2F2;
+      --danger-light:   rgba(239, 68, 68, 0.15);
       --warning:        #F59E0B;
-      --warning-light:  #FFFBEB;
-      --info:           #3B82F6;
-      --info-light:     #EFF6FF;
-      --sidebar-bg:     #1E1B4B;
-      --sidebar-hover:  #312E81;
-      --sidebar-active: #4F46E5;
-      --bg:             #F8FAFC;
-      --card:           #FFFFFF;
-      --border:         #E2E8F0;
-      --text-primary:   #1E293B;
-      --text-secondary: #64748B;
-      --text-muted:     #94A3B8;
-      --shadow-sm:      0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-      --shadow-md:      0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
-      --shadow-lg:      0 10px 15px rgba(0,0,0,.07), 0 4px 6px rgba(0,0,0,.05);
-      --radius-sm:      6px;
-      --radius-md:      10px;
-      --radius-lg:      16px;
+      --warning-light:  rgba(245, 158, 11, 0.15);
+      --info:           #06B6D4;
+      --info-light:     rgba(6, 182, 212, 0.15);
+      --sidebar-bg:     #0f172a;
+      --sidebar-hover:  #1e293b;
+      --sidebar-active: #6366F1;
+      --bg:             #0b0f19;
+      --card:           #1e293b;
+      --border:         #334155;
+      --text-primary:   #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted:     #64748b;
+      --shadow-sm:      0 4px 10px rgba(0,0,0,.3);
+      --shadow-md:      0 8px 20px rgba(0,0,0,.4);
+      --shadow-lg:      0 16px 36px rgba(0,0,0,.5);
+      --radius-sm:      8px;
+      --radius-md:      12px;
+      --radius-lg:      20px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
     /* ─── SIDEBAR ─────────────────────────────── */
     .sidebar {
@@ -141,7 +141,7 @@
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
     .topbar {
-      background: var(--card); border-bottom: 1px solid var(--border);
+      background: var(--sidebar-bg); border-bottom: 1px solid var(--border);
       padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px;
       flex-shrink: 0; box-shadow: var(--shadow-sm);
     }
@@ -156,7 +156,7 @@
       transition: all .15s;
     }
     .topbar-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
-    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--card); }
+    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--sidebar-bg); }
 
     .dashboard-content {
       flex: 1; overflow-y: auto; padding: 24px;
@@ -168,6 +168,12 @@
       background: var(--card); border-radius: var(--radius-lg); padding: 24px;
       box-shadow: var(--shadow-sm); border: 1px solid var(--border);
       display: flex; flex-direction: column; gap: 12px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
     }
 
     .card-header { display: flex; align-items: center; gap: 12px; }
