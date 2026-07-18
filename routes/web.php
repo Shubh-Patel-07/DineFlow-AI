@@ -21,7 +21,38 @@ Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.sw
 // Protected UI Pages
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        // Today's Orders
+        $todayOrdersCount = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::today())->count();
+        $yesterdayOrdersCount = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::yesterday())->count();
+        $ordersDiff = $todayOrdersCount - $yesterdayOrdersCount;
+        $ordersDiffText = ($ordersDiff >= 0 ? '+' : '') . $ordersDiff . ' from yesterday';
+
+        // Total Revenue
+        $todayRevenue = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::today())->where('payment_status', 'paid')->sum('total_amount');
+        $yesterdayRevenue = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::yesterday())->where('payment_status', 'paid')->sum('total_amount');
+        if ($yesterdayRevenue > 0) {
+            $revenueChange = round((($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100);
+        } else {
+            $revenueChange = $todayRevenue > 0 ? 100 : 0;
+        }
+        $revenueDiffText = ($revenueChange >= 0 ? '+' : '') . $revenueChange . '% from yesterday';
+
+        // Occupied Tables
+        $occupiedTablesCount = \App\Models\Order::where('payment_status', 'pending')->distinct('table_id')->count('table_id');
+        $totalTablesCount = \App\Models\Table::count() ?: 12;
+
+        // Active Customers
+        $activeCustomers = $occupiedTablesCount * 3;
+
+        return view('dashboard', [
+            'todayOrdersCount' => $todayOrdersCount,
+            'ordersDiffText' => $ordersDiffText,
+            'todayRevenue' => $todayRevenue,
+            'revenueDiffText' => $revenueDiffText,
+            'occupiedTablesCount' => $occupiedTablesCount,
+            'totalTablesCount' => $totalTablesCount,
+            'activeCustomers' => $activeCustomers,
+        ]);
     })->name('dashboard');
     
     Route::get('/pos-terminal', function () {
