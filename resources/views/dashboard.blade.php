@@ -313,8 +313,8 @@
         <div class="card-icon primary"><i class="fa-solid fa-receipt"></i></div>
         <div>
           <div class="card-title">Today's Orders</div>
-          <div class="card-value">24</div>
-          <div class="card-sub">+5 from yesterday</div>
+          <div class="card-value">{{ $todayOrdersCount }}</div>
+          <div class="card-sub">{{ $ordersDiffText }}</div>
         </div>
       </div>
     </div>
@@ -324,8 +324,8 @@
         <div class="card-icon success"><i class="fa-solid fa-money-bill-wave"></i></div>
         <div>
           <div class="card-title">Total Revenue</div>
-          <div class="card-value">₹ 12,450</div>
-          <div class="card-sub">+12% from yesterday</div>
+          <div class="card-value">₹ {{ number_format($todayRevenue) }}</div>
+          <div class="card-sub">{{ $revenueDiffText }}</div>
         </div>
       </div>
     </div>
@@ -335,7 +335,7 @@
         <div class="card-icon warning"><i class="fa-solid fa-users"></i></div>
         <div>
           <div class="card-title">Active Customers</div>
-          <div class="card-value">18</div>
+          <div class="card-value">{{ $activeCustomers }}</div>
           <div class="card-sub">Currently dining</div>
         </div>
       </div>
@@ -346,8 +346,8 @@
         <div class="card-icon danger"><i class="fa-solid fa-table-cells"></i></div>
         <div>
           <div class="card-title">Tables Occupied</div>
-          <div class="card-value">8 / 12</div>
-          <div class="card-sub">3 tables reserved</div>
+          <div class="card-value">{{ $occupiedTablesCount }} / {{ $totalTablesCount }}</div>
+          <div class="card-sub">Real-time status</div>
         </div>
       </div>
     </div>
