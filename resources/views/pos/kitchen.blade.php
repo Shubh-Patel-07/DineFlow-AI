@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DineFlow AI - Kitchen Display System</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -316,8 +317,8 @@
         statusBadge.innerHTML = '<i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring';
 
         if (data.success && Array.isArray(data.data)) {
-          // Filter unpaid pending orders
-          const activeOrders = data.data.filter(order => order.payment_status === 'pending');
+          // Show all active orders that are pending, preparing or served (both paid and unpaid)
+          const activeOrders = data.data.filter(order => order.status !== 'completed' && order.status !== 'cancelled' && order.status !== 'served');
           
           if (activeOrders.length === 0) {
             document.getElementById('kdsGrid').innerHTML = `
@@ -402,19 +403,40 @@
     }
 
     async function completeKOT(orderId) {
-      if (confirm('Mark Order #' + orderId + ' as served?')) {
+      if (confirm('Mark Order #' + orderId + ' as completed?')) {
         const card = document.getElementById('kds-card-' + orderId);
         if (card) {
           card.style.opacity = '0.3';
           card.style.pointerEvents = 'none';
         }
-        // In this demo, we can just resolve it or call resolve waiter calls,
-        // but for KOT served, we can just hide it locally or mark it paid.
-        // For simplicity, we just hide it from this phone screen.
-        processedOrders.delete(orderId);
-        setTimeout(() => {
-          loadKOTs();
-        }, 800);
+        try {
+          const response = await fetch('/api/orders/' + orderId + '/status', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify({ status: 'completed' })
+          });
+          const resData = await response.json();
+          if (resData.success) {
+            processedOrders.delete(orderId);
+            loadKOTs();
+          } else {
+            alert('Failed to update order status');
+            if (card) {
+              card.style.opacity = '1';
+              card.style.pointerEvents = 'auto';
+            }
+          }
+        } catch (err) {
+          console.log('Error completing KOT:', err);
+          if (card) {
+            card.style.opacity = '1';
+            card.style.pointerEvents = 'auto';
+          }
+        }
       }
     }
 
