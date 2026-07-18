@@ -2305,5 +2305,11 @@
   }
   setInterval(updateLiveClock, 1000);
   updateLiveClock();
+
+  // Open modal automatically if query parameter is set
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('openModal') === 'orders') {
+    openModal('ordersModal');
+  }
 </script>
 @endsection
