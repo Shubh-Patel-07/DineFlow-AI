@@ -2266,8 +2266,8 @@
     }
   }
 
-  // Poll for waiter calls every 4 seconds
-  setInterval(checkWaiterCalls, 4000);
+  // Poll for waiter calls every 12 seconds to save server threads and DB resources
+  setInterval(checkWaiterCalls, 12000);
   // Initial check on load
   checkWaiterCalls();
 
