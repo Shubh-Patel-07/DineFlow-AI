@@ -249,7 +249,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('auth.login-with-pin') }}" id="pinForm">
+            <form method="POST" action="/pin-login" id="pinForm">
                 @csrf
 
                 <input type="hidden" name="username" value="{{ $username }}">
