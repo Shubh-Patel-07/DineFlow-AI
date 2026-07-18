@@ -62,6 +62,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', function () {
         return view('pos.index');
     })->name('pos.index');
+
+    Route::get('/kitchen', function () {
+        return view('pos.kitchen');
+    })->name('pos.kitchen');
 });
 
 Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
