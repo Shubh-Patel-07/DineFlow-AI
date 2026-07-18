@@ -53,15 +53,31 @@ class OrderController extends Controller
                 }
             }
 
-            $order = Order::create([
-                'restaurant_id' => $request->restaurant_id,
-                'table_id' => $request->table_id,
-                'total_amount' => $totalAmount,
-                'status' => 'pending',
-                'payment_status' => 'pending',
-                'payment_method' => $request->payment_method ?? 'cash',
-                'special_instructions' => $request->special_instructions ?? '',
-            ]);
+            // Check if there is already an active (unpaid) order for this table
+            $order = Order::where('table_id', $request->table_id)
+                ->where('restaurant_id', $request->restaurant_id)
+                ->where('payment_status', 'pending')
+                ->first();
+
+            if ($order) {
+                // Update existing active order
+                $order->total_amount = $totalAmount;
+                $order->special_instructions = $request->special_instructions ?? $order->special_instructions;
+                $order->save();
+                // Delete old items for this order to replace with updated list
+                $order->items()->delete();
+            } else {
+                // Create new order
+                $order = Order::create([
+                    'restaurant_id' => $request->restaurant_id,
+                    'table_id' => $request->table_id,
+                    'total_amount' => $totalAmount,
+                    'status' => 'pending',
+                    'payment_status' => 'pending',
+                    'payment_method' => $request->payment_method ?? 'cash',
+                    'special_instructions' => $request->special_instructions ?? '',
+                ]);
+            }
 
             foreach ($itemsData as $itemData) {
                 $order->items()->create($itemData);
@@ -175,5 +191,18 @@ class OrderController extends Controller
         });
 
         return view('pos.kot_bar', compact('order', 'barItems', 'tableName'));
+    }
+
+    public function showCombinedKOT($id)
+    {
+        $order = Order::with('items.menuItem')->find($id);
+        if (!$order) {
+            abort(404, 'Order not found');
+        }
+
+        $table = \App\Models\Table::find($order->table_id);
+        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+
+        return view('pos.kot_combined', compact('order', 'tableName'));
     }
 }

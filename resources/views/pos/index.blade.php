@@ -1386,6 +1386,11 @@
         <button onclick="triggerPrintHubAction('all')" class="ph-btn" style="width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); color:#FFFFFF; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(16,185,129,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16,185,129,0.45)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.3)';">
           <i class="fa-solid fa-print" style="font-size:14px;"></i> Print All Tickets
         </button>
+
+        <!-- Print Combined KOT -->
+        <button id="printHubCombinedKOTBtn" onclick="triggerPrintHubAction('combined')" class="ph-btn" style="width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(245,158,11,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245,158,11,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245,158,11,0.25)';">
+          <i class="fa-solid fa-fire-burner" style="font-size:14px;"></i> Print Combined KOT (Food + Drink)
+        </button>
         
         <div style="display:flex; align-items:center; justify-content:center; margin:6px 0;">
           <div style="flex:1; height:1px; background:rgba(255,255,255,0.06);"></div>
@@ -1769,12 +1774,45 @@
     renderTablesGrid(filtered);
   }
 
+  function clearCartSilent() {
+    MENU.forEach(i => i.qty = 0);
+    renderMenu();
+    renderCart();
+  }
+
   function selectTable(el, tno, id) {
     selectedTableId = id;
     document.getElementById('selectedTableNo').textContent = tno;
     document.querySelectorAll('.table-cell').forEach(c => c.classList.remove('selected'));
     el.className = 'table-cell selected';
     el.querySelector('span:last-child').textContent = 'Selected';
+    
+    // Dynamically sync and load existing unpaid items for the selected table
+    fetch('/api/orders/restaurant/1')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.data)) {
+          const activeOrder = data.data.find(order => String(order.table_id) === String(id) && order.payment_status === 'pending');
+          if (activeOrder && Array.isArray(activeOrder.items)) {
+            MENU.forEach(item => item.qty = 0);
+            activeOrder.items.forEach(orderItem => {
+              const menuItem = MENU.find(m => m.id === orderItem.menu_item_id);
+              if (menuItem) {
+                menuItem.qty = orderItem.quantity;
+              }
+            });
+            renderMenu();
+            renderCart();
+            showToast('Loaded active items for Table ' + tno, 'info');
+          } else {
+            clearCartSilent();
+          }
+        }
+      })
+      .catch(err => {
+        console.log('Error syncing table order:', err);
+      });
+
     showToast('Table ' + tno + ' selected', 'success');
     setTimeout(() => closeModal('tableModal'), 600);
   }
@@ -1984,6 +2022,8 @@
       if (activeOrderHasBar) {
         window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
       }
+    } else if (type === 'combined') {
+      window.open('/orders/' + lastPlacedOrderId + '/receipt/kot-combined', '_blank');
     } else if (type === 'receipt') {
       window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
     } else if (type === 'kitchen') {
