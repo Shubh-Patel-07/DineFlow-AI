@@ -1387,9 +1387,9 @@
           <i class="fa-solid fa-print" style="font-size:14px;"></i> Print All Tickets
         </button>
 
-        <!-- Print Combined KOT -->
-        <button id="printHubCombinedKOTBtn" onclick="triggerPrintHubAction('combined')" class="ph-btn" style="width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(245,158,11,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245,158,11,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245,158,11,0.25)';">
-          <i class="fa-solid fa-fire-burner" style="font-size:14px;"></i> Print Combined KOT (Food + Drink)
+        <!-- Print KOTs Only -->
+        <button id="printHubKOTsOnlyBtn" onclick="triggerPrintHubAction('kots_only')" class="ph-btn" style="width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(245,158,11,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245,158,11,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245,158,11,0.25)';">
+          <i class="fa-solid fa-fire-burner" style="font-size:14px;"></i> Print KOTs Only (Kitchen + Bar)
         </button>
         
         <div style="display:flex; align-items:center; justify-content:center; margin:6px 0;">
@@ -2022,8 +2022,13 @@
       if (activeOrderHasBar) {
         window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
       }
-    } else if (type === 'combined') {
-      window.open('/orders/' + lastPlacedOrderId + '/receipt/kot-combined', '_blank');
+    } else if (type === 'kots_only') {
+      if (activeOrderHasKitchen) {
+        window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
+      }
+      if (activeOrderHasBar) {
+        window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
+      }
     } else if (type === 'receipt') {
       window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
     } else if (type === 'kitchen') {
