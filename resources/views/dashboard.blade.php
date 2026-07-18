@@ -209,7 +209,9 @@
         padding: 0 12px;
       }
       .topbar-title-group { display: none; }
+      .topbar-mobile-menu { display: flex !important; }
     }
+    .topbar-mobile-menu { display: none; }
   </style>
 </head>
 <body>
@@ -294,7 +296,7 @@
       <div class="topbar-title">Dashboard</div>
       <div class="topbar-sub">{{ now()->format('l, d M Y') }} · System Overview</div>
     </div>
-    <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()" style="display:none;">
+    <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
