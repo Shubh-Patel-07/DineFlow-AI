@@ -1543,7 +1543,7 @@
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
     const serviceCharge = subtotal * 0.05;
     const gst = (subtotal + serviceCharge) * 0.18;
-    const grandTotal = subtotal + serviceCharge + gst;
+    const grandTotal = Math.round(subtotal + serviceCharge + gst);
 
     document.getElementById('cartCount').textContent = total;
     document.getElementById('topbarCartBadge').textContent = total;
@@ -1552,8 +1552,8 @@
     document.getElementById('subtotal').textContent = `₹ ${subtotal.toFixed(2)}`;
     document.getElementById('serviceCharge').textContent = `₹ ${serviceCharge.toFixed(2)}`;
     document.getElementById('gstAmount').textContent = `₹ ${gst.toFixed(2)}`;
-    document.getElementById('grandTotal').textContent = `₹ ${grandTotal.toFixed(2)}`;
-    document.getElementById('checkoutAmount').textContent = `₹ ${grandTotal.toFixed(2)}`;
+    document.getElementById('grandTotal').textContent = `₹ ${grandTotal.toFixed(0)}`;
+    document.getElementById('checkoutAmount').textContent = `₹ ${grandTotal.toFixed(0)}`;
   }
 
   function addQuickItem(id) {
@@ -1757,12 +1757,17 @@
           
           const tableNum = order.table ? order.table.table_number : 'Table #' + order.table_id;
           
+          const subtotal = parseFloat(order.total_amount);
+          const serviceCharge = subtotal * 0.05;
+          const gst = (subtotal + serviceCharge) * 0.18;
+          const grandTotal = Math.round(subtotal + serviceCharge + gst);
+
           return `
             <tr style="border-bottom:1px solid var(--border);">
               <td style="padding:12px 10px; font-weight:700;">#${order.id}</td>
               <td style="padding:12px 10px; font-weight:600;">${tableNum}</td>
               <td style="padding:12px 10px; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary);" title="${itemsSummary}">${itemsSummary}</td>
-              <td style="padding:12px 10px; font-weight:700; color:var(--primary);">₹${parseFloat(order.total_amount).toFixed(2)}</td>
+              <td style="padding:12px 10px; font-weight:700; color:var(--primary);">₹${grandTotal}</td>
               <td style="padding:12px 10px;">${payBadge}</td>
               <td style="padding:12px 10px; white-space:nowrap;">${actionBtns}</td>
             </tr>
