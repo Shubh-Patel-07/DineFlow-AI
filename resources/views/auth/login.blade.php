@@ -428,7 +428,7 @@
 
         <!-- PASSWORD FORM -->
         <div class="form-panel active" id="panelPassword">
-            <form method="POST" action="{{ route('auth.login') }}">
+            <form method="POST" action="/login">
                 @csrf
                 <div class="form-group">
                     <label>Username</label>
@@ -454,7 +454,7 @@
 
         <!-- PIN FORM -->
         <div class="form-panel" id="panelPin">
-            <form method="POST" action="{{ route('auth.login-with-pin') }}" id="pinSubmitForm">
+            <form method="POST" action="/pin-login" id="pinSubmitForm">
                 @csrf
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label>Select Username</label>
