@@ -183,7 +183,7 @@
             $taxableAmount = $order->total_amount + $serviceCharge;
             $cgst = $taxableAmount * 0.09; // 9% CGST (18% Total GST)
             $sgst = $taxableAmount * 0.09; // 9% SGST (18% Total GST)
-            $grandTotal = $taxableAmount + $cgst + $sgst;
+            $grandTotal = round($taxableAmount + $cgst + $sgst);
         @endphp
         <tr>
             <td>Service Charge (5%):</td>
