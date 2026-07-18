@@ -926,7 +926,7 @@
       <a class="nav-item active" href="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
       <a class="nav-item" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span></a>
       <a class="nav-item" href="#" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
-      <a class="nav-item" href="#" data-tip="Kitchen Display"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
+      <a class="nav-item" href="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
 
     <div class="sidebar-section">
