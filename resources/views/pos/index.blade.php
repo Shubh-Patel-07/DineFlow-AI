@@ -1266,11 +1266,17 @@
     </div>
     <div class="modal-body">
       <div style="display:flex;gap:8px;margin-bottom:14px;">
-        <select class="meta-select" style="flex:1;">
-          <option>All Floors</option><option>Ground Floor</option><option>First Floor</option><option>Terrace</option>
+        <select class="meta-select" id="tableFloorSelect" style="flex:1;" onchange="filterTables()">
+          <option value="all">All Floors</option>
+          <option value="ground">Ground Floor</option>
+          <option value="first">First Floor</option>
+          <option value="terrace">Terrace</option>
         </select>
-        <select class="meta-select" style="flex:1;">
-          <option>All Sections</option><option>Indoor</option><option>Outdoor</option><option>Private</option>
+        <select class="meta-select" id="tableSectionSelect" style="flex:1;" onchange="filterTables()">
+          <option value="all">All Sections</option>
+          <option value="indoor">Indoor</option>
+          <option value="outdoor">Outdoor</option>
+          <option value="private">Private</option>
         </select>
       </div>
       <div class="table-grid">
@@ -1676,38 +1682,91 @@
   }
 
   /* ─── TABLE ──────────────────────────────── */
+  let allTablesData = [];
+
+  function getTableMetadata(tableNum) {
+    const idNum = parseInt(tableNum.replace('T-', ''));
+    let floor = 'ground';
+    let section = 'indoor';
+    let capacity = '4 PAX';
+    
+    if (idNum >= 1 && idNum <= 4) {
+      floor = 'ground';
+      section = 'indoor';
+      capacity = (idNum % 2 === 0) ? '2 PAX' : '4 PAX';
+    } else if (idNum >= 5 && idNum <= 8) {
+      floor = 'first';
+      section = 'outdoor';
+      capacity = (idNum <= 6) ? '6 PAX' : '4 PAX';
+    } else if (idNum >= 9 && idNum <= 12) {
+      floor = 'terrace';
+      section = 'private';
+      capacity = (idNum <= 10) ? '2 PAX' : '8 PAX';
+    }
+    return { floor, section, capacity };
+  }
+
   async function loadTablesData() {
     try {
       const response = await fetch('/api/tables/restaurant/1');
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
-        const grid = document.querySelector('#tableModal .table-grid');
-        grid.innerHTML = data.data.map(table => {
-          let statusClass = 'available';
-          let statusText = 'Available';
-          
-          if (table.status === 'occupied') {
-            statusClass = 'occupied';
-            statusText = 'Occupied';
-          }
-          
-          const currentTableNo = document.getElementById('selectedTableNo')?.textContent || 'T-01';
-          if (table.table_number === currentTableNo) {
-            statusClass = 'selected';
-            statusText = 'Selected';
-          }
-          
-          return `
-            <div class="table-cell ${statusClass}" onclick="selectTable(this, '${table.table_number}', ${table.id})">
-              ${table.table_number}
-              <span>${statusText}</span>
-            </div>
-          `;
-        }).join('');
+        allTablesData = data.data;
+        // Reset filters
+        document.getElementById('tableFloorSelect').value = 'all';
+        document.getElementById('tableSectionSelect').value = 'all';
+        renderTablesGrid(allTablesData);
       }
     } catch (err) {
       console.log('Error loading tables:', err);
     }
+  }
+
+  function renderTablesGrid(tables) {
+    const grid = document.querySelector('#tableModal .table-grid');
+    if (tables.length === 0) {
+      grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-secondary); font-size: 13px; font-weight: 500;"><i class="fa-solid fa-triangle-exclamation" style="margin-bottom: 6px; font-size: 20px; color: var(--warning);"></i><br>No tables match the selected filters.</div>`;
+      return;
+    }
+    
+    grid.innerHTML = tables.map(table => {
+      const meta = getTableMetadata(table.table_number);
+      let statusClass = 'available';
+      let statusText = meta.capacity;
+      
+      if (table.status === 'occupied') {
+        statusClass = 'occupied';
+        statusText = `Occupied (₹${table.active_order_amount})`;
+      }
+      
+      const currentTableNo = document.getElementById('selectedTableNo')?.textContent || 'T-01';
+      if (table.table_number === currentTableNo) {
+        statusClass = 'selected';
+        statusText = 'Selected';
+      }
+      
+      return `
+        <div class="table-cell ${statusClass}" onclick="selectTable(this, '${table.table_number}', ${table.id})">
+          <i class="fa-solid fa-table-cells-large" style="font-size:18px; margin-bottom:4px; opacity:0.8;"></i>
+          <span style="font-weight:700; font-size:13.5px; letter-spacing:0.3px;">${table.table_number}</span>
+          <span style="font-size:9.5px; opacity:0.85; margin-top:2px; font-weight:600;">${statusText}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function filterTables() {
+    const floor = document.getElementById('tableFloorSelect').value;
+    const section = document.getElementById('tableSectionSelect').value;
+    
+    const filtered = allTablesData.filter(table => {
+      const meta = getTableMetadata(table.table_number);
+      const matchFloor = (floor === 'all' || meta.floor === floor);
+      const matchSection = (section === 'all' || meta.section === section);
+      return matchFloor && matchSection;
+    });
+    
+    renderTablesGrid(filtered);
   }
 
   function selectTable(el, tno, id) {
@@ -1715,7 +1774,7 @@
     document.getElementById('selectedTableNo').textContent = tno;
     document.querySelectorAll('.table-cell').forEach(c => c.classList.remove('selected'));
     el.className = 'table-cell selected';
-    el.querySelector('span').textContent = 'Selected';
+    el.querySelector('span:last-child').textContent = 'Selected';
     showToast('Table ' + tno + ' selected', 'success');
     setTimeout(() => closeModal('tableModal'), 600);
   }
