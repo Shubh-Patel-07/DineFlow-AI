@@ -80,8 +80,65 @@ function printQrCode() {
   const tableTitle = document.getElementById('qrModalTitle').textContent;
   const tableNumber = tableTitle.replace('QR Code for Table ', '');
 
-  document.getElementById('qrPrintImage').src = qrUrl;
-  document.getElementById('qrPrintTableNumber').textContent = tableNumber;
+  // Reset print layout to show only this card
+  const printLayout = document.getElementById('qrPrintLayout');
+  printLayout.innerHTML = `
+    <div class="qr-print-card">
+      <div class="qr-print-header">
+        <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="logo-image">
+        <h2>DineFlow AI</h2>
+        <p>Smart Dining Experience</p>
+      </div>
+      <div class="qr-print-body">
+        <div class="qr-print-code-wrapper">
+          <img id="qrPrintImage" src="${qrUrl}" alt="Table QR Code">
+        </div>
+        <div class="table-badge-container">
+          <span class="table-badge-label">TABLE</span>
+          <h1 id="qrPrintTableNumber">${tableNumber}</h1>
+        </div>
+        <p class="scan-instructions">📸 Scan QR Code using your phone camera to view menu & place order</p>
+      </div>
+      <div class="qr-print-footer">
+        <p class="thank-you">Thank you for dining with us!</p>
+        <p class="branding-footer">Powered by DineFlow AI • www.dineflow.ai</p>
+      </div>
+    </div>
+  `;
+
+  window.print();
+}
+
+function printAllQrCodes() {
+  if (allTables.length === 0) {
+    alert('No tables configured to print!');
+    return;
+  }
+
+  const printLayout = document.getElementById('qrPrintLayout');
+  printLayout.innerHTML = allTables.map(table => `
+    <div class="qr-print-card">
+      <div class="qr-print-header">
+        <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="logo-image">
+        <h2>DineFlow AI</h2>
+        <p>Smart Dining Experience</p>
+      </div>
+      <div class="qr-print-body">
+        <div class="qr-print-code-wrapper">
+          <img src="${table.qr_code_url}" alt="Table QR Code">
+        </div>
+        <div class="table-badge-container">
+          <span class="table-badge-label">TABLE</span>
+          <h1 class="qrPrintTableNumber">${table.table_number}</h1>
+        </div>
+        <p class="scan-instructions">📸 Scan QR Code using your phone camera to view menu & place order</p>
+      </div>
+      <div class="qr-print-footer">
+        <p class="thank-you">Thank you for dining with us!</p>
+        <p class="branding-footer">Powered by DineFlow AI • www.dineflow.ai</p>
+      </div>
+    </div>
+  `).join('');
 
   window.print();
 }
