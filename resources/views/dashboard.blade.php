@@ -219,7 +219,9 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon"><i class="fa-solid fa-bowl-food"></i></div>
+    <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 2px;">
+      <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
     <div class="brand-text">
       <h2>DineFlow AI POS</h2>
       <span>Restaurant Suite v2.0</span>

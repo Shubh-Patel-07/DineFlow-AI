@@ -232,7 +232,7 @@
   </div>
 
   <header>
-    <h1><i class="fa-solid fa-fire-burner"></i> KOT Monitor</h1>
+    <h1><img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 28px; height: 28px; border-radius: 6px; vertical-align: middle; margin-right: 8px;"> KOT Monitor</h1>
     <div class="status-badge" id="syncStatus">
       <i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring
     </div>

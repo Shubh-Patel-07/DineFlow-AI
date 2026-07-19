@@ -913,7 +913,9 @@
 ══════════════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon"><i class="fa-solid fa-bowl-food"></i></div>
+    <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 2px;">
+      <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
     <div class="brand-text">
       <h2>DineFlow AI POS</h2>
       <span>Restaurant Suite v2.0</span>
@@ -984,7 +986,10 @@
   <div class="topbar">
     <div class="topbar-title-group">
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover;">
+          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
+        </div>
         <div id="liveClockBadge" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); color: #818CF8; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: monospace; letter-spacing: 0.5px;">--:--:-- --</div>
         <div id="localWeatherBadge" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34D399; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
       </div>
