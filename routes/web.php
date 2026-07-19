@@ -53,9 +53,11 @@ Route::middleware('auth')->group(function () {
             $weeklySalesData[] = \App\Models\Order::whereDate('created_at', $date)->where('payment_status', 'paid')->sum('total_amount');
         }
 
-        // Get Category Wise Sales Distribution
+        // Get Category Wise Sales Distribution (Paid orders only)
         $categorySales = \DB::table('order_items')
             ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.payment_status', 'paid')
             ->select('menu_items.category', \DB::raw('SUM(order_items.quantity * order_items.price) as total'))
             ->groupBy('menu_items.category')
             ->pluck('total', 'category')
