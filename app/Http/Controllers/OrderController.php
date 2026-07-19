@@ -60,14 +60,28 @@ class OrderController extends Controller
                 ->first();
 
             if ($order) {
-                // Update existing active order
-                $order->total_amount = $totalAmount;
-                $order->special_instructions = $request->special_instructions ?? $order->special_instructions;
                 // Reset status to pending so new/appended items reappear on the kitchen display!
                 $order->status = 'pending';
+                $order->special_instructions = $request->special_instructions ?? $order->special_instructions;
+                
+                // Merge/append items
+                foreach ($itemsData as $newItem) {
+                    $existingItem = $order->items()->where('menu_item_id', $newItem['menu_item_id'])->first();
+                    if ($existingItem) {
+                        $existingItem->quantity += $newItem['quantity'];
+                        $existingItem->save();
+                    } else {
+                        $order->items()->create($newItem);
+                    }
+                }
+
+                // Recalculate total amount for all items in the order
+                $newTotal = 0;
+                foreach ($order->items()->get() as $item) {
+                    $newTotal += $item->price * $item->quantity;
+                }
+                $order->total_amount = $newTotal;
                 $order->save();
-                // Delete old items for this order to replace with updated list
-                $order->items()->delete();
             } else {
                 // Create new order
                 $order = Order::create([
@@ -79,10 +93,10 @@ class OrderController extends Controller
                     'payment_method' => $request->payment_method ?? 'cash',
                     'special_instructions' => $request->special_instructions ?? '',
                 ]);
-            }
 
-            foreach ($itemsData as $itemData) {
-                $order->items()->create($itemData);
+                foreach ($itemsData as $itemData) {
+                    $order->items()->create($itemData);
+                }
             }
 
             return response()->json(['success' => true, 'data' => $order->load('items')], 201);
