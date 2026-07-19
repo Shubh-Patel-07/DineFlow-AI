@@ -2009,16 +2009,6 @@
     }
     // 1. Customer Bill Invoice (Always prints)
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
-    
-    // 2. Kitchen KOT (Only if order has food items)
-    if (activeOrderHasKitchen) {
-      window.open('/orders/' + lastPlacedOrderId + '/receipt/kitchen', '_blank');
-    }
-    
-    // 3. Bar KOT (Only if order has drinks/dessert items)
-    if (activeOrderHasBar) {
-      window.open('/orders/' + lastPlacedOrderId + '/receipt/bar', '_blank');
-    }
   }
 
   function triggerPrintHubAction(type) {
