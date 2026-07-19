@@ -51,6 +51,9 @@ function renderTables() {
   container.innerHTML = allTables.map(table => {
     return `
       <div class="table-card">
+        <button onclick="removeTable(${table.id})" class="btn-delete-table" style="position: absolute; top: 12px; right: 12px; border: none; background: transparent; color: var(--danger); font-size: 15px; cursor: pointer; opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6" title="Remove Table">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
         <i class="fa-solid fa-table-cells-large" style="font-size: 32px; color: #38BDF8; margin-bottom: 12px; opacity: 0.85;"></i>
         <h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 4px;">${table.table_number}</h3>
         <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px;">Status: ${table.status}</p>
@@ -75,6 +78,21 @@ async function openAddTableModal() {
     loadTables();
   } else {
     Toast.error(result.error || 'Failed to add table');
+  }
+}
+
+async function removeTable(tableId) {
+  if (!confirm('Are you sure you want to remove this table? This will delete the QR code as well.')) return;
+
+  showLoader();
+  const result = await APIService.deleteTable(tableId);
+  hideLoader();
+
+  if (result.success) {
+    Toast.success('Table removed successfully!');
+    loadTables();
+  } else {
+    Toast.error(result.error || 'Failed to remove table');
   }
 }
 

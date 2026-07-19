@@ -34,6 +34,21 @@ const APIService = {
     }
   },
 
+  async deleteTable(tableId) {
+    try {
+      const response = await fetch(`${API_BASE}/tables/${tableId}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error('Failed to delete table');
+      return await response.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
   async getFeedback() {
     try {
       const response = await fetch(`${API_BASE}/feedback/restaurant/1`);

@@ -64,4 +64,26 @@ class TableController extends Controller
 
         return response()->json(['success' => true, 'data' => $table]);
     }
+
+    public function destroy($id)
+    {
+        $table = Table::find($id);
+
+        if (!$table) {
+            return response()->json(['success' => false, 'message' => 'Table not found'], 404);
+        }
+
+        // Prevent deleting a table if it has active unpaid orders
+        $hasActiveOrder = \App\Models\Order::where('table_id', $table->id)
+            ->where('payment_status', 'pending')
+            ->exists();
+
+        if ($hasActiveOrder) {
+            return response()->json(['success' => false, 'message' => 'Cannot delete a table with an active unpaid order'], 400);
+        }
+
+        $table->delete();
+
+        return response()->json(['success' => true, 'message' => 'Table deleted successfully']);
+    }
 }
