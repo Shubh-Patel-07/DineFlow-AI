@@ -1449,6 +1449,9 @@
       return;
     }
     
+    // Clear any stuck/queued audio speech synthesis
+    window.speechSynthesis.cancel();
+    
     // Construct friendly announcement
     const msgText = `Payment of ${amount} rupees received for Table ${tableNumber} via ${method}.`;
     
@@ -2301,6 +2304,7 @@
   setInterval(checkWaiterCalls, 12000);
   // Initial check on load
   checkWaiterCalls();
+  loadTablesData(); // Populate allTablesData array immediately on page load!
 
   function updateLiveClock() {
     const clock = document.getElementById('liveClockBadge');
@@ -2341,6 +2345,8 @@
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('openModal') === 'orders') {
     openModal('ordersModal');
+    // Clear URL query parameters from browser address bar to prevent opening again on refresh
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
 
   // ─── VOCAL SOUNDBOX ANNOUNCEMENTS ───
