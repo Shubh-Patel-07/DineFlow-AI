@@ -274,3 +274,54 @@ function generateSplitUpi() {
 
 applyLanguage();
 loadMenu();
+
+async function openPayFullBillModal() {
+  $('#fullSubtotal').textContent = '₹0.00';
+  $('#fullTax').textContent = '₹0.00';
+  $('#fullTotal').textContent = '₹0.00';
+  $('#fullBillTableLabel').textContent = `Table #${tableId} - Loading Bill...`;
+  $('#fullUpiQrImg').src = '';
+
+  try {
+    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
+      
+      if (!activeOrder || !Array.isArray(activeOrder.items) || activeOrder.items.length === 0) {
+        alert('No active unpaid items found on this table!');
+        return;
+      }
+
+      // Calculate total amount for all items in the order
+      let subtotal = 0;
+      activeOrder.items.forEach(item => {
+        subtotal += parseFloat(item.price) * parseInt(item.quantity);
+      });
+
+      const tax = subtotal * 0.05; // 5% GST
+      const total = subtotal + tax;
+
+      $('#fullSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      $('#fullTax').textContent = `₹${tax.toFixed(2)}`;
+      $('#fullTotal').textContent = `₹${total.toFixed(2)}`;
+      $('#fullBillTableLabel').textContent = `Table #${tableId} - Active Order #${activeOrder.id}`;
+
+      // Generate UPI QR for full amount!
+      const merchantUpi = "7777938338@omni";
+      const merchantName = "DineFlow AI Restaurant";
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=Table${tableId}Order${activeOrder.id}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+
+      $('#fullUpiQrImg').src = qrUrl;
+      $('#payFullBillModal').hidden = false;
+    }
+  } catch (err) {
+    console.log('Error loading full bill:', err);
+    alert('Failed to load total bill details.');
+  }
+}
+
+function closePayFullBillModal() {
+  $('#payFullBillModal').hidden = true;
+}
