@@ -70,7 +70,7 @@ function renderMenu() {
   $('#foodGrid').innerHTML = items.length ? items.map(item => `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}"><img class="food-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}"><div class="food-content"><div class="food-topline"><span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span><span>★ ${escapeHtml(item.rating)}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.description || '')}</p><div class="food-footer"><strong>₹${escapeHtml(item.price)}</strong><span class="stock ${item.available ? 'available' : 'out'}">${item.available ? getText('available') : getText('unavailable')}</span></div></div></article>`).join('') : `<div class="empty-state"><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
 }
 
-function openItemModal(item) {
+async function openItemModal(item) {
   if (!item) return;
   $('#modalItemImage').src = item.image;
   $('#modalItemImage').alt = item.name;
@@ -80,6 +80,55 @@ function openItemModal(item) {
   $('#modalItemType').className = `item-modal__type ${item.isVeg ? 'veg' : 'nonveg'}`;
   $('#modalItemDescription').textContent = item.description || '';
   $('#modalItemPrice').textContent = `₹${item.price}`;
+
+  // Estimate prep time based on real active kitchen load
+  let activeKotsCount = 0;
+  try {
+    const activeOrdersRes = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
+    const activeOrdersData = await activeOrdersRes.json();
+    if (activeOrdersData.success && Array.isArray(activeOrdersData.data)) {
+      activeKotsCount = activeOrdersData.data.filter(o => o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'served').length;
+    }
+  } catch (err) {
+    console.log('Error fetching active orders count:', err);
+  }
+
+  const prepBadge = $('#kitchenTrafficBadge');
+  if (prepBadge) {
+    let trafficText = 'Clear';
+    let prepTime = 10;
+    let badgeColor = '#10B981';
+    let bgLight = 'rgba(16, 185, 129, 0.1)';
+
+    if (activeKotsCount > 0 && activeKotsCount <= 2) {
+      trafficText = 'Low Traffic';
+      prepTime = 12;
+      badgeColor = '#34D399';
+      bgLight = 'rgba(52, 211, 153, 0.1)';
+    } else if (activeKotsCount > 2 && activeKotsCount <= 5) {
+      trafficText = 'Medium Traffic';
+      prepTime = 18;
+      badgeColor = '#F59E0B';
+      bgLight = 'rgba(245, 158, 11, 0.1)';
+    } else if (activeKotsCount > 5) {
+      trafficText = 'High Traffic / Busy';
+      prepTime = 25;
+      badgeColor = '#EF4444';
+      bgLight = 'rgba(239, 68, 68, 0.1)';
+    }
+
+    prepBadge.style.background = bgLight;
+    prepBadge.style.border = `1px solid ${badgeColor}`;
+    prepBadge.style.color = badgeColor;
+    prepBadge.innerHTML = `
+      <span style="font-size: 14px;">⏱️</span>
+      <div>
+        <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Est. Prep Time: ~${prepTime} Mins</div>
+        <div style="font-size: 9px; opacity: 0.8; margin-top: 1px;">Kitchen Load: ${trafficText} (${activeKotsCount} active KOTs)</div>
+      </div>
+    `;
+  }
+
   $('#itemModal').hidden = false;
   $('#closeItemModal').focus();
 }
@@ -121,6 +170,107 @@ $('#closeItemModal').addEventListener('click', closeItemModal);
 $('#itemModal').addEventListener('click', event => { if (event.target.hasAttribute('data-close-modal')) closeItemModal(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closeItemModal(); });
 $('#callWaiterBtn').addEventListener('click', async () => { const button = $('#callWaiterBtn'); button.disabled = true; button.lastElementChild.textContent = getText('calling'); try { await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) }); showToast(getText('waiterSent')); } catch (_) { showToast(getText('waiterError'), true); } finally { button.disabled = false; button.lastElementChild.textContent = getText('callWaiter'); } });
+
+let tableUnpaidItems = [];
+
+async function openSplitBillModal() {
+  $('#splitUpiSection').style.display = 'none';
+  $('#btnGenerateSplitUpi').style.display = 'block';
+  $('#splitSubtotal').textContent = '₹0.00';
+  $('#splitTax').textContent = '₹0.00';
+  $('#splitTotal').textContent = '₹0.00';
+
+  $('#splitBillTableLabel').textContent = `Table #${tableId} - Active Order Items`;
+
+  try {
+    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
+      
+      if (!activeOrder || !Array.isArray(activeOrder.items) || activeOrder.items.length === 0) {
+        $('#splitBillItemsList').innerHTML = `
+          <div style="text-align: center; padding: 30px 10px; opacity: 0.6; font-size: 13px;">
+            <p>No active unpaid items found on this table!</p>
+          </div>
+        `;
+        $('#btnGenerateSplitUpi').style.display = 'none';
+        $('#splitBillModal').hidden = false;
+        return;
+      }
+
+      tableUnpaidItems = activeOrder.items;
+
+      $('#splitBillItemsList').innerHTML = tableUnpaidItems.map((item, idx) => `
+        <label style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: var(--color-primary);">
+            <div style="text-align: left; font-size: 13px;">
+              <div style="font-weight: 700; color: white;">${item.name}</div>
+              <div style="font-size: 10px; opacity: 0.6;">₹${item.price} each</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; font-weight: 700; color: white;">
+            Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
+              ${Array.from({ length: item.quantity }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+            </select>
+          </div>
+        </label>
+      `).join('');
+      
+    }
+  } catch (err) {
+    console.log('Error loading split bill items:', err);
+    $('#splitBillItemsList').innerHTML = `<p style="color:red; text-align:center; font-size:12px;">Failed to load order items.</p>`;
+  }
+
+  $('#splitBillModal').hidden = false;
+}
+
+function closeSplitBillModal() {
+  $('#splitBillModal').hidden = true;
+}
+
+function recalculateSplit() {
+  let subtotal = 0;
+  const checkboxes = document.querySelectorAll('.split-item-chk');
+  const qtySelects = document.querySelectorAll('.split-item-qty');
+
+  checkboxes.forEach((chk, index) => {
+    if (chk.checked) {
+      const idx = parseInt(chk.value);
+      const item = tableUnpaidItems[idx];
+      const selectedQty = parseInt(qtySelects[index].value);
+      subtotal += parseFloat(item.price) * selectedQty;
+    }
+  });
+
+  const tax = subtotal * 0.05; // 5% GST
+  const total = subtotal + tax;
+
+  $('#splitSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
+  $('#splitTax').textContent = `₹${tax.toFixed(2)}`;
+  $('#splitTotal').textContent = `₹${total.toFixed(2)}`;
+}
+
+function generateSplitUpi() {
+  const totalStr = $('#splitTotal').textContent.replace('₹', '');
+  const totalAmount = parseFloat(totalStr);
+
+  if (isNaN(totalAmount) || totalAmount <= 0) {
+    alert('Please select at least one item to split!');
+    return;
+  }
+
+  const merchantUpi = "dineflow@paytm";
+  const merchantName = "DineFlow AI Restaurant";
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+
+  $('#splitUpiQrImg').src = qrUrl;
+  $('#splitUpiSection').style.display = 'block';
+  $('#btnGenerateSplitUpi').style.display = 'none';
+}
 
 applyLanguage();
 loadMenu();
