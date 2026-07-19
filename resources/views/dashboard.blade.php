@@ -362,7 +362,99 @@
       </div>
     </div>
   </div>
+
+  <!-- Charts Row -->
+  <div class="dashboard-charts-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 24px;">
+    <div class="chart-card" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> Last 7 Days Sales Trend</h3>
+      <div style="height: 280px; position: relative;">
+        <canvas id="salesTrendChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-card" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-pie" style="color:var(--success);"></i> Sales by Category</h3>
+      <div style="height: 280px; position: relative;">
+        <canvas id="categorySalesChart"></canvas>
+      </div>
+    </div>
+  </div>
+
 </div>
+</div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Sales Trend Chart
+  const ctxTrend = document.getElementById('salesTrendChart').getContext('2d');
+  const trendGrad = ctxTrend.createLinearGradient(0, 0, 0, 280);
+  trendGrad.addColorStop(0, 'rgba(99, 102, 241, 0.35)');
+  trendGrad.addColorStop(1, 'rgba(99, 102, 241, 0.01)');
+
+  new Chart(ctxTrend, {
+    type: 'line',
+    data: {
+      labels: {!! json_encode($weeklySalesLabels) !!},
+      datasets: [{
+        label: 'Revenue (₹)',
+        data: {!! json_encode($weeklySalesData) !!},
+        borderColor: '#6366F1',
+        borderWidth: 3,
+        backgroundColor: trendGrad,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#818CF8',
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+          ticks: { color: '#9CA3AF', font: { family: 'Outfit', size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#9CA3AF', font: { family: 'Outfit', size: 11 } }
+        }
+      }
+    }
+  });
+
+  // Category Sales Chart
+  const ctxCat = document.getElementById('categorySalesChart').getContext('2d');
+  new Chart(ctxCat, {
+    type: 'doughnut',
+    data: {
+      labels: {!! json_encode($categorySalesLabels) !!},
+      datasets: [{
+        data: {!! json_encode($categorySalesData) !!},
+        backgroundColor: ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: '#9CA3AF', font: { family: 'Outfit', size: 11 } }
+        }
+      },
+      cutout: '70%'
+    }
+  });
+});
+</script>
 
 <script>
 function toggleSidebar() {
