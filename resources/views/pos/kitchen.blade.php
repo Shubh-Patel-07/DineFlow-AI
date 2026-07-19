@@ -251,10 +251,13 @@
     let processedOrders = new Set();
 
     // Sound alert using Web Audio API
-    function playChime() {
+    async function playChime() {
       if (!isSoundEnabled) return;
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
         
         // Note 1 (E5)
         const osc1 = audioCtx.createOscillator();
@@ -262,22 +265,29 @@
         osc1.connect(gain1);
         gain1.connect(audioCtx.destination);
         osc1.frequency.value = 659.25; // E5
-        gain1.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain1.gain.setValueAtTime(0.4, audioCtx.currentTime);
         gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
         osc1.start();
         osc1.stop(audioCtx.currentTime + 0.3);
 
         // Note 2 (G5) at 0.15s
-        setTimeout(() => {
-          const osc2 = audioCtx.createOscillator();
-          const gain2 = audioCtx.createGain();
-          osc2.connect(gain2);
-          gain2.connect(audioCtx.destination);
-          osc2.frequency.value = 783.99; // G5
-          gain2.gain.setValueAtTime(0.15, audioCtx.currentTime);
-          gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-          osc2.start();
-          osc2.stop(audioCtx.currentTime + 0.4);
+        setTimeout(async () => {
+          try {
+            if (audioCtx.state === 'suspended') {
+              await audioCtx.resume();
+            }
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.frequency.value = 783.99; // G5
+            gain2.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc2.start();
+            osc2.stop(audioCtx.currentTime + 0.4);
+          } catch (err) {
+            console.log('Osc2 audio context error:', err);
+          }
         }, 150);
       } catch (e) {
         console.log('Audio playback failed:', e);
