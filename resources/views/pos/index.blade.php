@@ -1899,6 +1899,18 @@
       const data = await response.json();
       if (data.success) {
         showToast('Payment verified successfully!', 'success');
+        
+        // Verbal announcement for manual cash payment
+        if (data.data) {
+          const order = data.data;
+          const table = allTablesData.find(t => String(t.id) === String(order.table_id));
+          const tableNumber = table ? table.table_number : `T-${order.table_id}`;
+          announcePaymentVoice(tableNumber, Math.round(order.total_amount), 'cash');
+          if (!announcedOrderIds.includes(order.id)) {
+            announcedOrderIds.push(order.id);
+          }
+        }
+        
         loadOrdersData();
         loadTablesData();
       }
@@ -2310,5 +2322,60 @@
   if (urlParams.get('openModal') === 'orders') {
     openModal('ordersModal');
   }
+
+  // ─── VOCAL SOUNDBOX ANNOUNCEMENTS ───
+  let announcedOrderIds = [];
+
+  function announcePaymentVoice(tableNumber, amount, method = 'online') {
+    if (!('speechSynthesis' in window)) {
+      console.log('Text-to-speech not supported in this browser.');
+      return;
+    }
+    
+    // Construct friendly announcement
+    const msgText = `Payment of ${amount} rupees received for Table ${tableNumber} via ${method}.`;
+    
+    const utterance = new SpeechSynthesisUtterance(msgText);
+    utterance.lang = 'en-IN'; // Indian English accent fits currency best
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    
+    window.speechSynthesis.speak(utterance);
+  }
+
+  async function checkNewPayments() {
+    try {
+      const response = await fetch('/api/orders/restaurant/1');
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data)) {
+        // Initialize announced list on first run to avoid repeating old orders
+        if (announcedOrderIds.length === 0) {
+          announcedOrderIds = data.data
+            .filter(order => order.payment_status === 'paid')
+            .map(order => order.id);
+          return;
+        }
+
+        data.data.forEach(order => {
+          if (order.payment_status === 'paid' && !announcedOrderIds.includes(order.id)) {
+            // Find table number
+            const table = allTablesData.find(t => String(t.id) === String(order.table_id));
+            const tableNumber = table ? table.table_number : `T-${order.table_id}`;
+            
+            // Announce payment vocally!
+            announcePaymentVoice(tableNumber, Math.round(order.total_amount), 'digital scan');
+            
+            // Add to announced list
+            announcedOrderIds.push(order.id);
+          }
+        });
+      }
+    } catch (err) {
+      console.log('Error checking new payments:', err);
+    }
+  }
+
+  // Poll for payments every 6 seconds (fast and responsive!)
+  setInterval(checkNewPayments, 6000);
 </script>
 @endsection
