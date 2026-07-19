@@ -107,6 +107,7 @@ Route::prefix('api')->group(function () {
 
         // Tables
         Route::post('/tables', [TableController::class, 'store'])->middleware('role:admin');
+        Route::delete('/tables/{id}', [TableController::class, 'destroy'])->middleware('role:admin');
         Route::get('/tables/restaurant/{restaurantId}', [TableController::class, 'getRestaurantTables'])
             ->middleware(['role:admin,manager,cashier,waiter', 'tenant']);
 
