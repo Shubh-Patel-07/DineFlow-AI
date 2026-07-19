@@ -84,7 +84,7 @@ function renderTables() {
     }
 
     return `
-      <div class="table-card" style="background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 18px 16px; position: relative; transition: all 0.22s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 155px;">
+      <div class="table-card" style="background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 3px solid ${statusColor}; border-radius: 16px; padding: 18px 16px; position: relative; transition: all 0.22s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 155px;">
         <!-- Header: Table Number & Status Dot -->
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-bottom: 6px;">
           <h3 style="font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 800; color: #FFFFFF; margin: 0;">${table.table_number}</h3>
@@ -134,10 +134,26 @@ function printQrCode() {
   window.print();
 }
 
-async function openAddTableModal() {
-  const tableNumber = prompt('Enter Table Number (e.g. T-13):');
-  if (!tableNumber) return;
+function openAddTableModal() {
+  document.getElementById('newTableNumberInput').value = '';
+  document.getElementById('addTableModal').hidden = false;
+  setTimeout(() => {
+    document.getElementById('newTableNumberInput').focus();
+  }, 100);
+}
 
+function closeAddTableModal() {
+  document.getElementById('addTableModal').hidden = true;
+}
+
+async function submitAddTable() {
+  const tableNumber = document.getElementById('newTableNumberInput').value.trim();
+  if (!tableNumber) {
+    Toast.error('Please enter a table number!');
+    return;
+  }
+
+  closeAddTableModal();
   showLoader();
   const result = await APIService.addTable(tableNumber);
   hideLoader();
