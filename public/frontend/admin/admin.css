@@ -930,3 +930,64 @@ body {
   display: none;
 }
 
+/* Feedback Styling */
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.feedback-card {
+  background: rgba(30, 41, 59, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 140px;
+  transition: all 0.2s ease;
+}
+
+.feedback-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feedback-header h4 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.stars {
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.feedback-comment {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.feedback-date {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: auto;
+  font-weight: 600;
+}
+
+
