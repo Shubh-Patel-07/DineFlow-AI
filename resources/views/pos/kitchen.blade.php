@@ -246,9 +246,9 @@
   </div>
 
   <script>
-    let lastKnownOrderId = 0;
     let isSoundEnabled = false;
     let processedOrders = new Set();
+    let isFirstLoad = true; // Skip chime on first API response to avoid alert spam on page load
 
     // Sound alert using Web Audio API
     async function playChime() {
@@ -337,6 +337,7 @@
                 <p>No active KOTs found.<br><span style="font-size:11px;opacity:0.6;">Waiting for new orders...</span></p>
               </div>
             `;
+            isFirstLoad = false;
             return;
           }
 
@@ -345,24 +346,18 @@
           activeOrders.forEach(order => {
             if (!processedOrders.has(order.id)) {
               processedOrders.add(order.id);
-              if (lastKnownOrderId !== 0 && order.id > lastKnownOrderId) {
+              if (!isFirstLoad) {
                 hasNewOrder = true;
               }
             }
           });
 
-          // Update last known ID
-          const orderIds = activeOrders.map(o => o.id);
-          if (orderIds.length > 0) {
-            const maxId = Math.max(...orderIds);
-            if (maxId > lastKnownOrderId) {
-              lastKnownOrderId = maxId;
-            }
-          }
-
           if (hasNewOrder) {
             playChime();
           }
+
+          // Clear first load flag
+          isFirstLoad = false;
 
           // Render KDS cards
           document.getElementById('kdsGrid').innerHTML = activeOrders.map(order => {
