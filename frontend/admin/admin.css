@@ -556,6 +556,7 @@ body {
 /* Sidebar and Topbar Layout Styles (from Dashboard) */
 body {
   display: flex !important;
+  flex-direction: row !important;
   height: 100vh !important;
   overflow: hidden !important;
 }
