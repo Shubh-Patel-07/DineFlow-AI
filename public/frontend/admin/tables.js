@@ -84,28 +84,38 @@ function renderTables() {
     }
 
     return `
-      <div class="table-card" style="background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 3px solid ${statusColor}; border-radius: 16px; padding: 18px 16px; position: relative; transition: all 0.22s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 155px;">
-        <!-- Header: Table Number & Status Dot -->
-        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-bottom: 6px;">
-          <h3 style="font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 800; color: #FFFFFF; margin: 0;">${table.table_number}</h3>
-          <span class="${statusClass}" title="${statusLabel}" style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; display: inline-block; box-shadow: 0 0 8px ${statusColor};"></span>
+      <div class="table-row-item" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 4px solid ${statusColor}; border-radius: 14px; margin-bottom: 12px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <!-- Left Side: Table Info -->
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-table-cells-large" style="font-size: 16px; color: #38BDF8;"></i>
+          </div>
+          <div>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: #FFFFFF; margin: 0; display: inline-flex; align-items: center; gap: 8px;">
+              ${table.table_number}
+            </h3>
+            <div style="font-size: 11px; color: #94A3B8; margin-top: 2px;">
+              Restaurant Table • DineFlow System
+            </div>
+          </div>
         </div>
-        
-        <!-- Status Text -->
-        <div style="font-size: 10px; font-weight: 800; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px;">
-          ${statusLabel}
+
+        <!-- Middle: Status Badge -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="${statusClass}" style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; display: inline-block; box-shadow: 0 0 8px ${statusColor};"></span>
+          <span style="font-size: 11px; font-weight: 800; color: ${statusColor}; text-transform: uppercase; letter-spacing: 0.8px;">${statusLabel}</span>
         </div>
-        
-        <!-- Action Row -->
-        <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
+
+        <!-- Right Side: Actions -->
+        <div style="display: flex; align-items: center; gap: 10px;">
           <!-- View QR Button -->
-          <button onclick="showQrModal('${table.table_number}', '${table.qr_code_url}')" class="btn-primary" style="flex: 1; height: 32px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 11.5px; font-weight: 700; color: #FFFFFF; cursor: pointer; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
-            <i class="fa-solid fa-qrcode"></i> QR
+          <button onclick="showQrModal('${table.table_number}', '${table.qr_code_url}')" class="btn-primary" style="height: 34px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 12px; font-weight: 700; color: #FFFFFF; cursor: pointer; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
+            <i class="fa-solid fa-qrcode"></i> View QR Code
           </button>
           
           <!-- Delete Button -->
-          <button onclick="removeTable(${table.id})" style="width: 32px; height: 32px; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.08); color: #F87171; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.background='#EF4444'; this.style.color='white';" onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.color='#F87171';" title="Remove Table">
-            <i class="fa-solid fa-trash-can" style="font-size: 11px;"></i>
+          <button onclick="removeTable(${table.id})" style="width: 34px; height: 34px; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.08); color: #F87171; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.background='#EF4444'; this.style.color='white';" onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.color='#F87171';" title="Remove Table">
+            <i class="fa-solid fa-trash-can" style="font-size: 12px;"></i>
           </button>
         </div>
       </div>
