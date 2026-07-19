@@ -63,6 +63,8 @@ class OrderController extends Controller
                 // Update existing active order
                 $order->total_amount = $totalAmount;
                 $order->special_instructions = $request->special_instructions ?? $order->special_instructions;
+                // Reset status to pending so new/appended items reappear on the kitchen display!
+                $order->status = 'pending';
                 $order->save();
                 // Delete old items for this order to replace with updated list
                 $order->items()->delete();
