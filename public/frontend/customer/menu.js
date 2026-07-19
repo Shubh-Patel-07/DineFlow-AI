@@ -262,7 +262,7 @@ function generateSplitUpi() {
     return;
   }
 
-  const merchantUpi = "dineflow@paytm";
+  const merchantUpi = "7777938338@omni";
   const merchantName = "DineFlow AI Restaurant";
   const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
