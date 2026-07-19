@@ -370,11 +370,7 @@ body {
   }
 
   .qr-print-layout {
-    position: absolute;
-    inset: 0;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    display: block !important;
     background: white;
   }
 

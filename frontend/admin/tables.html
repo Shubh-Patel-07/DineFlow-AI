@@ -41,7 +41,10 @@
   <main class="admin-container">
     <div class="dashboard-header">
       <h2>Restaurant Tables</h2>
-      <button onclick="openAddTableModal()" class="btn-primary">+ Add Table</button>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="printAllQrCodes()" class="btn-primary" style="background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35); cursor: pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-print"></i> Print All QRs</button>
+        <button onclick="openAddTableModal()" class="btn-primary">+ Add Table</button>
+      </div>
     </div>
 
     <!-- Tables Grid -->
