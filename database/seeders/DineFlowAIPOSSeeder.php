@@ -23,6 +23,9 @@ class DineFlowAIPOSSeeder extends Seeder
             ]
         );
 
+        $localIP = gethostbyname(gethostname());
+        $host = "http://" . $localIP . ":8000";
+
         // Seed 12 Tables (T-01 to T-12)
         for ($i = 1; $i <= 12; $i++) {
             $num = str_pad($i, 2, '0', STR_PAD_LEFT);
@@ -31,7 +34,7 @@ class DineFlowAIPOSSeeder extends Seeder
                 [
                     'restaurant_id' => '1',
                     'table_number' => 'T-' . $num,
-                    'qr_code_url' => 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode("http://localhost:8000/customer/menu?restaurantId=1&tableId=" . $i),
+                    'qr_code_url' => 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($host . "/customer/menu?restaurantId=1&tableId=" . $i),
                     'status' => 'active'
                 ]
             );
