@@ -20,7 +20,8 @@ class TableController extends Controller
             'status' => 'active',
         ]);
 
-        $qrData = "http://localhost:8000/customer/menu?restaurantId=" . $request->restaurant_id . "&tableId=" . $table->id;
+        $host = $request->getSchemeAndHttpHost();
+        $qrData = $host . "/customer/menu?restaurantId=" . $request->restaurant_id . "&tableId=" . $table->id;
         $table->qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrData);
         $table->save();
 
