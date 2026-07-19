@@ -362,7 +362,7 @@
       </div>
     </div>
     <!-- Charts Row -->
-    <div class="dashboard-charts-row" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 12px;">
+    <div class="dashboard-charts-row" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; margin-top: 12px;">
       <div class="chart-card" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
         <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> Last 7 Days Sales Trend</h3>
         <div style="height: 280px; position: relative;">
