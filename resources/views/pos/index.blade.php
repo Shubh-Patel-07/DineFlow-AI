@@ -1455,28 +1455,33 @@
     // Clear any stuck/queued audio speech synthesis
     window.speechSynthesis.cancel();
     
-    // Construct friendly announcement
-    const msgText = `Payment of ${amount} rupees received for Table ${tableNumber} via ${method}.`;
+    // Construct friendly announcement in Gujarati!
+    let msgText = "";
+    if (tableNumber === 'Test') {
+      msgText = "સાઉન્ડબોક્સ ટેસ્ટ સફળ રહ્યો છે.";
+    } else {
+      const cashOrOnline = (method === 'cash') ? 'રોકડા' : 'ઓનલાઇન';
+      msgText = `ટેબલ ${tableNumber} ના ${amount} રૂપિયા ${cashOrOnline} જમા થયા છે.`;
+    }
     
     const utterance = new SpeechSynthesisUtterance(msgText);
     
-    // Robust English Voice Fallback selection
+    // Select Gujarati Voice (gu-IN)
     const voices = window.speechSynthesis.getVoices();
     if (voices && voices.length > 0) {
-      const targetVoice = voices.find(v => v.lang.toLowerCase() === 'en-in') || 
-                           voices.find(v => v.lang.toLowerCase().includes('en-in')) || 
-                           voices.find(v => v.lang.toLowerCase().includes('en-us')) || 
-                           voices.find(v => v.lang.toLowerCase().includes('en-gb')) || 
-                           voices.find(v => v.lang.toLowerCase().startsWith('en')) ||
+      const targetVoice = voices.find(v => v.lang.toLowerCase() === 'gu-in') || 
+                           voices.find(v => v.lang.toLowerCase().includes('gu-')) ||
+                           voices.find(v => v.lang.toLowerCase().includes('hi-in')) ||
+                           voices.find(v => v.lang.toLowerCase().includes('en-in')) ||
                            voices[0];
       if (targetVoice) {
         utterance.voice = targetVoice;
       }
     } else {
-      utterance.lang = 'en-US'; // safe default lang string
+      utterance.lang = 'gu-IN'; // safe default lang string
     }
     
-    utterance.rate = 0.9;
+    utterance.rate = 1.0; // standard speaking rate
     utterance.pitch = 1.0;
     utterance.volume = 1.0; // Force full volume
     
@@ -1948,7 +1953,14 @@
           const order = data.data;
           const table = allTablesData.find(t => String(t.id) === String(order.table_id));
           const tableNumber = table ? table.table_number : `T-${order.table_id}`;
-          announcePaymentVoice(tableNumber, Math.round(order.total_amount), 'cash');
+          
+          // Calculate proper grand total (subtotal + 5% service charge + 18% GST)
+          const subtotal = parseFloat(order.total_amount);
+          const serviceCharge = subtotal * 0.05;
+          const gst = (subtotal + serviceCharge) * 0.18;
+          const grandTotal = Math.round(subtotal + serviceCharge + gst);
+          
+          announcePaymentVoice(tableNumber, grandTotal, 'cash');
           if (!announcedOrderIds.includes(order.id)) {
             announcedOrderIds.push(order.id);
           }
@@ -2390,8 +2402,14 @@
             const table = allTablesData.find(t => String(t.id) === String(order.table_id));
             const tableNumber = table ? table.table_number : `T-${order.table_id}`;
             
+            // Calculate proper grand total (subtotal + 5% service charge + 18% GST)
+            const subtotal = parseFloat(order.total_amount);
+            const serviceCharge = subtotal * 0.05;
+            const gst = (subtotal + serviceCharge) * 0.18;
+            const grandTotal = Math.round(subtotal + serviceCharge + gst);
+            
             // Announce payment vocally!
-            announcePaymentVoice(tableNumber, Math.round(order.total_amount), 'digital scan');
+            announcePaymentVoice(tableNumber, grandTotal, 'digital scan');
             
             // Add to announced list
             announcedOrderIds.push(order.id);
