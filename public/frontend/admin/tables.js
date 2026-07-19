@@ -51,7 +51,7 @@ function renderTables() {
   container.innerHTML = allTables.map(table => {
     return `
       <div class="table-card">
-        <button onclick="removeTable(${table.id})" class="btn-delete-table" style="position: absolute; top: 12px; right: 12px; border: none; background: transparent; color: var(--danger); font-size: 15px; cursor: pointer; opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6" title="Remove Table">
+        <button onclick="removeTable(${table.id})" class="btn-delete-table" style="position: absolute; top: 12px; right: 12px; border: none; background: rgba(239, 68, 68, 0.15); color: #EF4444; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#EF4444'; this.style.color='white';" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'; this.style.color='#EF4444';" title="Remove Table">
           <i class="fa-solid fa-trash-can"></i>
         </button>
         <i class="fa-solid fa-table-cells-large" style="font-size: 32px; color: #38BDF8; margin-bottom: 12px; opacity: 0.85;"></i>
