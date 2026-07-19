@@ -1,0 +1,46 @@
+/**
+ * DineFlow AI - API Service
+ */
+const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
+
+const APIService = {
+  async getTables() {
+    try {
+      const response = await fetch(`${API_BASE}/tables/restaurant/1`);
+      if (!response.ok) throw new Error('Failed to fetch tables');
+      return await response.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  async addTable(tableNumber) {
+    try {
+      const response = await fetch(`${API_BASE}/tables`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          restaurant_id: '1',
+          table_number: tableNumber
+        })
+      });
+      if (!response.ok) throw new Error('Failed to add table');
+      return await response.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  async getFeedback() {
+    try {
+      const response = await fetch(`${API_BASE}/feedback/restaurant/1`);
+      if (!response.ok) throw new Error('Failed to fetch feedback');
+      return await response.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  }
+};
