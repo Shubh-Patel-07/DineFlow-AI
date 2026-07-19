@@ -86,7 +86,7 @@ class AuthController extends Controller
         session(['last_username' => $user->username]);
         Auth::login($user, remember: true);
         
-        return redirect()->route('pos.index')->with('success', 'Login successful!');
+        return redirect()->intended(route('pos.index'))->with('success', 'Login successful!');
     }
 
     /**
