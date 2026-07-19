@@ -76,6 +76,13 @@ function closeQrModal() {
 }
 
 function printQrCode() {
+  const qrUrl = document.getElementById('qrModalImage').src;
+  const tableTitle = document.getElementById('qrModalTitle').textContent;
+  const tableNumber = tableTitle.replace('QR Code for Table ', '');
+
+  document.getElementById('qrPrintImage').src = qrUrl;
+  document.getElementById('qrPrintTableNumber').textContent = tableNumber;
+
   window.print();
 }
 

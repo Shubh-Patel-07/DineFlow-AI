@@ -347,20 +347,124 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Print styling for QR code print popup */
+/* Print Layout styling */
+.qr-print-layout {
+  display: none;
+}
+
 @media print {
+  html, body {
+    background: white !important;
+    color: black !important;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
   body * {
-    visibility: hidden;
+    display: none !important;
   }
-  .qr-container, .qr-container img {
-    visibility: visible;
+
+  .qr-print-layout, .qr-print-layout * {
+    display: block !important;
   }
-  .qr-container {
+
+  .qr-print-layout {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: white;
+  }
+
+  .qr-print-card {
+    border: 3px double #000;
+    padding: 40px;
+    width: 380px;
+    text-align: center;
+    border-radius: 16px;
     box-shadow: none;
-    padding: 0;
+    background: white;
+  }
+
+  .qr-print-header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+  }
+
+  .qr-print-header .logo-icon {
+    font-size: 32px;
+    margin-bottom: 5px;
+    display: block !important;
+  }
+
+  .qr-print-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 1px;
+    color: black;
+  }
+
+  .qr-print-header p {
+    font-size: 11px;
+    margin: 5px 0 0 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #555;
+  }
+
+  .qr-print-body {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .qr-print-code-wrapper {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 12px;
+    display: inline-block !important;
+    background: white;
+    margin-bottom: 20px;
+  }
+
+  .qr-print-code-wrapper img {
+    width: 180px;
+    height: 180px;
+    display: block !important;
+  }
+
+  .qr-print-body h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    margin: 10px 0;
+    letter-spacing: 1px;
+    color: black;
+  }
+
+  .qr-print-body .scan-instructions {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 15px 0 0 0;
+    color: #444;
+  }
+
+  .qr-print-footer {
+    border-top: 1px dashed #ccc;
+    margin-top: 25px;
+    padding-top: 15px;
+  }
+
+  .qr-print-footer p {
+    font-size: 11px;
+    font-style: italic;
+    color: #666;
+    margin: 0;
   }
 }
