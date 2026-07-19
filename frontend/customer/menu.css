@@ -10,9 +10,56 @@ button, input, select { font: inherit; }
 .restaurant-left { display: flex; align-items: center; gap: 16px; }.restaurant-logo { width: 62px; height: 62px; border-radius: 16px; object-fit: cover; background: white; }.restaurant-left h2 { margin: 0; font: 700 1.4rem Outfit, sans-serif; }.restaurant-meta { display: flex; gap: 10px; color: #f6c34a; margin: 5px 0 0; font-size: .9rem; }.open-status { color: #4ade80; }.table-card { text-align: center; padding: 7px 12px; border-left: 1px solid var(--border); color: var(--muted); }.table-card strong { display: block; color: white; font-size: 1.3rem; }
 .menu-tools { display: flex; justify-content: space-between; gap: 16px; margin: 25px 0 16px; }.search-box { flex: 1; max-width: 500px; }.search-box input { width: 100%; border: 0; outline: 0; color: var(--text); background: transparent; }.diet-filter, .category-section { display: flex; flex-wrap: wrap; gap: 9px; }.diet-btn, .category-btn { border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--text); padding: 10px 16px; cursor: pointer; font-weight: 600; }.diet-btn.active, .category-btn.active { border-color: transparent; background: var(--primary); }.category-section { margin-bottom: 32px; }.section-title { margin-bottom: 18px; }.section-title h2 { margin: 0; font: 700 2rem Outfit, sans-serif; }.section-title p, .food-content p { color: var(--muted); }.section-title p { margin: 4px 0; }
 .loading-state, .empty-state { color: var(--muted); text-align: center; padding: 40px; }.food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 20px; }.food-card { overflow: hidden; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); transition: transform .2s ease; }.food-card:hover { transform: translateY(-4px); }.food-card.unavailable { opacity: .63; }.food-image { width: 100%; height: 175px; object-fit: cover; display: block; }.food-content { padding: 16px; }.food-content h3 { margin: 12px 0 6px; font: 700 1.25rem Outfit, sans-serif; }.food-content p { margin: 0; font-size: .88rem; min-height: 43px; }.food-topline, .food-footer { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: .84rem; }.food-type.veg { color: #4ade80; }.food-type.nonveg { color: #f87171; }.food-footer { margin-top: 16px; }.food-footer strong { font-size: 1.25rem; }.stock { font-size: .75rem; }.stock.available { color: #4ade80; }.stock.out { color: #f87171; }
-.bottom-floating-actions { position: fixed; left: 24px; right: 24px; bottom: 24px; z-index: 3; display: flex; gap: 12px; pointer-events: none; }
-.call-waiter-btn { border: 0; border-radius: 999px; padding: 15px 22px; background: var(--primary); color: white; font-weight: 800; box-shadow: 0 12px 28px rgba(255,107,53,.4); cursor: pointer; }
-.call-waiter-btn:disabled { opacity: .7; cursor: wait; }
+.bottom-floating-actions {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 12px;
+  padding: 8px 14px;
+  background: rgba(18, 18, 22, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 2px rgba(255,255,255,0.1) inset;
+  pointer-events: auto;
+  width: max-content;
+  max-width: 92%;
+}
+.call-waiter-btn {
+  border: 0;
+  border-radius: 12px;
+  height: 42px;
+  padding: 0 20px;
+  background: linear-gradient(135deg, var(--primary), hsl(24, 100%, 45%));
+  color: white;
+  font-weight: 800;
+  font-size: 13px;
+  box-shadow: 0 4px 14px rgba(255,102,0,.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+}
+.call-waiter-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 18px rgba(255,102,0,.35);
+}
+.call-waiter-btn:active {
+  transform: translateY(0);
+}
+.call-waiter-btn:disabled {
+  opacity: .6;
+  cursor: wait;
+}
 .toast { position: fixed; left: 50%; bottom: 102px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: #16a34a; color: #fff; padding: 12px 18px; border-radius: 10px; transition: .2s; z-index: 4; }
 .toast.error { background: #dc2626; }
 .toast.show { transform: translate(-50%, 0); opacity: 1; }

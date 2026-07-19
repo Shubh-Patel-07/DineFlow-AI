@@ -1440,6 +1440,26 @@
 </html>
 
 <script>
+  // ─── VOCAL SOUNDBOX STATE & HELPER ───
+  let announcedOrderIds = [];
+
+  function announcePaymentVoice(tableNumber, amount, method = 'online') {
+    if (!('speechSynthesis' in window)) {
+      console.log('Text-to-speech not supported in this browser.');
+      return;
+    }
+    
+    // Construct friendly announcement
+    const msgText = `Payment of ${amount} rupees received for Table ${tableNumber} via ${method}.`;
+    
+    const utterance = new SpeechSynthesisUtterance(msgText);
+    utterance.lang = 'en-IN'; // Indian English accent fits currency best
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    
+    window.speechSynthesis.speak(utterance);
+  }
+
   /* ─── DATA ─────────────────────────────────── */
   const MENU = [
     { id:1,  name:'Paneer Butter Masala', cat:'mains',     price:240, emoji:'🍛', badge:'veg',    desc:'Creamy tomato butter curry',   qty:0 },
@@ -2324,24 +2344,6 @@
   }
 
   // ─── VOCAL SOUNDBOX ANNOUNCEMENTS ───
-  let announcedOrderIds = [];
-
-  function announcePaymentVoice(tableNumber, amount, method = 'online') {
-    if (!('speechSynthesis' in window)) {
-      console.log('Text-to-speech not supported in this browser.');
-      return;
-    }
-    
-    // Construct friendly announcement
-    const msgText = `Payment of ${amount} rupees received for Table ${tableNumber} via ${method}.`;
-    
-    const utterance = new SpeechSynthesisUtterance(msgText);
-    utterance.lang = 'en-IN'; // Indian English accent fits currency best
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    
-    window.speechSynthesis.speak(utterance);
-  }
 
   async function checkNewPayments() {
     try {
