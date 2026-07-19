@@ -195,3 +195,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Let's load the tables list
   loadTables();
 });
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const isMobile = window.innerWidth <= 768;
+  
+  if (isMobile) {
+    sidebar.classList.toggle('mobile-open');
+  } else {
+    sidebar.classList.toggle('collapsed');
+  }
+}
