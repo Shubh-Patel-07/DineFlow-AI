@@ -79,6 +79,12 @@ Route::get('/menu', function () {
     return redirect('/frontend/customer/menu.html?restaurantId=1&tableId=1');
 });
 
+Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
+    $restaurantId = $request->query('restaurantId', '1');
+    $tableId = $request->query('tableId', '1');
+    return redirect("/frontend/customer/menu.html?restaurantId={$restaurantId}&tableId={$tableId}");
+});
+
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('pos.index') : redirect()->route('login');
 });
