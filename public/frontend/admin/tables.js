@@ -57,12 +57,26 @@ function renderTables() {
         <i class="fa-solid fa-table-cells-large" style="font-size: 32px; color: #38BDF8; margin-bottom: 12px; opacity: 0.85;"></i>
         <h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 4px;">${table.table_number}</h3>
         <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px;">Status: ${table.status}</p>
-        <a href="${table.qr_code_url}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--primary); font-size: 12.5px; font-weight: 700;">
+        <a href="javascript:void(0)" onclick="showQrModal('${table.table_number}', '${table.qr_code_url}')" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--primary); font-size: 12.5px; font-weight: 700;">
           <i class="fa-solid fa-qrcode"></i> View QR Code
         </a>
       </div>
     `;
   }).join('');
+}
+
+function showQrModal(tableNumber, qrCodeUrl) {
+  document.getElementById('qrModalTitle').textContent = `QR Code for Table ${tableNumber}`;
+  document.getElementById('qrModalImage').src = qrCodeUrl;
+  document.getElementById('qrModal').hidden = false;
+}
+
+function closeQrModal() {
+  document.getElementById('qrModal').hidden = true;
+}
+
+function printQrCode() {
+  window.print();
 }
 
 async function openAddTableModal() {

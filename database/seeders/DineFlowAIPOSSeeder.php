@@ -31,7 +31,7 @@ class DineFlowAIPOSSeeder extends Seeder
                 [
                     'restaurant_id' => '1',
                     'table_number' => 'T-' . $num,
-                    'qr_code_url' => 'http://localhost:8000/menu?restaurantId=1&tableId=' . $i,
+                    'qr_code_url' => 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode("http://localhost:8000/customer/menu?restaurantId=1&tableId=" . $i),
                     'status' => 'active'
                 ]
             );
