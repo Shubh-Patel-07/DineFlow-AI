@@ -999,6 +999,9 @@
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
+    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.05); margin-right: 8px;">
+      <i class="fa-solid fa-volume-high"></i>&nbsp;<span style="font-size:11px;font-weight:700;">Test Sound</span>
+    </div>
     <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications">
       <i class="fa-solid fa-bell"></i>
@@ -1456,9 +1459,26 @@
     const msgText = `Payment of ${amount} rupees received for Table ${tableNumber} via ${method}.`;
     
     const utterance = new SpeechSynthesisUtterance(msgText);
-    utterance.lang = 'en-IN'; // Indian English accent fits currency best
+    
+    // Robust English Voice Fallback selection
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const targetVoice = voices.find(v => v.lang.toLowerCase() === 'en-in') || 
+                           voices.find(v => v.lang.toLowerCase().includes('en-in')) || 
+                           voices.find(v => v.lang.toLowerCase().includes('en-us')) || 
+                           voices.find(v => v.lang.toLowerCase().includes('en-gb')) || 
+                           voices.find(v => v.lang.toLowerCase().startsWith('en')) ||
+                           voices[0];
+      if (targetVoice) {
+        utterance.voice = targetVoice;
+      }
+    } else {
+      utterance.lang = 'en-US'; // safe default lang string
+    }
+    
     utterance.rate = 0.9;
     utterance.pitch = 1.0;
+    utterance.volume = 1.0; // Force full volume
     
     window.speechSynthesis.speak(utterance);
   }
