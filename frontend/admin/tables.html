@@ -68,6 +68,27 @@
     </div>
   </div>
 
+  <!-- QR Print Layout (Hidden on screen, styled for print only) -->
+  <div id="qrPrintLayout" class="qr-print-layout">
+    <div class="qr-print-card">
+      <div class="qr-print-header">
+        <span class="logo-icon">🍽️</span>
+        <h2>DineFlow AI</h2>
+        <p>Smart Dining Experience</p>
+      </div>
+      <div class="qr-print-body">
+        <div class="qr-print-code-wrapper">
+          <img id="qrPrintImage" src="" alt="Table QR Code">
+        </div>
+        <h1 id="qrPrintTableNumber">T-01</h1>
+        <p class="scan-instructions">Scan QR Code using your phone to view menu & place order</p>
+      </div>
+      <div class="qr-print-footer">
+        <p>Thank you for dining with us!</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="../auth.js"></script>
   <script src="utils.js?v=1.0.1"></script>
