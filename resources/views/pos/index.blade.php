@@ -1526,23 +1526,20 @@
 
   function announceWaiterCallVoice(tableNumber) {
     if (isPosVoiceMuted) return;
-    if (!('speechSynthesis' in window)) return;
-    
-    window.speechSynthesis.cancel();
-    const msgText = `ધ્યાન આપો, ટેબલ નંબર ${tableNumber} પર વેઇટરની જરૂરિયાત છે.`;
-    const utterance = new SpeechSynthesisUtterance(msgText);
-    utterance.lang = 'gu-IN';
-    utterance.rate = 0.95;
-    utterance.pitch = 1.0;
-
-    const voices = window.speechSynthesis.getVoices();
-    if (voices && voices.length > 0) {
-      const targetVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || 
-                           voices.find(v => v.lang.toLowerCase().includes('hi')) ||
-                           voices[0];
-      if (targetVoice) utterance.voice = targetVoice;
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+    } catch (e) {
+      console.log('Pop chime error:', e);
     }
-    window.speechSynthesis.speak(utterance);
   }
 
   document.addEventListener('DOMContentLoaded', updatePosMuteUI);

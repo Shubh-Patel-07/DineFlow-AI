@@ -177,19 +177,19 @@ $('#callWaiterBtn').addEventListener('click', async () => {
     await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) });
     showToast(getText('waiterSent'));
     
-    // Play instant Voice & Audio Feedback on Mobile!
+    // Play crisp Pop Sound feedback on Mobile!
     try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance("વેઇટરને બોલાવવામાં આવ્યા છે.");
-      utterance.lang = 'gu-IN';
-      utterance.rate = 0.95;
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        const targetVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || voices.find(v => v.lang.toLowerCase().includes('hi')) || voices[0];
-        if (targetVoice) utterance.voice = targetVoice;
-      }
-      window.speechSynthesis.speak(utterance);
-    } catch(e) { console.log('Mobile speech error:', e); }
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+    } catch(e) { console.log('Mobile pop sound error:', e); }
   } catch (_) {
     showToast(getText('waiterError'), true);
   } finally {
