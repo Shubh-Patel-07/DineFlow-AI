@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
+Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4');
 Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen');
 Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar');
 Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined');

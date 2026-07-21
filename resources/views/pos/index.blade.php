@@ -1233,9 +1233,14 @@
           <button class="btn-outline" onclick="printBill()"><i class="fa-solid fa-print"></i> Print Bill</button>
           <button class="btn-outline danger" onclick="clearCart()"><i class="fa-solid fa-trash"></i> Clear</button>
         </div>
-        <button class="btn-outline" onclick="sendWhatsAppInvoice()" style="width: 100%; margin-top: 6px; background: rgba(37, 211, 102, 0.12); border-color: rgba(37, 211, 102, 0.4); color: #25D366; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 13px;">
-          <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Send WhatsApp Invoice
-        </button>
+        <div class="cart-btns-row" style="margin-top: 6px;">
+          <button class="btn-outline" onclick="printA4Invoice()" style="flex: 1; background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.4); color: #6366F1; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
+            <i class="fa-solid fa-file-pdf" style="font-size: 14px;"></i> A4 Bill PDF
+          </button>
+          <button class="btn-outline" onclick="sendWhatsAppInvoice()" style="flex: 1; background: rgba(37, 211, 102, 0.12); border-color: rgba(37, 211, 102, 0.4); color: #25D366; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
+            <i class="fa-brands fa-whatsapp" style="font-size: 14px;"></i> WhatsApp Bill
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -2165,6 +2170,14 @@
     }
     // 1. Customer Bill Invoice (Always prints)
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
+  }
+
+  function printA4Invoice() {
+    if (lastPlacedOrderId) {
+      window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
+    } else {
+      window.open('/orders/1/invoice-a4', '_blank');
+    }
   }
 
   let currentWaMessage = "";

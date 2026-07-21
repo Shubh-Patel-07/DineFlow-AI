@@ -173,6 +173,41 @@ class OrderController extends Controller
         return view('pos.receipt', compact('order', 'restaurant', 'tableName'));
     }
 
+    public function showA4Invoice($id)
+    {
+        $order = Order::with('items.menuItem')->find($id);
+
+        if (!$order) {
+            $order = new Order([
+                'id' => $id,
+                'restaurant_id' => 1,
+                'table_id' => 1,
+                'total_amount' => 360,
+                'status' => 'completed',
+                'payment_status' => 'paid',
+                'payment_method' => 'online',
+                'created_at' => now(),
+            ]);
+            $order->setRelation('items', collect([
+                (object)['name' => 'Paneer Butter Masala', 'quantity' => 1, 'price' => 240],
+                (object)['name' => 'Garlic Naan', 'quantity' => 2, 'price' => 60],
+            ]));
+        }
+
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
+            'name' => 'DineFlow AI Restaurant Suite',
+            'address' => '456 Gourmet Boulevard, Commercial Hub, Patan, Gujarat - 384265',
+            'phone' => '+91 98765 43210',
+            'email' => 'billing@dineflow.ai',
+            'gstin' => '24ABCDE1234F1Z5'
+        ]);
+
+        $table = \App\Models\Table::find($order->table_id);
+        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+
+        return view('pos.invoice_a4', compact('order', 'restaurant', 'tableName'));
+    }
+
     public function showKitchenKOT($id)
     {
         $order = Order::with('items.menuItem')->find($id);
