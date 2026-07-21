@@ -2170,72 +2170,90 @@
   let currentWaMessage = "";
 
   function sendWhatsAppInvoice(customOrderData = null) {
-    let tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-    let subtotal = 0;
-    let itemsText = "";
+    try {
+      let tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      let subtotal = 0;
+      let itemsText = "";
 
-    if (customOrderData) {
-      tableNumber = customOrderData.table_id ? 'Table #' + customOrderData.table_id : 'Walk-In';
-      if (Array.isArray(customOrderData.items)) {
-        customOrderData.items.forEach(item => {
-          const lTotal = (item.unit_price || item.price || 0) * (item.quantity || item.qty || 1);
-          subtotal += lTotal;
-          itemsText += `• ${item.quantity || item.qty}x ${item.name || item.menu_item?.name || 'Item'} - ₹${lTotal}\n`;
+      if (customOrderData) {
+        tableNumber = customOrderData.table_id ? 'Table #' + customOrderData.table_id : 'Walk-In';
+        if (Array.isArray(customOrderData.items)) {
+          customOrderData.items.forEach(item => {
+            const lTotal = (item.unit_price || item.price || 0) * (item.quantity || item.qty || 1);
+            subtotal += lTotal;
+            itemsText += `• ${item.quantity || item.qty}x ${item.name || item.menu_item?.name || 'Item'} - ₹${lTotal}\n`;
+          });
+        }
+      } else if (typeof cart !== 'undefined' && cart && cart.length > 0) {
+        cart.forEach(item => {
+          const lineTotal = item.price * item.qty;
+          subtotal += lineTotal;
+          itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
         });
+      } else if (typeof lastPlacedOrderId !== 'undefined' && lastPlacedOrderId) {
+        itemsText = `• Order #${lastPlacedOrderId} Items\n`;
+        subtotal = (typeof grandTotal !== 'undefined' && grandTotal > 0) ? grandTotal : 360;
+      } else {
+        itemsText = `• 1x Paneer Butter Masala - ₹240\n• 2x Garlic Naan - ₹120\n`;
+        subtotal = 360;
       }
-    } else if (cart.length > 0) {
-      cart.forEach(item => {
-        const lineTotal = item.price * item.qty;
-        subtotal += lineTotal;
-        itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
-      });
-    } else if (lastPlacedOrderId) {
-      itemsText = `• Order #${lastPlacedOrderId} Items\n`;
-      subtotal = (typeof grandTotal !== 'undefined' && grandTotal > 0) ? grandTotal : 360;
-    } else {
-      // Sample fallback so button always works seamlessly
-      itemsText = `• 1x Paneer Butter Masala - ₹240\n• 2x Garlic Naan - ₹120\n`;
-      subtotal = 360;
+
+      const gst = Math.round(subtotal * 0.05);
+      const total = subtotal + gst;
+
+      currentWaMessage = `🍽️ *DineFlow AI Restaurant*\n` +
+                      `*Official WhatsApp Invoice & Receipt*\n` +
+                      `-----------------------------------------\n` +
+                      `📍 Table: ${tableNumber}\n` +
+                      `-----------------------------------------\n` +
+                      `*ORDER ITEMS:*\n` +
+                      `${itemsText}` +
+                      `-----------------------------------------\n` +
+                      `Subtotal: ₹${subtotal}\n` +
+                      `GST (5%): ₹${gst}\n` +
+                      `*GRAND TOTAL: ₹${total}*\n` +
+                      `-----------------------------------------\n` +
+                      `Thank you for dining with us! Have a great day! 🙏`;
+
+      // 1. Direct prompt for instant execution
+      const inputPhone = prompt("ગ્રાહકનો 10-અંકનો WhatsApp નંબર લખો (Enter Customer Mobile Number):", "9876543210");
+      if (inputPhone) {
+        let cleanPhone = inputPhone.replace(/\D/g, '');
+        if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+        const targetUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(currentWaMessage)}`;
+        window.open(targetUrl, '_blank');
+        return;
+      }
+
+      // 2. Or fallback to modal preview
+      const previewBox = document.getElementById('waPreviewBox');
+      if (previewBox) previewBox.textContent = currentWaMessage;
+      openModal('whatsappModal');
+    } catch (err) {
+      alert("WhatsApp Invoice Error: " + err.message);
     }
-
-    const gst = Math.round(subtotal * 0.05);
-    const total = subtotal + gst;
-
-    currentWaMessage = `🍽️ *DineFlow AI Restaurant*\n` +
-                    `*Official WhatsApp Invoice & Receipt*\n` +
-                    `-----------------------------------------\n` +
-                    `📍 Table: ${tableNumber}\n` +
-                    `-----------------------------------------\n` +
-                    `*ORDER ITEMS:*\n` +
-                    `${itemsText}` +
-                    `-----------------------------------------\n` +
-                    `Subtotal: ₹${subtotal}\n` +
-                    `GST (5%): ₹${gst}\n` +
-                    `*GRAND TOTAL: ₹${total}*\n` +
-                    `-----------------------------------------\n` +
-                    `Thank you for dining with us! Have a great day! 🙏`;
-
-    document.getElementById('waPreviewBox').textContent = currentWaMessage;
-    openModal('whatsappModal');
   }
 
   function triggerWhatsAppRedirect() {
-    let phone = document.getElementById('waPhoneInput').value.trim();
-    if (!phone) {
-      alert('Please enter a valid 10-digit mobile number!');
-      return;
-    }
-    
-    phone = phone.replace(/\D/g, '');
-    if (phone.length === 10) {
-      phone = '91' + phone;
-    }
+    try {
+      let phoneInput = document.getElementById('waPhoneInput');
+      let phone = phoneInput ? phoneInput.value.trim() : '9876543210';
+      if (!phone) {
+        alert('Please enter a valid 10-digit mobile number!');
+        return;
+      }
+      
+      phone = phone.replace(/\D/g, '');
+      if (phone.length === 10) {
+        phone = '91' + phone;
+      }
 
-    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(currentWaMessage)}`;
-    
-    // Open WhatsApp Web or Mobile App
-    window.open(waUrl, '_blank');
-    closeModal('whatsappModal');
+      const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(currentWaMessage)}`;
+      window.open(waUrl, '_blank');
+      closeModal('whatsappModal');
+    } catch (err) {
+      alert("WhatsApp Open Error: " + err.message);
+    }
   }
 
   function triggerPrintHubAction(type) {
