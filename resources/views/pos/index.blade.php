@@ -2314,6 +2314,7 @@
   }
 
   let activeCallsSet = new Set();
+  let isFirstWaiterLoad = true;
 
   async function checkWaiterCalls() {
     try {
@@ -2322,18 +2323,19 @@
       if (data.success && Array.isArray(data.data)) {
         // Filter unresolved (pending) calls
         const pendingCalls = data.data.filter(c => c.status === 'pending');
-
-        // Check if there are any NEW pending calls we haven't chimed for yet
-        let hasNewCall = false;
         const currentCallIds = new Set();
 
         pendingCalls.forEach(call => {
           currentCallIds.add(call.id);
           if (!activeCallsSet.has(call.id)) {
-            announceWaiterCallVoice(call.table_id);
+            if (!isFirstWaiterLoad) {
+              playChimeSound();
+              announceWaiterCallVoice(call.table_id);
+            }
           }
         });
 
+        isFirstWaiterLoad = false;
         activeCallsSet = currentCallIds;
 
         // Render cards inside the drawer

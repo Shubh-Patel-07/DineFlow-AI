@@ -169,7 +169,34 @@ $('#foodGrid').addEventListener('keydown', event => { if (event.key === 'Enter' 
 $('#closeItemModal').addEventListener('click', closeItemModal);
 $('#itemModal').addEventListener('click', event => { if (event.target.hasAttribute('data-close-modal')) closeItemModal(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closeItemModal(); });
-$('#callWaiterBtn').addEventListener('click', async () => { const button = $('#callWaiterBtn'); button.disabled = true; button.lastElementChild.textContent = getText('calling'); try { await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) }); showToast(getText('waiterSent')); } catch (_) { showToast(getText('waiterError'), true); } finally { button.disabled = false; button.lastElementChild.textContent = getText('callWaiter'); } });
+$('#callWaiterBtn').addEventListener('click', async () => {
+  const button = $('#callWaiterBtn');
+  button.disabled = true;
+  button.lastElementChild.textContent = getText('calling');
+  try {
+    await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) });
+    showToast(getText('waiterSent'));
+    
+    // Play instant Voice & Audio Feedback on Mobile!
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance("વેઇટરને બોલાવવામાં આવ્યા છે.");
+      utterance.lang = 'gu-IN';
+      utterance.rate = 0.95;
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const targetVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || voices.find(v => v.lang.toLowerCase().includes('hi')) || voices[0];
+        if (targetVoice) utterance.voice = targetVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    } catch(e) { console.log('Mobile speech error:', e); }
+  } catch (_) {
+    showToast(getText('waiterError'), true);
+  } finally {
+    button.disabled = false;
+    button.lastElementChild.textContent = getText('callWaiter');
+  }
+});
 
 let tableUnpaidItems = [];
 
