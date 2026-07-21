@@ -2170,7 +2170,7 @@
   let currentWaMessage = "";
 
   function sendWhatsAppInvoice(customOrderData = null) {
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    let tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
     let subtotal = 0;
     let itemsText = "";
 
