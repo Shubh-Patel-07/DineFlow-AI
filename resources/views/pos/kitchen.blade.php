@@ -256,7 +256,7 @@
   <script>
     let isSoundMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
     let isSoundEnabled = false;
-    let processedOrders = new Set();
+    let processedOrders = new Set(JSON.parse(localStorage.getItem('dineflow_kitchen_processed') || '[]').map(String));
     let isFirstLoad = true;
 
     function updateMuteButtonUI() {
@@ -366,16 +366,21 @@
 
           // Check if there is a new order
           activeOrders.forEach(order => {
-            if (!processedOrders.has(order.id)) {
-              processedOrders.add(order.id);
+            const orderIdStr = String(order.id);
+            if (!processedOrders.has(orderIdStr)) {
+              processedOrders.add(orderIdStr);
+              localStorage.setItem('dineflow_kitchen_processed', JSON.stringify(Array.from(processedOrders)));
               if (!isFirstLoad) {
                 playChimeAndSpeakOrder();
               }
             }
           });
 
-          // Clear first load flag
-          isFirstLoad = false;
+          if (isFirstLoad) {
+            activeOrders.forEach(order => processedOrders.add(String(order.id)));
+            localStorage.setItem('dineflow_kitchen_processed', JSON.stringify(Array.from(processedOrders)));
+            isFirstLoad = false;
+          }
 
           // Render KDS cards
           document.getElementById('kdsGrid').innerHTML = activeOrders.map(order => {

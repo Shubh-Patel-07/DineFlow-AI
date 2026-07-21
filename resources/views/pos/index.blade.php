@@ -1489,7 +1489,7 @@
 <script>
   // ─── VOCAL SOUNDBOX STATE & HELPER ───
   let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
-  let announcedOrderIds = [];
+  let announcedOrderIds = JSON.parse(localStorage.getItem('dineflow_announced_orders') || '[]').map(String);
 
   function updatePosMuteUI() {
     const icon = document.getElementById('posMuteIcon');
@@ -2173,14 +2173,17 @@
   }
 
   function printA4Invoice() {
-    if (cart.length > 0) {
-      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-      const itemsJson = encodeURIComponent(JSON.stringify(cart));
+    const activeCartItems = MENU.filter(i => i.qty > 0);
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+
+    if (activeCartItems.length > 0) {
+      const itemsPayload = activeCartItems.map(i => ({ name: i.name, qty: i.qty, price: i.price }));
+      const itemsJson = encodeURIComponent(JSON.stringify(itemsPayload));
       window.open('/orders/live/invoice-a4?table=' + encodeURIComponent(tableNumber) + '&items=' + itemsJson, '_blank');
     } else if (lastPlacedOrderId) {
       window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
     } else {
-      window.open('/orders/1/invoice-a4', '_blank');
+      showToast('Please add items to cart first to generate real-time A4 bill!', 'error');
     }
   }
 
@@ -2191,6 +2194,7 @@
       let tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
       let subtotal = 0;
       let itemsText = "";
+      const activeCartItems = MENU.filter(i => i.qty > 0);
 
       if (customOrderData) {
         tableNumber = customOrderData.table_id ? 'Table #' + customOrderData.table_id : 'Walk-In';
@@ -2201,22 +2205,23 @@
             itemsText += `• ${item.quantity || item.qty}x ${item.name || item.menu_item?.name || 'Item'} - ₹${lTotal}\n`;
           });
         }
-      } else if (typeof cart !== 'undefined' && cart && cart.length > 0) {
-        cart.forEach(item => {
+      } else if (activeCartItems.length > 0) {
+        activeCartItems.forEach(item => {
           const lineTotal = item.price * item.qty;
           subtotal += lineTotal;
           itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
         });
       } else if (typeof lastPlacedOrderId !== 'undefined' && lastPlacedOrderId) {
-        itemsText = `• Order #${lastPlacedOrderId} Items\n`;
-        subtotal = (typeof grandTotal !== 'undefined' && grandTotal > 0) ? grandTotal : 360;
+        window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
+        return;
       } else {
-        itemsText = `• 1x Paneer Butter Masala - ₹240\n• 2x Garlic Naan - ₹120\n`;
-        subtotal = 360;
+        showToast('Please add items to cart first to send WhatsApp bill!', 'error');
+        return;
       }
 
-      const gst = Math.round(subtotal * 0.05);
-      const total = subtotal + gst;
+      const serviceCharge = subtotal * 0.05;
+      const gst = (subtotal + serviceCharge) * 0.18;
+      const grandTotal = Math.round(subtotal + serviceCharge + gst);
 
       currentWaMessage = `🍽️ *DineFlow AI Restaurant*\n` +
                       `*Official WhatsApp Invoice & Receipt*\n` +
@@ -2226,13 +2231,13 @@
                       `*ORDER ITEMS:*\n` +
                       `${itemsText}` +
                       `-----------------------------------------\n` +
-                      `Subtotal: ₹${subtotal}\n` +
-                      `GST (5%): ₹${gst}\n` +
-                      `*GRAND TOTAL: ₹${total}*\n` +
+                      `Subtotal: ₹${subtotal.toFixed(2)}\n` +
+                      `Service Charge (5%): ₹${serviceCharge.toFixed(2)}\n` +
+                      `GST (18%): ₹${gst.toFixed(2)}\n` +
+                      `*GRAND TOTAL: ₹${grandTotal}*\n` +
                       `-----------------------------------------\n` +
                       `Thank you for dining with us! Have a great day! 🙏`;
 
-      // Open sleek WhatsApp Modal directly (No browser prompt)
       const previewBox = document.getElementById('waPreviewBox');
       if (previewBox) previewBox.textContent = currentWaMessage;
       openModal('whatsappModal');
@@ -2575,12 +2580,14 @@
         if (announcedOrderIds.length === 0) {
           announcedOrderIds = data.data
             .filter(order => order.payment_status === 'paid')
-            .map(order => order.id);
+            .map(order => String(order.id));
+          localStorage.setItem('dineflow_announced_orders', JSON.stringify(announcedOrderIds));
           return;
         }
 
         data.data.forEach(order => {
-          if (order.payment_status === 'paid' && !announcedOrderIds.includes(order.id)) {
+          const orderIdStr = String(order.id);
+          if (order.payment_status === 'paid' && !announcedOrderIds.includes(orderIdStr)) {
             // Find table number
             const table = allTablesData.find(t => String(t.id) === String(order.table_id));
             const tableNumber = table ? table.table_number : `T-${order.table_id}`;
@@ -2594,8 +2601,9 @@
             // Announce payment vocally!
             announcePaymentVoice(tableNumber, grandTotal, 'digital scan');
             
-            // Add to announced list
-            announcedOrderIds.push(order.id);
+            // Add to announced list & persist
+            announcedOrderIds.push(orderIdStr);
+            localStorage.setItem('dineflow_announced_orders', JSON.stringify(announcedOrderIds));
           }
         });
       }
