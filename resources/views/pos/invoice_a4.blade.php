@@ -318,7 +318,11 @@
       let cleanPhone = phone.replace(/\D/g, '');
       if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
-      const invoiceUrl = window.location.href;
+      let invoiceUrl = window.location.href;
+      const hostIp = @json(request()->getHost() == 'localhost' || request()->getHost() == '127.0.0.1' ? gethostbyname(gethostname()) : request()->getHost());
+      if (hostIp && hostIp !== '127.0.0.1') {
+        invoiceUrl = invoiceUrl.replace('localhost', hostIp).replace('127.0.0.1', hostIp);
+      }
       const msg = `🍽️ *${@json($restaurant->name)}*\n` +
                   `*Official Tax Invoice #INV-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}*\n` +
                   `-----------------------------------------\n` +
