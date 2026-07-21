@@ -7,7 +7,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -299,9 +299,13 @@
           <p>DineFlow AI Digital Receipt</p>
         </div>
       </div>
-      <div class="sign-box">
-        <div class="sign-space"></div>
-        <p>Authorized Signatory</p>
+      <div class="sign-box" style="text-align: right;">
+        <div style="font-family: 'Great Vibes', cursive; font-size: 34px; font-weight: 700; color: #1E1B4B; transform: rotate(-5deg); margin-bottom: -2px; letter-spacing: 1px; text-shadow: 0 1px 1px rgba(0,0,0,0.15);">
+          SMP
+        </div>
+        <p style="font-size: 11px; font-weight: 700; color: #0F172A; border-top: 1.5px solid #64748B; padding-top: 4px; display: inline-block; width: 160px; text-align: center;">
+          Authorized Signatory (SMP)
+        </p>
       </div>
     </div>
 
