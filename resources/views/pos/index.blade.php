@@ -2173,7 +2173,11 @@
   }
 
   function printA4Invoice() {
-    if (lastPlacedOrderId) {
+    if (cart.length > 0) {
+      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      const itemsJson = encodeURIComponent(JSON.stringify(cart));
+      window.open('/orders/live/invoice-a4?table=' + encodeURIComponent(tableNumber) + '&items=' + itemsJson, '_blank');
+    } else if (lastPlacedOrderId) {
       window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
     } else {
       window.open('/orders/1/invoice-a4', '_blank');

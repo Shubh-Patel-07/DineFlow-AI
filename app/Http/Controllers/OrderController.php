@@ -173,25 +173,51 @@ class OrderController extends Controller
         return view('pos.receipt', compact('order', 'restaurant', 'tableName'));
     }
 
-    public function showA4Invoice($id)
+    public function showA4Invoice(Request $request, $id)
     {
-        $order = Order::with('items.menuItem')->find($id);
+        $order = null;
+        if (is_numeric($id) && $id > 0) {
+            $order = Order::with('items.menuItem')->find($id);
+        }
 
-        if (!$order) {
-            $order = new Order([
-                'id' => $id,
-                'restaurant_id' => 1,
-                'table_id' => 1,
-                'total_amount' => 360,
-                'status' => 'completed',
-                'payment_status' => 'paid',
-                'payment_method' => 'online',
-                'created_at' => now(),
-            ]);
-            $order->setRelation('items', collect([
-                (object)['name' => 'Paneer Butter Masala', 'quantity' => 1, 'price' => 240],
-                (object)['name' => 'Garlic Naan', 'quantity' => 2, 'price' => 60],
-            ]));
+        if ($id === 'live' || $request->has('items') || !$order) {
+            $itemsData = json_decode($request->get('items', '[]'), true);
+            $tableName = $request->get('table', 'Walk-In');
+            $calcSubtotal = 0;
+            $itemsCollection = collect();
+
+            if (is_array($itemsData) && count($itemsData) > 0) {
+                foreach ($itemsData as $it) {
+                    $qty = (int)($it['qty'] ?? $it['quantity'] ?? 1);
+                    $price = (float)($it['price'] ?? $it['unit_price'] ?? 0);
+                    $calcSubtotal += $price * $qty;
+                    $itemsCollection->push((object)[
+                        'name' => $it['name'] ?? 'Item',
+                        'quantity' => $qty,
+                        'price' => $price,
+                    ]);
+                }
+            } else if (!$order) {
+                $calcSubtotal = 360;
+                $itemsCollection = collect([
+                    (object)['name' => 'Paneer Butter Masala', 'quantity' => 1, 'price' => 240],
+                    (object)['name' => 'Garlic Naan', 'quantity' => 2, 'price' => 60],
+                ]);
+            }
+
+            if (!$order) {
+                $order = new Order([
+                    'id' => is_numeric($id) ? $id : time(),
+                    'restaurant_id' => 1,
+                    'table_id' => 1,
+                    'total_amount' => $calcSubtotal,
+                    'status' => 'placed',
+                    'payment_status' => 'pending',
+                    'payment_method' => 'cash',
+                    'created_at' => now(),
+                ]);
+                $order->setRelation('items', $itemsCollection);
+            }
         }
 
         $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
@@ -203,7 +229,7 @@ class OrderController extends Controller
         ]);
 
         $table = \App\Models\Table::find($order->table_id);
-        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+        $tableName = isset($tableName) ? $tableName : ($table ? $table->table_number : 'Table #' . $order->table_id);
 
         return view('pos.invoice_a4', compact('order', 'restaurant', 'tableName'));
     }
