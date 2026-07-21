@@ -299,11 +299,19 @@
           <p>DineFlow AI Digital Receipt</p>
         </div>
       </div>
-      <div class="sign-box" style="text-align: right;">
-        <div style="font-family: 'Great Vibes', cursive; font-size: 34px; font-weight: 700; color: #1E1B4B; transform: rotate(-5deg); margin-bottom: -2px; letter-spacing: 1px; text-shadow: 0 1px 1px rgba(0,0,0,0.15);">
-          SMP
+      <div class="sign-box" style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+          <!-- Official Circular Seal Badge -->
+          <div style="border: 2px dashed #4F46E5; border-radius: 50%; width: 48px; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(79, 70, 229, 0.04); transform: rotate(-12deg); padding: 2px;">
+            <i class="fa-solid fa-stamp" style="font-size: 14px; color: #4F46E5;"></i>
+            <span style="font-size: 7px; font-weight: 800; color: #4F46E5; letter-spacing: 0.5px;">VERIFIED</span>
+          </div>
+          <!-- Executive Cursive Signature -->
+          <div style="font-family: 'Great Vibes', cursive; font-size: 38px; font-weight: 700; color: #1E1B4B; transform: rotate(-6deg); letter-spacing: 2px; text-shadow: 0 1px 2px rgba(30, 27, 75, 0.2);">
+            S.M. Patel
+          </div>
         </div>
-        <p style="font-size: 11px; font-weight: 700; color: #0F172A; border-top: 1.5px solid #64748B; padding-top: 4px; display: inline-block; width: 160px; text-align: center;">
+        <p style="font-size: 11px; font-weight: 700; color: #0F172A; border-top: 1.5px solid #475569; padding-top: 5px; width: 170px; text-align: center; margin: 0;">
           Authorized Signatory (SMP)
         </p>
       </div>
