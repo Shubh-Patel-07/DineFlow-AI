@@ -33,8 +33,18 @@ class TableController extends Controller
     {
         $tables = Table::where('restaurant_id', $restaurantId)->get();
         
-        // Map tables to include dynamic occupancy status and active order details
-        $tables = $tables->map(function($table) {
+        $serverIp = request()->server('SERVER_ADDR') ?: gethostbyname(gethostname());
+        if (!$serverIp || $serverIp === '127.0.0.1') {
+            $serverIp = request()->ip();
+        }
+
+        // Map tables to include dynamic occupancy status and live dynamic QR code URL
+        $tables = $tables->map(function($table) use ($serverIp) {
+            // Dynamically replace any local IP address in qr_code_url with current active server IP
+            if ($table->qr_code_url) {
+                $table->qr_code_url = preg_replace('/192\.168\.\d+\.\d+/', $serverIp, $table->qr_code_url);
+            }
+
             $activeOrder = \App\Models\Order::where('table_id', $table->id)
                 ->where('payment_status', 'pending')
                 ->first();
@@ -48,6 +58,7 @@ class TableController extends Controller
             } else {
                 $table->status = 'available';
                 $table->active_order_id = null;
+                $activeOrder = null;
                 $table->active_order_amount = 0;
             }
             return $table;
