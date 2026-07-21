@@ -25,6 +25,9 @@ Homestead.yaml
 Thumbs.db
 composer.phar
 Run_Server.bat
+START_DINEFLOW_POS.bat
+create_shortcut.ps1
+dineflow_logo.ico
 team_workload_matrix.csv
 backend/node_modules/
 frontend/node_modules/
