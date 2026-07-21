@@ -1245,6 +1245,35 @@
      MODALS
 ══════════════════════════════════════════════ -->
 
+<!-- WhatsApp Invoice Modal -->
+<div class="modal-overlay" id="whatsappModal">
+  <div class="modal" style="width:440px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:#25D366; display:flex; align-items:center; gap:8px;">
+        <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i>
+        <span>Send WhatsApp Invoice</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('whatsappModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Customer Mobile / WhatsApp Number:</label>
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <span style="background:var(--bg); border:1px solid var(--border); padding:8px 12px; border-radius:var(--radius-sm); font-size:13px; font-weight:700; color:var(--text-muted);">+91</span>
+        <input id="waPhoneInput" type="tel" class="search-input" placeholder="Enter 10-digit mobile number" style="padding-left:12px; font-size:14px; font-weight:600;" value="9876543210" />
+      </div>
+
+      <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Invoice Message Preview:</label>
+      <div id="waPreviewBox" style="background:#075E54; color:#DCF8C6; padding:12px; border-radius:10px; font-size:11.5px; font-family:monospace; white-space:pre-wrap; max-height:180px; overflow-y:auto; border:1px solid rgba(255,255,255,0.1);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" style="flex:none;padding:0 16px;height:36px;" onclick="closeModal('whatsappModal')">Cancel</button>
+      <button class="btn-checkout" style="flex:none;padding:0 20px;height:38px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none;" onclick="triggerWhatsAppRedirect()">
+        <i class="fa-brands fa-whatsapp"></i> Open WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Customer Modal -->
 <div class="modal-overlay" id="customerModal">
   <div class="modal" style="width:480px;">
@@ -2138,34 +2167,33 @@
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
   }
 
+  let currentWaMessage = "";
+
   function sendWhatsAppInvoice() {
-    if (cart.length === 0) {
-      showToast('Cart is empty! Add items before sending invoice.', 'error');
+    if (cart.length === 0 && !lastPlacedOrderId) {
+      showToast('Please add items to cart or place an order first!', 'error');
       return;
-    }
-
-    let phone = prompt("Enter Customer WhatsApp Number (e.g. 9876543210):", "9876543210");
-    if (!phone) return;
-
-    phone = phone.replace(/\D/g, '');
-    if (phone.length === 10) {
-      phone = '91' + phone;
     }
 
     const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
     let subtotal = 0;
     let itemsText = "";
 
-    cart.forEach(item => {
-      const lineTotal = item.price * item.qty;
-      subtotal += lineTotal;
-      itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
-    });
+    if (cart.length > 0) {
+      cart.forEach(item => {
+        const lineTotal = item.price * item.qty;
+        subtotal += lineTotal;
+        itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
+      });
+    } else if (lastPlacedOrderId) {
+      itemsText = `• Order #${lastPlacedOrderId} Items\n`;
+      subtotal = (typeof grandTotal !== 'undefined') ? grandTotal : 0;
+    }
 
     const gst = Math.round(subtotal * 0.05);
-    const grandTotal = subtotal + gst;
+    const total = subtotal + gst;
 
-    const message = `🍽️ *DineFlow AI Restaurant*\n` +
+    currentWaMessage = `🍽️ *DineFlow AI Restaurant*\n` +
                     `*Official WhatsApp Invoice & Receipt*\n` +
                     `-----------------------------------------\n` +
                     `📍 Table: ${tableNumber}\n` +
@@ -2175,12 +2203,34 @@
                     `-----------------------------------------\n` +
                     `Subtotal: ₹${subtotal}\n` +
                     `GST (5%): ₹${gst}\n` +
-                    `*GRAND TOTAL: ₹${grandTotal}*\n` +
+                    `*GRAND TOTAL: ₹${total}*\n` +
                     `-----------------------------------------\n` +
                     `Thank you for dining with us! Have a great day! 🙏`;
 
-    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, '_blank');
+    document.getElementById('waPreviewBox').textContent = currentWaMessage;
+    openModal('whatsappModal');
+  }
+
+  function triggerWhatsAppRedirect() {
+    let phone = document.getElementById('waPhoneInput').value.trim();
+    if (!phone) {
+      alert('Please enter a valid mobile number!');
+      return;
+    }
+    
+    phone = phone.replace(/\D/g, '');
+    if (phone.length === 10) {
+      phone = '91' + phone;
+    }
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(currentWaMessage)}`;
+    
+    // Open WhatsApp Web or Mobile App
+    const win = window.open(waUrl, '_blank');
+    if (!win || win.closed || typeof win.closed === 'undefined') {
+      window.location.href = waUrl;
+    }
+    closeModal('whatsappModal');
   }
 
   function triggerPrintHubAction(type) {
