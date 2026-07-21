@@ -300,10 +300,10 @@
         </div>
       </div>
       <div class="sign-box" style="text-align: center; width: 160px;">
-        <div style="font-family: 'Great Vibes', cursive; font-size: 32px; font-weight: 700; color: #1E293B; transform: rotate(-3deg); margin-bottom: 2px; letter-spacing: 1px;">
+        <div style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #1E293B; letter-spacing: 3px; margin-bottom: 4px;">
           SMP
         </div>
-        <div style="border-top: 1.5px solid #64748B; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
+        <div style="border-top: 1.5px solid #475569; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
           Authorized Signatory (SMP)
         </div>
       </div>
