@@ -2232,17 +2232,7 @@
                       `-----------------------------------------\n` +
                       `Thank you for dining with us! Have a great day! 🙏`;
 
-      // 1. Direct prompt for instant execution
-      const inputPhone = prompt("ગ્રાહકનો 10-અંકનો WhatsApp નંબર લખો (Enter Customer Mobile Number):", "9876543210");
-      if (inputPhone) {
-        let cleanPhone = inputPhone.replace(/\D/g, '');
-        if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
-        const targetUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(currentWaMessage)}`;
-        window.open(targetUrl, '_blank');
-        return;
-      }
-
-      // 2. Or fallback to modal preview
+      // Open sleek WhatsApp Modal directly (No browser prompt)
       const previewBox = document.getElementById('waPreviewBox');
       if (previewBox) previewBox.textContent = currentWaMessage;
       openModal('whatsappModal');
