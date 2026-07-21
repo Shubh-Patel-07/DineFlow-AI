@@ -227,14 +227,22 @@
 </head>
 <body>
 
-  <div id="soundPermission" onclick="enableSound()">
-    <i class="fa-solid fa-volume-high"></i> Click here to enable Sound Alerts for new KOTs!
+  <div id="soundPermission" onclick="enableSound()" style="background: linear-gradient(135deg, #6366F1, #4F46E5); color: white; padding: 12px; text-align: center; border-radius: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
+    <i class="fa-solid fa-volume-high fa-beat"></i> <span>અહીં ક્લિક કરી ગુજરાતી સાઉન્ડબોક્સ ચાલુ કરો (Click to Enable Gujarati Voice Alerts)</span>
   </div>
 
   <header>
     <h1><img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 28px; height: 28px; border-radius: 6px; vertical-align: middle; margin-right: 8px;"> KOT Monitor</h1>
-    <div class="status-badge" id="syncStatus">
-      <i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <!-- Gujarati Voice Soundbox Mute/Unmute Toggle Button -->
+      <button id="voiceMuteToggleBtn" onclick="toggleVoiceMute()" style="background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); color: #F8FAFC; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+        <i id="voiceMuteIcon" class="fa-solid fa-volume-high" style="color: #10B981;"></i>
+        <span id="voiceMuteText">ગુજરાતી અવાજ: ચાલુ (🔊)</span>
+      </button>
+
+      <div class="status-badge" id="syncStatus">
+        <i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring
+      </div>
     </div>
   </header>
 
@@ -246,58 +254,73 @@
   </div>
 
   <script>
+    let isSoundMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
     let isSoundEnabled = false;
     let processedOrders = new Set();
-    let isFirstLoad = true; // Skip chime on first API response to avoid alert spam on page load
+    let isFirstLoad = true;
 
-    // Sound alert using Web Audio API
-    async function playChime() {
-      if (!isSoundEnabled) return;
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') {
-          await audioCtx.resume();
-        }
-        
-        // Note 1 (E5)
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.frequency.value = 659.25; // E5
-        gain1.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc1.start();
-        osc1.stop(audioCtx.currentTime + 0.3);
-
-        // Note 2 (G5) at 0.15s
-        setTimeout(async () => {
-          try {
-            if (audioCtx.state === 'suspended') {
-              await audioCtx.resume();
-            }
-            const osc2 = audioCtx.createOscillator();
-            const gain2 = audioCtx.createGain();
-            osc2.connect(gain2);
-            gain2.connect(audioCtx.destination);
-            osc2.frequency.value = 783.99; // G5
-            gain2.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-            osc2.start();
-            osc2.stop(audioCtx.currentTime + 0.4);
-          } catch (err) {
-            console.log('Osc2 audio context error:', err);
-          }
-        }, 150);
-      } catch (e) {
-        console.log('Audio playback failed:', e);
+    function updateMuteButtonUI() {
+      const icon = document.getElementById('voiceMuteIcon');
+      const text = document.getElementById('voiceMuteText');
+      const btn = document.getElementById('voiceMuteToggleBtn');
+      if (isSoundMuted) {
+        icon.className = 'fa-solid fa-volume-xmark';
+        icon.style.color = '#EF4444';
+        text.textContent = 'સાઉન્ડ મ્યૂટ (🔇)';
+        btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+      } else {
+        icon.className = 'fa-solid fa-volume-high';
+        icon.style.color = '#10B981';
+        text.textContent = 'ગુજરાતી અવાજ: ચાલુ (🔊)';
+        btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
       }
+    }
+
+    function toggleVoiceMute() {
+      isSoundMuted = !isSoundMuted;
+      localStorage.setItem('dineflow_voice_muted', isSoundMuted ? 'true' : 'false');
+      updateMuteButtonUI();
+      if (!isSoundMuted) {
+        speakGujarati('ડાઇનફ્લો કિચન સાઉન્ડબોક્સ સક્રિય છે.');
+      }
+    }
+
+    // Gujarati Voice Speech Synthesis
+    function speakGujarati(text) {
+      if (isSoundMuted) return;
+      try {
+        window.speechSynthesis.cancel(); // Cancel active speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'gu-IN'; // Gujarati Language
+        utterance.rate = 0.95; // Clear natural rate
+        utterance.pitch = 1.0;
+        
+        // Find Gujarati voice if available, else fallback
+        const voices = window.speechSynthesis.getVoices();
+        const guVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || 
+                             voices.find(v => v.lang.toLowerCase().includes('hi')) ||
+                             voices[0];
+        if (guVoice) {
+          utterance.voice = guVoice;
+        }
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.log('Gujarati Speech Synthesis error:', err);
+      }
+    }
+
+    function playChimeAndSpeakOrder() {
+      if (isSoundMuted) return;
+      // Play crisp professional Gujarati Speech Announcement for Kitchen
+      const spokenText = "ડાઇનફ્લો કિચન: નવો ઓર્ડર આવ્યો છે.";
+      speakGujarati(spokenText);
     }
 
     function enableSound() {
       isSoundEnabled = true;
       document.getElementById('soundPermission').style.display = 'none';
-      playChime();
+      updateMuteButtonUI();
+      speakGujarati('ડાઇનફ્લો કિચન સાઉન્ડબોક્સ સક્રિય છે.');
     }
 
     // Request audio playback permission on page load
@@ -342,19 +365,14 @@
           }
 
           // Check if there is a new order
-          let hasNewOrder = false;
           activeOrders.forEach(order => {
             if (!processedOrders.has(order.id)) {
               processedOrders.add(order.id);
               if (!isFirstLoad) {
-                hasNewOrder = true;
+                playChimeAndSpeakOrder();
               }
             }
           });
-
-          if (hasNewOrder) {
-            playChime();
-          }
 
           // Clear first load flag
           isFirstLoad = false;

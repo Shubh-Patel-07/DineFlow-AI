@@ -999,8 +999,15 @@
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
-    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.05); margin-right: 8px;">
-      <i class="fa-solid fa-volume-high"></i>&nbsp;<span style="font-size:11px;font-weight:700;">Test Sound</span>
+    <!-- Gujarati Soundbox Voice Mute Toggle -->
+    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Gujarati Soundbox Toggle" onclick="togglePosVoiceMute()" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px;">
+      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
+      <span id="posMuteText" style="font-size:11px; font-weight:700;">ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊</span>
+    </div>
+
+    <!-- Test Voice Sound Button -->
+    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px;">
+      <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications">
@@ -1444,9 +1451,44 @@
 
 <script>
   // ─── VOCAL SOUNDBOX STATE & HELPER ───
+  let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
   let announcedOrderIds = [];
 
+  function updatePosMuteUI() {
+    const icon = document.getElementById('posMuteIcon');
+    const text = document.getElementById('posMuteText');
+    const btn = document.getElementById('posVoiceMuteBtn');
+    if (!icon || !text || !btn) return;
+
+    if (isPosVoiceMuted) {
+      icon.className = 'fa-solid fa-volume-xmark';
+      icon.style.color = '#EF4444';
+      text.textContent = 'સાઉન્ડબોક્સ મ્યૂટ 🔇';
+      btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+      btn.style.background = 'rgba(239, 68, 68, 0.08)';
+      btn.style.color = '#EF4444';
+    } else {
+      icon.className = 'fa-solid fa-volume-high';
+      icon.style.color = '#10B981';
+      text.textContent = 'ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊';
+      btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+      btn.style.background = 'rgba(16, 185, 129, 0.08)';
+      btn.style.color = '#10B981';
+    }
+  }
+
+  function togglePosVoiceMute() {
+    isPosVoiceMuted = !isPosVoiceMuted;
+    localStorage.setItem('dineflow_voice_muted', isPosVoiceMuted ? 'true' : 'false');
+    updatePosMuteUI();
+    if (!isPosVoiceMuted) {
+      announcePaymentVoice('Test', 0, 'test mode');
+    }
+  }
+
   function announcePaymentVoice(tableNumber, amount, method = 'online') {
+    if (isPosVoiceMuted) return;
+
     if (!('speechSynthesis' in window)) {
       console.log('Text-to-speech not supported in this browser.');
       return;
@@ -1455,38 +1497,56 @@
     // Clear any stuck/queued audio speech synthesis
     window.speechSynthesis.cancel();
     
-    // Construct friendly announcement in Gujarati!
+    // Construct ultra-professional announcement in Gujarati!
     let msgText = "";
     if (tableNumber === 'Test') {
-      msgText = "સાઉન્ડબોક્સ ટેસ્ટ સફળ રહ્યો છે.";
+      msgText = "ડાઇનફ્લો એઆઇ સ્માર્ટ સાઉન્ડબોક્સ સફળતાપૂર્વક સક્રિય છે.";
     } else {
       const cashOrOnline = (method === 'cash') ? 'રોકડા' : 'ઓનલાઇન';
-      msgText = `ટેબલ ${tableNumber} ના ${amount} રૂપિયા ${cashOrOnline} જમા થયા છે.`;
+      msgText = `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${tableNumber} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
     }
     
     const utterance = new SpeechSynthesisUtterance(msgText);
+    utterance.lang = 'gu-IN';
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
     
-    // Select Gujarati Voice (gu-IN)
     const voices = window.speechSynthesis.getVoices();
     if (voices && voices.length > 0) {
-      const targetVoice = voices.find(v => v.lang.toLowerCase() === 'gu-in') || 
-                           voices.find(v => v.lang.toLowerCase().includes('gu-')) ||
-                           voices.find(v => v.lang.toLowerCase().includes('hi-in')) ||
-                           voices.find(v => v.lang.toLowerCase().includes('en-in')) ||
+      const targetVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || 
+                           voices.find(v => v.lang.toLowerCase().includes('hi')) ||
                            voices[0];
       if (targetVoice) {
         utterance.voice = targetVoice;
       }
-    } else {
-      utterance.lang = 'gu-IN'; // safe default lang string
     }
-    
-    utterance.rate = 1.0; // standard speaking rate
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0; // Force full volume
     
     window.speechSynthesis.speak(utterance);
   }
+
+  function announceWaiterCallVoice(tableNumber) {
+    if (isPosVoiceMuted) return;
+    if (!('speechSynthesis' in window)) return;
+    
+    window.speechSynthesis.cancel();
+    const msgText = `ધ્યાન આપો, ટેબલ નંબર ${tableNumber} પર વેઇટરની જરૂરિયાત છે.`;
+    const utterance = new SpeechSynthesisUtterance(msgText);
+    utterance.lang = 'gu-IN';
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const targetVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || 
+                           voices.find(v => v.lang.toLowerCase().includes('hi')) ||
+                           voices[0];
+      if (targetVoice) utterance.voice = targetVoice;
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+
+  document.addEventListener('DOMContentLoaded', updatePosMuteUI);
+  updatePosMuteUI();
 
   /* ─── DATA ─────────────────────────────────── */
   const MENU = [
@@ -2270,13 +2330,9 @@
         pendingCalls.forEach(call => {
           currentCallIds.add(call.id);
           if (!activeCallsSet.has(call.id)) {
-            hasNewCall = true;
+            announceWaiterCallVoice(call.table_id);
           }
         });
-
-        if (hasNewCall) {
-          playChimeSound();
-        }
 
         activeCallsSet = currentCallIds;
 

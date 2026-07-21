@@ -10,16 +10,16 @@ class CustomerController extends Controller
 {
     public function placeFeedback(Request $request)
     {
-        $request->validate([
-            'restaurant_id' => 'required|string',
-            'rating' => 'required|integer|min:1|max:5',
-        ]);
+        $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId') ?? '1';
+        $customerName = $request->input('customer_name') ?? $request->input('customerName') ?? 'Anonymous';
+        $rating = $request->input('rating') ?? 5;
+        $comment = $request->input('comment') ?? '';
 
         $feedback = Feedback::create([
-            'restaurant_id' => $request->restaurant_id,
-            'customer_name' => $request->customer_name ?? 'Anonymous',
-            'rating' => $request->rating,
-            'comment' => $request->comment ?? '',
+            'restaurant_id' => (string) $restaurantId,
+            'customer_name' => (string) $customerName,
+            'rating' => (int) $rating,
+            'comment' => (string) $comment,
         ]);
 
         return response()->json(['success' => true, 'data' => $feedback], 201);
@@ -33,14 +33,12 @@ class CustomerController extends Controller
 
     public function callWaiter(Request $request)
     {
-        $request->validate([
-            'restaurant_id' => 'required|string',
-            'table_id' => 'required|string',
-        ]);
+        $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId') ?? '1';
+        $tableId = $request->input('table_id') ?? $request->input('tableId') ?? '1';
 
         $call = WaiterCall::create([
-            'restaurant_id' => $request->restaurant_id,
-            'table_id' => $request->table_id,
+            'restaurant_id' => (string) $restaurantId,
+            'table_id' => (string) $tableId,
             'status' => 'pending',
         ]);
 

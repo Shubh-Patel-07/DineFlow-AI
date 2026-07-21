@@ -123,6 +123,7 @@ Route::prefix('api')->group(function () {
 
     // --- PUBLIC ENDPOINTS ---
     Route::get('/restaurants/{id}', [RestaurantController::class, 'show']);
+    Route::get('/tables/restaurant/{restaurantId}', [TableController::class, 'getRestaurantTables']);
     Route::get('/tables/{id}', [TableController::class, 'show']);
     Route::get('/menu', [MenuItemController::class, 'index']);
     
@@ -142,8 +143,6 @@ Route::prefix('api')->group(function () {
         // Tables
         Route::post('/tables', [TableController::class, 'store'])->middleware('role:admin');
         Route::delete('/tables/{id}', [TableController::class, 'destroy'])->middleware('role:admin');
-        Route::get('/tables/restaurant/{restaurantId}', [TableController::class, 'getRestaurantTables'])
-            ->middleware(['role:admin,manager,cashier,waiter', 'tenant']);
 
         // Menu Items CRUD
         Route::post('/menu', [MenuItemController::class, 'store'])->middleware('role:admin');
