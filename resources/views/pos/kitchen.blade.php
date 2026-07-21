@@ -403,12 +403,21 @@
                 <div class="card-body">
                   ${itemsHtml}
                 </div>
-                <div class="card-footer">
-                  <button class="btn btn-warning" onclick="printKOT(${order.id})">
-                    <i class="fa-solid fa-print"></i> Print KOT
+                <div class="card-footer" style="gap: 6px;">
+                  <button class="btn btn-warning" onclick="printKOT(${order.id})" style="padding: 6px 10px; font-size: 12px;">
+                    <i class="fa-solid fa-print"></i> KOT
                   </button>
-                  <button class="btn btn-success" onclick="completeKOT(${order.id})">
-                    <i class="fa-solid fa-circle-check"></i> Done
+                  ${order.status === 'preparing' || order.status === 'cooking' ? `
+                    <span style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #F59E0B; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                      🍳 Cooking...
+                    </span>
+                  ` : `
+                    <button class="btn" style="background: #3B82F6; color: white; padding: 6px 10px; font-size: 12px;" onclick="startCookingKOT(${order.id})">
+                      🍳 Start Cooking
+                    </button>
+                  `}
+                  <button class="btn btn-success" onclick="completeKOT(${order.id})" style="padding: 6px 10px; font-size: 12px;">
+                    <i class="fa-solid fa-circle-check"></i> Ready
                   </button>
                 </div>
               </div>
@@ -417,6 +426,26 @@
         }
       } catch (err) {
         console.log('Error refreshing KDS:', err);
+      }
+    }
+
+    async function startCookingKOT(orderId) {
+      try {
+        const response = await fetch('/api/orders/' + orderId + '/status', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+          },
+          body: JSON.stringify({ status: 'preparing' })
+        });
+        const resData = await response.json();
+        if (resData.success) {
+          loadKOTs();
+        }
+      } catch (err) {
+        console.log('Error starting cooking:', err);
       }
     }
 
