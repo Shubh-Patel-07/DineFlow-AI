@@ -288,6 +288,59 @@ function generateSplitUpi() {
 applyLanguage();
 loadMenu();
 
+async function checkTableLiveOrderTracker() {
+  try {
+    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      const activeOrder = data.data.find(o => String(o.table_id) === String(tableId) && o.status !== 'completed' && o.status !== 'cancelled');
+      
+      const tracker = $('#liveOrderTracker');
+      if (!activeOrder) {
+        if (tracker) tracker.style.display = 'none';
+        return;
+      }
+
+      if (tracker) tracker.style.display = 'block';
+      $('#trackerOrderBadge').textContent = `#${activeOrder.id}`;
+
+      const fill = $('#progressFill');
+      const icon1 = $('#stepIcon1'), label1 = $('#stepLabel1');
+      const icon2 = $('#stepIcon2'), label2 = $('#stepLabel2');
+      const icon3 = $('#stepIcon3'), label3 = $('#stepLabel3');
+      const msg = $('#trackerStatusMsg');
+      const timeEst = $('#trackerTimeEst');
+
+      if (activeOrder.status === 'pending' || activeOrder.status === 'placed') {
+        fill.style.width = '0%';
+        icon1.style.background = '#F59E0B'; icon1.style.color = '#000'; label1.style.color = '#F59E0B';
+        icon2.style.background = 'rgba(255,255,255,0.1)'; icon2.style.color = 'var(--text-muted)'; label2.style.color = 'var(--text-muted)';
+        icon3.style.background = 'rgba(255,255,255,0.1)'; icon3.style.color = 'var(--text-muted)'; label3.style.color = 'var(--text-muted)';
+        msg.textContent = "🟡 Order Placed! Sent to kitchen chef.";
+        timeEst.textContent = "~15 Mins";
+      } else if (activeOrder.status === 'preparing' || activeOrder.status === 'cooking') {
+        fill.style.width = '50%';
+        icon1.style.background = '#10B981'; icon1.style.color = '#fff'; label1.style.color = '#10B981';
+        icon2.style.background = '#F59E0B'; icon2.style.color = '#000'; label2.style.color = '#F59E0B';
+        icon3.style.background = 'rgba(255,255,255,0.1)'; icon3.style.color = 'var(--text-muted)'; label3.style.color = 'var(--text-muted)';
+        msg.textContent = "🟠 Chef is cooking your delicious meal!";
+        timeEst.textContent = "~7 Mins";
+      } else if (activeOrder.status === 'ready' || activeOrder.status === 'served') {
+        fill.style.width = '100%';
+        icon1.style.background = '#10B981'; icon1.style.color = '#fff'; label1.style.color = '#10B981';
+        icon2.style.background = '#10B981'; icon2.style.color = '#fff'; label2.style.color = '#10B981';
+        icon3.style.background = '#10B981'; icon3.style.color = '#fff'; label3.style.color = '#10B981';
+        msg.textContent = "🟢 Food is Ready & being served to your table!";
+        timeEst.textContent = "Served!";
+      }
+    }
+  } catch (err) {
+    console.log('Error checking live order tracker:', err);
+  }
+}
+setInterval(checkTableLiveOrderTracker, 4000);
+checkTableLiveOrderTracker();
+
 async function openPayFullBillModal() {
   $('#fullSubtotal').textContent = '₹0.00';
   $('#fullTax').textContent = '₹0.00';

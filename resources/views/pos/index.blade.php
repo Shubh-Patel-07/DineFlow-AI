@@ -1233,6 +1233,9 @@
           <button class="btn-outline" onclick="printBill()"><i class="fa-solid fa-print"></i> Print Bill</button>
           <button class="btn-outline danger" onclick="clearCart()"><i class="fa-solid fa-trash"></i> Clear</button>
         </div>
+        <button class="btn-outline" onclick="sendWhatsAppInvoice()" style="width: 100%; margin-top: 6px; background: rgba(37, 211, 102, 0.12); border-color: rgba(37, 211, 102, 0.4); color: #25D366; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 13px;">
+          <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Send WhatsApp Invoice
+        </button>
       </div>
     </div>
   </div>
@@ -2133,6 +2136,51 @@
     }
     // 1. Customer Bill Invoice (Always prints)
     window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
+  }
+
+  function sendWhatsAppInvoice() {
+    if (cart.length === 0) {
+      showToast('Cart is empty! Add items before sending invoice.', 'error');
+      return;
+    }
+
+    let phone = prompt("Enter Customer WhatsApp Number (e.g. 9876543210):", "9876543210");
+    if (!phone) return;
+
+    phone = phone.replace(/\D/g, '');
+    if (phone.length === 10) {
+      phone = '91' + phone;
+    }
+
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    let subtotal = 0;
+    let itemsText = "";
+
+    cart.forEach(item => {
+      const lineTotal = item.price * item.qty;
+      subtotal += lineTotal;
+      itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
+    });
+
+    const gst = Math.round(subtotal * 0.05);
+    const grandTotal = subtotal + gst;
+
+    const message = `🍽️ *DineFlow AI Restaurant*\n` +
+                    `*Official WhatsApp Invoice & Receipt*\n` +
+                    `-----------------------------------------\n` +
+                    `📍 Table: ${tableNumber}\n` +
+                    `-----------------------------------------\n` +
+                    `*ORDER ITEMS:*\n` +
+                    `${itemsText}` +
+                    `-----------------------------------------\n` +
+                    `Subtotal: ₹${subtotal}\n` +
+                    `GST (5%): ₹${gst}\n` +
+                    `*GRAND TOTAL: ₹${grandTotal}*\n` +
+                    `-----------------------------------------\n` +
+                    `Thank you for dining with us! Have a great day! 🙏`;
+
+    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
   }
 
   function triggerPrintHubAction(type) {
