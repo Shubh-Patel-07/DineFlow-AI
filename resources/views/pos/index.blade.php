@@ -1487,47 +1487,47 @@
       <button class="modal-close" onclick="closeModal('upiQrModal')" style="color:#94A3B8;"><i class="fa-solid fa-xmark"></i></button>
     </div>
     
-    <div class="modal-body" style="padding:20px; text-align:center;">
-      <div style="font-size:12px; color:#94A3B8; margin-bottom:4px;" id="upiModalTable">Table 1</div>
-      <div style="font-size:26px; font-weight:800; color:#34D399; font-family:'Outfit',sans-serif;" id="upiModalTotal">₹0.00</div>
-      <div style="font-size:11px; color:#64748B; margin-bottom:16px;">Scan with PhonePe, GPay, Paytm or BHIM UPI</div>
+    <div class="modal-body" style="padding:16px 20px; text-align:center;">
+      <div style="font-size:12px; color:#94A3B8; margin-bottom:2px;" id="upiModalTable">Table 1</div>
+      <div style="font-size:24px; font-weight:800; color:#34D399; font-family:'Outfit',sans-serif;" id="upiModalTotal">₹0.00</div>
+      <div style="font-size:11px; color:#64748B; margin-bottom:12px;">Scan with PhonePe, GPay, Paytm or BHIM UPI</div>
 
       <!-- High Res Live UPI QR Code Container -->
-      <div style="background:#FFFFFF; padding:15px; border-radius:16px; display:inline-block; box-shadow:0 10px 25px rgba(0,0,0,0.5); border:3px solid #34D399; margin-bottom:12px;">
-        <img id="upiQrImg" src="" alt="UPI Payment QR Code" style="width:200px; height:200px; display:block;" />
+      <div style="background:#FFFFFF; padding:12px; border-radius:16px; display:inline-block; box-shadow:0 10px 25px rgba(0,0,0,0.5); border:3px solid #34D399; margin-bottom:10px;">
+        <img id="upiQrImg" src="" alt="UPI Payment QR Code" style="width:180px; height:180px; display:block;" />
       </div>
 
       <!-- Receiver Merchant VPA Handle Input -->
-      <div style="margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+      <div style="margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:6px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
         <i class="fa-solid fa-building-columns" style="color:#34D399;"></i>
         <span>Receiver UPI ID:</span>
         <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:#1E293B; color:#34D399; border:1px solid #334155; padding:4px 10px; border-radius:6px; font-weight:700; font-size:11.5px; width:180px; text-align:center;" placeholder="7777938338@omni" />
       </div>
 
       <!-- Itemized Price Breakdown Table -->
-      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:12px; font-size:12px; color:#CBD5E1;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px 12px; font-size:11.5px; color:#CBD5E1;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
           <span>Items Subtotal:</span>
           <span id="upiModalSubtotal" style="font-weight:600;">₹0.00</span>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
           <span>Service Charge (5%):</span>
           <span id="upiModalService" style="font-weight:600;">₹0.00</span>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
           <span>GST (18%):</span>
           <span id="upiModalGst" style="font-weight:600;">₹0.00</span>
         </div>
-        <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.15); padding-top:6px; font-weight:700; color:#34D399; font-size:13.5px;">
+        <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.15); padding-top:4px; font-weight:700; color:#34D399; font-size:13px;">
           <span>Exact Scan & Pay Total:</span>
           <span id="upiModalBreakdownTotal">₹0.00</span>
         </div>
       </div>
     </div>
 
-    <div class="modal-footer" style="padding:14px 20px; background:rgba(0,0,0,0.2); border-top:1px solid rgba(255,255,255,0.06); display:flex; gap:10px;">
-      <button class="btn-outline" onclick="closeModal('upiQrModal')" style="flex:1;">Cancel</button>
-      <button onclick="confirmUpiPaymentCompleted()" class="btn-checkout" style="flex:2; background:linear-gradient(135deg, #10B981, #059669);">
+    <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; gap:12px; align-items:center;">
+      <button class="btn-outline" onclick="closeModal('upiQrModal')" style="flex:1; padding:10px; font-weight:700; border-radius:10px; height:42px;">Cancel</button>
+      <button onclick="confirmUpiPaymentCompleted()" class="btn-checkout" style="flex:2; padding:10px 14px; font-size:12.5px; font-weight:700; border-radius:10px; background:linear-gradient(135deg, #10B981, #059669); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; border:none; cursor:pointer; height:42px;">
         <i class="fa-solid fa-volume-high"></i> Verify & Announce Voice
       </button>
     </div>
