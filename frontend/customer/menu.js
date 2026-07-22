@@ -13,12 +13,145 @@ let language = localStorage.getItem('dineflow-language') || 'en';
 let menuItems = typeof foodItems !== 'undefined' && Array.isArray(foodItems) ? foodItems : [];
 let category = 'All';
 let diet = 'all';
+let activeView = 'all';
+let activeSuggestionIndex = -1;
+const activeFilters = new Set();
+const FAVORITES_STORAGE_KEY = 'dineflow-favorites';
+const RECENT_STORAGE_KEY = 'dineflow-recent-items';
+const THEME_STORAGE_KEY = 'dineflow-theme';
 
 const $ = (selector) => document.querySelector(selector);
 const getText = (key) => translations[language][key] || translations.en[key] || key;
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 
 function unwrap(response) { return response && response.data ? response.data : response; }
+
+function getStoredItems(storageKey) {
+  try {
+    const stored = localStorage.getItem(storageKey);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.warn('Unable to read local storage item:', error);
+    return [];
+  }
+}
+
+function saveStoredItems(storageKey, values) {
+  localStorage.setItem(storageKey, JSON.stringify(values));
+}
+
+function getFavoriteIds() {
+  return new Set(getStoredItems(FAVORITES_STORAGE_KEY));
+}
+
+function getRecentItemIds() {
+  return getStoredItems(RECENT_STORAGE_KEY);
+}
+
+function getRecentItems() {
+  const recentIds = getRecentItemIds();
+  return recentIds.map(id => menuItems.find(item => String(item.id) === String(id))).filter(Boolean);
+}
+
+function toggleFavorite(itemId) {
+  const normalizedId = String(itemId);
+  const favorites = getStoredItems(FAVORITES_STORAGE_KEY).map(String);
+  const isFavorite = favorites.includes(normalizedId);
+  const nextFavorites = isFavorite ? favorites.filter(id => id !== normalizedId) : [...favorites, normalizedId];
+  saveStoredItems(FAVORITES_STORAGE_KEY, nextFavorites);
+  showToast(isFavorite ? 'Removed from Favorites' : 'Added to Favorites');
+  renderMenu();
+}
+
+function removeFavorite(itemId) {
+  const favorites = getStoredItems(FAVORITES_STORAGE_KEY).map(String).filter(id => id !== String(itemId));
+  saveStoredItems(FAVORITES_STORAGE_KEY, favorites);
+  showToast('Removed from Favorites');
+  renderMenu();
+}
+
+function getFavoriteItems() {
+  const favorites = getStoredItems(FAVORITES_STORAGE_KEY).map(String);
+  return favorites.map(id => menuItems.find(item => String(item.id) === id)).filter(Boolean);
+}
+
+function renderFavoritesSection() {
+  const favorites = getFavoriteItems();
+  const section = $('#favoritesSection');
+  if (!section) return;
+
+  if (!favorites.length) {
+    section.innerHTML = `
+      <div class="favorites-section__header">
+        <h3>Favorites</h3>
+        <span class="favorites-section__meta">0 saved</span>
+      </div>
+      <p class="favorites-empty">Tap the heart icon on any dish to save it here.</p>
+    `;
+    return;
+  }
+
+  section.innerHTML = `
+    <div class="favorites-section__header">
+      <h3>Favorites</h3>
+      <span class="favorites-section__meta">${favorites.length} saved</span>
+    </div>
+    <div class="favorites-list">
+      ${favorites.map(item => `
+        <div class="favorite-chip" data-favorite-chip-id="${escapeHtml(item.id)}">
+          <span>${escapeHtml(item.name)}</span>
+          <button class="favorite-chip__remove" type="button" data-favorite-remove-id="${escapeHtml(item.id)}" aria-label="Remove ${escapeHtml(item.name)} from favorites">×</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderRecentSection() {
+  const recentItems = getRecentItems();
+  const section = $('#recentSection');
+  if (!section) return;
+
+  if (!recentItems.length) {
+    section.innerHTML = `
+      <div class="favorites-section__header">
+        <h3>Recently Viewed</h3>
+        <span class="favorites-section__meta">0 items</span>
+      </div>
+      <p class="favorites-empty">Open any dish to see it appear here.</p>
+    `;
+    return;
+  }
+
+  section.innerHTML = `
+    <div class="favorites-section__header">
+      <h3>Recently Viewed</h3>
+      <button class="recent-clear" type="button" data-clear-recent>Clear History</button>
+    </div>
+    <div class="favorites-list">
+      ${recentItems.map(item => `
+        <button class="favorite-chip" type="button" data-recent-item-id="${escapeHtml(item.id)}" aria-label="View ${escapeHtml(item.name)}">
+          <span>${escapeHtml(item.name)}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function addRecentlyViewed(item) {
+  if (!item?.id) return;
+  const recent = getStoredItems(RECENT_STORAGE_KEY);
+  const nextRecent = [String(item.id), ...recent.map(String).filter(id => id !== String(item.id))].slice(0, 5);
+  saveStoredItems(RECENT_STORAGE_KEY, nextRecent);
+}
+
+function resolveImagePath(image, fallback = 'assests/images/placeholder-food.svg') {
+  const value = typeof image === 'string' ? image.trim() : '';
+  if (!value) return fallback;
+  if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) return value;
+  if (value.startsWith('/')) return value;
+  return value;
+}
 
 function setTableOptions(tables = []) {
   const select = $('#tableNumber');
@@ -42,7 +175,7 @@ async function request(path, options) {
 }
 
 function normalizeItem(item) {
-  return { ...item, id: item.id || item._id, image: item.image || 'assests/images/p1.png', available: item.is_available ?? item.available ?? true, isVeg: item.is_veg ?? item.isVeg ?? true, rating: item.rating || '4.5', badge: item.badge || item.category || '' };
+  return { ...item, id: item.id || item._id, image: resolveImagePath(item.image), available: item.is_available ?? item.available ?? true, isVeg: item.is_veg ?? item.isVeg ?? true, rating: item.rating || '4.5', badge: item.badge || item.category || '' };
 }
 
 function applyLanguage() {
@@ -61,18 +194,55 @@ function renderCategories() {
 
 function filteredItems() {
   const search = $('#searchInput').value.trim().toLowerCase();
-  return menuItems.filter(item => (category === 'All' || item.category === category) && (diet === 'all' || (diet === 'veg' ? item.isVeg : !item.isVeg)) && (!search || `${item.name} ${item.description || ''}`.toLowerCase().includes(search)));
+  const favorites = getFavoriteIds();
+  const recentIds = new Set(getRecentItemIds());
+
+  const matches = menuItems.filter(item => {
+    const matchesCategory = category === 'All' || item.category === category;
+    const matchesDiet = diet === 'all' || (diet === 'veg' ? item.isVeg : !item.isVeg);
+    const matchesSearch = !search || `${item.name} ${item.description || ''}`.toLowerCase().includes(search);
+    const isFavorite = favorites.has(String(item.id));
+    const isRecent = recentIds.has(String(item.id));
+    const matchesView = activeView === 'all' || (activeView === 'favorites' && isFavorite) || (activeView === 'recent' && isRecent) || (activeView === 'popular' && Boolean(item.popular));
+
+    const matchesPopular = !activeFilters.has('popular') || Boolean(item.popular);
+    const matchesAvailable = !activeFilters.has('available') || Boolean(item.available);
+    const matchesRating = !activeFilters.has('rating') || Number(item.rating) >= 4.5;
+    return matchesCategory && matchesDiet && matchesSearch && matchesView && matchesPopular && matchesAvailable && matchesRating;
+  });
+  const sort = $('#sortSelect')?.value;
+  if (sort === 'price-asc') return matches.sort((a, b) => Number(a.price) - Number(b.price));
+  if (sort === 'price-desc') return matches.sort((a, b) => Number(b.price) - Number(a.price));
+  return matches;
 }
 
 function renderMenu() {
   const items = filteredItems();
+  const favorites = getFavoriteIds();
+  renderFavoritesSection();
+  renderRecentSection();
   $('#loadingState').hidden = true;
-  $('#foodGrid').innerHTML = items.length ? items.map(item => `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}"><img class="food-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}"><div class="food-content"><div class="food-topline"><span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span><span>★ ${escapeHtml(item.rating)}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.description || '')}</p><div class="food-footer"><strong>₹${escapeHtml(item.price)}</strong><span class="stock ${item.available ? 'available' : 'out'}">${item.available ? getText('available') : getText('unavailable')}</span></div></div></article>`).join('') : `<div class="empty-state"><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
+  $('#foodGrid').innerHTML = items.length ? items.map(item => {
+    const imageSrc = resolveImagePath(item.image);
+    const isFavorite = favorites.has(String(item.id));
+    return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}">
+      <button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" data-favorite-toggle="${escapeHtml(item.id)}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">★</button>
+      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}">
+      <div class="food-content">
+        <div class="food-topline"><span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span><span>★ ${escapeHtml(item.rating)}</span></div>
+        <h3>${escapeHtml(item.name)}</h3>
+        <p>${escapeHtml(item.description || '')}</p>
+        <div class="food-footer"><strong>₹${escapeHtml(item.price)}</strong><span class="stock ${item.available ? 'available' : 'out'}">${item.available ? getText('available') : getText('unavailable')}</span></div>
+      </div>
+    </article>`;
+  }).join('') : `<div class="empty-state"><span class="empty-illustration" aria-hidden="true">🍽️</span><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
 }
 
 async function openItemModal(item) {
   if (!item) return;
-  $('#modalItemImage').src = item.image;
+  addRecentlyViewed(item);
+  renderMenu();
+  $('#modalItemImage').src = resolveImagePath(item.image);
   $('#modalItemImage').alt = item.name;
   $('#modalItemCategory').textContent = item.category || '';
   $('#modalItemName').textContent = item.name;
@@ -139,6 +309,7 @@ function showToast(message, isError = false) { const toast = $('#toast'); toast.
 
 async function loadMenu() {
   $('#loadingState').hidden = false;
+  $('#foodGrid').innerHTML = `<div class="skeleton-grid" aria-label="Loading menu"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>`;
   setTableOptions();
   try {
     const [restaurantResult, tableResult, menuResult, tablesResult] = await Promise.allSettled([
@@ -147,7 +318,7 @@ async function loadMenu() {
       request(`/menu?restaurantId=${encodeURIComponent(restaurantId)}`),
       request(`/tables/restaurant/${encodeURIComponent(restaurantId)}`)
     ]);
-    if (restaurantResult.status === 'fulfilled') { const data = restaurantResult.value; $('#restaurantName').textContent = data.name || $('#restaurantName').textContent; $('#restaurantLocation').textContent = data.address || data.location || $('#restaurantLocation').textContent; if (data.logo) $('#restaurantLogo').src = data.logo; }
+    if (restaurantResult.status === 'fulfilled') { const data = restaurantResult.value; $('#restaurantName').textContent = data.name || $('#restaurantName').textContent; $('#restaurantLocation').textContent = data.address || data.location || $('#restaurantLocation').textContent; if (data.logo) $('#restaurantLogo').src = resolveImagePath(data.logo); }
     const restaurantTables = tablesResult.status === 'fulfilled' && Array.isArray(tablesResult.value) ? tablesResult.value : [];
     setTableOptions(restaurantTables);
     if (tableResult.status === 'fulfilled') { const data = tableResult.value; const number = data.table_number || data.tableNumber || tableId; $('#tableNumber').options[$('#tableNumber').selectedIndex].text = `#${number}`; }
@@ -159,12 +330,89 @@ async function loadMenu() {
   renderCategories(); renderMenu();
 }
 
-$('#searchInput').addEventListener('input', renderMenu);
+function highlightSuggestion(value, query) {
+  const safeValue = escapeHtml(value);
+  const safeQuery = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return safeQuery ? safeValue.replace(new RegExp(`(${safeQuery})`, 'ig'), '<mark>$1</mark>') : safeValue;
+}
+
+function renderSuggestions() {
+  const input = $('#searchInput');
+  const query = input.value.trim();
+  const container = $('#searchSuggestions');
+  if (!query) { container.hidden = true; container.innerHTML = ''; activeSuggestionIndex = -1; return; }
+  const suggestions = menuItems.filter(item => `${item.name} ${item.category}`.toLowerCase().includes(query.toLowerCase())).slice(0, 6);
+  container.innerHTML = suggestions.map((item, index) => `<button type="button" class="search-suggestion ${index === activeSuggestionIndex ? 'is-active' : ''}" role="option" aria-selected="${index === activeSuggestionIndex}" data-suggestion-id="${escapeHtml(item.id)}"><span>${highlightSuggestion(item.name, query)}</span><small>${escapeHtml(item.category || '')}</small></button>`).join('');
+  container.hidden = !suggestions.length;
+}
+
+function selectSuggestion(itemId) {
+  const item = menuItems.find(candidate => String(candidate.id) === String(itemId));
+  if (!item) return;
+  $('#searchInput').value = item.name;
+  $('#searchSuggestions').hidden = true;
+  activeSuggestionIndex = -1;
+  renderMenu();
+}
+
+function applyTheme(theme) {
+  const isLight = theme === 'light';
+  document.body.classList.toggle('light-theme', isLight);
+  const toggle = $('#themeToggle');
+  toggle.setAttribute('aria-pressed', String(!isLight));
+  toggle.querySelector('span').textContent = isLight ? 'Dark mode' : 'Light mode';
+  toggle.firstChild.textContent = isLight ? '☾ ' : '☀ ';
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+}
+
+$('#searchInput').addEventListener('input', () => { activeSuggestionIndex = -1; renderSuggestions(); renderMenu(); });
+$('#searchInput').addEventListener('keydown', event => {
+  const suggestions = [...document.querySelectorAll('.search-suggestion')];
+  if (!suggestions.length) return;
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); activeSuggestionIndex = event.key === 'ArrowDown' ? (activeSuggestionIndex + 1) % suggestions.length : (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length; renderSuggestions(); }
+  if (event.key === 'Enter' && activeSuggestionIndex >= 0) { event.preventDefault(); selectSuggestion(suggestions[activeSuggestionIndex].dataset.suggestionId); }
+  if (event.key === 'Escape') $('#searchSuggestions').hidden = true;
+});
+$('#searchSuggestions').addEventListener('click', event => { const suggestion = event.target.closest('[data-suggestion-id]'); if (suggestion) selectSuggestion(suggestion.dataset.suggestionId); });
+document.addEventListener('click', event => { if (!event.target.closest('.search-wrapper')) $('#searchSuggestions').hidden = true; });
+$('#themeToggle').addEventListener('click', () => applyTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'));
+document.querySelectorAll('.filter-btn').forEach(button => button.addEventListener('click', () => { const { filter } = button.dataset; activeFilters.has(filter) ? activeFilters.delete(filter) : activeFilters.add(filter); button.classList.toggle('is-active', activeFilters.has(filter)); renderMenu(); }));
+$('#sortSelect').addEventListener('change', renderMenu);
 $('#languageSelect').addEventListener('change', event => { language = event.target.value; localStorage.setItem('dineflow-language', language); applyLanguage(); });
 $('#tableNumber').addEventListener('change', event => { tableId = event.target.value; const nextUrl = new URL(window.location.href); nextUrl.searchParams.set('tableId', tableId); window.history.replaceState({}, '', nextUrl); loadMenu(); });
 $('#categorySection').addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; category = button.dataset.category; renderCategories(); renderMenu(); });
 document.querySelectorAll('.diet-btn').forEach(button => button.addEventListener('click', () => { diet = button.dataset.diet; document.querySelectorAll('.diet-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
-$('#foodGrid').addEventListener('click', event => { const card = event.target.closest('[data-item-id]'); if (card) openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); });
+document.querySelectorAll('.view-btn').forEach(button => button.addEventListener('click', () => { activeView = button.dataset.view; document.querySelectorAll('.view-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
+$('#foodGrid').addEventListener('click', event => {
+  const favoriteButton = event.target.closest('[data-favorite-toggle]');
+  if (favoriteButton) {
+    event.stopPropagation();
+    toggleFavorite(favoriteButton.dataset.favoriteToggle);
+    return;
+  }
+
+  const card = event.target.closest('[data-item-id]');
+  if (card) openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId));
+});
+
+$('#favoritesSection').addEventListener('click', event => {
+  const removeButton = event.target.closest('[data-favorite-remove-id]');
+  if (!removeButton) return;
+  event.stopPropagation();
+  removeFavorite(removeButton.dataset.favoriteRemoveId);
+});
+
+$('#recentSection').addEventListener('click', event => {
+  if (event.target.closest('[data-clear-recent]')) {
+    saveStoredItems(RECENT_STORAGE_KEY, []);
+    renderMenu();
+    return;
+  }
+  const recentButton = event.target.closest('[data-recent-item-id]');
+  if (!recentButton) return;
+  const item = menuItems.find(entry => String(entry.id) === recentButton.dataset.recentItemId);
+  if (item) openItemModal(item);
+});
 $('#foodGrid').addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { const card = event.target.closest('[data-item-id]'); if (card) { event.preventDefault(); openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); } } });
 $('#closeItemModal').addEventListener('click', closeItemModal);
 $('#itemModal').addEventListener('click', event => { if (event.target.hasAttribute('data-close-modal')) closeItemModal(); });
@@ -285,6 +533,7 @@ function generateSplitUpi() {
   $('#btnGenerateSplitUpi').style.display = 'none';
 }
 
+applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'dark');
 applyLanguage();
 loadMenu();
 
