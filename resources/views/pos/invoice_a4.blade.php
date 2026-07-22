@@ -154,6 +154,87 @@
       text-align: center; font-size: 10px; color: #94A3B8; margin-top: 20px; font-weight: 600;
     }
 
+    /* Mobile Responsive Optimizations */
+    @media screen and (max-width: 640px) {
+      body {
+        padding: 10px 8px !important;
+      }
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px 14px;
+      }
+      .action-bar .title {
+        justify-content: center;
+        text-align: center;
+        font-size: 13px;
+      }
+      .action-btns {
+        justify-content: center;
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .btn-action {
+        flex: 1;
+        min-width: 100px;
+        justify-content: center;
+        font-size: 11px;
+        padding: 8px 10px;
+      }
+      .invoice-card {
+        padding: 18px 14px !important;
+        border-radius: 12px;
+        min-height: auto !important;
+      }
+      .header-grid {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+      }
+      .brand-section {
+        flex-direction: column;
+        text-align: center;
+      }
+      .invoice-title-badge {
+        text-align: center !important;
+        width: 100%;
+      }
+      .meta-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+        padding: 14px;
+      }
+      .calc-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+      }
+      .footer-sign-grid {
+        flex-direction: column-reverse;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+      }
+      .sign-box {
+        text-align: center !important;
+        width: 100%;
+      }
+      .qr-box {
+        flex-direction: column;
+        text-align: center;
+      }
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .items-table th, .items-table td {
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+    }
+
     /* Print Setup for Clean A4 */
     @media print {
       body { background: #fff; padding: 0; }
