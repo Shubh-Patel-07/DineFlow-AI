@@ -114,7 +114,8 @@ button, input, select { font: inherit; }
 @media (min-width: 1240px) { .food-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* Customer-menu enhancements: theme, search, filters and loading feedback. */
-body { transition: background-color .25s ease, color .25s ease; }
+body, .menu-header, .restaurant-header, .food-card, .favorites-section, .search-suggestions, .theme-toggle { transition: background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease; }
+body.dark-theme { --bg-primary: #0b1020; --bg-secondary: #141b2d; --text-main: #f5f7ff; --text-muted: #a7b1c7; --glass-bg: rgba(20,27,45,.82); --glass-border: rgba(148,163,184,.16); --glass-shadow: rgba(0,0,0,.36); --surface-light: rgba(255,255,255,.07); }
 body.light-theme { --bg-primary: #f6f7fb; --bg-secondary: #ffffff; --text-main: #172033; --text-muted: #5c677d; --glass-bg: rgba(255,255,255,.88); --glass-border: rgba(23,32,51,.12); --glass-shadow: rgba(23,32,51,.10); --surface-light: rgba(23,32,51,.06); }
 .theme-toggle, .filter-btn, #sortSelect { border: 1px solid var(--border); border-radius: 10px; background: var(--surface-light); color: var(--text); cursor: pointer; padding: 9px 12px; font-weight: 700; }
 .theme-toggle { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }

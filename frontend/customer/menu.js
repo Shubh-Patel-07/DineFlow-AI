@@ -356,13 +356,16 @@ function selectSuggestion(itemId) {
 }
 
 function applyTheme(theme) {
-  const isLight = theme === 'light';
+  const selectedTheme = theme === 'light' ? 'light' : 'dark';
+  const isLight = selectedTheme === 'light';
   document.body.classList.toggle('light-theme', isLight);
+  document.body.classList.toggle('dark-theme', !isLight);
   const toggle = $('#themeToggle');
   toggle.setAttribute('aria-pressed', String(!isLight));
+  toggle.setAttribute('aria-label', isLight ? 'Enable dark mode' : 'Enable light mode');
   toggle.querySelector('span').textContent = isLight ? 'Dark mode' : 'Light mode';
   toggle.firstChild.textContent = isLight ? '☾ ' : '☀ ';
-  localStorage.setItem(THEME_STORAGE_KEY, theme);
+  localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
 }
 
 $('#searchInput').addEventListener('input', () => { activeSuggestionIndex = -1; renderSuggestions(); renderMenu(); });
