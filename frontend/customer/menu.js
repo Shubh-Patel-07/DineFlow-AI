@@ -29,7 +29,8 @@ function unwrap(response) { return response && response.data ? response.data : r
 function getStoredItems(storageKey) {
   try {
     const stored = localStorage.getItem(storageKey);
-    return stored ? JSON.parse(stored) : [];
+    const values = stored ? JSON.parse(stored) : [];
+    return Array.isArray(values) ? values : [];
   } catch (error) {
     console.warn('Unable to read local storage item:', error);
     return [];
@@ -116,7 +117,7 @@ function renderRecentSection() {
     section.innerHTML = `
       <div class="favorites-section__header">
         <h3>Recently Viewed</h3>
-        <span class="favorites-section__meta">0 items</span>
+        <button class="recent-clear" type="button" data-clear-recent disabled>Clear History</button>
       </div>
       <p class="favorites-empty">Open any dish to see it appear here.</p>
     `;
@@ -143,6 +144,11 @@ function addRecentlyViewed(item) {
   const recent = getStoredItems(RECENT_STORAGE_KEY);
   const nextRecent = [String(item.id), ...recent.map(String).filter(id => id !== String(item.id))].slice(0, 5);
   saveStoredItems(RECENT_STORAGE_KEY, nextRecent);
+}
+
+function clearRecentlyViewed() {
+  saveStoredItems(RECENT_STORAGE_KEY, []);
+  renderMenu();
 }
 
 function resolveImagePath(image, fallback = 'assests/images/placeholder-food.svg') {
@@ -407,8 +413,7 @@ $('#favoritesSection').addEventListener('click', event => {
 
 $('#recentSection').addEventListener('click', event => {
   if (event.target.closest('[data-clear-recent]')) {
-    saveStoredItems(RECENT_STORAGE_KEY, []);
-    renderMenu();
+    clearRecentlyViewed();
     return;
   }
   const recentButton = event.target.closest('[data-recent-item-id]');
