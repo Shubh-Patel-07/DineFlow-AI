@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Physical Thermal Printer Hardware Simulator - DineFlow AI</title>
+    <title>3D Physical POS Thermal Printer Device - DineFlow AI</title>
     <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +39,7 @@
             gap: 10px;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
             z-index: 100;
         }
@@ -69,56 +69,110 @@
         .btn-toggle { background: linear-gradient(135deg, #F59E0B, #D97706); }
         .btn-print { background: linear-gradient(135deg, #6366F1, #4F46E5); }
 
-        /* Hardware Printer Container Wrapper */
-        .physical-printer-wrapper {
+        /* 3D Hardware Thermal Printer Assembly Unit */
+        .printer-3d-hardware-unit {
             width: 100%;
-            max-width: 480px;
+            max-width: 460px;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
         }
 
-        /* Real Physical Printer Machine Graphic Shell */
-        .hardware-printer-image-card {
+        /* Top 3D Printer Casing Body (Layer 1) */
+        .printer-top-chassis {
             width: 100%;
-            background: #0F172A;
-            border-radius: 20px 20px 0 0;
+            background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
             border: 3px solid #334155;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+            border-radius: 24px 24px 0 0;
+            padding: 20px 22px 14px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85);
             position: relative;
             z-index: 30;
-            overflow: hidden;
         }
 
-        .hardware-printer-img {
-            width: 100%;
-            height: auto;
-            max-height: 280px;
-            object-fit: cover;
-            display: block;
+        .printer-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
         }
 
-        /* Cutter Exit Mouth Slot Overlay */
-        .printer-exit-slot-mouth {
+        .brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: #34D399;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .led-panel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .led-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .led-power { background: #10B981; box-shadow: 0 0 8px #10B981; }
+        .led-feed { background: #3B82F6; box-shadow: 0 0 8px #3B82F6; }
+        .led-busy { background: #EF4444; box-shadow: 0 0 8px #EF4444; opacity: 0.3; }
+
+        /* Paper Roll Chamber Window Inside Printer */
+        .paper-chamber-box {
             width: 100%;
-            height: 12px;
+            height: 42px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1.5px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #94A3B8;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .roll-core-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid #64748B;
+            background: #CBD5E1;
+        }
+
+        /* Front Exit Mouth Slit & Cutter Lip (Layer 3 - Z-INDEX 50) */
+        .cutter-mouth-lip {
+            width: 100%;
+            height: 18px;
             background: #090D16;
-            border-bottom: 3px dashed #475569;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.95);
+            border-bottom: 4px dashed #64748B;
+            border-top: 2px solid #334155;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.8), inset 0 2px 4px rgba(0,0,0,0.9);
             position: relative;
-            z-index: 35;
+            z-index: 50;
         }
 
-        /* Viewport Paper Slot Container */
-        .paper-output-viewport {
+        /* Paper Exit Viewport Container (Layer 2 - Z-INDEX 10) */
+        .paper-exit-viewport {
             width: 100%;
             display: flex;
             justify-content: center;
             position: relative;
             z-index: 10;
+            margin-top: -6px;
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 0 0 20px 20px;
             padding: 0 0 35px;
             border-left: 3px solid #334155;
@@ -126,7 +180,7 @@
             border-bottom: 3px solid #334155;
         }
 
-        /* Thermal Receipt Paper Roll Card */
+        /* Thermal Paper Roll Emerging Out of Slot */
         .thermal-receipt-paper {
             background: #FFFFFF;
             width: 58mm;
@@ -157,9 +211,9 @@
         .barcode { text-align: center; margin: 14px 0 6px 0; font-size: 10px; }
         .footer { text-align: center; margin-top: 12px; font-size: 9.5px; }
 
-        /* @media print: Hide physical hardware printer image & buttons completely */
+        /* @media print: Hide hardware printer shell & buttons completely */
         @media print {
-            .no-print, .top-action-bar, .hardware-printer-image-card, .printer-exit-slot-mouth {
+            .no-print, .top-action-bar, .printer-top-chassis, .cutter-mouth-lip {
                 display: none !important;
                 visibility: hidden !important;
                 height: 0 !important;
@@ -171,7 +225,7 @@
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            .paper-output-viewport {
+            .paper-exit-viewport {
                 padding: 0 !important;
                 margin: 0 !important;
                 overflow: visible !important;
@@ -204,16 +258,34 @@
         </button>
     </div>
 
-    <!-- Real Physical Hardware Thermal Printer Machine Unit -->
-    <div class="physical-printer-wrapper">
-        <!-- Physical Hardware POS Printer Device Image Card -->
-        <div class="hardware-printer-image-card no-print">
-            <img src="/images/pos_thermal_printer.jpg" alt="Real POS Thermal Printer Machine" class="hardware-printer-img">
-            <div class="printer-exit-slot-mouth"></div>
+    <!-- 3D Hardware Thermal Printer Assembly Unit -->
+    <div class="printer-3d-hardware-unit">
+        <!-- Layer 1: Printer Top Chassis & Chamber -->
+        <div class="printer-top-chassis no-print">
+            <div class="printer-header-row">
+                <div class="brand-name">
+                    <i class="fa-solid fa-print" style="font-size: 16px;"></i>
+                    DINEFLOW POS THERMAL PRINTER TP-80
+                </div>
+                <div class="led-panel">
+                    <span class="led-dot led-power" title="POWER"></span>
+                    <span class="led-dot led-feed" title="READY"></span>
+                    <span class="led-dot led-busy" id="busyLed" title="PRINTING"></span>
+                </div>
+            </div>
+
+            <!-- Paper Roll Chamber -->
+            <div class="paper-chamber-box">
+                <div class="roll-core-circle"></div>
+                <span>Thermal Paper Roll Inside Printer Machine</span>
+            </div>
         </div>
 
-        <!-- Viewport where receipt paper rolls out of the printer cutter slot -->
-        <div class="paper-output-viewport">
+        <!-- Layer 3: Front Cutter Mouth Lip (Positioned OVER the Slot Mouth) -->
+        <div class="cutter-mouth-lip no-print"></div>
+
+        <!-- Layer 2: Viewport where receipt paper physically glides out from under the cutter lip -->
+        <div class="paper-exit-viewport">
             <div class="thermal-receipt-paper" id="paperRollCard">
                 <div class="header">
                     <h2>{{ $restaurant->name }}</h2>
@@ -352,25 +424,33 @@
 
         function triggerThermalPrintFeed() {
             const paper = document.getElementById('paperRollCard');
+            const busyLed = document.getElementById('busyLed');
             if (!paper) return;
+
+            // Flash RED PRINTING LED during printing
+            if (busyLed) busyLed.style.opacity = '1';
 
             playThermalMotorAudio();
 
-            // Retract paper into printer mouth slot
+            // Retract paper completely inside the printer mouth slot behind the front lip
             paper.style.transition = 'none';
             paper.style.transform = 'translateY(-100%)';
-            paper.style.opacity = '0.05';
+            paper.style.opacity = '0';
 
-            // Feed paper smoothly out of the printer cutter slot
+            // Feed paper smoothly out of the slot behind the cutter lip
             setTimeout(() => {
                 paper.style.transition = 'all 1.5s cubic-bezier(0.1, 0.9, 0.2, 1)';
                 paper.style.transform = 'translateY(0)';
                 paper.style.opacity = '1';
+
+                setTimeout(() => {
+                    if (busyLed) busyLed.style.opacity = '0.3';
+                }, 1500);
             }, 60);
         }
 
         window.onload = function() {
-            console.log('Real Hardware Physical Thermal Printer ready.');
+            console.log('3D Layered Physical POS Thermal Printer ready.');
         };
     </script>
 </body>
