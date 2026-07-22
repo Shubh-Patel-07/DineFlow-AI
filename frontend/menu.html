@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Keep legacy root menu links working while the customer menu remains the single feature source.
+    window.location.replace(`customer/menu.html${window.location.search}${window.location.hash}`);
+  </script>
   <title>DineFlow AI | Digital Menu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
