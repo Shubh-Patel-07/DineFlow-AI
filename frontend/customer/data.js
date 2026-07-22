@@ -3,7 +3,7 @@ const restaurant = {
     rating: 4.8,
     status: "Open Now",
     location: "Patan, Gujarat",
-    logo: "assets/images/p1.png"
+    logo: "assests/images/placeholder-food.svg"
 };
 
 
@@ -143,6 +143,8 @@ const foodItems = [
 
 { id:16, name:"Chinese Soup", category:"Soup", price:129, rating:4.6, badge:"Hot", image:"https://unsplash.com/photos/ZejuCsw8Ofw/download?force=true&w=800", description:"Chinese-style vegetable soup with fresh vegetables and aromatic seasoning.", available:true, isVeg:true },
 
-{ id:17, name:"Roasted Papad", category:"Starters", price:35, rating:4.6, badge:"Crispy", image:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800", description:"Light and crispy roasted papad served with traditional seasoning.", available:true, isVeg:true }
+{ id:17, name:"Roasted Papad", category:"Starters", price:35, rating:4.6, badge:"Crispy", image:"https://images.pexels.com/photos/34739831/pexels-photo-34739831.jpeg?auto=compress&cs=tinysrgb&w=800", description:"Light and crispy roasted papad served with traditional seasoning.", available:true, isVeg:true },
+
+{ id:18, name:"Chhas", category:"Beverage", price:30, rating:4.8, badge:"Popular", image:"https://images.pexels.com/photos/8489749/pexels-photo-8489749.jpeg?auto=compress&cs=tinysrgb&w=800", description:"Fresh traditional Gujarati buttermilk served chilled.", available:true, isVeg:true, popular:true }
 
 ];

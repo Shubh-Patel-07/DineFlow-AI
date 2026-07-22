@@ -20,6 +20,14 @@ const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, char => ({ 
 
 function unwrap(response) { return response && response.data ? response.data : response; }
 
+function resolveImagePath(image, fallback = 'assests/images/placeholder-food.svg') {
+  const value = typeof image === 'string' ? image.trim() : '';
+  if (!value) return fallback;
+  if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) return value;
+  if (value.startsWith('/')) return value;
+  return value;
+}
+
 function setTableOptions(tables = []) {
   const select = $('#tableNumber');
   const availableTables = tables.length ? tables : Array.from({ length: 20 }, (_, index) => ({ id: String(index + 1), tableNumber: String(index + 1) }));
@@ -42,7 +50,7 @@ async function request(path, options) {
 }
 
 function normalizeItem(item) {
-  return { ...item, id: item.id || item._id, image: item.image || 'assests/images/p1.png', available: item.is_available ?? item.available ?? true, isVeg: item.is_veg ?? item.isVeg ?? true, rating: item.rating || '4.5', badge: item.badge || item.category || '' };
+  return { ...item, id: item.id || item._id, image: resolveImagePath(item.image), available: item.is_available ?? item.available ?? true, isVeg: item.is_veg ?? item.isVeg ?? true, rating: item.rating || '4.5', badge: item.badge || item.category || '' };
 }
 
 function applyLanguage() {
@@ -67,12 +75,15 @@ function filteredItems() {
 function renderMenu() {
   const items = filteredItems();
   $('#loadingState').hidden = true;
-  $('#foodGrid').innerHTML = items.length ? items.map(item => `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}"><img class="food-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}"><div class="food-content"><div class="food-topline"><span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span><span>★ ${escapeHtml(item.rating)}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.description || '')}</p><div class="food-footer"><strong>₹${escapeHtml(item.price)}</strong><span class="stock ${item.available ? 'available' : 'out'}">${item.available ? getText('available') : getText('unavailable')}</span></div></div></article>`).join('') : `<div class="empty-state"><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
+  $('#foodGrid').innerHTML = items.length ? items.map(item => {
+    const imageSrc = resolveImagePath(item.image);
+    return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}"><img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}"><div class="food-content"><div class="food-topline"><span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span><span>★ ${escapeHtml(item.rating)}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.description || '')}</p><div class="food-footer"><strong>₹${escapeHtml(item.price)}</strong><span class="stock ${item.available ? 'available' : 'out'}">${item.available ? getText('available') : getText('unavailable')}</span></div></div></article>`;
+  }).join('') : `<div class="empty-state"><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
 }
 
 function openItemModal(item) {
   if (!item) return;
-  $('#modalItemImage').src = item.image;
+  $('#modalItemImage').src = resolveImagePath(item.image);
   $('#modalItemImage').alt = item.name;
   $('#modalItemCategory').textContent = item.category || '';
   $('#modalItemName').textContent = item.name;
@@ -98,7 +109,7 @@ async function loadMenu() {
       request(`/menu?restaurantId=${encodeURIComponent(restaurantId)}`),
       request(`/tables/restaurant/${encodeURIComponent(restaurantId)}`)
     ]);
-    if (restaurantResult.status === 'fulfilled') { const data = restaurantResult.value; $('#restaurantName').textContent = data.name || $('#restaurantName').textContent; $('#restaurantLocation').textContent = data.address || data.location || $('#restaurantLocation').textContent; if (data.logo) $('#restaurantLogo').src = data.logo; }
+    if (restaurantResult.status === 'fulfilled') { const data = restaurantResult.value; $('#restaurantName').textContent = data.name || $('#restaurantName').textContent; $('#restaurantLocation').textContent = data.address || data.location || $('#restaurantLocation').textContent; if (data.logo) $('#restaurantLogo').src = resolveImagePath(data.logo); }
     const restaurantTables = tablesResult.status === 'fulfilled' && Array.isArray(tablesResult.value) ? tablesResult.value : [];
     setTableOptions(restaurantTables);
     if (tableResult.status === 'fulfilled') { const data = tableResult.value; const number = data.table_number || data.tableNumber || tableId; $('#tableNumber').options[$('#tableNumber').selectedIndex].text = `#${number}`; }

@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Keep legacy root menu links working while the customer menu remains the single feature source.
+    window.location.replace(`customer/menu.html${window.location.search}${window.location.hash}`);
+  </script>
   <title>DineFlow AI | Digital Menu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +34,7 @@
 
     <section class="restaurant-header glass-panel" aria-live="polite">
       <div class="restaurant-left">
-        <img id="restaurantLogo" class="restaurant-logo" src="assests/images/p1.png" alt="Restaurant logo">
+        <img id="restaurantLogo" class="restaurant-logo" src="assests/images/placeholder-food.svg" alt="Restaurant logo">
         <div>
           <h2 id="restaurantName">DineFlow Restaurant</h2>
           <p class="restaurant-meta"><span>★ <span id="restaurantRating">4.8</span></span><span>•</span><span id="restaurantStatus" class="open-status">Open Now</span></p>
