@@ -145,6 +145,6 @@ const foodItems = [
 
 { id:17, name:"Roasted Papad", category:"Starters", price:35, rating:4.6, badge:"Crispy", image:"assests/images/roasted-papad.svg", description:"Light and crispy roasted papad served with traditional seasoning.", available:true, isVeg:true },
 
-{ id:18, name:"Chhas (Buttermilk)", category:"Beverage", price:30, rating:4.8, badge:"Fresh", image:"assests/images/chhas.svg", description:"Fresh traditional Gujarati buttermilk served chilled.", available:true, isVeg:true, popular:true }
+{ id:18, name:"Chhas", category:"Beverage", price:30, rating:4.8, badge:"Popular", image:"assests/images/chhas.svg", description:"Fresh traditional Gujarati buttermilk served chilled.", available:true, isVeg:true, popular:true }
 
 ];
