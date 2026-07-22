@@ -116,10 +116,32 @@
 </head>
 <body>
 
-    <div class="print-btn-container no-print" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; background: #0F172A; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-        <button class="print-btn" onclick="window.print()" style="background: #10B981; padding: 8px 14px; border-radius: 6px; font-weight: 700;">🖨️ Direct Thermal Print (Roll Paper)</button>
-        <button class="print-btn" onclick="saveAsPdfSimulated()" style="background: #6366F1; padding: 8px 14px; border-radius: 6px; font-weight: 700;">📄 Save as Thermal PDF (Virtual Simulation)</button>
-        <button class="print-btn" onclick="toggleRollWidth()" style="background: #F59E0B; padding: 8px 14px; border-radius: 6px; font-weight: 700;" id="widthToggleBtn">📏 Switch to 80mm Roll</button>
+    <!-- Hardware Thermal Printer Machine Simulator Shell (Screen Only) -->
+    <div class="printer-machine-frame no-print" style="max-width: 480px; margin: 0 auto 20px; background: #0F172A; border-radius: 20px; padding: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 2px solid #334155; text-align: center; color: #F8FAFC;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #1E293B; padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: #34D399; font-size: 13px;">
+          <i class="fa-solid fa-print"></i> ESC/POS Thermal Printer Simulator (58mm/80mm)
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;" title="Power Ready"></span>
+          <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #3B82F6; box-shadow: 0 0 8px #3B82F6;" title="Paper Feed Ready"></span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 12px;">
+        <button onclick="runPaperFeedAnimation()" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12px;">
+          ▶️ Run Paper Feed Animation
+        </button>
+        <button onclick="toggleRollWidth()" style="background: #F59E0B; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12px;" id="widthToggleBtn">
+          📏 Switch to 80mm Roll
+        </button>
+        <button onclick="window.print()" style="background: #6366F1; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12px;">
+          🖨️ Hard Copy / Save PDF
+        </button>
+      </div>
+
+      <!-- Thermal Paper Exit Cutter Slot -->
+      <div style="height: 10px; background: #1E293B; border-radius: 4px; border-bottom: 3px dashed #475569; position: relative; z-index: 2;"></div>
     </div>
 
     <div class="header">
@@ -237,6 +259,22 @@
         function saveAsPdfSimulated() {
             alert('💡 Virtual Thermal Printer Simulation Mode:\n\n1. Browser print window will now open.\n2. Change "Destination" printer to "Save as PDF" (or Microsoft Print to PDF).\n3. Under Paper Size, select "58mm / 80mm Roll" (or Auto).\n4. Click Save to create your virtual Thermal Receipt PDF file!');
             window.print();
+        }
+
+        function runPaperFeedAnimation() {
+            const elements = document.querySelectorAll('body > *:not(.printer-machine-frame)');
+            elements.forEach(el => {
+                el.style.transition = 'none';
+                el.style.transform = 'translateY(-60px)';
+                el.style.opacity = '0.2';
+            });
+            setTimeout(() => {
+                elements.forEach(el => {
+                    el.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    el.style.transform = 'translateY(0)';
+                    el.style.opacity = '1';
+                });
+            }, 50);
         }
 
         // Auto print disabled so user can interact with control buttons smoothly
