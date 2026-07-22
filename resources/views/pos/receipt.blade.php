@@ -400,8 +400,8 @@
         }
 
         window.onload = function() {
-            // Auto run paper feed animation on initial page load for instant WOW effect!
-            setTimeout(runPaperFeedAnimation, 300);
+            // Page opens silently. Audio plays only when user clicks Run Paper Feed Animation button!
+            console.log('Thermal receipt simulator ready. Click button for audio feed animation.');
         };
     </script>
 </body>
