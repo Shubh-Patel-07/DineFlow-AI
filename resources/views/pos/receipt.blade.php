@@ -236,11 +236,9 @@
             window.print();
         }
 
+        // Auto print disabled so user can interact with control buttons smoothly
         window.onload = function() {
-            setTimeout(function() {
-                // Auto trigger print prompt
-                window.print();
-            }, 600);
+            console.log('Thermal receipt rendered. Ready for printing/toggling width.');
         };
     </script>
 </body>
