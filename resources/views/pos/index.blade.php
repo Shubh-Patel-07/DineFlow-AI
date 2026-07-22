@@ -2178,8 +2178,16 @@
 
   function confirmUpiPaymentCompleted() {
     const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+
+    // Automatically highlight UPI payment method in POS terminal as active and verified
+    document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
+    const upiPayBtn = Array.from(document.querySelectorAll('.pay-method')).find(p => p.textContent.includes('UPI') || p.textContent.includes('GPay'));
+    if (upiPayBtn) {
+      upiPayBtn.classList.add('active');
+    }
+
     announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
-    showToast(`Payment of ₹${currentUpiPayAmount} verified successfully!`, 'success');
+    showToast(`✅ UPI/GPay Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
     closeModal('upiQrModal');
   }
 
