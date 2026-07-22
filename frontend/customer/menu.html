@@ -27,6 +27,7 @@
           <option value="gu">ગુજરાતી</option>
         </select>
       </label>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Enable dark mode">☾ <span>Dark mode</span></button>
     </header>
 
     <section class="restaurant-header glass-panel" aria-live="polite">
@@ -77,16 +78,39 @@
     </section>
 
     <section class="menu-tools" aria-label="Menu filters">
-      <label class="search-box" for="searchInput"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" data-i18n-placeholder="search" placeholder="Search delicious food..."></label>
-      <div class="diet-filter" role="group" aria-label="Dietary filter">
-        <button class="diet-btn active" data-diet="all" data-i18n="all">All</button>
-        <button class="diet-btn" data-diet="veg" data-i18n="veg">Veg</button>
-        <button class="diet-btn" data-diet="nonveg" data-i18n="nonveg">Non-Veg</button>
+      <div class="search-wrapper">
+        <label class="search-box" for="searchInput"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" autocomplete="off" aria-autocomplete="list" aria-controls="searchSuggestions" data-i18n-placeholder="search" placeholder="Search delicious food..."></label>
+        <div id="searchSuggestions" class="search-suggestions" role="listbox" hidden></div>
+      </div>
+      <div class="tool-stack">
+        <div class="diet-filter" role="group" aria-label="Dietary filter">
+          <button class="diet-btn active" data-diet="all" data-i18n="all">All</button>
+          <button class="diet-btn" data-diet="veg" data-i18n="veg">Veg</button>
+          <button class="diet-btn" data-diet="nonveg" data-i18n="nonveg">Non-Veg</button>
+        </div>
+        <div class="view-filter" role="group" aria-label="Menu view filter">
+          <button class="view-btn active" data-view="all">All</button>
+          <button class="view-btn" data-view="favorites">Favorites</button>
+          <button class="view-btn" data-view="recent">Recent</button>
+          <button class="view-btn" data-view="popular">Popular</button>
+        </div>
+        <div class="advanced-filter" role="group" aria-label="Advanced menu filters">
+          <button class="filter-btn" type="button" data-filter="popular">Popular</button>
+          <button class="filter-btn" type="button" data-filter="available">Available</button>
+          <button class="filter-btn" type="button" data-filter="rating">Rating 4.5+</button>
+          <select id="sortSelect" aria-label="Sort menu items">
+            <option value="default">Sort</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
+        </div>
       </div>
     </section>
 
     <section id="categorySection" class="category-section" aria-label="Categories"></section>
     <section class="section-title"><h2 data-i18n="menu">Our Menu</h2><p data-i18n="subtitle">Freshly prepared, just for you</p></section>
+    <section id="favoritesSection" class="favorites-section" aria-live="polite"></section>
+    <section id="recentSection" class="favorites-section" aria-live="polite"></section>
     <p id="loadingState" class="loading-state" data-i18n="loading">Loading menu…</p>
     <section id="foodGrid" class="food-grid" aria-live="polite"></section>
   </main>
