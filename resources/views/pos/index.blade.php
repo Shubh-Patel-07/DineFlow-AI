@@ -1633,10 +1633,22 @@
       upiPayBtn.classList.add('active');
     }
 
-    // Call API to mark active order as PAID in DB!
-    if (lastPlacedOrderId) {
-      try {
-        await fetch(`/api/orders/${lastPlacedOrderId}/pay`, {
+    // Call API to mark active order / last placed order / latest unpaid order as PAID in DB!
+    try {
+      let targetOrderId = lastPlacedOrderId;
+      
+      // If no lastPlacedOrderId, find latest unpaid order from backend API
+      if (!targetOrderId) {
+        const res = await fetch('/api/orders/restaurant/1');
+        const ordersRes = await res.json();
+        if (ordersRes.success && Array.isArray(ordersRes.data)) {
+          const unpaidOrder = ordersRes.data.find(o => o.payment_status === 'unpaid');
+          if (unpaidOrder) targetOrderId = unpaidOrder.id;
+        }
+      }
+
+      if (targetOrderId) {
+        await fetch(`/api/orders/${targetOrderId}/pay`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1645,14 +1657,16 @@
           },
           body: JSON.stringify({ payment_method: 'upi' })
         });
-      } catch(e){}
+      }
+    } catch(e){
+      console.log('Error updating UPI payment in DB:', e);
     }
 
     announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
     showToast(`✅ UPI/GPay Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
     
-    // Refresh active orders list and tables grid
-    loadOrdersData();
+    // Refresh active orders list and tables grid immediately
+    await loadOrdersData();
     loadTablesData();
     closeModal('upiQrModal');
   }
