@@ -144,102 +144,104 @@
       <div style="height: 10px; background: #1E293B; border-radius: 4px; border-bottom: 3px dashed #475569; position: relative; z-index: 2;"></div>
     </div>
 
-    <div class="header">
-        <h2>{{ $restaurant->name }}</h2>
-        <p>{{ $restaurant->address }}</p>
-        <p>Ph: {{ $restaurant->phone }}</p>
-    </div>
+    <div id="thermalPaperContainer" style="transition: all 1.4s cubic-bezier(0.1, 0.9, 0.2, 1);">
+      <div class="header">
+          <h2>{{ $restaurant->name }}</h2>
+          <p>{{ $restaurant->address }}</p>
+          <p>Ph: {{ $restaurant->phone }}</p>
+      </div>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <table class="info-table">
-        <tr>
-            <td><strong>Order ID:</strong></td>
-            <td class="text-right">#{{ $order->id }}</td>
-        </tr>
-        <tr>
-            <td><strong>Table:</strong></td>
-            <td class="text-right">{{ $tableName }}</td>
-        </tr>
-        <tr>
-            <td><strong>Date:</strong></td>
-            <td class="text-right">{{ $order->created_at->format('d-M-Y H:i') }}</td>
-        </tr>
-        <tr>
-            <td><strong>Status:</strong></td>
-            <td class="text-right">{{ strtoupper($order->status) }}</td>
-        </tr>
-        <tr>
-            <td><strong>Payment:</strong></td>
-            <td class="text-right">{{ strtoupper($order->payment_status) }} ({{ strtoupper($order->payment_method) }})</td>
-        </tr>
-    </table>
+      <table class="info-table">
+          <tr>
+              <td><strong>Order ID:</strong></td>
+              <td class="text-right">#{{ $order->id }}</td>
+          </tr>
+          <tr>
+              <td><strong>Table:</strong></td>
+              <td class="text-right">{{ $tableName }}</td>
+          </tr>
+          <tr>
+              <td><strong>Date:</strong></td>
+              <td class="text-right">{{ optional($order->created_at)->format('d-M-Y H:i') ?? now()->format('d-M-Y H:i') }}</td>
+          </tr>
+          <tr>
+              <td><strong>Status:</strong></td>
+              <td class="text-right">{{ strtoupper($order->status) }}</td>
+          </tr>
+          <tr>
+              <td><strong>Payment:</strong></td>
+              <td class="text-right">{{ strtoupper($order->payment_status) }} ({{ strtoupper($order->payment_method) }})</td>
+          </tr>
+      </table>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Price</th>
-                <th class="text-right">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($order->items as $item)
-            <tr>
-                <td>{{ $item->name }}</td>
-                <td class="text-right">{{ $item->quantity }}</td>
-                <td class="text-right">₹{{ number_format($item->price, 2) }}</td>
-                <td class="text-right">₹{{ number_format($item->price * $item->quantity, 2) }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+      <table class="items-table">
+          <thead>
+              <tr>
+                  <th>Item</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Price</th>
+                  <th class="text-right">Total</th>
+              </tr>
+          </thead>
+          <tbody>
+              @foreach($order->items as $item)
+              <tr>
+                  <td>{{ $item->name }}</td>
+                  <td class="text-right">{{ $item->quantity }}</td>
+                  <td class="text-right">₹{{ number_format($item->price, 2) }}</td>
+                  <td class="text-right">₹{{ number_format($item->price * $item->quantity, 2) }}</td>
+              </tr>
+              @endforeach
+          </tbody>
+      </table>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <table class="info-table total-section">
-        <tr>
-            <td>Subtotal:</td>
-            <td class="text-right">₹{{ number_format($order->total_amount, 2) }}</td>
-        </tr>
-        @php
-            $serviceCharge = $order->total_amount * 0.05; // 5% Service Charge
-            $taxableAmount = $order->total_amount + $serviceCharge;
-            $cgst = $taxableAmount * 0.09; // 9% CGST (18% Total GST)
-            $sgst = $taxableAmount * 0.09; // 9% SGST (18% Total GST)
-            $grandTotal = round($taxableAmount + $cgst + $sgst);
-        @endphp
-        <tr>
-            <td>Service Charge (5%):</td>
-            <td class="text-right">₹{{ number_format($serviceCharge, 2) }}</td>
-        </tr>
-        <tr>
-            <td>CGST (9%):</td>
-            <td class="text-right">₹{{ number_format($cgst, 2) }}</td>
-        </tr>
-        <tr>
-            <td>SGST (9%):</td>
-            <td class="text-right">₹{{ number_format($sgst, 2) }}</td>
-        </tr>
-        <tr style="font-size: 13px;">
-            <td>GRAND TOTAL:</td>
-            <td class="text-right">₹{{ number_format($grandTotal, 2) }}</td>
-        </tr>
-    </table>
+      <table class="info-table total-section">
+          <tr>
+              <td>Subtotal:</td>
+              <td class="text-right">₹{{ number_format($order->total_amount, 2) }}</td>
+          </tr>
+          @php
+              $serviceCharge = $order->total_amount * 0.05; // 5% Service Charge
+              $taxableAmount = $order->total_amount + $serviceCharge;
+              $cgst = $taxableAmount * 0.09; // 9% CGST (18% Total GST)
+              $sgst = $taxableAmount * 0.09; // 9% SGST (18% Total GST)
+              $grandTotal = round($taxableAmount + $cgst + $sgst);
+          @endphp
+          <tr>
+              <td>Service Charge (5%):</td>
+              <td class="text-right">₹{{ number_format($serviceCharge, 2) }}</td>
+          </tr>
+          <tr>
+              <td>CGST (9%):</td>
+              <td class="text-right">₹{{ number_format($cgst, 2) }}</td>
+          </tr>
+          <tr>
+              <td>SGST (9%):</td>
+              <td class="text-right">₹{{ number_format($sgst, 2) }}</td>
+          </tr>
+          <tr style="font-size: 13px;">
+              <td>GRAND TOTAL:</td>
+              <td class="text-right">₹{{ number_format($grandTotal, 2) }}</td>
+          </tr>
+      </table>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <div class="barcode">
-        <p>*DINEFLOW-{{ $order->id }}*</p>
-        <p style="font-size: 8px; margin-top: 5px; opacity: 0.7;">Powered by DineFlow AI POS</p>
-    </div>
+      <div class="barcode">
+          <p>*DINEFLOW-{{ $order->id }}*</p>
+          <p style="font-size: 8px; margin-top: 5px; opacity: 0.7;">Powered by DineFlow AI POS</p>
+      </div>
 
-    <div class="footer">
-        <p>Thank You for Dining With Us!</p>
-        <p>Please Visit Again!</p>
+      <div class="footer">
+          <p>Thank You for Dining With Us!</p>
+          <p>Please Visit Again!</p>
+      </div>
     </div>
 
     <script>
@@ -261,20 +263,40 @@
             window.print();
         }
 
+        function playThermalMotorSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 1.2);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 1.2);
+            } catch(e){}
+        }
+
         function runPaperFeedAnimation() {
-            const elements = document.querySelectorAll('body > *:not(.printer-machine-frame)');
-            elements.forEach(el => {
-                el.style.transition = 'none';
-                el.style.transform = 'translateY(-60px)';
-                el.style.opacity = '0.2';
-            });
+            const paper = document.getElementById('thermalPaperContainer');
+            if (!paper) return;
+
+            playThermalMotorSound();
+
+            paper.style.transition = 'none';
+            paper.style.transform = 'translateY(-120px)';
+            paper.style.opacity = '0';
+            paper.style.clipPath = 'inset(0 0 100% 0)';
+
             setTimeout(() => {
-                elements.forEach(el => {
-                    el.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-                    el.style.transform = 'translateY(0)';
-                    el.style.opacity = '1';
-                });
-            }, 50);
+                paper.style.transition = 'all 1.4s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                paper.style.transform = 'translateY(0)';
+                paper.style.opacity = '1';
+                paper.style.clipPath = 'inset(0 0 0 0)';
+            }, 60);
         }
 
         // Auto print disabled so user can interact with control buttons smoothly
