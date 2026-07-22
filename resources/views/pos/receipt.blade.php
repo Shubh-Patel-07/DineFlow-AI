@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Physical POS Thermal Printer Device - DineFlow AI</title>
+    <title>Receipt - Order #{{ $order->id }}</title>
     <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -211,19 +211,27 @@
         .barcode { text-align: center; margin: 14px 0 6px 0; font-size: 10px; }
         .footer { text-align: center; margin-top: 12px; font-size: 9.5px; }
 
+        @page {
+            margin: 0;
+            size: auto;
+        }
+
         /* @media print: Hide hardware printer shell & buttons completely */
         @media print {
+            @page {
+                margin: 0;
+            }
+            html, body {
+                background: #FFFFFF !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
             .no-print, .top-action-bar, .printer-top-chassis, .cutter-mouth-lip {
                 display: none !important;
                 visibility: hidden !important;
                 height: 0 !important;
                 margin: 0 !important;
                 padding: 0 !important;
-            }
-            body {
-                background: #FFFFFF !important;
-                padding: 0 !important;
-                margin: 0 !important;
             }
             .paper-exit-viewport {
                 padding: 0 !important;
