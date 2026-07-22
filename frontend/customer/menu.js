@@ -311,6 +311,282 @@ async function openItemModal(item) {
 
 function closeItemModal() { $('#itemModal').hidden = true; }
 
+// --- Cart helpers (local) ---
+const CART_STORAGE_KEY = 'dineflow-cart';
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
+function addToCart(customizedItem) {
+  const cart = getCart();
+  cart.push(customizedItem);
+  saveCart(cart);
+  showToast('Added to cart');
+  renderCart();
+}
+
+// --- Build Your Plate feature ---
+let currentBuildItem = null;
+function openBuildPlateModal(item) {
+  if (!item) return;
+  currentBuildItem = item;
+  $('#buildItemName').textContent = item.name + ` — ₹${Number(item.price).toFixed(2)}`;
+  $('#buildSpicy').value = 'Medium';
+  $('#buildPortion').value = 'full';
+  document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
+  document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
+  $('#buildInstruction').value = '';
+  updateBuildPrice();
+  $('#buildPlateModal').hidden = false;
+  $('#closeBuildPlateModal').focus();
+}
+
+function openBuildPlateModalFromDetails() {
+  const name = $('#modalItemName').textContent;
+  const item = menuItems.find(i => i.name === name) || menuItems.find(i => String(i.id) === String($('#modalItemName').dataset?.id));
+  openBuildPlateModal(item);
+}
+
+function closeBuildPlateModal() { $('#buildPlateModal').hidden = true; currentBuildItem = null; }
+
+function parseNumber(value) { const n = parseFloat(value); return isNaN(n) ? 0 : n; }
+
+function updateBuildPrice() {
+  if (!currentBuildItem) { $('#buildPrice').textContent = '₹0.00'; return; }
+  const base = parseNumber(currentBuildItem.price);
+  const portion = $('#buildPortion').value;
+  const portionMultiplier = portion === 'half' ? 0.5 : 1;
+  let addonsTotal = 0;
+  document.querySelectorAll('.build-addon').forEach(chk => { if (chk.checked) addonsTotal += parseNumber(chk.dataset.price); });
+  const subtotal = (base * portionMultiplier) + addonsTotal;
+  $('#buildPrice').textContent = `₹${subtotal.toFixed(2)}`;
+  return subtotal;
+}
+
+function buildDescription() {
+  if (!currentBuildItem) return '';
+  const parts = [];
+  const spicy = $('#buildSpicy').value;
+  const portion = $('#buildPortion').value;
+  parts.push(`${spicy} spicy`);
+  const removes = [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove);
+  removes.forEach(r => parts.push(r));
+  const addons = [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => `${c.dataset.addon}${c.dataset.price ? ` (+₹${c.dataset.price})` : ''}`);
+  addons.forEach(a => parts.push(a));
+  const instr = $('#buildInstruction').value.trim();
+  if (instr) parts.push(`Note: ${instr}`);
+  return parts.join(', ');
+}
+
+// Wire up build modal interactions
+document.addEventListener('change', event => {
+  if (event.target.closest('#buildPlateModal')) updateBuildPrice();
+});
+document.getElementById('closeBuildPlateModal').addEventListener('click', closeBuildPlateModal);
+document.querySelector('#btnCancelBuild').addEventListener('click', closeBuildPlateModal);
+document.getElementById('btnAddBuildToCart').addEventListener('click', () => {
+  if (!currentBuildItem) return;
+  const total = updateBuildPrice();
+  const desc = buildDescription();
+  const customized = {
+    id: `${currentBuildItem.id}-${Date.now()}`,
+    baseId: currentBuildItem.id,
+    name: currentBuildItem.name,
+    description: desc,
+    price: Number(total.toFixed(2)),
+    quantity: 1,
+    portion: $('#buildPortion').value,
+    spicy: $('#buildSpicy').value,
+    addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
+    removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
+    specialInstruction: $('#buildInstruction').value.trim(),
+  };
+  addToCart(customized);
+  closeBuildPlateModal();
+  closeItemModal();
+});
+
+// --- Add-on availability (from API) and Presets ---
+let addonAvailability = {};
+async function loadAddonAvailability() {
+  try {
+    const res = await fetch(`${API_BASE}/addons/availability?restaurantId=${encodeURIComponent(restaurantId)}`);
+    const data = await res.json().catch(() => ({}));
+    if (data && data.success && data.data) addonAvailability = data.data;
+    else addonAvailability = {};
+  } catch (err) {
+    addonAvailability = {};
+  }
+  applyAddonAvailability();
+}
+
+function applyAddonAvailability() {
+  document.querySelectorAll('.build-addon').forEach(chk => {
+    const name = chk.dataset.addon;
+    const label = chk.closest('label');
+    const available = addonAvailability && Object.prototype.hasOwnProperty.call(addonAvailability, name) ? Boolean(addonAvailability[name]) : true;
+    chk.disabled = !available;
+    // update label status
+    if (label) {
+      let status = label.querySelector('.addon-status');
+      if (!status) { status = document.createElement('span'); status.className = 'addon-status'; status.style.marginLeft = '8px'; status.style.fontSize = '12px'; status.style.opacity = '0.85'; label.appendChild(status); }
+      status.textContent = available ? '' : ' (unavailable)';
+      label.style.opacity = available ? '1' : '0.6';
+    }
+  });
+}
+
+// Presets storage
+const PRESETS_KEY = 'dineflow-presets';
+function getPresets() { try { return JSON.parse(localStorage.getItem(PRESETS_KEY) || '[]'); } catch { return []; } }
+function savePresets(presets) { localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); }
+
+function renderPresets() {
+  const list = $('#buildPresetsList');
+  if (!list) return;
+  const presets = getPresets();
+  if (!presets.length) { list.innerHTML = `<div style="opacity:0.7; font-size:13px;">No saved presets</div>`; return; }
+  list.innerHTML = presets.map((p, idx) => `<button type="button" class="preset-btn" data-preset-idx="${idx}" style="padding:6px 8px; border-radius:8px; background: rgba(255,255,255,0.04); font-size:13px;">${escapeHtml(p.name)}</button>`).join('');
+}
+
+function applyPreset(idx) {
+  const presets = getPresets();
+  const p = presets[idx];
+  if (!p || !currentBuildItem) return;
+  // apply options
+  $('#buildSpicy').value = p.spicy || 'Medium';
+  $('#buildPortion').value = p.portion || 'full';
+  document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
+  (p.addons || []).forEach(a => {
+    const chk = Array.from(document.querySelectorAll('.build-addon')).find(c => c.dataset.addon === a.name);
+    if (chk && !chk.disabled) chk.checked = true;
+  });
+  document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
+  (p.removes || []).forEach(r => {
+    const chk = Array.from(document.querySelectorAll('.build-remove')).find(c => c.dataset.remove === r);
+    if (chk) chk.checked = true;
+  });
+  $('#buildInstruction').value = p.specialInstruction || '';
+  updateBuildPrice();
+}
+
+function saveCurrentPreset() {
+  if (!currentBuildItem) { showToast('Open an item first', true); return; }
+  const presets = getPresets();
+  const name = `${currentBuildItem.name} Preset ${presets.length + 1}`;
+  const preset = {
+    id: `preset-${Date.now()}`,
+    name,
+    baseId: currentBuildItem.id,
+    spicy: $('#buildSpicy').value,
+    portion: $('#buildPortion').value,
+    addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
+    removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
+    specialInstruction: $('#buildInstruction').value.trim(),
+    price: updateBuildPrice()
+  };
+  presets.push(preset);
+  savePresets(presets);
+  renderPresets();
+  showToast('Preset saved');
+}
+
+// Wire preset clicks
+document.addEventListener('click', event => {
+  const btn = event.target.closest('[data-preset-idx]');
+  if (btn) { applyPreset(Number(btn.dataset.presetIdx)); }
+});
+
+// Hook save preset button
+const saveBtn = document.getElementById('btnSavePreset');
+if (saveBtn) saveBtn.addEventListener('click', saveCurrentPreset);
+
+// Load addon availability & presets when opening build modal
+const origOpenBuild = openBuildPlateModal;
+openBuildPlateModal = function(item) {
+  origOpenBuild(item);
+  // load availability and presets
+  loadAddonAvailability();
+  renderPresets();
+};
+
+
+// --- Cart UI and interactions ---
+function formatCurrency(amount) { return `₹${Number(amount || 0).toFixed(2)}`; }
+
+function renderCart() {
+  const cart = getCart();
+  const badge = $('#cartBadge');
+  const list = $('#cartList');
+  const subtotalEl = $('#cartSubtotal');
+  if (!badge || !list || !subtotalEl) return;
+  badge.textContent = cart.length;
+  if (!cart.length) {
+    list.innerHTML = `<div style="text-align:center; opacity:0.7; padding:18px;">Your cart is empty</div>`;
+    subtotalEl.textContent = formatCurrency(0);
+    return;
+  }
+  let subtotal = 0;
+  list.innerHTML = cart.map((item, idx) => {
+    const name = escapeHtml(item.name);
+    const desc = escapeHtml(item.description || '');
+    const price = Number(item.price || 0);
+    subtotal += price * (item.quantity || 1);
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background: rgba(255,255,255,0.03); padding:8px; border-radius:8px;">
+        <div style="flex:1">
+          <div style="font-weight:700;">${name}</div>
+          <div style="font-size:12px; opacity:0.8;">${desc}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <div style="font-weight:800;">${formatCurrency(price)}</div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <select data-cart-idx="${idx}" class="cart-qty" style="background:transparent; color:inherit; border-radius:6px; padding:4px;">
+              ${[1,2,3,4,5].map(q => `<option value="${q}" ${q === (item.quantity||1) ? 'selected' : ''}>${q}</option>`).join('')}
+            </select>
+            <button data-remove-idx="${idx}" class="cart-remove" style="background:transparent; border:none; color:#ff6b6b; font-weight:800;">Remove</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  subtotalEl.textContent = formatCurrency(subtotal);
+}
+
+function openCart() { $('#cartPanel').hidden = false; renderCart(); }
+function closeCart() { $('#cartPanel').hidden = true; }
+
+// Event delegation for cart interactions
+document.addEventListener('click', event => {
+  if (event.target.closest('#floatingCartBtn')) { openCart(); return; }
+  if (event.target.closest('[data-close-cart]')) { closeCart(); return; }
+  if (event.target.closest('#btnCloseCart')) { closeCart(); return; }
+  if (event.target.closest('#clearCartBtn')) { saveCart([]); renderCart(); showToast('Cart cleared'); return; }
+  if (event.target.closest('#checkoutBtn')) { showToast('Proceeding to checkout (not implemented)'); return; }
+  const removeBtn = event.target.closest('[data-remove-idx]');
+  if (removeBtn) {
+    const idx = Number(removeBtn.dataset.removeIdx);
+    const cart = getCart();
+    if (cart[idx]) { cart.splice(idx,1); saveCart(cart); renderCart(); showToast('Removed from cart'); }
+  }
+});
+
+document.addEventListener('change', event => {
+  const sel = event.target.closest('.cart-qty');
+  if (!sel) return;
+  const idx = Number(sel.dataset.cartIdx);
+  const qty = Number(sel.value);
+  const cart = getCart();
+  if (cart[idx]) { cart[idx].quantity = qty; saveCart(cart); renderCart(); }
+});
+
+// Quick test helper
+window.__printCart = function() { console.log('Cart contents:', getCart()); };
+
+// Initialize cart UI on load
+document.addEventListener('DOMContentLoaded', () => renderCart());
+
+
 function showToast(message, isError = false) { const toast = $('#toast'); toast.textContent = message; toast.className = `toast show ${isError ? 'error' : ''}`; window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => { toast.className = 'toast'; }, 3500); }
 
 async function loadMenu() {

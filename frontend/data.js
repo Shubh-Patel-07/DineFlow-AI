@@ -3,7 +3,7 @@ const restaurant = {
     rating: 4.8,
     status: "Open Now",
     location: "Patan, Gujarat",
-    logo: "assets/images/p1.png"
+    logo: "assests/images/placeholder-food.svg"
 };
 
 
