@@ -1476,6 +1476,57 @@
   </div>
 </div>
 
+<!-- Live UPI Payment QR Code Modal -->
+<div class="modal-overlay" id="upiQrModal">
+  <div class="modal" style="width:420px; max-width:95%; background:#0F172A; color:#F8FAFC; border-radius:24px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 25px 50px -12px rgba(0,0,0,0.7); overflow:hidden;">
+    <div class="modal-header" style="background:linear-gradient(135deg, #1E1B4B, #312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px;">
+      <div class="modal-title" style="color:#A7F3D0; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-brands fa-google-pay" style="font-size:20px; color:#34D399;"></i>
+        Scan & Pay Live UPI QR Code
+      </div>
+      <button class="modal-close" onclick="closeModal('upiQrModal')" style="color:#94A3B8;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <div class="modal-body" style="padding:20px; text-align:center;">
+      <div style="font-size:12px; color:#94A3B8; margin-bottom:4px;" id="upiModalTable">Table 1</div>
+      <div style="font-size:26px; font-weight:800; color:#34D399; font-family:'Outfit',sans-serif;" id="upiModalTotal">₹0.00</div>
+      <div style="font-size:11px; color:#64748B; margin-bottom:16px;">Scan with PhonePe, GPay, Paytm or BHIM UPI</div>
+
+      <!-- High Res Live UPI QR Code Container -->
+      <div style="background:#FFFFFF; padding:15px; border-radius:16px; display:inline-block; box-shadow:0 10px 25px rgba(0,0,0,0.5); border:3px solid #34D399; margin-bottom:16px;">
+        <img id="upiQrImg" src="" alt="UPI Payment QR Code" style="width:200px; height:200px; display:block;" />
+      </div>
+
+      <!-- Itemized Price Breakdown Table -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:12px; font-size:12px; color:#CBD5E1;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>Items Subtotal:</span>
+          <span id="upiModalSubtotal" style="font-weight:600;">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>Service Charge (5%):</span>
+          <span id="upiModalService" style="font-weight:600;">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>GST (18%):</span>
+          <span id="upiModalGst" style="font-weight:600;">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.15); padding-top:6px; font-weight:700; color:#34D399; font-size:13.5px;">
+          <span>Exact Scan & Pay Total:</span>
+          <span id="upiModalBreakdownTotal">₹0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" style="padding:14px 20px; background:rgba(0,0,0,0.2); border-top:1px solid rgba(255,255,255,0.06); display:flex; gap:10px;">
+      <button class="btn-outline" onclick="closeModal('upiQrModal')" style="flex:1;">Cancel</button>
+      <button onclick="confirmUpiPaymentCompleted()" class="btn-checkout" style="flex:2; background:linear-gradient(135deg, #10B981, #059669);">
+        <i class="fa-solid fa-volume-high"></i> Verify & Announce Voice
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1489,7 +1540,7 @@
 <script>
   // ─── VOCAL SOUNDBOX STATE & HELPER ───
   let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
-  let announcedOrderIds = [];
+  let announcedOrderIds = JSON.parse(localStorage.getItem('dineflow_announced_orders') || '[]').map(String);
 
   function updatePosMuteUI() {
     const icon = document.getElementById('posMuteIcon');
@@ -2075,12 +2126,54 @@
     printBill();
   }
 
+  let currentUpiPayAmount = 0;
+
+  function openUpiQrModal() {
+    const activeCartItems = MENU.filter(i => i.qty > 0);
+    let subtotal = 0;
+    if (activeCartItems.length > 0) {
+      subtotal = activeCartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    } else {
+      showToast('Please add items to cart first to scan QR!', 'error');
+      return;
+    }
+
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    const serviceCharge = subtotal * 0.05;
+    const gst = (subtotal + serviceCharge) * 0.18;
+    const finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+    currentUpiPayAmount = finalGrandTotal;
+
+    document.getElementById('upiModalTable').textContent = tableNumber;
+    document.getElementById('upiModalSubtotal').textContent = '₹' + subtotal.toFixed(2);
+    document.getElementById('upiModalService').textContent = '₹' + serviceCharge.toFixed(2);
+    document.getElementById('upiModalGst').textContent = '₹' + gst.toFixed(2);
+    document.getElementById('upiModalTotal').textContent = '₹' + finalGrandTotal.toFixed(2);
+    document.getElementById('upiModalBreakdownTotal').textContent = '₹' + finalGrandTotal.toFixed(2);
+
+    const upiString = `upi://pay?pa=dineflow@upi&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${finalGrandTotal}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+    
+    document.getElementById('upiQrImg').src = qrUrl;
+    openModal('upiQrModal');
+  }
+
+  function confirmUpiPaymentCompleted() {
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
+    showToast(`Payment of ₹${currentUpiPayAmount} verified successfully!`, 'success');
+    closeModal('upiQrModal');
+  }
+
   /* ─── PAYMENT ────────────────────────────── */
   function selectPay(el) {
     document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
     el.classList.add('active');
     const label = el.querySelector('span').textContent;
     document.getElementById('splitRow').style.display = (label === 'Split') ? 'flex' : 'none';
+    if (label.includes('UPI') || label.includes('QR')) {
+      openUpiQrModal();
+    }
   }
 
   /* ─── COUPON ─────────────────────────────── */
@@ -2173,14 +2266,17 @@
   }
 
   function printA4Invoice() {
-    if (cart.length > 0) {
-      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-      const itemsJson = encodeURIComponent(JSON.stringify(cart));
+    const activeCartItems = MENU.filter(i => i.qty > 0);
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+
+    if (activeCartItems.length > 0) {
+      const itemsPayload = activeCartItems.map(i => ({ name: i.name, qty: i.qty, price: i.price }));
+      const itemsJson = encodeURIComponent(JSON.stringify(itemsPayload));
       window.open('/orders/live/invoice-a4?table=' + encodeURIComponent(tableNumber) + '&items=' + itemsJson, '_blank');
     } else if (lastPlacedOrderId) {
       window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
     } else {
-      window.open('/orders/1/invoice-a4', '_blank');
+      showToast('Please add items to cart first to generate real-time A4 bill!', 'error');
     }
   }
 
@@ -2191,6 +2287,7 @@
       let tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
       let subtotal = 0;
       let itemsText = "";
+      const activeCartItems = MENU.filter(i => i.qty > 0);
 
       if (customOrderData) {
         tableNumber = customOrderData.table_id ? 'Table #' + customOrderData.table_id : 'Walk-In';
@@ -2201,22 +2298,23 @@
             itemsText += `• ${item.quantity || item.qty}x ${item.name || item.menu_item?.name || 'Item'} - ₹${lTotal}\n`;
           });
         }
-      } else if (typeof cart !== 'undefined' && cart && cart.length > 0) {
-        cart.forEach(item => {
+      } else if (activeCartItems.length > 0) {
+        activeCartItems.forEach(item => {
           const lineTotal = item.price * item.qty;
           subtotal += lineTotal;
           itemsText += `• ${item.qty}x ${item.name} - ₹${lineTotal}\n`;
         });
       } else if (typeof lastPlacedOrderId !== 'undefined' && lastPlacedOrderId) {
-        itemsText = `• Order #${lastPlacedOrderId} Items\n`;
-        subtotal = (typeof grandTotal !== 'undefined' && grandTotal > 0) ? grandTotal : 360;
+        window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
+        return;
       } else {
-        itemsText = `• 1x Paneer Butter Masala - ₹240\n• 2x Garlic Naan - ₹120\n`;
-        subtotal = 360;
+        showToast('Please add items to cart first to send WhatsApp bill!', 'error');
+        return;
       }
 
-      const gst = Math.round(subtotal * 0.05);
-      const total = subtotal + gst;
+      const serviceCharge = subtotal * 0.05;
+      const gst = (subtotal + serviceCharge) * 0.18;
+      const grandTotal = Math.round(subtotal + serviceCharge + gst);
 
       currentWaMessage = `🍽️ *DineFlow AI Restaurant*\n` +
                       `*Official WhatsApp Invoice & Receipt*\n` +
@@ -2226,13 +2324,13 @@
                       `*ORDER ITEMS:*\n` +
                       `${itemsText}` +
                       `-----------------------------------------\n` +
-                      `Subtotal: ₹${subtotal}\n` +
-                      `GST (5%): ₹${gst}\n` +
-                      `*GRAND TOTAL: ₹${total}*\n` +
+                      `Subtotal: ₹${subtotal.toFixed(2)}\n` +
+                      `Service Charge (5%): ₹${serviceCharge.toFixed(2)}\n` +
+                      `GST (18%): ₹${gst.toFixed(2)}\n` +
+                      `*GRAND TOTAL: ₹${grandTotal}*\n` +
                       `-----------------------------------------\n` +
                       `Thank you for dining with us! Have a great day! 🙏`;
 
-      // Open sleek WhatsApp Modal directly (No browser prompt)
       const previewBox = document.getElementById('waPreviewBox');
       if (previewBox) previewBox.textContent = currentWaMessage;
       openModal('whatsappModal');
@@ -2575,12 +2673,14 @@
         if (announcedOrderIds.length === 0) {
           announcedOrderIds = data.data
             .filter(order => order.payment_status === 'paid')
-            .map(order => order.id);
+            .map(order => String(order.id));
+          localStorage.setItem('dineflow_announced_orders', JSON.stringify(announcedOrderIds));
           return;
         }
 
         data.data.forEach(order => {
-          if (order.payment_status === 'paid' && !announcedOrderIds.includes(order.id)) {
+          const orderIdStr = String(order.id);
+          if (order.payment_status === 'paid' && !announcedOrderIds.includes(orderIdStr)) {
             // Find table number
             const table = allTablesData.find(t => String(t.id) === String(order.table_id));
             const tableNumber = table ? table.table_number : `T-${order.table_id}`;
@@ -2594,8 +2694,9 @@
             // Announce payment vocally!
             announcePaymentVoice(tableNumber, grandTotal, 'digital scan');
             
-            // Add to announced list
-            announcedOrderIds.push(order.id);
+            // Add to announced list & persist
+            announcedOrderIds.push(orderIdStr);
+            localStorage.setItem('dineflow_announced_orders', JSON.stringify(announcedOrderIds));
           }
         });
       }
