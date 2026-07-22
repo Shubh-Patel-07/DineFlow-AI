@@ -288,7 +288,7 @@
         <div class="paper-exit-viewport">
             <div class="thermal-receipt-paper" id="paperRollCard">
                 <div class="header">
-                    <h2>{{ $restaurant->name }}</h2>
+                    <h2>ULTIMATE DINEFLOW AI</h2>
                     <p>{{ $restaurant->address }}</p>
                     <p>Ph: {{ $restaurant->phone }}</p>
                 </div>
