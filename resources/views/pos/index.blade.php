@@ -1493,8 +1493,15 @@
       <div style="font-size:11px; color:#64748B; margin-bottom:16px;">Scan with PhonePe, GPay, Paytm or BHIM UPI</div>
 
       <!-- High Res Live UPI QR Code Container -->
-      <div style="background:#FFFFFF; padding:15px; border-radius:16px; display:inline-block; box-shadow:0 10px 25px rgba(0,0,0,0.5); border:3px solid #34D399; margin-bottom:16px;">
+      <div style="background:#FFFFFF; padding:15px; border-radius:16px; display:inline-block; box-shadow:0 10px 25px rgba(0,0,0,0.5); border:3px solid #34D399; margin-bottom:12px;">
         <img id="upiQrImg" src="" alt="UPI Payment QR Code" style="width:200px; height:200px; display:block;" />
+      </div>
+
+      <!-- Receiver Merchant VPA Handle Input -->
+      <div style="margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+        <i class="fa-solid fa-building-columns" style="color:#34D399;"></i>
+        <span>Receiver UPI ID:</span>
+        <input type="text" id="merchantVpaInput" value="shubhpatel@okicici" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:#1E293B; color:#34D399; border:1px solid #334155; padding:4px 10px; border-radius:6px; font-weight:700; font-size:11.5px; width:180px; text-align:center;" placeholder="yourid@okicici" />
       </div>
 
       <!-- Itemized Price Breakdown Table -->
