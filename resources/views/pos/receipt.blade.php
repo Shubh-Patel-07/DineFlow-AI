@@ -80,15 +80,18 @@
             font-size: 10px;
         }
 
-        /* Hide screen elements during print */
+        /* Hide screen elements completely during print & PDF save */
         @media print {
-            .no-print {
-                display: none;
+            .no-print, .print-btn-container, .print-btn {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             body {
-                width: 58mm;
-                margin: 0;
-                padding: 5px;
+                margin: 0 !important;
+                padding: 5px !important;
             }
         }
 
