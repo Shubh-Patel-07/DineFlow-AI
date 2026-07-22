@@ -177,9 +177,9 @@ class OrderController extends Controller
         }
 
         $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
-            'name' => 'DineFlow AI POS House',
-            'address' => '456 Gourmet Boulevard',
-            'phone' => '555-0199'
+            'name' => 'ULTIMATE DINEFLOW AI',
+            'address' => '456 Gourmet Boulevard, Patan',
+            'phone' => '+91 98765 43210'
         ]);
 
         $table = \App\Models\Table::find($order->table_id);
