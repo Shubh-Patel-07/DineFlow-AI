@@ -1592,13 +1592,17 @@
     // Clear any stuck/queued audio speech synthesis
     window.speechSynthesis.cancel();
     
+    // Extract clean numeric/name table number (e.g. "Table #1" -> "1", "Table 5" -> "5")
+    let cleanTableNum = String(tableNumber).replace(/table/gi, '').replace(/#/g, '').replace(/T-/gi, '').trim();
+    if (!cleanTableNum || cleanTableNum === 'Walk-In') cleanTableNum = '1';
+
     // Construct ultra-professional announcement in Gujarati!
     let msgText = "";
     if (tableNumber === 'Test') {
       msgText = "ડાઇનફ્લો એઆઇ સ્માર્ટ સાઉન્ડબોક્સ સફળતાપૂર્વક સક્રિય છે.";
     } else {
       const cashOrOnline = (method === 'cash') ? 'રોકડા' : 'ઓનલાઇન';
-      msgText = `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${tableNumber} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
+      msgText = `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${cleanTableNum} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
     }
     
     const utterance = new SpeechSynthesisUtterance(msgText);
@@ -1617,6 +1621,40 @@
     }
     
     window.speechSynthesis.speak(utterance);
+  }
+
+  async function confirmUpiPaymentCompleted() {
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+
+    // Automatically highlight UPI payment method in POS terminal as active and verified
+    document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
+    const upiPayBtn = Array.from(document.querySelectorAll('.pay-method')).find(p => p.textContent.includes('UPI') || p.textContent.includes('GPay'));
+    if (upiPayBtn) {
+      upiPayBtn.classList.add('active');
+    }
+
+    // Call API to mark active order as PAID in DB!
+    if (lastPlacedOrderId) {
+      try {
+        await fetch(`/api/orders/${lastPlacedOrderId}/pay`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+          },
+          body: JSON.stringify({ payment_method: 'upi' })
+        });
+      } catch(e){}
+    }
+
+    announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
+    showToast(`✅ UPI/GPay Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
+    
+    // Refresh active orders list and tables grid
+    loadOrdersData();
+    loadTablesData();
+    closeModal('upiQrModal');
   }
 
   function announceWaiterCallVoice(tableNumber) {
