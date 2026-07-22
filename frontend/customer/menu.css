@@ -127,7 +127,7 @@ body.light-theme { --bg-primary: #f6f7fb; --bg-secondary: #ffffff; --text-main: 
 .search-suggestion small { color: var(--muted); }.search-suggestion mark { padding: 0; background: transparent; color: var(--primary); font-weight: 800; }
 .tool-stack, .advanced-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
 .filter-btn.is-active { color: #fff; border-color: transparent; background: var(--primary); }
-.recent-clear { border: 0; background: transparent; color: var(--primary); font-weight: 700; cursor: pointer; }
+.recent-clear { border: 0; background: transparent; color: var(--primary); font-weight: 700; cursor: pointer; }.recent-clear:disabled { color: var(--muted); cursor: not-allowed; }
 .empty-illustration { display: block; margin-bottom: 8px; font-size: 2.2rem; }
 .food-card { animation: card-in .32s ease both; }.favorite-btn { transition: transform .2s ease, background-color .2s ease; }.favorite-btn:hover { transform: scale(1.08); }
 .favorite-btn.is-favorite { color: #e11d48; }.favorite-btn.is-favorite::after { content: '♥'; font-size: 1.15rem; }.favorite-btn.is-favorite { font-size: 0; }.favorite-btn.is-favorite::after { font-size: 1.15rem; }
