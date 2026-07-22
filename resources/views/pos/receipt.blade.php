@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thermal Receipt Printer Simulator - DineFlow AI</title>
+    <title>3D Thermal Receipt Printer Device - DineFlow AI</title>
+    <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
@@ -14,7 +15,7 @@
 
         body {
             font-family: 'Courier New', Courier, monospace;
-            background: radial-gradient(circle at top, #1E293B 0%, #0F172A 60%, #090D16 100%);
+            background: radial-gradient(circle at top, #1E293B 0%, #0F172A 50%, #090D16 100%);
             min-height: 100vh;
             color: #000000;
             display: flex;
@@ -24,10 +25,10 @@
             padding: 25px 15px 80px;
         }
 
-        /* Glassmorphic Header Toolbar */
-        .toolbar-container {
+        /* Top Action Bar */
+        .top-action-bar {
             width: 100%;
-            max-width: 580px;
+            max-width: 600px;
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -39,11 +40,11 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             z-index: 100;
         }
 
-        .btn-ctrl {
+        .btn-action {
             border: none;
             border-radius: 12px;
             padding: 10px 18px;
@@ -59,17 +60,17 @@
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
         }
 
-        .btn-ctrl:hover {
+        .btn-action:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
         }
 
-        .btn-print-feed { background: linear-gradient(135deg, #10B981, #059669); }
-        .btn-toggle-roll { background: linear-gradient(135deg, #F59E0B, #D97706); }
-        .btn-hard-print { background: linear-gradient(135deg, #6366F1, #4F46E5); }
+        .btn-feed { background: linear-gradient(135deg, #10B981, #059669); }
+        .btn-toggle { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .btn-print { background: linear-gradient(135deg, #6366F1, #4F46E5); }
 
-        /* 3D Physical POS Printer Machine Unit */
-        .pos-hardware-unit {
+        /* 3D Physical POS Thermal Printer Machine Frame */
+        .hardware-printer-container {
             width: 100%;
             max-width: 480px;
             display: flex;
@@ -78,28 +79,29 @@
             position: relative;
         }
 
-        /* Heavy Dark Metallic Printer Chassis */
-        .printer-chassis {
+        /* Metallic Dark Printer Body Chassis */
+        .printer-body-3d {
             width: 100%;
-            background: linear-gradient(180deg, #111827 0%, #0F172A 100%);
-            border: 3px solid #374151;
-            border-radius: 24px 24px 8px 8px;
-            padding: 20px 24px 14px;
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255,255,255,0.1);
+            background: linear-gradient(180deg, #1E293B 0%, #0F172A 60%, #090D16 100%);
+            border: 3px solid #334155;
+            border-radius: 28px 28px 12px 12px;
+            padding: 22px 24px 16px;
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.85), inset 0 2px 5px rgba(255, 255, 255, 0.12);
             position: relative;
             z-index: 30;
         }
 
-        .chassis-top-row {
+        /* Top Brand & Model Header */
+        .printer-top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             padding-bottom: 12px;
         }
 
-        .brand-badge {
+        .printer-model-name {
             font-family: 'Outfit', sans-serif;
             font-size: 14px;
             font-weight: 800;
@@ -110,17 +112,18 @@
             letter-spacing: 0.5px;
         }
 
-        .led-panel {
+        /* Control Panel LED & Buttons on Printer Body */
+        .printer-controls-panel {
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: rgba(0,0,0,0.4);
-            padding: 6px 12px;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 14px;
             border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .led-indicator {
+        .led-indicator-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
@@ -130,36 +133,112 @@
 
         .led-power { background: #10B981; box-shadow: 0 0 10px #10B981; }
         .led-feed { background: #3B82F6; box-shadow: 0 0 10px #3B82F6; }
-        .led-busy { background: #EF4444; box-shadow: 0 0 10px #EF4444; }
+        .led-busy { background: #EF4444; box-shadow: 0 0 10px #EF4444; opacity: 0.3; }
 
-        /* Metallic Paper Exit Mouth / Serrated Teeth Slot */
-        .printer-mouth-slot {
-            width: 100%;
-            height: 14px;
-            background: #090D16;
+        /* Hardware FEED Button on Printer Machine Body */
+        .hardware-feed-btn {
+            background: #334155;
+            color: #F8FAFC;
+            border: 1px solid #475569;
+            padding: 4px 10px;
             border-radius: 6px;
-            border-bottom: 3px dashed #64748B;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .hardware-feed-btn:active {
+            transform: scale(0.95);
+            background: #1E293B;
+        }
+
+        /* Paper Chamber Hood & Glass Window */
+        .paper-chamber-lid {
+            width: 100%;
+            height: 48px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 2px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .paper-roll-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94A3B8;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .roll-icon-graphic {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid #64748B;
+            background: #CBD5E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+        }
+
+        .roll-center-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #475569;
+        }
+
+        .latch-release-btn {
+            background: #1E293B;
+            color: #64748B;
+            border: 1px solid #334155;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        /* Metallic Serrated Teeth Cutter Slot Mouth */
+        .cutter-mouth-slot {
+            width: 100%;
+            height: 16px;
+            background: #090D16;
+            border-radius: 8px;
+            border-bottom: 4px dashed #64748B;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.95);
             position: relative;
         }
 
-        /* Paper Output Viewport Slot */
-        .paper-exit-viewport {
+        /* Viewport Paper Mouth Slot */
+        .paper-output-viewport {
             width: 100%;
             display: flex;
             justify-content: center;
             position: relative;
             z-index: 10;
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 0 0 20px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0 0 24px 24px;
             padding: 0 0 35px;
-            border-left: 2px solid rgba(255,255,255,0.05);
-            border-right: 2px solid rgba(255,255,255,0.05);
-            border-bottom: 2px solid rgba(255,255,255,0.05);
+            border-left: 2px solid rgba(255,255,255,0.06);
+            border-right: 2px solid rgba(255,255,255,0.06);
+            border-bottom: 2px solid rgba(255,255,255,0.06);
         }
 
-        /* Thermal Paper Card Rolling Out */
+        /* Thermal Receipt Paper Roll Card */
         .thermal-receipt-paper {
             background: #FFFFFF;
             width: 58mm;
@@ -192,7 +271,7 @@
 
         /* @media print: Hide hardware printer shell & buttons completely */
         @media print {
-            .no-print, .toolbar-container, .printer-chassis {
+            .no-print, .top-action-bar, .printer-body-3d {
                 display: none !important;
                 visibility: hidden !important;
                 height: 0 !important;
@@ -204,7 +283,7 @@
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            .paper-exit-viewport {
+            .paper-output-viewport {
                 padding: 0 !important;
                 margin: 0 !important;
                 overflow: visible !important;
@@ -224,39 +303,53 @@
 </head>
 <body>
 
-    <!-- Floating Top Control Bar -->
-    <div class="toolbar-container no-print">
-        <button class="btn-ctrl btn-print-feed" onclick="triggerThermalPrintFeed()">
+    <!-- Floating Top Bar Toolbar Controls -->
+    <div class="top-action-bar no-print">
+        <button class="btn-action btn-feed" onclick="triggerThermalPrintFeed()">
             <i class="fa-solid fa-play"></i> ▶️ Start Thermal Print Feed
         </button>
-        <button class="btn-ctrl btn-toggle-roll" onclick="togglePaperWidth()" id="widthBtn">
+        <button class="btn-action btn-toggle" onclick="togglePaperWidth()" id="widthBtn">
             <i class="fa-solid fa-ruler-horizontal"></i> 📏 Switch to 80mm Roll
         </button>
-        <button class="btn-ctrl btn-hard-print" onclick="window.print()">
+        <button class="btn-action btn-print" onclick="window.print()">
             <i class="fa-solid fa-print"></i> 🖨️ Save PDF / Print Roll
         </button>
     </div>
 
-    <!-- 3D Hardware Thermal Printer Device Unit -->
-    <div class="pos-hardware-unit">
-        <div class="printer-chassis no-print">
-            <div class="chassis-top-row">
-                <div class="brand-badge">
+    <!-- 3D Hardware Thermal Printer Machine Unit -->
+    <div class="hardware-printer-container">
+        <!-- Main Metallic Printer Casing -->
+        <div class="printer-body-3d no-print">
+            <div class="printer-top-bar">
+                <div class="printer-model-name">
                     <i class="fa-solid fa-print" style="font-size: 18px;"></i>
-                    DINEFLOW ESC/POS PRINTER TP-80
+                    DINEFLOW POS THERMAL PRINTER TP-80
                 </div>
-                <div class="led-panel">
-                    <span class="led-indicator led-power" id="powerLed" title="POWER"></span>
-                    <span class="led-indicator led-feed" id="feedLed" title="FEED"></span>
-                    <span class="led-indicator led-busy" id="busyLed" style="opacity: 0.3;" title="PRINTING"></span>
+                <div class="printer-controls-panel">
+                    <span class="led-indicator-dot led-power" title="POWER"></span>
+                    <span class="led-indicator-dot led-feed" title="FEED"></span>
+                    <span class="led-indicator-dot led-busy" id="busyLed" title="PRINTING"></span>
+                    <button class="hardware-feed-btn" onclick="triggerThermalPrintFeed()">FEED</button>
                 </div>
             </div>
-            <!-- Mouth Slot where paper emerges -->
-            <div class="printer-mouth-slot"></div>
+
+            <!-- Paper Roll Chamber Lid -->
+            <div class="paper-chamber-lid">
+                <div class="paper-roll-preview">
+                    <div class="roll-icon-graphic">
+                        <div class="roll-center-dot"></div>
+                    </div>
+                    <span>58mm/80mm Thermal Paper Roll Chamber</span>
+                </div>
+                <div class="latch-release-btn">PUSH LATCH</div>
+            </div>
+
+            <!-- Serrated Cutter Exit Mouth Slot -->
+            <div class="cutter-mouth-slot"></div>
         </div>
 
         <!-- Viewport where paper rolls down out of the printer mouth slot -->
-        <div class="paper-exit-viewport">
+        <div class="paper-output-viewport">
             <div class="thermal-receipt-paper" id="paperRollCard">
                 <div class="header">
                     <h2>{{ $restaurant->name }}</h2>
