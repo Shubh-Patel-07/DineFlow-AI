@@ -2093,7 +2093,8 @@
         const sortedOrders = [...data.data].reverse();
         
         tbody.innerHTML = sortedOrders.map(order => {
-          const itemsSummary = order.items.map(item => `${item.name} (x${item.quantity})`).join(', ');
+          const itemsSummary = order.items ? order.items.map(item => `${item.name} (x${item.quantity})`).join(', ') : 'Order Items';
+          const isPaid = (String(order.payment_status).toLowerCase() === 'paid');
           
           let payBadge = `<span style="background:rgba(239,68,68,0.1); color:#FCA5A5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Unpaid</span>`;
           let actionBtns = `
@@ -2102,7 +2103,7 @@
             </button>
           `;
           
-          if (order.payment_status === 'paid') {
+          if (isPaid) {
             payBadge = `<span style="background:rgba(16,185,129,0.1); color:#34D399; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Paid</span>`;
             actionBtns = '';
           }
@@ -2115,10 +2116,15 @@
           
           const tableNum = order.table ? order.table.table_number : 'Table #' + order.table_id;
           
-          const subtotal = parseFloat(order.total_amount);
-          const serviceCharge = subtotal * 0.05;
-          const gst = (subtotal + serviceCharge) * 0.18;
-          const grandTotal = Math.round(subtotal + serviceCharge + gst);
+          let grandTotal = parseFloat(order.total_amount || 0);
+          if (Array.isArray(order.items) && order.items.length > 0) {
+            const rawItemsSum = order.items.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
+            const serviceCharge = rawItemsSum * 0.05;
+            const gst = (rawItemsSum + serviceCharge) * 0.18;
+            grandTotal = Math.round(rawItemsSum + serviceCharge + gst);
+          } else {
+            grandTotal = Math.round(grandTotal);
+          }
 
           return `
             <tr style="border-bottom:1px solid var(--border);">
