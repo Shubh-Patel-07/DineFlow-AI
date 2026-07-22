@@ -1501,7 +1501,7 @@
       <div style="margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
         <i class="fa-solid fa-building-columns" style="color:#34D399;"></i>
         <span>Receiver UPI ID:</span>
-        <input type="text" id="merchantVpaInput" value="shubhpatel@okicici" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:#1E293B; color:#34D399; border:1px solid #334155; padding:4px 10px; border-radius:6px; font-weight:700; font-size:11.5px; width:180px; text-align:center;" placeholder="yourid@okicici" />
+        <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:#1E293B; color:#34D399; border:1px solid #334155; padding:4px 10px; border-radius:6px; font-weight:700; font-size:11.5px; width:180px; text-align:center;" placeholder="7777938338@omni" />
       </div>
 
       <!-- Itemized Price Breakdown Table -->
@@ -2135,6 +2135,15 @@
 
   let currentUpiPayAmount = 0;
 
+  function updateUpiQrCodeFromInput() {
+    const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
+    localStorage.setItem('dineflow_merchant_vpa', inputVal);
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${currentUpiPayAmount}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+    document.getElementById('upiQrImg').src = qrUrl;
+  }
+
   function openUpiQrModal() {
     const activeCartItems = MENU.filter(i => i.qty > 0);
     let subtotal = 0;
@@ -2158,10 +2167,12 @@
     document.getElementById('upiModalTotal').textContent = '₹' + finalGrandTotal.toFixed(2);
     document.getElementById('upiModalBreakdownTotal').textContent = '₹' + finalGrandTotal.toFixed(2);
 
-    const upiString = `upi://pay?pa=dineflow@upi&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${finalGrandTotal}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-    
-    document.getElementById('upiQrImg').src = qrUrl;
+    const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
+    if (document.getElementById('merchantVpaInput')) {
+      document.getElementById('merchantVpaInput').value = savedVpa;
+    }
+
+    updateUpiQrCodeFromInput();
     openModal('upiQrModal');
   }
 
