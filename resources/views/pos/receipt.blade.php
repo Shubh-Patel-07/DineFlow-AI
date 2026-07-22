@@ -113,8 +113,10 @@
 </head>
 <body>
 
-    <div class="print-btn-container no-print">
-        <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
+    <div class="print-btn-container no-print" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; background: #0F172A; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <button class="print-btn" onclick="window.print()" style="background: #10B981; padding: 8px 14px; border-radius: 6px; font-weight: 700;">🖨️ Direct Thermal Print (Roll Paper)</button>
+        <button class="print-btn" onclick="saveAsPdfSimulated()" style="background: #6366F1; padding: 8px 14px; border-radius: 6px; font-weight: 700;">📄 Save as Thermal PDF (Virtual Simulation)</button>
+        <button class="print-btn" onclick="toggleRollWidth()" style="background: #F59E0B; padding: 8px 14px; border-radius: 6px; font-weight: 700;" id="widthToggleBtn">📏 Switch to 80mm Roll</button>
     </div>
 
     <div class="header">
@@ -216,10 +218,29 @@
     </div>
 
     <script>
+        let currentWidth = 58;
+        function toggleRollWidth() {
+            if (currentWidth === 58) {
+                document.body.style.width = '80mm';
+                currentWidth = 80;
+                document.getElementById('widthToggleBtn').innerText = '📏 Switch to 58mm Roll';
+            } else {
+                document.body.style.width = '58mm';
+                currentWidth = 58;
+                document.getElementById('widthToggleBtn').innerText = '📏 Switch to 80mm Roll';
+            }
+        }
+
+        function saveAsPdfSimulated() {
+            alert('💡 Virtual Thermal Printer Simulation Mode:\n\n1. Browser print window will now open.\n2. Change "Destination" printer to "Save as PDF" (or Microsoft Print to PDF).\n3. Under Paper Size, select "58mm / 80mm Roll" (or Auto).\n4. Click Save to create your virtual Thermal Receipt PDF file!');
+            window.print();
+        }
+
         window.onload = function() {
             setTimeout(function() {
+                // Auto trigger print prompt
                 window.print();
-            }, 500);
+            }, 600);
         };
     </script>
 </body>
