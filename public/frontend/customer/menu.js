@@ -739,9 +739,16 @@ document.addEventListener('DOMContentLoaded', () => renderCart());
 function showToast(message, isError = false) { const toast = $('#toast'); toast.textContent = message; toast.className = `toast show ${isError ? 'error' : ''}`; window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => { toast.className = 'toast'; }, 3500); }
 
 async function loadMenu() {
-  $('#loadingState').hidden = false;
-  $('#foodGrid').innerHTML = `<div class="skeleton-grid" aria-label="Loading menu"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>`;
+  // Render static items immediately without waiting for API fetch (0ms instant load!)
+  if (typeof foodItems !== 'undefined' && Array.isArray(foodItems) && foodItems.length > 0) {
+    menuItems = foodItems.map(normalizeItem);
+    renderCategories();
+    renderMenu();
+  }
+
   setTableOptions();
+  checkTableActiveOrder();
+
   try {
     const [restaurantResult, tableResult, menuResult, tablesResult] = await Promise.allSettled([
       request(`/restaurants/${encodeURIComponent(restaurantId)}`),
@@ -749,15 +756,25 @@ async function loadMenu() {
       request(`/menu?restaurantId=${encodeURIComponent(restaurantId)}`),
       request(`/tables/restaurant/${encodeURIComponent(restaurantId)}`)
     ]);
-    if (restaurantResult.status === 'fulfilled') { const data = restaurantResult.value; $('#restaurantName').textContent = data.name || $('#restaurantName').textContent; $('#restaurantLocation').textContent = data.address || data.location || $('#restaurantLocation').textContent; if (data.logo) $('#restaurantLogo').src = resolveImagePath(data.logo); }
+    if (restaurantResult.status === 'fulfilled' && restaurantResult.value) {
+      const data = restaurantResult.value;
+      if (data.name) $('#restaurantName').textContent = data.name;
+      if (data.address || data.location) $('#restaurantLocation').textContent = data.address || data.location;
+      if (data.logo) $('#restaurantLogo').src = resolveImagePath(data.logo);
+    }
     const restaurantTables = tablesResult.status === 'fulfilled' && Array.isArray(tablesResult.value) ? tablesResult.value : [];
     setTableOptions(restaurantTables);
-    if (tableResult.status === 'fulfilled') { const data = tableResult.value; const number = data.table_number || data.tableNumber || tableId; $('#tableNumber').options[$('#tableNumber').selectedIndex].text = `#${number}`; }
+    if (tableResult.status === 'fulfilled' && tableResult.value) {
+      const data = tableResult.value;
+      const number = data.table_number || data.tableNumber || tableId;
+      if ($('#tableNumber').options[$('#tableNumber').selectedIndex]) {
+        $('#tableNumber').options[$('#tableNumber').selectedIndex].text = `#${number}`;
+      }
+    }
     if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
       const apiItems = menuResult.value.map(normalizeItem);
       const staticFoodItems = (typeof foodItems !== 'undefined' && Array.isArray(foodItems)) ? foodItems.map(normalizeItem) : [];
       if (staticFoodItems.length > 0) {
-        // Merge backend items into Krushank's rich static list so all Unsplash images & categories are preserved!
         menuItems = staticFoodItems.map(staticItem => {
           const match = apiItems.find(api => api.name.toLowerCase() === staticItem.name.toLowerCase() || String(api.id) === String(staticItem.id));
           if (match) {
@@ -765,22 +782,13 @@ async function loadMenu() {
           }
           return staticItem;
         });
-        // Append any extra backend items not in static list
-        apiItems.forEach(apiItem => {
-          if (!menuItems.some(m => String(m.id) === String(apiItem.id))) {
-            menuItems.push(apiItem);
-          }
-        });
       } else {
         menuItems = apiItems;
       }
+      renderCategories();
+      renderMenu();
     }
-  } catch (_) {
-    // Local sample menu remains available when the API server is not running.
-  }
-  menuItems = menuItems.map(normalizeItem);
-  renderCategories(); renderMenu();
-  checkTableActiveOrder();
+  } catch (_) {}
 }
 
 async function checkTableActiveOrder() {
