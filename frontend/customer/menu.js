@@ -172,6 +172,12 @@ async function request(path, options) {
   return unwrap(payload);
 }
 
+function getStaticFoodItemsList() {
+  if (typeof foodItems !== 'undefined' && Array.isArray(foodItems) && foodItems.length > 0) return foodItems;
+  if (window.foodItems && Array.isArray(window.foodItems) && window.foodItems.length > 0) return window.foodItems;
+  return [];
+}
+
 function normalizeItem(item) {
   let cat = String(item.category || 'Mains').trim();
   if (cat.toLowerCase() === 'main course' || cat.toLowerCase() === 'mains') cat = 'Mains';
@@ -180,6 +186,8 @@ function normalizeItem(item) {
   if (cat.toLowerCase() === 'bread' || cat.toLowerCase() === 'breads') cat = 'Breads';
   if (cat.toLowerCase() === 'dessert' || cat.toLowerCase() === 'desserts') cat = 'Desserts';
 
+  const isPop = Boolean(item.popular || (item.badge && String(item.badge).toLowerCase().includes('popular')) || (item.badge && String(item.badge).toLowerCase().includes('seller')) || Number(item.rating) >= 4.8);
+
   return {
     ...item,
     id: item.id || item._id,
@@ -187,8 +195,9 @@ function normalizeItem(item) {
     image: resolveImagePath(item.image),
     available: item.is_available ?? item.available ?? true,
     isVeg: item.is_veg ?? item.isVeg ?? true,
-    rating: item.rating || '4.5',
-    badge: item.badge || cat
+    rating: String(item.rating || '4.8'),
+    badge: item.badge || cat,
+    popular: isPop
   };
 }
 
@@ -743,9 +752,9 @@ document.addEventListener('DOMContentLoaded', () => renderCart());
 function showToast(message, isError = false) { const toast = $('#toast'); toast.textContent = message; toast.className = `toast show ${isError ? 'error' : ''}`; window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => { toast.className = 'toast'; }, 3500); }
 
 async function loadMenu() {
-  // Render static items immediately without waiting for API fetch (0ms instant load!)
-  if (typeof foodItems !== 'undefined' && Array.isArray(foodItems) && foodItems.length > 0) {
-    menuItems = foodItems.map(normalizeItem);
+  const initialItems = getStaticFoodItemsList();
+  if (initialItems.length > 0) {
+    menuItems = initialItems.map(normalizeItem);
     renderCategories();
     renderMenu();
   }
@@ -777,7 +786,7 @@ async function loadMenu() {
     }
     if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
       const apiItems = menuResult.value.map(normalizeItem);
-      const staticFoodItems = (typeof foodItems !== 'undefined' && Array.isArray(foodItems)) ? foodItems.map(normalizeItem) : [];
+      const staticFoodItems = getStaticFoodItemsList().map(normalizeItem);
       if (staticFoodItems.length > 0) {
         menuItems = staticFoodItems.map(staticItem => {
           const match = apiItems.find(api => api.name.toLowerCase() === staticItem.name.toLowerCase() || String(api.id) === String(staticItem.id));
