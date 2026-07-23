@@ -242,7 +242,11 @@ function renderMenu() {
   const favorites = getFavoriteIds();
   renderFavoritesSection();
   renderRecentSection();
-  $('#loadingState').hidden = true;
+  const loadingEl = $('#loadingState');
+  if (loadingEl) {
+    loadingEl.hidden = true;
+    loadingEl.style.display = 'none';
+  }
   $('#foodGrid').innerHTML = items.length ? items.map(item => {
     const imageSrc = resolveImagePath(item.image);
     const isFavorite = favorites.has(String(item.id));
@@ -1030,9 +1034,17 @@ function generateSplitUpi() {
   $('#btnGenerateSplitUpi').style.display = 'none';
 }
 
-applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'dark');
-applyLanguage();
-loadMenu();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'dark');
+    applyLanguage();
+    loadMenu();
+  });
+} else {
+  applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'dark');
+  applyLanguage();
+  loadMenu();
+}
 
 async function openPayFullBillModal() {
   $('#fullSubtotal').textContent = '₹0.00';
