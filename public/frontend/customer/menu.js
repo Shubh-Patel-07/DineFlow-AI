@@ -924,34 +924,43 @@ $('#recentSection').addEventListener('click', event => {
   if (item) openItemModal(item);
 });
 $('#foodGrid').addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { const card = event.target.closest('[data-item-id]'); if (card) { event.preventDefault(); openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); } } });
-$('#closeItemModal').addEventListener('click', closeItemModal);
-$('#itemModal').addEventListener('click', event => { if (event.target.hasAttribute('data-close-modal')) closeItemModal(); });
+
+const btnCloseModal = $('#btnCloseModal') || $('#closeItemModal');
+if (btnCloseModal) btnCloseModal.addEventListener('click', closeItemModal);
+
+const itemModalEl = $('#itemModal');
+if (itemModalEl) itemModalEl.addEventListener('click', event => { if (event.target.hasAttribute('data-close-modal')) closeItemModal(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closeItemModal(); });
-$('#callWaiterBtn').addEventListener('click', async () => {
-  const button = $('#callWaiterBtn');
-  button.disabled = true;
-  button.lastElementChild.textContent = getText('calling');
-  try {
-    await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) });
-    showToast(getText('waiterSent'));
-  } catch (_) {
-    showToast(getText('waiterError'), true);
-  } finally {
-    button.disabled = false;
-    button.lastElementChild.textContent = getText('callWaiter');
-  }
-});
+
+const callWaiterButton = $('#callWaiterBtn');
+if (callWaiterButton) {
+  callWaiterButton.addEventListener('click', async () => {
+    callWaiterButton.disabled = true;
+    const labelSpan = callWaiterButton.querySelector('span:last-child');
+    if (labelSpan) labelSpan.textContent = getText('calling');
+    try {
+      await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) });
+      showToast(getText('waiterSent'));
+    } catch (_) {
+      showToast(getText('waiterError'), true);
+    } finally {
+      callWaiterButton.disabled = false;
+      if (labelSpan) labelSpan.textContent = getText('callWaiter');
+    }
+  });
+}
 
 let tableUnpaidItems = [];
 
 async function openSplitBillModal() {
-  $('#splitUpiSection').style.display = 'none';
-  $('#btnGenerateSplitUpi').style.display = 'block';
+  const upiSec = $('#splitUpiSection');
+  if (upiSec) upiSec.style.display = 'block';
+
+  const listEl = $('#splitBillItemList') || $('#splitBillItemsList');
+
   $('#splitSubtotal').textContent = '₹0.00';
   $('#splitTax').textContent = '₹0.00';
   $('#splitTotal').textContent = '₹0.00';
-
-  $('#splitBillTableLabel').textContent = `Table #${tableId} - Active Order Items`;
 
   try {
     const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
@@ -960,46 +969,51 @@ async function openSplitBillModal() {
       const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
       
       if (!activeOrder || !Array.isArray(activeOrder.items) || activeOrder.items.length === 0) {
-        $('#splitBillItemsList').innerHTML = `
-          <div style="text-align: center; padding: 30px 10px; opacity: 0.6; font-size: 13px;">
-            <p>No active unpaid items found on this table!</p>
-          </div>
-        `;
-        $('#btnGenerateSplitUpi').style.display = 'none';
-        $('#splitBillModal').hidden = false;
+        if (listEl) {
+          listEl.innerHTML = `
+            <div style="text-align: center; padding: 20px 10px; opacity: 0.6; font-size: 13px;">
+              <p>No active unpaid items found on this table!</p>
+            </div>
+          `;
+        }
+        const modal = $('#splitBillModal');
+        if (modal) modal.hidden = false;
         return;
       }
 
       tableUnpaidItems = activeOrder.items;
 
-      $('#splitBillItemsList').innerHTML = tableUnpaidItems.map((item, idx) => `
-        <label style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: var(--color-primary);">
-            <div style="text-align: left; font-size: 13px;">
-              <div style="font-weight: 700; color: white;">${item.name}</div>
-              <div style="font-size: 10px; opacity: 0.6;">₹${item.price} each</div>
+      if (listEl) {
+        listEl.innerHTML = tableUnpaidItems.map((item, idx) => `
+          <label style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 12px; border-radius: 8px; cursor: pointer;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: #6366F1;">
+              <div style="text-align: left; font-size: 13px;">
+                <div style="font-weight: 700; color: white;">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
+                <div style="font-size: 10px; opacity: 0.6;">₹${item.price} each</div>
+              </div>
             </div>
-          </div>
-          <div style="font-size: 12px; font-weight: 700; color: white;">
-            Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
-              ${Array.from({ length: item.quantity }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
-            </select>
-          </div>
-        </label>
-      `).join('');
-      
+            <div style="font-size: 12px; font-weight: 700; color: white;">
+              Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
+                ${Array.from({ length: item.quantity || 1 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+              </select>
+            </div>
+          </label>
+        `).join('');
+      }
     }
   } catch (err) {
     console.log('Error loading split bill items:', err);
-    $('#splitBillItemsList').innerHTML = `<p style="color:red; text-align:center; font-size:12px;">Failed to load order items.</p>`;
+    if (listEl) listEl.innerHTML = `<p style="color:#F87171; text-align:center; font-size:12px;">No active order items found to split.</p>`;
   }
 
-  $('#splitBillModal').hidden = false;
+  const modal = $('#splitBillModal');
+  if (modal) modal.hidden = false;
 }
 
 function closeSplitBillModal() {
-  $('#splitBillModal').hidden = true;
+  const modal = $('#splitBillModal');
+  if (modal) modal.hidden = true;
 }
 
 function recalculateSplit() {
@@ -1016,31 +1030,21 @@ function recalculateSplit() {
     }
   });
 
-  const tax = subtotal * 0.05; // 5% GST
+  const tax = subtotal * 0.05;
   const total = subtotal + tax;
 
   $('#splitSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
   $('#splitTax').textContent = `₹${tax.toFixed(2)}`;
   $('#splitTotal').textContent = `₹${total.toFixed(2)}`;
-}
 
-function generateSplitUpi() {
-  const totalStr = $('#splitTotal').textContent.replace('₹', '');
-  const totalAmount = parseFloat(totalStr);
-
-  if (isNaN(totalAmount) || totalAmount <= 0) {
-    alert('Please select at least one item to split!');
-    return;
-  }
-
+  const totalAmount = total;
   const merchantUpi = "7777938338@omni";
   const merchantName = "DineFlow AI Restaurant";
   const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
 
-  $('#splitUpiQrImg').src = qrUrl;
-  $('#splitUpiSection').style.display = 'block';
-  $('#btnGenerateSplitUpi').style.display = 'none';
+  const qrImg = $('#splitUpiQrImg');
+  if (qrImg) qrImg.src = qrUrl;
 }
 
 if (document.readyState === 'loading') {
