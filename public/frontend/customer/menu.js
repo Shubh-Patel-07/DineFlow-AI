@@ -173,7 +173,23 @@ async function request(path, options) {
 }
 
 function normalizeItem(item) {
-  return { ...item, id: item.id || item._id, image: resolveImagePath(item.image), available: item.is_available ?? item.available ?? true, isVeg: item.is_veg ?? item.isVeg ?? true, rating: item.rating || '4.5', badge: item.badge || item.category || '' };
+  let cat = String(item.category || 'Mains').trim();
+  if (cat.toLowerCase() === 'main course' || cat.toLowerCase() === 'mains') cat = 'Mains';
+  if (cat.toLowerCase() === 'beverage' || cat.toLowerCase() === 'drinks') cat = 'Drinks';
+  if (cat.toLowerCase() === 'starter' || cat.toLowerCase() === 'starters') cat = 'Starters';
+  if (cat.toLowerCase() === 'bread' || cat.toLowerCase() === 'breads') cat = 'Breads';
+  if (cat.toLowerCase() === 'dessert' || cat.toLowerCase() === 'desserts') cat = 'Desserts';
+
+  return {
+    ...item,
+    id: item.id || item._id,
+    category: cat,
+    image: resolveImagePath(item.image),
+    available: item.is_available ?? item.available ?? true,
+    isVeg: item.is_veg ?? item.isVeg ?? true,
+    rating: item.rating || '4.5',
+    badge: item.badge || cat
+  };
 }
 
 function applyLanguage() {
@@ -190,8 +206,6 @@ function renderCategories() {
   const normalizedCategories = [];
   rawCategories.forEach(cat => {
     let cleanCat = String(cat).trim();
-    if (cleanCat.toLowerCase() === 'main course' || cleanCat.toLowerCase() === 'mains') cleanCat = 'Mains';
-    if (cleanCat.toLowerCase() === 'beverage' || cleanCat.toLowerCase() === 'drinks') cleanCat = 'Drinks';
     if (!normalizedCategories.includes(cleanCat)) normalizedCategories.push(cleanCat);
   });
 
@@ -205,7 +219,7 @@ function filteredItems() {
   const recentIds = new Set(getRecentItemIds());
 
   const matches = menuItems.filter(item => {
-    const matchesCategory = category === 'All' || item.category === category;
+    const matchesCategory = category === 'All' || (item.category && item.category.toLowerCase() === category.toLowerCase());
     const matchesDiet = diet === 'all' || (diet === 'veg' ? item.isVeg : !item.isVeg);
     const matchesSearch = !search || `${item.name} ${item.description || ''}`.toLowerCase().includes(search);
     const isFavorite = favorites.has(String(item.id));
