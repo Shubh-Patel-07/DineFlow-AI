@@ -82,16 +82,12 @@ function renderFavoritesSection() {
   if (!section) return;
 
   if (!favorites.length) {
-    section.innerHTML = `
-      <div class="favorites-section__header">
-        <h3>Favorites</h3>
-        <span class="favorites-section__meta">0 saved</span>
-      </div>
-      <p class="favorites-empty">Tap the heart icon on any dish to save it here.</p>
-    `;
+    section.style.display = 'none';
+    section.innerHTML = '';
     return;
   }
 
+  section.style.display = 'block';
   section.innerHTML = `
     <div class="favorites-section__header">
       <h3>Favorites</h3>
@@ -114,16 +110,12 @@ function renderRecentSection() {
   if (!section) return;
 
   if (!recentItems.length) {
-    section.innerHTML = `
-      <div class="favorites-section__header">
-        <h3>Recently Viewed</h3>
-        <button class="recent-clear" type="button" data-clear-recent disabled>Clear History</button>
-      </div>
-      <p class="favorites-empty">Open any dish to see it appear here.</p>
-    `;
+    section.style.display = 'none';
+    section.innerHTML = '';
     return;
   }
 
+  section.style.display = 'block';
   section.innerHTML = `
     <div class="favorites-section__header">
       <h3>Recently Viewed</h3>
@@ -194,7 +186,16 @@ function applyLanguage() {
 }
 
 function renderCategories() {
-  const categories = ['All', ...new Set(menuItems.map(item => item.category).filter(Boolean))];
+  const rawCategories = menuItems.map(item => item.category).filter(Boolean);
+  const normalizedCategories = [];
+  rawCategories.forEach(cat => {
+    let cleanCat = String(cat).trim();
+    if (cleanCat.toLowerCase() === 'main course' || cleanCat.toLowerCase() === 'mains') cleanCat = 'Mains';
+    if (cleanCat.toLowerCase() === 'beverage' || cleanCat.toLowerCase() === 'drinks') cleanCat = 'Drinks';
+    if (!normalizedCategories.includes(cleanCat)) normalizedCategories.push(cleanCat);
+  });
+
+  const categories = ['All', ...normalizedCategories];
   $('#categorySection').innerHTML = categories.map(item => `<button class="category-btn ${item === category ? 'active' : ''}" data-category="${escapeHtml(item)}">${item === 'All' ? getText('all') : escapeHtml(item)}</button>`).join('');
 }
 
