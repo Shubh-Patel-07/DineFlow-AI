@@ -10,7 +10,7 @@ const translations = {
 };
 
 let language = localStorage.getItem('dineflow-language') || 'en';
-let menuItems = typeof foodItems !== 'undefined' && Array.isArray(foodItems) ? foodItems : [];
+let menuItems = [];
 let category = 'All';
 let diet = 'all';
 let activeView = 'all';
@@ -205,9 +205,9 @@ function applyLanguage() {
   document.documentElement.lang = language;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = getText(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = getText(el.dataset.i18nPlaceholder); });
-  $('#languageSelect').value = language;
-  renderCategories();
-  renderMenu();
+  const langSel = $('#languageSelect');
+  if (langSel) langSel.value = language;
+  if (menuItems.length > 0) { renderCategories(); renderMenu(); }
 }
 
 function renderCategories() {
@@ -339,11 +339,13 @@ async function openItemModal(item) {
     `;
   }
 
-  $('#itemModal').hidden = false;
-  $('#closeItemModal').focus();
+  const modal = $('#itemModal');
+  if (modal) modal.hidden = false;
+  const closeBtn = $('#btnCloseModal') || $('#closeItemModal');
+  if (closeBtn) closeBtn.focus();
 }
 
-function closeItemModal() { $('#itemModal').hidden = true; }
+function closeItemModal() { const m = $('#itemModal'); if (m) m.hidden = true; }
 
 // --- Cart helpers (local) ---
 const CART_STORAGE_KEY = 'dineflow-cart';
@@ -364,15 +366,18 @@ let currentBuildItem = null;
 function openBuildPlateModal(item) {
   if (!item) return;
   currentBuildItem = item;
-  $('#buildItemName').textContent = item.name + ` — ₹${Number(item.price).toFixed(2)}`;
-  $('#buildSpicy').value = 'Medium';
-  $('#buildPortion').value = 'full';
+  const buildModal = $('#buildPlateModal');
+  if (!buildModal) { addToCart({ ...item, quantity: 1 }); return; }
+  const nameEl = $('#buildItemName');
+  if (nameEl) nameEl.textContent = item.name + ` — ₹${Number(item.price).toFixed(2)}`;
+  const spicyEl = $('#buildSpicy'); if (spicyEl) spicyEl.value = 'Medium';
+  const portionEl = $('#buildPortion'); if (portionEl) portionEl.value = 'full';
   document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
   document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
-  $('#buildInstruction').value = '';
+  const instrEl = $('#buildInstruction'); if (instrEl) instrEl.value = '';
   updateBuildPrice();
-  $('#buildPlateModal').hidden = false;
-  $('#closeBuildPlateModal').focus();
+  buildModal.hidden = false;
+  const closeBtn = $('#closeBuildPlateModal'); if (closeBtn) closeBtn.focus();
 }
 
 function openBuildPlateModalFromDetails() {
@@ -381,19 +386,21 @@ function openBuildPlateModalFromDetails() {
   openBuildPlateModal(item);
 }
 
-function closeBuildPlateModal() { $('#buildPlateModal').hidden = true; currentBuildItem = null; }
+function closeBuildPlateModal() { const m = $('#buildPlateModal'); if (m) m.hidden = true; currentBuildItem = null; }
 
 function parseNumber(value) { const n = parseFloat(value); return isNaN(n) ? 0 : n; }
 
 function updateBuildPrice() {
-  if (!currentBuildItem) { $('#buildPrice').textContent = '₹0.00'; return; }
+  const priceEl = $('#buildPrice');
+  if (!currentBuildItem) { if (priceEl) priceEl.textContent = '₹0.00'; return 0; }
   const base = parseNumber(currentBuildItem.price);
-  const portion = $('#buildPortion').value;
+  const portionEl = $('#buildPortion');
+  const portion = portionEl ? portionEl.value : 'full';
   const portionMultiplier = portion === 'half' ? 0.5 : 1;
   let addonsTotal = 0;
   document.querySelectorAll('.build-addon').forEach(chk => { if (chk.checked) addonsTotal += parseNumber(chk.dataset.price); });
   const subtotal = (base * portionMultiplier) + addonsTotal;
-  $('#buildPrice').textContent = `₹${subtotal.toFixed(2)}`;
+  if (priceEl) priceEl.textContent = `₹${subtotal.toFixed(2)}`;
   return subtotal;
 }
 
@@ -416,24 +423,30 @@ function buildDescription() {
 document.addEventListener('change', event => {
   if (event.target.closest('#buildPlateModal')) updateBuildPrice();
 });
-document.getElementById('closeBuildPlateModal').addEventListener('click', closeBuildPlateModal);
-document.querySelector('#btnCancelBuild').addEventListener('click', closeBuildPlateModal);
-document.getElementById('btnAddBuildToCart').addEventListener('click', () => {
+const closesBuildBtn = document.getElementById('closeBuildPlateModal');
+if (closesBuildBtn) closesBuildBtn.addEventListener('click', closeBuildPlateModal);
+const cancelBuildBtn = document.querySelector('#btnCancelBuild');
+if (cancelBuildBtn) cancelBuildBtn.addEventListener('click', closeBuildPlateModal);
+const addBuildBtn = document.getElementById('btnAddBuildToCart');
+if (addBuildBtn) addBuildBtn.addEventListener('click', () => {
   if (!currentBuildItem) return;
   const total = updateBuildPrice();
   const desc = buildDescription();
+  const portionEl = $('#buildPortion');
+  const spicyEl = $('#buildSpicy');
+  const instrEl = $('#buildInstruction');
   const customized = {
     id: `${currentBuildItem.id}-${Date.now()}`,
     baseId: currentBuildItem.id,
     name: currentBuildItem.name,
     description: desc,
-    price: Number(total.toFixed(2)),
+    price: Number((total || 0).toFixed(2)),
     quantity: 1,
-    portion: $('#buildPortion').value,
-    spicy: $('#buildSpicy').value,
+    portion: portionEl ? portionEl.value : 'full',
+    spicy: spicyEl ? spicyEl.value : 'Medium',
     addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
     removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
-    specialInstruction: $('#buildInstruction').value.trim(),
+    specialInstruction: instrEl ? instrEl.value.trim() : '',
   };
   addToCart(customized);
   closeBuildPlateModal();
@@ -532,17 +545,18 @@ document.addEventListener('click', event => {
 });
 
 // Hook save preset button
-const saveBtn = document.getElementById('btnSavePreset');
-if (saveBtn) saveBtn.addEventListener('click', saveCurrentPreset);
+const savePBtn = document.getElementById('btnSavePreset');
+if (savePBtn) savePBtn.addEventListener('click', saveCurrentPreset);
 
-// Load addon availability & presets when opening build modal
-const origOpenBuild = openBuildPlateModal;
-openBuildPlateModal = function(item) {
-  origOpenBuild(item);
-  // load availability and presets
-  loadAddonAvailability();
-  renderPresets();
-};
+// Load addon availability & presets when opening build modal - only if build modal exists
+if (document.getElementById('buildPlateModal')) {
+  const origOpenBuild = openBuildPlateModal;
+  openBuildPlateModal = function(item) {
+    origOpenBuild(item);
+    loadAddonAvailability();
+    renderPresets();
+  };
+}
 
 
 // --- Cart UI and interactions ---
@@ -587,8 +601,8 @@ function renderCart() {
   subtotalEl.textContent = formatCurrency(subtotal);
 }
 
-function openCart() { $('#cartPanel').hidden = false; renderCart(); }
-function closeCart() { $('#cartPanel').hidden = true; }
+function openCart() { const p = $('#cartPanel'); if (p) { p.hidden = false; renderCart(); } }
+function closeCart() { const p = $('#cartPanel'); if (p) p.hidden = true; }
 
 async function handleCheckout() {
   const cart = getCart();
@@ -749,7 +763,7 @@ window.__printCart = function() { console.log('Cart contents:', getCart()); };
 document.addEventListener('DOMContentLoaded', () => renderCart());
 
 
-function showToast(message, isError = false) { const toast = $('#toast'); toast.textContent = message; toast.className = `toast show ${isError ? 'error' : ''}`; window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => { toast.className = 'toast'; }, 3500); }
+function showToast(message, isError = false) { const toast = $('#toast'); if (!toast) return; toast.textContent = message; toast.className = `toast show ${isError ? 'error' : ''}`; window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => { toast.className = 'toast'; }, 3500); }
 
 async function loadMenu() {
   const initialItems = getStaticFoodItemsList();
@@ -861,10 +875,13 @@ function applyTheme(theme) {
   document.body.classList.toggle('light-theme', isLight);
   document.body.classList.toggle('dark-theme', !isLight);
   const toggle = $('#themeToggle');
-  toggle.setAttribute('aria-pressed', String(!isLight));
-  toggle.setAttribute('aria-label', isLight ? 'Enable dark mode' : 'Enable light mode');
-  toggle.querySelector('span').textContent = isLight ? 'Dark mode' : 'Light mode';
-  toggle.firstChild.textContent = isLight ? '☾ ' : '☀ ';
+  if (toggle) {
+    toggle.setAttribute('aria-pressed', String(!isLight));
+    toggle.setAttribute('aria-label', isLight ? 'Enable dark mode' : 'Enable light mode');
+    const span = toggle.querySelector('span');
+    if (span) span.textContent = isLight ? 'Dark mode' : 'Light mode';
+    if (toggle.firstChild) toggle.firstChild.textContent = isLight ? '☾ ' : '☀ ';
+  }
   localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
 }
 
@@ -1060,49 +1077,49 @@ if (document.readyState === 'loading') {
 }
 
 async function openPayFullBillModal() {
-  $('#fullSubtotal').textContent = '₹0.00';
-  $('#fullTax').textContent = '₹0.00';
-  $('#fullTotal').textContent = '₹0.00';
-  $('#fullBillTableLabel').textContent = `Table #${tableId} - Loading Bill...`;
-  $('#fullUpiQrImg').src = '';
+  const setEl = (id, val) => { const el = $(id); if (el) el.textContent = val; };
+  setEl('#fullSubtotal', '₹0.00');
+  setEl('#fullTax', '₹0.00');
+  setEl('#fullTotal', '₹0.00');
+  setEl('#fullBillTableLabel', `Table #${tableId} - Loading...`);
+  const qrImg = $('#fullUpiQrImg'); if (qrImg) qrImg.src = '';
+
+  const payModal = $('#payFullBillModal');
+  if (payModal) payModal.hidden = false;
 
   try {
     const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
       const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
-      
+
       if (!activeOrder || !Array.isArray(activeOrder.items) || activeOrder.items.length === 0) {
-        alert('No active unpaid items found on this table!');
+        setEl('#fullBillTableLabel', `Table #${tableId} - No active orders`);
         return;
       }
 
-      // Calculate total amount for all items in the order
       let subtotal = 0;
       activeOrder.items.forEach(item => {
-        subtotal += parseFloat(item.price) * parseInt(item.quantity);
+        subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1);
       });
 
-      const tax = subtotal * 0.05; // 5% GST
+      const tax = subtotal * 0.05;
       const total = subtotal + tax;
 
-      $('#fullSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
-      $('#fullTax').textContent = `₹${tax.toFixed(2)}`;
-      $('#fullTotal').textContent = `₹${total.toFixed(2)}`;
-      $('#fullBillTableLabel').textContent = `Table #${tableId} - Active Order #${activeOrder.id}`;
+      setEl('#fullSubtotal', `₹${subtotal.toFixed(2)}`);
+      setEl('#fullTax', `₹${tax.toFixed(2)}`);
+      setEl('#fullTotal', `₹${total.toFixed(2)}`);
+      setEl('#fullBillTableLabel', `Table #${tableId} — Order #${activeOrder.id}`);
 
-      // Generate UPI QR for full amount!
       const merchantUpi = "7777938338@omni";
       const merchantName = "DineFlow AI Restaurant";
       const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=Table${tableId}Order${activeOrder.id}`;
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
-
-      $('#fullUpiQrImg').src = qrUrl;
-      $('#payFullBillModal').hidden = false;
+      if (qrImg) qrImg.src = qrUrl;
     }
   } catch (err) {
     console.log('Error loading full bill:', err);
-    alert('Failed to load total bill details.');
+    setEl('#fullBillTableLabel', `Table #${tableId} - Error loading bill`);
   }
 }
 
