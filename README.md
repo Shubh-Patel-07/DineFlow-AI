@@ -41,6 +41,16 @@ DineFlow AI is a state-of-the-art, enterprise-grade Restaurant POS and Smart Ope
 
 ---
 
+## 👥 Team Members & Module Contributions
+
+| Member Name | Role & Branch | Module Responsibilities |
+| :--- | :--- | :--- |
+| **Shubh Patel (SMP)** | **Team Lead** (`feature-teamlead`) | Full-Stack Architecture, POS Billing Engine, Soundbox Engine, Thermal Printing, A4 Invoices & WhatsApp Integration |
+| **Krushank Dave** | **Member 2** (`feature-krushank`) | Customer Menu UI, Responsive Card Layout & Frontend Data Rendering |
+| **Fiyans** | **Member** (`feature-fiyans`) | Table Management UI & Admin Styling Modules |
+
+---
+
 ## 📅 Project Presentation Roadmap & Milestones
 
 This section summarizes our backend & full-stack development progress across all 4 key presentation deliverables.
