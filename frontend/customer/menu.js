@@ -592,6 +592,7 @@ async function handleCheckout() {
       saveCart([]);
       renderCart();
       closeCart();
+      localStorage.setItem(`dineflow_session_order_${tableId}`, data.data.id);
       showToast(`✅ Order #${data.data.id} placed successfully! Sent to Kitchen KDS.`, false);
       startLiveOrderTracking(data.data.id);
     } else {
@@ -668,6 +669,11 @@ function updateLiveOrderTrackerUI(order) {
     if (stepIcon2) { stepIcon2.style.background = '#10B981'; stepIcon2.style.color = '#fff'; }
     if (stepIcon3) { stepIcon3.style.background = '#10B981'; stepIcon3.style.color = '#fff'; }
     if (statusMsg) statusMsg.textContent = '🟢 Food is ready & served at your table! Enjoy your meal!';
+
+    // Stop tracking after served/completed
+    setTimeout(() => {
+      localStorage.removeItem(`dineflow_session_order_${tableId}`);
+    }, 8000);
   }
 }
 
@@ -735,13 +741,21 @@ async function loadMenu() {
 }
 
 async function checkTableActiveOrder() {
+  const tracker = $('#liveOrderTracker');
+  if (tracker) tracker.style.display = 'none';
+
+  const sessionPlacedOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  if (!sessionPlacedOrderId) return;
+
   try {
-    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
+    const res = await fetch(`${API_BASE}/orders/${sessionPlacedOrderId}`);
     const data = await res.json();
-    if (data.success && Array.isArray(data.data)) {
-      const activeOrder = data.data.find(o => String(o.table_id) === String(tableId) && o.payment_status === 'pending');
-      if (activeOrder) {
-        startLiveOrderTracking(activeOrder.id);
+    if (data.success && data.data) {
+      const order = data.data;
+      if (order.status !== 'completed' && order.status !== 'served' && order.status !== 'cancelled') {
+        startLiveOrderTracking(order.id);
+      } else {
+        localStorage.removeItem(`dineflow_session_order_${tableId}`);
       }
     }
   } catch (err) {
