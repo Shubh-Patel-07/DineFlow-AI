@@ -250,10 +250,16 @@ function renderMenu() {
       <button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" data-favorite-toggle="${escapeHtml(item.id)}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">♡</button>
       <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}">
       <div class="food-content">
-        <div class="food-topline"><span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span><span>★ ${escapeHtml(item.rating)}</span></div>
+        <div class="food-topline">
+          <span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span>
+          <span class="rating-tag">★ ${escapeHtml(item.rating)}</span>
+        </div>
         <h3>${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.description || '')}</p>
-        <div class="food-footer"><strong>₹${escapeHtml(item.price)}</strong><span class="stock ${item.available ? 'available' : 'out'}">${item.available ? getText('available') : getText('unavailable')}</span></div>
+        <div class="food-footer">
+          <strong>₹${escapeHtml(item.price)}</strong>
+          <button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>
+        </div>
       </div>
     </article>`;
   }).join('') : `<div class="empty-state"><span class="empty-illustration" aria-hidden="true">🍽️</span><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
@@ -864,6 +870,14 @@ $('#foodGrid').addEventListener('click', event => {
   if (favoriteButton) {
     event.stopPropagation();
     toggleFavorite(favoriteButton.dataset.favoriteToggle);
+    return;
+  }
+
+  const addCartBtn = event.target.closest('[data-add-cart]');
+  if (addCartBtn) {
+    event.stopPropagation();
+    const item = menuItems.find(i => String(i.id) === String(addCartBtn.dataset.addCart));
+    if (item) addToCart(item);
     return;
   }
 
