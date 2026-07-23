@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Roasted papad">
+  <rect width="800" height="600" rx="40" fill="#fff7ed"/>
+  <rect x="120" y="120" width="560" height="360" rx="32" fill="#fef3c7"/>
+  <path d="M250 330c40-95 215-128 300-70 32 21 48 55 54 92-58 20-124 28-188 24-71-5-123-29-166-46Z" fill="#f59e0b"/>
+  <path d="M270 320c22-54 128-90 190-72 20 6 38 18 54 35-41 16-102 27-167 27-35 0-63-6-77-10Z" fill="#fbbf24"/>
+  <circle cx="340" cy="222" r="26" fill="#fb923c"/>
+  <circle cx="432" cy="232" r="22" fill="#f59e0b"/>
+  <circle cx="392" cy="278" r="18" fill="#ea580c"/>
+  <path d="M240 430c53-12 97-18 165-16 72 2 135 10 184 24" stroke="#b45309" stroke-width="10" stroke-linecap="round" fill="none"/>
+</svg>

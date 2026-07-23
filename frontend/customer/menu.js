@@ -626,7 +626,8 @@ async function checkLiveOrderStatus(orderId) {
 function updateLiveOrderTrackerUI(order) {
   const tracker = $('#liveOrderTracker');
   if (!tracker) return;
-  tracker.style.display = 'block';
+  tracker.hidden = false;
+  tracker.style.setProperty('display', 'block', 'important');
 
   const badge = $('#trackerOrderBadge');
   if (badge) badge.textContent = `#${order.id}`;
@@ -742,7 +743,10 @@ async function loadMenu() {
 
 async function checkTableActiveOrder() {
   const tracker = $('#liveOrderTracker');
-  if (tracker) tracker.style.display = 'none';
+  if (tracker) {
+    tracker.hidden = true;
+    tracker.style.setProperty('display', 'none', 'important');
+  }
 
   const sessionPlacedOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
   if (!sessionPlacedOrderId) return;
