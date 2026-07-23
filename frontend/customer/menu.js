@@ -556,13 +556,134 @@ function renderCart() {
 function openCart() { $('#cartPanel').hidden = false; renderCart(); }
 function closeCart() { $('#cartPanel').hidden = true; }
 
+async function handleCheckout() {
+  const cart = getCart();
+  if (!cart || !cart.length) {
+    showToast('Your cart is empty! Add items first.', true);
+    return;
+  }
+  const checkoutBtn = $('#checkoutBtn');
+  if (checkoutBtn) {
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Placing Order...';
+  }
+
+  const payload = {
+    restaurant_id: String(restaurantId),
+    table_id: String(tableId),
+    special_instructions: cart.map(i => i.specialInstruction).filter(Boolean).join('; ') || '',
+    items: cart.map(item => ({
+      menu_item_id: item.baseId || item.id,
+      quantity: item.quantity || 1
+    }))
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success && data.data) {
+      saveCart([]);
+      renderCart();
+      closeCart();
+      showToast(`✅ Order #${data.data.id} placed successfully! Sent to Kitchen KDS.`, false);
+      startLiveOrderTracking(data.data.id);
+    } else {
+      showToast(data.message || 'Failed to place order', true);
+    }
+  } catch (err) {
+    console.error('Checkout error:', err);
+    showToast('Error connecting to backend API', true);
+  } finally {
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = 'Checkout';
+    }
+  }
+}
+
+let liveOrderPollInterval = null;
+
+async function checkLiveOrderStatus(orderId) {
+  try {
+    const res = await fetch(`${API_BASE}/orders/${orderId}`);
+    const data = await res.json();
+    if (data.success && data.data) {
+      updateLiveOrderTrackerUI(data.data);
+    }
+  } catch (err) {
+    console.log('Error polling order status:', err);
+  }
+}
+
+function updateLiveOrderTrackerUI(order) {
+  const tracker = $('#liveOrderTracker');
+  if (!tracker) return;
+  tracker.style.display = 'block';
+
+  const badge = $('#trackerOrderBadge');
+  if (badge) badge.textContent = `#${order.id}`;
+
+  const status = (order.status || 'pending').toLowerCase();
+
+  const step1 = $('#step1');
+  const step2 = $('#step2');
+  const step3 = $('#step3');
+  const stepIcon1 = $('#stepIcon1');
+  const stepIcon2 = $('#stepIcon2');
+  const stepIcon3 = $('#stepIcon3');
+  const fill = $('#progressFill');
+  const statusMsg = $('#trackerStatusMsg');
+
+  if (status === 'pending') {
+    if (fill) fill.style.width = '0%';
+    if (step1) step1.classList.add('active');
+    if (step2) step2.classList.remove('active');
+    if (step3) step3.classList.remove('active');
+    if (stepIcon1) { stepIcon1.style.background = '#F59E0B'; stepIcon1.style.color = '#000'; }
+    if (stepIcon2) { stepIcon2.style.background = 'rgba(255,255,255,0.1)'; stepIcon2.style.color = 'var(--text-muted)'; }
+    if (stepIcon3) { stepIcon3.style.background = 'rgba(255,255,255,0.1)'; stepIcon3.style.color = 'var(--text-muted)'; }
+    if (statusMsg) statusMsg.textContent = '🟡 Order received! Sent to kitchen chef.';
+  } else if (status === 'preparing') {
+    if (fill) fill.style.width = '50%';
+    if (step1) step1.classList.add('active');
+    if (step2) step2.classList.add('active');
+    if (step3) step3.classList.remove('active');
+    if (stepIcon1) { stepIcon1.style.background = '#F59E0B'; stepIcon1.style.color = '#000'; }
+    if (stepIcon2) { stepIcon2.style.background = '#F97316'; stepIcon2.style.color = '#fff'; }
+    if (stepIcon3) { stepIcon3.style.background = 'rgba(255,255,255,0.1)'; stepIcon3.style.color = 'var(--text-muted)'; }
+    if (statusMsg) statusMsg.textContent = '🟠 Chef is cooking your delicious meal in the kitchen!';
+  } else if (status === 'served' || status === 'completed') {
+    if (fill) fill.style.width = '100%';
+    if (step1) step1.classList.add('active');
+    if (step2) step2.classList.add('active');
+    if (step3) step3.classList.add('active');
+    if (stepIcon1) { stepIcon1.style.background = '#10B981'; stepIcon1.style.color = '#fff'; }
+    if (stepIcon2) { stepIcon2.style.background = '#10B981'; stepIcon2.style.color = '#fff'; }
+    if (stepIcon3) { stepIcon3.style.background = '#10B981'; stepIcon3.style.color = '#fff'; }
+    if (statusMsg) statusMsg.textContent = '🟢 Food is ready & served at your table! Enjoy your meal!';
+  }
+}
+
+function startLiveOrderTracking(orderId) {
+  if (liveOrderPollInterval) clearInterval(liveOrderPollInterval);
+  checkLiveOrderStatus(orderId);
+  liveOrderPollInterval = setInterval(() => checkLiveOrderStatus(orderId), 4000);
+}
+
 // Event delegation for cart interactions
 document.addEventListener('click', event => {
   if (event.target.closest('#floatingCartBtn')) { openCart(); return; }
   if (event.target.closest('[data-close-cart]')) { closeCart(); return; }
   if (event.target.closest('#btnCloseCart')) { closeCart(); return; }
   if (event.target.closest('#clearCartBtn')) { saveCart([]); renderCart(); showToast('Cart cleared'); return; }
-  if (event.target.closest('#checkoutBtn')) { showToast('Proceeding to checkout (not implemented)'); return; }
+  if (event.target.closest('#checkoutBtn')) { handleCheckout(); return; }
   const removeBtn = event.target.closest('[data-remove-idx]');
   if (removeBtn) {
     const idx = Number(removeBtn.dataset.removeIdx);
@@ -610,6 +731,22 @@ async function loadMenu() {
   }
   menuItems = menuItems.map(normalizeItem);
   renderCategories(); renderMenu();
+  checkTableActiveOrder();
+}
+
+async function checkTableActiveOrder() {
+  try {
+    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      const activeOrder = data.data.find(o => String(o.table_id) === String(tableId) && o.payment_status === 'pending');
+      if (activeOrder) {
+        startLiveOrderTracking(activeOrder.id);
+      }
+    }
+  } catch (err) {
+    console.log('Error checking table active order:', err);
+  }
 }
 
 function highlightSuggestion(value, query) {
