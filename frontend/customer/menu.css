@@ -371,5 +371,78 @@ button, input, select, textarea { font: inherit; }
   .search-wrapper { max-width: 100%; }
   .food-grid { grid-template-columns: 1fr; gap: 14px; }
   .bottom-floating-actions { width: 94%; bottom: 14px; gap: 6px; padding: 6px; }
-  .call-waiter-btn { font-size: 11px; padding: 0 8px; height: 38px; }
+}
+
+/* --- LIGHT THEME STYLING OVERRIDES --- */
+body.light-theme {
+  background: #F1F5F9 !important;
+  background-image: none !important;
+  color: #0F172A !important;
+}
+
+body.light-theme .menu-header,
+body.light-theme .restaurant-header {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light-theme .logo,
+body.light-theme .restaurant-left h2,
+body.light-theme .section-title h2,
+body.light-theme .food-content h3 {
+  color: #0F172A !important;
+}
+
+body.light-theme .eyebrow,
+body.light-theme .section-title p,
+body.light-theme .food-content p,
+body.light-theme .logo-section > p:last-child {
+  color: #64748B !important;
+}
+
+body.light-theme .food-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .food-card:hover {
+  border-color: #6366F1 !important;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15) !important;
+}
+
+body.light-theme .diet-btn,
+body.light-theme .filter-btn,
+body.light-theme .category-btn,
+body.light-theme #sortSelect,
+body.light-theme .search-box,
+body.light-theme .language-picker,
+body.light-theme .theme-toggle {
+  background: #FFFFFF !important;
+  color: #334155 !important;
+  border-color: #CBD5E1 !important;
+}
+
+body.light-theme .search-box input {
+  color: #0F172A !important;
+}
+
+body.light-theme .diet-btn.active,
+body.light-theme .category-btn.active,
+body.light-theme .filter-btn.is-active {
+  background: linear-gradient(135deg, #6366F1, #4F46E5) !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
+}
+
+body.light-theme .bottom-floating-actions {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.light-theme .favorite-btn {
+  background: #F1F5F9 !important;
+  color: #D97706 !important;
 }
