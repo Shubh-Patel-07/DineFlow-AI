@@ -347,6 +347,16 @@ async function openItemModal(item) {
 
 function closeItemModal() { const m = $('#itemModal'); if (m) m.hidden = true; }
 
+// Wire modal Add to Cart button
+document.addEventListener('click', event => {
+  if (event.target.closest('#modalAddToCartBtn')) {
+    const name = $('#modalItemName')?.textContent;
+    const item = menuItems.find(i => i.name === name);
+    if (item) { addToCart({ ...item, quantity: 1 }); closeItemModal(); }
+  }
+});
+
+
 // --- Cart helpers (local) ---
 const CART_STORAGE_KEY = 'dineflow-cart';
 function getCart() {
