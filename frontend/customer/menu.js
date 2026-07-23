@@ -248,7 +248,7 @@ function renderMenu() {
     const isFavorite = favorites.has(String(item.id));
     return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}">
       <button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" data-favorite-toggle="${escapeHtml(item.id)}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">♡</button>
-      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}">
+      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';">
       <div class="food-content">
         <div class="food-topline">
           <span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span>
