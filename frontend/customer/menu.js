@@ -732,7 +732,28 @@ async function loadMenu() {
     const restaurantTables = tablesResult.status === 'fulfilled' && Array.isArray(tablesResult.value) ? tablesResult.value : [];
     setTableOptions(restaurantTables);
     if (tableResult.status === 'fulfilled') { const data = tableResult.value; const number = data.table_number || data.tableNumber || tableId; $('#tableNumber').options[$('#tableNumber').selectedIndex].text = `#${number}`; }
-    if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value)) menuItems = menuResult.value.map(normalizeItem);
+    if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
+      const apiItems = menuResult.value.map(normalizeItem);
+      const staticFoodItems = (typeof foodItems !== 'undefined' && Array.isArray(foodItems)) ? foodItems.map(normalizeItem) : [];
+      if (staticFoodItems.length > 0) {
+        // Merge backend items into Krushank's rich static list so all Unsplash images & categories are preserved!
+        menuItems = staticFoodItems.map(staticItem => {
+          const match = apiItems.find(api => api.name.toLowerCase() === staticItem.name.toLowerCase() || String(api.id) === String(staticItem.id));
+          if (match) {
+            return { ...staticItem, id: match.id, baseId: match.id, price: match.price || staticItem.price };
+          }
+          return staticItem;
+        });
+        // Append any extra backend items not in static list
+        apiItems.forEach(apiItem => {
+          if (!menuItems.some(m => String(m.id) === String(apiItem.id))) {
+            menuItems.push(apiItem);
+          }
+        });
+      } else {
+        menuItems = apiItems;
+      }
+    }
   } catch (_) {
     // Local sample menu remains available when the API server is not running.
   }
