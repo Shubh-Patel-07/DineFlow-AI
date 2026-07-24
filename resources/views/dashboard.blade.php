@@ -307,68 +307,99 @@
   </div>
 
   <!-- Dashboard Content -->
-  <div class="dashboard-content">
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon primary"><i class="fa-solid fa-receipt"></i></div>
+  <div class="dashboard-content" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+
+    <!-- Welcome Hero Banner -->
+    <div style="background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95)); backdrop-filter: blur(20px); border: 1px solid rgba(99,102,241,0.3); border-radius: 24px; padding: 24px 28px; box-shadow: 0 20px 45px -10px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 20px rgba(99,102,241,0.4); border: 2px solid rgba(99,102,241,0.5);">
         <div>
-          <div class="card-title">Today's Orders</div>
-          <div class="card-value">{{ $todayOrdersCount }}</div>
-          <div class="card-sub">{{ $ordersDiffText }}</div>
+          <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:#F8FAFC; margin:0 0 4px; display:flex; align-items:center; gap:8px;">
+            Welcome back, {{ Auth::user()->name }}! <span style="font-size:18px;">👋</span>
+          </h2>
+          <p style="margin:0; color:#94A3B8; font-size:13px; font-weight:500;">DineFlow AI POS Operations Center • Live Real-Time Analytics & Soundbox Enabled</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/pos" style="padding: 11px 20px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
+        <a href="/admin/menu-manager" style="padding: 11px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #F8FAFC; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
+        <a href="/z-report" style="padding: 11px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #F8FAFC; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-line"></i> Z-Report</a>
+      </div>
+    </div>
+
+    <!-- 4 Stats Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px;">
+      <!-- Card 1 -->
+      <div style="background: rgba(30,41,59,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(99,102,241,0.25); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: 0 10px 25px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #818CF8; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-receipt"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Today's Orders</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: #F8FAFC; margin: 2px 0;">{{ $todayOrdersCount }}</div>
+            <div style="font-size: 11.5px; color: #34D399; font-weight: 600;">{{ $ordersDiffText }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div style="background: rgba(30,41,59,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(16,185,129,0.25); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: 0 10px 25px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Total Revenue</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: #F8FAFC; margin: 2px 0;">₹ {{ number_format($todayRevenue) }}</div>
+            <div style="font-size: 11.5px; color: #34D399; font-weight: 600;">{{ $revenueDiffText }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div style="background: rgba(30,41,59,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(245,158,11,0.25); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: 0 10px 25px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #FBBF24; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-users"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Active Customers</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: #F8FAFC; margin: 2px 0;">{{ $activeCustomers }}</div>
+            <div style="font-size: 11.5px; color: #94A3B8; font-weight: 500;">Currently dining at tables</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div style="background: rgba(30,41,59,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(239,68,68,0.25); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: 0 10px 25px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #F87171; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-table-cells-large"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Tables Occupied</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: #F8FAFC; margin: 2px 0;">{{ $occupiedTablesCount }} / {{ $totalTablesCount }}</div>
+            <div style="font-size: 11.5px; color: #64748B; font-weight: 500;">Real-time floor occupancy</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon success"><i class="fa-solid fa-money-bill-wave"></i></div>
-        <div>
-          <div class="card-title">Total Revenue</div>
-          <div class="card-value">₹ {{ number_format($todayRevenue) }}</div>
-          <div class="card-sub">{{ $revenueDiffText }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon warning"><i class="fa-solid fa-users"></i></div>
-        <div>
-          <div class="card-title">Active Customers</div>
-          <div class="card-value">{{ $activeCustomers }}</div>
-          <div class="card-sub">Currently dining</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon danger"><i class="fa-solid fa-table-cells"></i></div>
-        <div>
-          <div class="card-title">Tables Occupied</div>
-          <div class="card-value">{{ $occupiedTablesCount }} / {{ $totalTablesCount }}</div>
-          <div class="card-sub">Real-time status</div>
-        </div>
-      </div>
-    </div>
     <!-- Charts Row -->
-    <div class="dashboard-charts-row" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; margin-top: 12px;">
-      <div class="chart-card" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> Last 7 Days Sales Trend</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+      <div style="background: rgba(30,41,59,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.4);">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: #F8FAFC; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-line" style="color:#818CF8;"></i> Last 7 Days Revenue Trend
+        </h3>
         <div style="height: 280px; position: relative;">
           <canvas id="salesTrendChart"></canvas>
         </div>
       </div>
-      
-      <div class="chart-card" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-pie" style="color:var(--success);"></i> Sales by Category</h3>
+
+      <div style="background: rgba(30,41,59,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.4);">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: #F8FAFC; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-pie" style="color:#34D399;"></i> Sales Category Distribution
+        </h3>
         <div style="height: 280px; position: relative;">
           <canvas id="categorySalesChart"></canvas>
         </div>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
 </div>
 
