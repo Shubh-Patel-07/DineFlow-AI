@@ -39,8 +39,8 @@ class AuthController extends Controller
                 ->withErrors(['login' => 'Invalid username or password']);
         }
 
-        // Store username in session for quick PIN login
-        session(['last_username' => $user->username]);
+        // Store username and role in session for RBAC
+        session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
         
         Auth::login($user, $request->boolean('remember'));
         return redirect()->route('pos.index')->with('success', 'Welcome to DineFlow AI POS!');
@@ -105,7 +105,7 @@ class AuthController extends Controller
                 ->withErrors(['numeric_pin' => "Invalid PIN for {$user->username}. Hint: PIN is {$dbPin}"]);
         }
 
-        session(['last_username' => $user->username]);
+        session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
         Auth::login($user, remember: true);
         
         return redirect()->intended(route('pos.index'))->with('success', 'Login successful!');
