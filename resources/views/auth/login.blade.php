@@ -498,9 +498,8 @@
                     <div class="pin-dot" id="dot2"></div>
                     <div class="pin-dot" id="dot3"></div>
                     <div class="pin-dot" id="dot4"></div>
-                    <div class="pin-dot" id="dot5"></div>
-                    <div class="pin-dot" id="dot6"></div>
                 </div>
+
 
                 <div class="keypad">
                     <button type="button" class="key" onclick="pressKey(1)">1</button>
@@ -598,24 +597,26 @@
         const pinSubmitForm = document.getElementById('pinSubmitForm');
 
         function updatePinDisplay() {
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= 4; i++) {
                 const dot = document.getElementById('dot' + i);
-                if (enteredPin.length >= i) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
+                if (dot) {
+                    if (enteredPin.length >= i) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
                 }
             }
         }
 
         function pressKey(num) {
-            if (enteredPin.length < 6) {
-                enteredPin += num;
+            if (enteredPin.length < 4) {
+                enteredPin += String(num);
                 updatePinDisplay();
                 
-                if (enteredPin.length >= 6) {
+                if (enteredPin.length === 4) {
                     hiddenPinInput.value = enteredPin;
-                    // Auto submit form when 6 digits are completed!
+                    // Auto submit form when 4 digits (e.g. 1234) are completed!
                     setTimeout(() => {
                         pinSubmitForm.submit();
                     }, 200);
@@ -630,6 +631,7 @@
             }
         }
 
+
         function clearPin() {
             enteredPin = '';
             updatePinDisplay();
@@ -641,6 +643,27 @@
                 updatePinDisplay();
             }
         }
+
+        // Keyboard support for Quick PIN
+        document.addEventListener('keydown', (e) => {
+            const pinPanel = document.getElementById('panelPin');
+            if (!pinPanel || !pinPanel.classList.contains('active')) return;
+            // Don't intercept if focused on select element
+            if (document.activeElement && document.activeElement.tagName === 'SELECT') return;
+
+            if (e.key >= '0' && e.key <= '9') {
+                pressKey(parseInt(e.key));
+            } else if (e.key === 'Backspace') {
+                e.preventDefault();
+                backspacePin();
+            } else if (e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
+                clearPin();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                manualPinSubmit();
+            }
+        });
     </script>
+
 </body>
 </html>
