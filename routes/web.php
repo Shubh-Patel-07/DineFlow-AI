@@ -185,6 +185,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/feedback', function () {
         return response()->file(public_path('frontend/admin/feedback.html'));
     });
+
+    Route::get('/frontend/admin/staff.html', function () {
+        return response()->file(public_path('frontend/admin/staff.html'));
+    });
+    Route::get('/admin/staff', function () {
+        return response()->file(public_path('frontend/admin/staff.html'));
+    });
 });
 
 
