@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard — DineFlow AI POS</title>
+  <script>window.AUTH_USER_ROLE = "{{ Auth::user()->role ?? Auth::user()->username ?? session('active_role') ?? '' }}";</script>
+  <script src="/frontend/admin/utils.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -322,6 +324,7 @@
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         <a href="/pos" style="padding: 11px 20px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
+        <a href="/admin/tables" style="padding: 11px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #F8FAFC; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
         <a href="/admin/menu-manager" style="padding: 11px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #F8FAFC; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
         <a href="/z-report" style="padding: 11px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #F8FAFC; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-line"></i> Z-Report</a>
       </div>
