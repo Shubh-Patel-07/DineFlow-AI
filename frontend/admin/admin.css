@@ -18,15 +18,17 @@
   --font-display: 'Outfit', sans-serif;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
   background-color: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-main);
   overflow-x: hidden;
+  overflow-y: auto;
   min-height: 100vh;
 }
+
 
 /* Background Gradients & Glows */
 .auth-bg-glow {
