@@ -142,9 +142,11 @@
         </button>
       </div>
 
+      <div id="roleSwitcherBarContainer"></div>
+
       <div class="staff-grid">
         <!-- Admin Card -->
-        <div class="staff-card">
+        <div class="staff-card" data-role-card="admin">
           <div class="staff-header">
             <div class="staff-avatar" style="background:linear-gradient(135deg, #6366F1, #4F46E5);"><i class="fa-solid fa-crown"></i></div>
             <div>
@@ -160,7 +162,7 @@
         </div>
 
         <!-- Manager Card -->
-        <div class="staff-card">
+        <div class="staff-card" data-role-card="manager">
           <div class="staff-header">
             <div class="staff-avatar" style="background:linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-user-tie"></i></div>
             <div>
@@ -176,7 +178,7 @@
         </div>
 
         <!-- Cashier Card -->
-        <div class="staff-card">
+        <div class="staff-card" data-role-card="cashier">
           <div class="staff-header">
             <div class="staff-avatar" style="background:linear-gradient(135deg, #F59E0B, #D97706);"><i class="fa-solid fa-calculator"></i></div>
             <div>
@@ -192,7 +194,7 @@
         </div>
 
         <!-- Kitchen Card -->
-        <div class="staff-card">
+        <div class="staff-card" data-role-card="kitchen">
           <div class="staff-header">
             <div class="staff-avatar" style="background:linear-gradient(135deg, #EF4444, #DC2626);"><i class="fa-solid fa-fire-burner"></i></div>
             <div>
@@ -208,7 +210,7 @@
         </div>
 
         <!-- Waiter Card -->
-        <div class="staff-card">
+        <div class="staff-card" data-role-card="waiter">
           <div class="staff-header">
             <div class="staff-avatar" style="background:linear-gradient(135deg, #06B6D4, #0891B2);"><i class="fa-solid fa-person-walking"></i></div>
             <div>
@@ -225,5 +227,8 @@
       </div>
     </main>
   </div>
+
+  <script src="/frontend/admin/utils.js"></script>
+  <script src="/frontend/admin/staff.js"></script>
 </body>
 </html>
