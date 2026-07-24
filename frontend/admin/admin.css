@@ -585,8 +585,38 @@ body {
 }
 
 .sidebar.collapsed {
-  width: 60px;
-  min-width: 60px;
+  width: 60px !important;
+  min-width: 60px !important;
+}
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .user-info,
+.sidebar.collapsed .nav-item .nav-label,
+.sidebar.collapsed .nav-badge,
+.sidebar.collapsed .sidebar-section-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  display: none !important;
+}
+.sidebar-toggle {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s;
+}
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.sidebar.collapsed .sidebar-toggle i {
+  transform: rotate(180deg);
 }
 
 .sidebar-brand {

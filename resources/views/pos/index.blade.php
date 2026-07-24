@@ -2588,11 +2588,17 @@
   /* ─── SIDEBAR TOGGLE ─────────────────────── */
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
 
     if (window.innerWidth <= 768) {
       const willOpen = !sidebar.classList.contains('mobile-open');
-      if (willOpen) setMobileCart(false);
+      if (willOpen && typeof setMobileCart === 'function') setMobileCart(false);
       setMobileSidebar(willOpen);
+      return;
+    }
+
+    if (sidebar.classList.contains('mobile-open')) {
+      setMobileSidebar(false);
       return;
     }
 
