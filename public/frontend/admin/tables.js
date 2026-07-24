@@ -104,7 +104,7 @@ function renderTables() {
         </div>
 
         <!-- Action Button -->
-        <button onclick="showQrModal('${table.table_number}', '${table.qr_code_url}')" class="btn-primary" style="width: 100%; height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 11.5px; font-weight: 700; color: #FFFFFF; cursor: pointer; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
+        <button onclick="showQrModal(this.dataset.tablenum, this.dataset.qr)" data-tablenum="${String(table.table_number).replace(/\"/g, '&quot;')}" data-qr="${String(table.qr_code_url).replace(/\"/g, '&quot;')}" class="btn-primary" style="width: 100%; height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 11.5px; font-weight: 700; color: #FFFFFF; cursor: pointer; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
           <i class="fa-solid fa-qrcode"></i> View QR Code
         </button>
       </div>
@@ -181,6 +181,7 @@ async function removeTable(tableId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  Auth.checkAuth();
   // Let's load the tables list
   loadTables();
 });

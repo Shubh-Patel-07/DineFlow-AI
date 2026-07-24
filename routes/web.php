@@ -38,7 +38,10 @@ Route::middleware('auth')->group(function () {
         $revenueDiffText = ($revenueChange >= 0 ? '+' : '') . $revenueChange . '% from yesterday';
 
         // Occupied Tables
-        $occupiedTablesCount = \App\Models\Order::where('payment_status', 'pending')->distinct('table_id')->count('table_id');
+        $occupiedTablesCount = \App\Models\Order::where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->distinct('table_id')
+            ->count('table_id');
         $totalTablesCount = \App\Models\Table::count() ?: 12;
 
         // Active Customers
@@ -94,14 +97,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/kitchen', function () {
         return view('pos.kitchen');
     })->name('pos.kitchen');
+    Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
+    Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4');
+    Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen');
+    Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar');
+    Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined');
 });
-
-Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
-Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4');
-Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen');
-Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar');
-Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined');
-
 
 // Simple shortcuts for testing/presentations
 Route::get('/menu', function () {

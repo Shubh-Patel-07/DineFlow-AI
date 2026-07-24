@@ -6,7 +6,8 @@ let allFeedback = [];
 
 async function loadFeedback() {
   showLoader();
-  const result = await APIService.getFeedback();
+  const restaurantId = new URLSearchParams(window.location.search).get('restaurant_id') || window.APP_CONFIG?.restaurant_id || 1;
+  const result = await APIService.getFeedback(restaurantId);
   hideLoader();
 
   if (!result.success) {
@@ -19,7 +20,7 @@ async function loadFeedback() {
 }
 
 function renderFeedback() {
-  const container = $('[data-feedback-container]');
+  const container = document.querySelector('[data-feedback-container]');
 
   if (!allFeedback || allFeedback.length === 0) {
     container.innerHTML = `

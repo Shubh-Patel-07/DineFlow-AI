@@ -23,7 +23,7 @@ class InventoryController extends Controller
         $request->validate([
             'restaurant_id' => 'required|string',
             'name' => 'required|string',
-            'quantity' => 'required|integer',
+            'quantity' => 'required|integer|min:0',
         ]);
 
         $item = Inventory::create([
@@ -40,7 +40,7 @@ class InventoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'quantity' => 'required|integer',
+            'quantity' => 'required|integer|min:0',
         ]);
 
         $item = Inventory::find($id);
