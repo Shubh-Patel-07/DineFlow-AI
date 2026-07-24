@@ -21,25 +21,25 @@
       --warning-light:  rgba(245, 158, 11, 0.15);
       --info:           #06B6D4;
       --info-light:     rgba(6, 182, 212, 0.15);
-      --sidebar-bg:     #0f172a;
-      --sidebar-hover:  #1e293b;
+      --sidebar-bg:     #0B0F19;
+      --sidebar-hover:  #1E293B;
       --sidebar-active: #6366F1;
-      --bg:             #0b0f19;
-      --card:           #1e293b;
+      --bg:             #0F172A;
+      --card:           #1E293B;
       --border:         #334155;
-      --text-primary:   #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted:     #64748b;
-      --shadow-sm:      0 4px 10px rgba(0,0,0,.3);
-      --shadow-md:      0 8px 20px rgba(0,0,0,.4);
-      --shadow-lg:      0 16px 36px rgba(0,0,0,.5);
+      --text-primary:   #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.3);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.4);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.5);
       --radius-sm:      8px;
       --radius-md:      12px;
       --radius-lg:      20px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
+    body { font-family: 'Outfit', 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
     /* ─── SIDEBAR ─────────────────────────────── */
     .sidebar {
