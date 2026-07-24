@@ -346,6 +346,104 @@ button, input, select, textarea { font: inherit; }
 .section-title h2 { margin: 0; font: 800 1.85rem 'Outfit', sans-serif; color: #F8FAFC; letter-spacing: -0.5px; }
 .section-title p { margin: 2px 0 0; color: #94A3B8; font-size: 0.9rem; }
 
+/* Featured Sections */
+.promo-section {
+  margin-bottom: 20px;
+}
+
+.promo-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.promo-section__title {
+  font: 700 1rem 'Outfit', sans-serif;
+  color: #F8FAFC;
+}
+
+.promo-section__meta {
+  font-size: 0.8rem;
+  color: #94A3B8;
+}
+
+.promo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.promo-card, .combo-card {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.promo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.promo-card__tag {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.16);
+  color: #818CF8;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.promo-card__name {
+  font: 700 0.96rem 'Outfit', sans-serif;
+  color: #F8FAFC;
+}
+
+.promo-card__desc {
+  font-size: 0.82rem;
+  color: #94A3B8;
+  line-height: 1.4;
+}
+
+.promo-card__btn, .combo-card__btn {
+  margin-top: auto;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.combo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.combo-card__title {
+  font: 700 0.95rem 'Outfit', sans-serif;
+  color: #F8FAFC;
+}
+
+.combo-card__includes {
+  font-size: 0.8rem;
+  color: #CBD5E1;
+  line-height: 1.5;
+}
+
+.combo-card__price {
+  font: 800 1rem 'Outfit', sans-serif;
+  color: #34D399;
+}
+
 /* Food Grid & Cards */
 .food-grid {
   display: grid;
