@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Food placeholder">
+  <rect width="512" height="512" rx="40" fill="#FFF7ED"/>
+  <rect x="76" y="132" width="360" height="248" rx="36" fill="#FDE68A"/>
+  <path d="M142 216c0-52 42-94 94-94h40c52 0 94 42 94 94v34h-228z" fill="#FB923C"/>
+  <path d="M170 312h172" stroke="#92400E" stroke-width="18" stroke-linecap="round"/>
+  <path d="M228 126v-22" stroke="#A16207" stroke-width="18" stroke-linecap="round"/>
+  <path d="M286 126v-24" stroke="#A16207" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="206" cy="222" r="14" fill="#fff"/>
+  <circle cx="306" cy="222" r="14" fill="#fff"/>
+</svg>
