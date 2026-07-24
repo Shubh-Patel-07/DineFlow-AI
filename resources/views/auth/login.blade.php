@@ -65,15 +65,61 @@
             margin-bottom: 36px;
         }
 
+        /* Animated Glowing Brand Logo */
+        .logo-img-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #38BDF8, #818CF8, #C084FC, #38BDF8);
+            background-size: 300% 300%;
+            animation: logoGradientRotate 4s linear infinite;
+            opacity: 0.85;
+            filter: blur(8px);
+            z-index: 0;
+        }
+
+        @keyframes logoGradientRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .logo-img {
+            position: relative;
+            z-index: 1;
             height: 64px;
             width: 64px;
             border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.5);
             object-fit: cover;
-            border: 1px solid rgba(99, 102, 241, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            animation: logoFloatPulse 3s ease-in-out infinite alternate;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
         }
 
+        @keyframes logoFloatPulse {
+            0% {
+                transform: translateY(0px) scale(1);
+                box-shadow: 0 8px 24px rgba(56, 189, 248, 0.4), 0 0 15px rgba(129, 140, 248, 0.3);
+            }
+            100% {
+                transform: translateY(-5px) scale(1.04);
+                box-shadow: 0 16px 36px rgba(192, 132, 252, 0.65), 0 0 25px rgba(56, 189, 248, 0.55);
+            }
+        }
+
+        .logo-img-wrapper:hover .logo-img {
+            transform: translateY(-7px) scale(1.09) rotate(3deg);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.85), 0 0 35px rgba(56, 189, 248, 0.85);
+        }
 
         .logo-text {
             font-family: 'Outfit', sans-serif;
@@ -84,8 +130,17 @@
         }
 
         .logo-text span {
-            color: #818CF8;
+            background: linear-gradient(135deg, #38BDF8, #818CF8, #C084FC, #38BDF8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 3s linear infinite;
         }
+
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
 
         .left-title {
             font-family: 'Outfit', sans-serif;
@@ -400,9 +455,12 @@
     <div class="split-left">
         <div class="left-content">
             <div class="logo-group">
-                <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" class="logo-img" onerror="this.src='/images/dineflow_logo.png'">
+                <div class="logo-img-wrapper">
+                    <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" class="logo-img" onerror="this.src='/images/dineflow_logo.png'">
+                </div>
                 <div class="logo-text">Dine<span>Flow</span> AI</div>
             </div>
+
 
             <h1 class="left-title">Next-Gen Restaurant POS Suite</h1>
             
