@@ -192,6 +192,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/staff', function () {
         return response()->file(public_path('frontend/admin/staff.html'));
     });
+
+    Route::get('/frontend/admin/settings.html', function () {
+        return response()->file(public_path('frontend/admin/settings.html'));
+    });
+    Route::get('/admin/settings', function () {
+        return response()->file(public_path('frontend/admin/settings.html'));
+    });
 });
 
 
