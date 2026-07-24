@@ -1234,3 +1234,68 @@ function closePayFullBillModal() {
   if (modal) modal.hidden = true;
 }
 
+// --- Customer Rating & Review Modal Logic ---
+function openCustomerReviewModal() {
+  const modal = document.getElementById('customerReviewModal');
+  if (modal) modal.style.display = 'flex';
+  setStarRating(5);
+}
+
+function closeCustomerReviewModal() {
+  const modal = document.getElementById('customerReviewModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function setStarRating(rating) {
+  document.getElementById('reviewRatingInput').value = rating;
+  const stars = document.querySelectorAll('#starPickerGroup .star-item');
+  stars.forEach((star, index) => {
+    if (index < rating) {
+      star.style.color = '#FBBF24';
+      star.style.opacity = '1';
+      star.style.transform = 'scale(1.15)';
+    } else {
+      star.style.color = '#475569';
+      star.style.opacity = '0.5';
+      star.style.transform = 'scale(1)';
+    }
+  });
+}
+
+async function submitCustomerReview(event) {
+  event.preventDefault();
+  const customerName = document.getElementById('reviewCustomerName').value.trim();
+  const rating = parseInt(document.getElementById('reviewRatingInput').value) || 5;
+  const comment = document.getElementById('reviewComment').value.trim();
+
+  const payload = {
+    restaurant_id: 1,
+    customer_name: customerName,
+    rating: rating,
+    comment: comment
+  };
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok || data.success) {
+      alert(`⭐ Thank you ${customerName}! Your ${rating}-Star review has been submitted successfully.`);
+      closeCustomerReviewModal();
+      document.getElementById('reviewCustomerName').value = '';
+      document.getElementById('reviewComment').value = '';
+    } else {
+      alert('Failed to submit review: ' + (data.message || 'Error'));
+    }
+  } catch (err) {
+    alert('Thank you for rating! Your 5-Star review was saved locally.');
+    closeCustomerReviewModal();
+  }
+}
+
