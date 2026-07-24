@@ -1091,48 +1091,108 @@ async function openPayFullBillModal() {
   setEl('#fullSubtotal', '₹0.00');
   setEl('#fullTax', '₹0.00');
   setEl('#fullTotal', '₹0.00');
-  setEl('#fullBillTableLabel', `Table #${tableId} - Loading...`);
-  const qrImg = $('#fullUpiQrImg'); if (qrImg) qrImg.src = '';
+  const qrImg = $('#fullUpiQrImg');
+  if (qrImg) qrImg.src = '';
+  const upiSection = $('#fullUpiSection');
+  const itemListEl = $('#fullBillItemList');
+  if (itemListEl) itemListEl.innerHTML = '';
 
   const payModal = $('#payFullBillModal');
   if (payModal) payModal.hidden = false;
 
+  function generateAndShowQR(subtotal, orderId) {
+    const tax = subtotal * 0.05;
+    const total = subtotal + tax;
+    setEl('#fullSubtotal', `₹${subtotal.toFixed(2)}`);
+    setEl('#fullTax', `₹${tax.toFixed(2)}`);
+    setEl('#fullTotal', `₹${total.toFixed(2)}`);
+
+    if (total <= 0) { if (upiSection) upiSection.style.display = 'none'; return; }
+
+    const merchantUpi = '7777938338@omni';
+    const merchantName = 'DineFlow AI Restaurant';
+    const note = orderId ? `Table${tableId}Order${orderId}` : `Table${tableId}Cart`;
+    const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=${note}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
+    if (qrImg) {
+      qrImg.style.display = 'block';
+      qrImg.src = qrUrl;
+      qrImg.onerror = () => {
+        // Fallback if QR server unreachable
+        const parent = qrImg.parentElement;
+        if (parent) parent.innerHTML = `
+          <div style="padding:20px;text-align:center;">
+            <p style="color:#818CF8;font-weight:800;font-size:13px;margin:0 0 6px;">Pay via UPI ID</p>
+            <p style="color:#34D399;font-size:18px;font-weight:800;margin:0;">${merchantUpi}</p>
+            <p style="opacity:0.6;font-size:11px;margin:8px 0 0;">Amount: ₹${total.toFixed(2)}</p>
+          </div>`;
+      };
+    }
+    if (upiSection) upiSection.style.display = 'block';
+  }
+
+  // Try to fetch from DB first
   try {
     const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
-      const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
-
-      if (!activeOrder || !Array.isArray(activeOrder.items) || activeOrder.items.length === 0) {
-        setEl('#fullBillTableLabel', `Table #${tableId} - No active orders`);
+      const activeOrder = data.data.find(o =>
+        String(o.table_id) === String(tableId) && o.payment_status === 'pending'
+      );
+      if (activeOrder && Array.isArray(activeOrder.items) && activeOrder.items.length > 0) {
+        setEl('#fullBillTableLabel', `Table #${tableId} — Order #${activeOrder.id}`);
+        let subtotal = 0;
+        if (itemListEl) {
+          itemListEl.innerHTML = activeOrder.items.map(item => {
+            const name = item.name || item.menu_item?.name || 'Item';
+            const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
+            subtotal += lineTotal;
+            return `<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;">
+              <span style="font-weight:600;">${escapeHtml(name)} × ${item.quantity || 1}</span>
+              <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
+            </div>`;
+          }).join('');
+          subtotal = 0;
+          activeOrder.items.forEach(item => { subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1); });
+        }
+        generateAndShowQR(subtotal, activeOrder.id);
         return;
       }
-
-      let subtotal = 0;
-      activeOrder.items.forEach(item => {
-        subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1);
-      });
-
-      const tax = subtotal * 0.05;
-      const total = subtotal + tax;
-
-      setEl('#fullSubtotal', `₹${subtotal.toFixed(2)}`);
-      setEl('#fullTax', `₹${tax.toFixed(2)}`);
-      setEl('#fullTotal', `₹${total.toFixed(2)}`);
-      setEl('#fullBillTableLabel', `Table #${tableId} — Order #${activeOrder.id}`);
-
-      const merchantUpi = "7777938338@omni";
-      const merchantName = "DineFlow AI Restaurant";
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=Table${tableId}Order${activeOrder.id}`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
-      if (qrImg) qrImg.src = qrUrl;
     }
   } catch (err) {
-    console.log('Error loading full bill:', err);
-    setEl('#fullBillTableLabel', `Table #${tableId} - Error loading bill`);
+    console.log('DB fetch failed, using cart fallback:', err);
   }
+
+  // Fallback: use local cart
+  const cart = getCart();
+  if (cart && cart.length > 0) {
+    setEl('#fullBillTableLabel', `Table #${tableId} — Cart Preview`);
+    let subtotal = 0;
+    if (itemListEl) {
+      itemListEl.innerHTML = cart.map(item => {
+        const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
+        subtotal += lineTotal;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;">
+          <span style="font-weight:600;">${escapeHtml(item.name)} × ${item.quantity || 1}</span>
+          <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
+        </div>`;
+      }).join('');
+      subtotal = 0;
+      cart.forEach(item => { subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1); });
+    }
+    generateAndShowQR(subtotal, null);
+    return;
+  }
+
+  // Nothing found
+  setEl('#fullBillTableLabel', `Table #${tableId} — No active order`);
+  if (itemListEl) itemListEl.innerHTML = `<p style="text-align:center;opacity:0.6;font-size:13px;padding:20px 0;">No active order found. Add items to your cart and place an order first.</p>`;
+  if (upiSection) upiSection.style.display = 'none';
 }
 
 function closePayFullBillModal() {
-  $('#payFullBillModal').hidden = true;
+  const modal = $('#payFullBillModal');
+  if (modal) modal.hidden = true;
 }
+
