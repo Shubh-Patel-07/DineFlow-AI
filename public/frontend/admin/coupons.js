@@ -6,8 +6,8 @@ let couponsList = [
   { id: 3, code: 'FESTIVE20', type: 'percent', value: 20, minAmount: 500, active: true }
 ];
 
-document.addEventListener('DOMContentLoaded', () => {
-  Auth.checkAuth();
+function initCoupons() {
+  if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   const saved = localStorage.getItem('dineflow_coupons');
   if (saved) {
     try { couponsList = JSON.parse(saved); } catch (_) {}
@@ -15,7 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const loader = document.querySelector('[data-loader]');
   if (loader) loader.style.display = 'none';
   renderCoupons();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCoupons);
+} else {
+  initCoupons();
+}
+
 
 function renderCoupons() {
   const container = document.getElementById('couponGridContainer');

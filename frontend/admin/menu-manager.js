@@ -3,10 +3,17 @@
 let allMenuItems = [];
 let activeCategory = 'all';
 
-document.addEventListener('DOMContentLoaded', () => {
-  Auth.checkAuth();
+function initMenuManager() {
+  if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   loadMenuItems();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMenuManager);
+} else {
+  initMenuManager();
+}
+
 
 async function loadMenuItems() {
   const loader = document.querySelector('[data-loader]');

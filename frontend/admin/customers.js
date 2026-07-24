@@ -8,12 +8,19 @@ let customerList = [
   { name: 'Virendra Singh', phone: '+91 95456 78901', visits: 11, spent: 4100, points: 410, tier: 'VIP Gold' }
 ];
 
-document.addEventListener('DOMContentLoaded', () => {
-  Auth.checkAuth();
+function initCustomers() {
+  if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   const loader = document.querySelector('[data-loader]');
   if (loader) loader.style.display = 'none';
   renderCustomers();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCustomers);
+} else {
+  initCustomers();
+}
+
 
 function renderCustomers() {
   const tbody = document.getElementById('customerTableBody');

@@ -2,10 +2,17 @@
 
 let inventoryItems = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-  Auth.checkAuth();
+function initInventory() {
+  if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   loadInventory();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initInventory);
+} else {
+  initInventory();
+}
+
 
 async function loadInventory() {
   const loader = document.querySelector('[data-loader]');

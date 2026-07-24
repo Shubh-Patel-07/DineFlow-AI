@@ -68,8 +68,15 @@ function renderFeedback() {
     .join('');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  Auth.checkAuth();
+function initFeedback() {
+  if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   loadFeedback();
-  setInterval(loadFeedback, 60000); // Refresh every minute
-});
+  setInterval(loadFeedback, 60000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFeedback);
+} else {
+  initFeedback();
+}
+
