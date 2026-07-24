@@ -1574,13 +1574,16 @@
       modal.classList.add('show');
       if (id === 'tableModal' && typeof loadTablesData === 'function') loadTablesData();
       if (id === 'ordersModal' && typeof loadOrdersData === 'function') loadOrdersData();
+      if (id === 'catPopupModal') { const btn = document.getElementById('catPopupBtn'); if (btn) btn.classList.add('open'); }
     }
   }
 
   function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.remove('show');
+    if (id === 'catPopupModal') { const btn = document.getElementById('catPopupBtn'); if (btn) btn.classList.remove('open'); }
   }
+
 
   function openAdminModule(url, titleHtml) {
     try {
@@ -2564,58 +2567,14 @@
     }
   }
 
-  function openAdminModule(url, titleHtml) {
-    const titleEl = document.getElementById('adminModuleModalTitle');
-    const iframeEl = document.getElementById('adminModuleIframe');
-    const extEl = document.getElementById('adminModuleExternalLink');
-    if (titleEl) titleEl.innerHTML = titleHtml;
-    if (iframeEl) iframeEl.src = url;
-    if (extEl) extEl.href = url;
-    openModal('adminModuleModal');
-  }
-
-  function openMenuManager() {
-    openAdminModule('/frontend/admin/menu-manager.html', '<i class="fa-solid fa-utensils" style="color:var(--primary);"></i> 🍽️ Menu Items Management');
-  }
-  function openInventory() {
-    openAdminModule('/frontend/admin/inventory.html', '<i class="fa-solid fa-box-open" style="color:var(--primary);"></i> 📦 Raw Ingredient Inventory');
-  }
-  function openCoupons() {
-    openAdminModule('/frontend/admin/coupons.html', '<i class="fa-solid fa-ticket" style="color:var(--primary);"></i> 🎟️ Promo Coupons');
-  }
-  function openCustomers() {
-    openAdminModule('/frontend/admin/customers.html', '<i class="fa-solid fa-users" style="color:var(--primary);"></i> 👥 Customer Directory');
-  }
-  function openZReport() {
-    openAdminModule('/z-report', '<i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> 📊 Daily Sales Z-Report');
-  }
-  function openFeedbackModule() {
-    openAdminModule('/frontend/admin/feedback.html', '<i class="fa-solid fa-comment-dots" style="color:var(--primary);"></i> ⭐ Reviews & Feedback');
-  }
-
-
-  function openModal(id) {
-    document.getElementById(id).classList.add('show');
-
-    if (id === 'tableModal') {
-      loadTablesData();
-    }
-    if (id === 'ordersModal') {
-      loadOrdersData();
-    }
-    if (id === 'catPopupModal') {
-      document.getElementById('catPopupBtn').classList.add('open');
-    }
-  }
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('show');
-    if (id === 'catPopupModal') {
-      document.getElementById('catPopupBtn').classList.remove('open');
-    }
-  }
+  // Merged openModal - handles catPopupBtn + null safety
+  // (primary definitions already hoisted to top of script)
   document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
   });
+
+
+
 
   /* ─── TOAST ──────────────────────────────── */
   function showToast(msg, type='') {
