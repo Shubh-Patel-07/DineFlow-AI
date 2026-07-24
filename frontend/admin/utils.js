@@ -434,8 +434,123 @@ class Auth {
   }
 
   static checkAuth() {
-    // If token exists or user is logged in via web session, allow access
     return true;
   }
-
 }
+
+/**
+ * 🛡️ DINEFLOW AI - ROLE-BASED ACCESS CONTROL (RBAC) ENGINE
+ */
+const DEFAULT_ROLE_PERMISSIONS = {
+  admin:   { pos: true, menu: true, reports: true, inventory: true, coupons: true, customers: true, tables: true, staff: true, settings: true, feedback: true },
+  manager: { pos: true, menu: true, reports: true, inventory: true, coupons: true, customers: true, tables: true, staff: false, settings: false, feedback: true },
+  cashier: { pos: true, menu: false, reports: true, inventory: false, coupons: false, customers: false, tables: true, staff: false, settings: false, feedback: false },
+  kitchen: { pos: false, menu: true, reports: false, inventory: true, coupons: false, customers: false, tables: false, staff: false, settings: false, feedback: false },
+  waiter:  { pos: true, menu: false, reports: false, inventory: false, coupons: false, customers: false, tables: true, staff: false, settings: false, feedback: false }
+};
+
+window.DineFlowRBAC = {
+  getPermissions() {
+    try {
+      const stored = localStorage.getItem('dineflow_role_permissions');
+      if (stored) return JSON.parse(stored);
+    } catch(e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_ROLE_PERMISSIONS));
+  },
+
+  savePermissions(perms) {
+    localStorage.setItem('dineflow_role_permissions', JSON.stringify(perms));
+  },
+
+  getActiveRole() {
+    return (localStorage.getItem('dineflow_active_role') || 'admin').toLowerCase();
+  },
+
+  setActiveRole(role) {
+    localStorage.setItem('dineflow_active_role', role);
+    location.reload();
+  },
+
+  checkPermission(moduleKey) {
+    const role = this.getActiveRole();
+    if (role === 'admin') return true; // Admin has full access
+    const perms = this.getPermissions();
+    return Boolean(perms[role] && perms[role][moduleKey]);
+  },
+
+  enforcePageAccess() {
+    const path = window.location.pathname.toLowerCase();
+    let requiredModule = null;
+
+    if (path.includes('/admin/staff')) requiredModule = 'staff';
+    else if (path.includes('/admin/settings')) requiredModule = 'settings';
+    else if (path.includes('/admin/inventory')) requiredModule = 'inventory';
+    else if (path.includes('/admin/menu-manager')) requiredModule = 'menu';
+    else if (path.includes('/admin/coupons')) requiredModule = 'coupons';
+    else if (path.includes('/admin/customers')) requiredModule = 'customers';
+    else if (path.includes('/admin/tables')) requiredModule = 'tables';
+    else if (path.includes('/admin/feedback')) requiredModule = 'feedback';
+    else if (path.includes('/z-report')) requiredModule = 'reports';
+
+    if (!requiredModule) return;
+
+    const activeRole = this.getActiveRole();
+    const hasAccess = this.checkPermission(requiredModule);
+
+    // Apply sidebar link filtering
+    this.applySidebarFilters();
+
+    if (!hasAccess) {
+      const main = document.querySelector('main');
+      if (main) {
+        main.innerHTML = `
+          <div style="max-width:550px; margin:80px auto; background:rgba(30,41,59,0.9); backdrop-filter:blur(20px); border:1px solid rgba(239,68,68,0.4); border-radius:24px; padding:40px; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.7);">
+            <div style="width:70px; height:70px; margin:0 auto 20px; background:rgba(239,68,68,0.15); border-radius:20px; color:#F87171; font-size:32px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(239,68,68,0.3);">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:#F8FAFC; margin:0 0 10px;">⛔ Access Restricted</h2>
+            <p style="color:#94A3B8; font-size:14px; margin:0 0 24px; line-height:1.6;">
+              Your current logged-in role <strong style="color:#F87171; text-transform:uppercase;">[${activeRole}]</strong> does not have permission to access the <strong>${requiredModule.toUpperCase()}</strong> module.
+            </p>
+            <div style="display:flex; gap:12px; justify-content:center;">
+              <a href="/pos" style="padding:12px 24px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; text-decoration:none; border-radius:12px; font-weight:700; font-size:13px;">Return to POS Terminal</a>
+              <button onclick="DineFlowRBAC.setActiveRole('admin')" style="padding:12px 20px; background:rgba(255,255,255,0.08); border:none; border-radius:12px; color:#94A3B8; font-weight:700; font-size:13px; cursor:pointer;">Switch to Admin</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+  },
+
+  applySidebarFilters() {
+    const role = this.getActiveRole();
+    if (role === 'admin') return;
+
+    const perms = this.getPermissions()[role] || {};
+    const moduleMap = {
+      '/pos': 'pos',
+      '/admin/menu-manager': 'menu',
+      '/z-report': 'reports',
+      '/admin/inventory': 'inventory',
+      '/admin/coupons': 'coupons',
+      '/admin/customers': 'customers',
+      '/admin/tables': 'tables',
+      '/admin/staff': 'staff',
+      '/admin/settings': 'settings',
+      '/admin/feedback': 'feedback'
+    };
+
+    document.querySelectorAll('.sidebar nav a.nav-item, .sidebar-nav a.nav-item').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && moduleMap[href] && perms[moduleMap[href]] === false) {
+        link.style.opacity = '0.35';
+        link.style.pointerEvents = 'none';
+        link.title = `Access Restricted for role [${role}]`;
+      }
+    });
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  DineFlowRBAC.enforcePageAccess();
+});
