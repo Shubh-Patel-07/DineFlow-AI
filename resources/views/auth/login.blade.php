@@ -389,12 +389,11 @@
     <!-- Left Split -->
     <div class="split-left">
         <div class="left-content">
-            <div class="logo-group">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-bowl-food"></i>
-                </div>
-                <div class="logo-text">Dine<span>Flow</span> AI</div>
+            <div class="logo-group" style="display:flex; align-items:center; gap:14px; margin-bottom:36px;">
+                <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:52px; width:auto; border-radius:12px; box-shadow:0 8px 20px rgba(79,70,229,0.35); background:#fff; padding:3px;" onerror="this.src='/images/dineflow_logo.png'">
+                <div class="logo-text" style="font-family:'Outfit',sans-serif; font-size:28px; font-weight:800;">Dine<span style="color:#818CF8;">Flow</span> AI</div>
             </div>
+
             <h1 class="left-title">Next-Gen Restaurant POS Suite</h1>
             
             <div class="feature-slider" id="slider">
@@ -420,10 +419,14 @@
 
     <!-- Right Split -->
     <div class="split-right">
-        <div style="margin-bottom: 30px;">
-            <h2 style="font-family:'Outfit', sans-serif; font-size:26px; font-weight:800; margin-bottom:6px;">Welcome Back</h2>
-            <p style="color:var(--text-secondary); font-size:14px;">Sign in to access your dashboard.</p>
+        <div style="margin-bottom: 24px; display:flex; align-items:center; gap:14px;">
+            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:44px; width:auto; border-radius:10px; box-shadow:0 4px 14px rgba(79,70,229,0.25); background:#fff; padding:3px;" onerror="this.src='/images/dineflow_logo.png'">
+            <div>
+                <h2 style="font-family:'Outfit', sans-serif; font-size:24px; font-weight:800; margin-bottom:2px;">Welcome Back</h2>
+                <p style="color:var(--text-secondary); font-size:13px;">Sign in to access your DineFlow POS dashboard.</p>
+            </div>
         </div>
+
 
         @if ($errors->any())
             <div class="error-container">
