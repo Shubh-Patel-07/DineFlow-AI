@@ -10,6 +10,10 @@ class CustomerController extends Controller
 {
     public function placeFeedback(Request $request)
     {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
         $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId') ?? '1';
         $customerName = $request->input('customer_name') ?? $request->input('customerName') ?? 'Anonymous';
         $rating = $request->input('rating') ?? 5;

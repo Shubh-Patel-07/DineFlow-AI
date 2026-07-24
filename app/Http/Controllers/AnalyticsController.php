@@ -12,7 +12,7 @@ class AnalyticsController extends Controller
     public function getSalesAnalytics($restaurantId)
     {
         $totalOrders = Order::where('restaurant_id', $restaurantId)->count();
-        $totalSales = Order::where('restaurant_id', $restaurantId)->sum('total_amount');
+        $totalSales = Order::where('restaurant_id', $restaurantId)->where('payment_status', 'paid')->sum('total_amount');
         
         $averageOrderValue = $totalOrders > 0 ? round($totalSales / $totalOrders, 2) : 0;
 

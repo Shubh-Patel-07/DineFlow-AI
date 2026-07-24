@@ -280,7 +280,7 @@
 
   <div class="sidebar-footer">
     <div class="user-card">
-      <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', Auth::user()->name)[1] ?? '', 0, 1)) }}</div>
+      <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}{{ str_contains(Auth::user()->name, ' ') ? strtoupper(substr(explode(' ', Auth::user()->name)[1], 0, 1)) : '' }}</div>
       <div class="user-info">
         <h4>{{ Auth::user()->name }}</h4>
         <p>Staff</p>

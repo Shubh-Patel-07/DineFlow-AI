@@ -48,8 +48,12 @@ class OrderController extends Controller
                     ->first();
 
                 if ($inventory) {
-                    $inventory->quantity = max(0, $inventory->quantity - $quantity);
-                    $inventory->save();
+                    if ($inventory->quantity >= $quantity) {
+                        $inventory->quantity -= $quantity;
+                        $inventory->save();
+                    } else {
+                        \Illuminate\Support\Facades\Log::warning("Not enough stock for {$menuItem->name}. Available: {$inventory->quantity}, Required: {$quantity}");
+                    }
                 }
             }
 
@@ -131,14 +135,21 @@ class OrderController extends Controller
 
         $order->payment_status = 'paid';
         $order->payment_method = $request->payment_method ?? 'online';
+        $order->status = 'completed';
         $order->save();
+
+        $table = \App\Models\Table::find($order->table_id);
+        if ($table) {
+            $table->status = 'available';
+            $table->save();
+        }
 
         return response()->json(['success' => true, 'data' => $order]);
     }
 
     public function getRestaurantOrders($restaurantId)
     {
-        $orders = Order::where('restaurant_id', $restaurantId)->with('items')->orderBy('created_at', 'desc')->get();
+        $orders = Order::where('restaurant_id', $restaurantId)->with(['items.menuItem', 'table'])->orderBy('created_at', 'desc')->get();
         return response()->json(['success' => true, 'data' => $orders]);
     }
 
@@ -260,8 +271,8 @@ class OrderController extends Controller
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $kitchenItems = $order->items->filter(function($item) {
-            $cat = strtolower($item->menuItem?->category ?? '');
-            return in_array($cat, ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup', 'main course']);
+            $cat = strtolower($item->menuItem?->category ?? 'food');
+            return in_array($cat, ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup', 'main course', 'food']);
         });
 
         return view('pos.kot_kitchen', compact('order', 'kitchenItems', 'tableName'));

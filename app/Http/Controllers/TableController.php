@@ -42,7 +42,7 @@ class TableController extends Controller
         $tables = $tables->map(function($table) use ($serverIp) {
             // Dynamically replace any local IP address in qr_code_url with current active server IP
             if ($table->qr_code_url) {
-                $table->qr_code_url = preg_replace('/192\.168\.\d+\.\d+/', $serverIp, $table->qr_code_url);
+                $table->qr_code_url = preg_replace('/(?:192\.168|10|172\.(?:1[6-9]|2\d|3[01]))\.[\d.]+|127\.0\.0\.1/', $serverIp, $table->qr_code_url);
             }
 
             $activeOrder = \App\Models\Order::where('table_id', $table->id)

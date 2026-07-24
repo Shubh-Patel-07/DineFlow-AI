@@ -478,6 +478,8 @@
                     <div class="pin-dot" id="dot2"></div>
                     <div class="pin-dot" id="dot3"></div>
                     <div class="pin-dot" id="dot4"></div>
+                    <div class="pin-dot" id="dot5"></div>
+                    <div class="pin-dot" id="dot6"></div>
                 </div>
 
                 <div class="keypad">
@@ -493,6 +495,7 @@
                     <button type="button" class="key key-action" onclick="clearPin()">C</button>
                     <button type="button" class="key" onclick="pressKey(0)">0</button>
                     <button type="button" class="key key-action" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
+                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: var(--primary); color: white;" onclick="manualPinSubmit()">Submit</button>
                 </div>
             </form>
         </div>
@@ -540,7 +543,7 @@
         const pinSubmitForm = document.getElementById('pinSubmitForm');
 
         function updatePinDisplay() {
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 6; i++) {
                 const dot = document.getElementById('dot' + i);
                 if (enteredPin.length >= i) {
                     dot.classList.add('active');
@@ -551,17 +554,24 @@
         }
 
         function pressKey(num) {
-            if (enteredPin.length < 4) {
+            if (enteredPin.length < 6) {
                 enteredPin += num;
                 updatePinDisplay();
                 
-                if (enteredPin.length === 4) {
+                if (enteredPin.length >= 6) {
                     hiddenPinInput.value = enteredPin;
-                    // Auto submit form when 4 digits are completed!
+                    // Auto submit form when 6 digits are completed!
                     setTimeout(() => {
                         pinSubmitForm.submit();
                     }, 200);
                 }
+            }
+        }
+
+        function manualPinSubmit() {
+            if (enteredPin.length >= 4) {
+                hiddenPinInput.value = enteredPin;
+                pinSubmitForm.submit();
             }
         }
 

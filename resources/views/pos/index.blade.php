@@ -1642,7 +1642,7 @@
         const res = await fetch('/api/orders/restaurant/1');
         const ordersRes = await res.json();
         if (ordersRes.success && Array.isArray(ordersRes.data)) {
-          const unpaidOrder = ordersRes.data.find(o => o.payment_status === 'unpaid');
+          const unpaidOrder = ordersRes.data.find(o => o.payment_status === 'pending');
           if (unpaidOrder) targetOrderId = unpaidOrder.id;
         }
       }
