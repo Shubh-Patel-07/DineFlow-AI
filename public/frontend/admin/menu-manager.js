@@ -15,21 +15,37 @@ async function loadMenuItems() {
   try {
     const res = await fetch('/api/menu?restaurantId=1');
     const data = await res.json();
-    if (data.success && Array.isArray(data.data)) {
+    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
       allMenuItems = data.data;
-    } else if (Array.isArray(data)) {
+    } else if (Array.isArray(data) && data.length > 0) {
       allMenuItems = data;
     } else {
-      allMenuItems = [];
+      allMenuItems = getStaticMenuItems();
     }
   } catch (err) {
-    console.error('Error fetching menu items:', err);
-    allMenuItems = [];
+    console.error('Error fetching menu items, using fallback:', err);
+    allMenuItems = getStaticMenuItems();
   } finally {
     if (loader) loader.style.display = 'none';
     renderMenuItems();
   }
 }
+
+function getStaticMenuItems() {
+  return [
+    { id: 1, name: 'Paneer Butter Masala', category: 'Mains', price: 240.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500', description: 'Rich cottage cheese cubes cooked in butter tomato gravy.' },
+    { id: 2, name: 'Chicken Tikka Masala', category: 'Mains', price: 320.00, is_veg: false, is_available: true, image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500', description: 'Tender chicken pieces simmered in spiced tikka gravy.' },
+    { id: 3, name: 'Garlic Naan', category: 'Breads', price: 60.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=500', description: 'Clay oven baked flatbread brushed with butter and minced garlic.' },
+    { id: 4, name: 'Veg Spring Rolls', category: 'Starters', price: 180.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500', description: 'Crispy fried rolls filled with seasoned vegetables.' },
+    { id: 5, name: 'Chicken Biryani', category: 'Rice', price: 380.00, is_veg: false, is_available: true, image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500', description: 'Fragrant basmati rice layered with spiced marinated chicken.' },
+    { id: 6, name: 'Mango Lassi', category: 'Drinks', price: 120.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500', description: 'Creamy yogurt drink blended with fresh sweet Alphonso mango pulp.' },
+    { id: 7, name: 'Gulab Jamun', category: 'Desserts', price: 80.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500', description: 'Soft milk dumplings soaked in cardamom sugar syrup.' },
+    { id: 8, name: 'Dal Tadka', category: 'Mains', price: 180.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500', description: 'Yellow lentils tempered with ghee, cumin seeds, garlic and chili.' },
+    { id: 9, name: 'Margherita Pizza', category: 'Pizza', price: 299.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500', description: 'Classic Italian pizza topped with mozzarella and fresh basil.' },
+    { id: 10, name: 'Cheese Burger', category: 'Burger', price: 199.00, is_veg: true, is_available: true, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500', description: 'Juicy patty filled with melted cheese, lettuce and signature sauce.' }
+  ];
+}
+
 
 function renderMenuItems() {
   const container = document.getElementById('menuGridContainer');
