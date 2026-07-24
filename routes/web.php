@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CouponController;
 use Illuminate\Support\Facades\Route;
 
 // Traditional Authentication Routes
@@ -217,6 +218,9 @@ Route::prefix('api')->group(function () {
     Route::post('/feedback', [CustomerController::class, 'placeFeedback']);
     Route::post('/waiter-calls', [CustomerController::class, 'callWaiter']);
 
+    // Coupon validation (public - used at POS checkout)
+    Route::post('/coupons/validate', [CouponController::class, 'validate']);
+
     // --- PROTECTED & TENANT SECURED ENDPOINTS ---
     Route::middleware(['auth'])->group(function () {
         
@@ -241,8 +245,21 @@ Route::prefix('api')->group(function () {
         // Inventory Management
         Route::get('/inventory', [InventoryController::class, 'index'])
             ->middleware(['role:admin,manager,cashier', 'tenant']);
-        Route::post('/inventory', [InventoryController::class, 'store'])->middleware('role:admin');
-        Route::put('/inventory/{id}', [InventoryController::class, 'update'])->middleware('role:admin');
+        Route::post('/inventory', [InventoryController::class, 'store'])->middleware('role:admin,manager');
+        Route::put('/inventory/{id}', [InventoryController::class, 'update'])->middleware('role:admin,manager');
+        Route::delete('/inventory/{id}', [InventoryController::class, 'destroy'])->middleware('role:admin');
+
+        // Coupons Management
+        Route::get('/coupons', [CouponController::class, 'index'])->middleware('role:admin,manager,cashier');
+        Route::post('/coupons', [CouponController::class, 'store'])->middleware('role:admin,manager');
+        Route::put('/coupons/{id}', [CouponController::class, 'update'])->middleware('role:admin,manager');
+        Route::delete('/coupons/{id}', [CouponController::class, 'destroy'])->middleware('role:admin');
+
+        // Customers Management
+        Route::get('/customers', [CustomerController::class, 'index'])->middleware('role:admin,manager,cashier');
+        Route::post('/customers', [CustomerController::class, 'store'])->middleware('role:admin,manager,cashier');
+        Route::put('/customers/{id}', [CustomerController::class, 'update'])->middleware('role:admin,manager');
+        Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->middleware('role:admin');
 
         // Sales Analytics
         Route::get('/analytics/restaurant/{restaurantId}', [AnalyticsController::class, 'getSalesAnalytics'])
