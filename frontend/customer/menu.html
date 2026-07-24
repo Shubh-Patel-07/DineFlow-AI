@@ -12,64 +12,276 @@
 </head>
 <body>
   <main class="menu-wrapper">
-    <header class="menu-header glass-panel-glow">
-      <div class="logo-section">
-        <p class="eyebrow" data-i18n="welcome">Welcome to</p>
-        <h1 class="logo">Dine<span>Flow</span> AI</h1>
-        <p id="restaurantLocation">Smart QR Restaurant Ordering</p>
-      </div>
-      <label class="language-picker" for="languageSelect">
-        <span aria-hidden="true">🌐</span>
-        <select id="languageSelect" aria-label="Choose language">
-          <option value="en">English</option>
-          <option value="hi">हिंदी</option>
-          <option value="gu">ગુજરાતી</option>
-        </select>
-      </label>
-    </header>
+    
+    <!-- Hero Restaurant Header Card -->
+    <header class="menu-hero-header">
+      <div class="hero-top-bar">
+        <div class="brand-badge">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="brand-logo">
+          <div>
+            <h1 class="logo">Dine<span>Flow</span> AI</h1>
+            <p class="eyebrow" data-i18n="welcome">Smart QR Restaurant Ordering</p>
+          </div>
+        </div>
 
-    <section class="restaurant-header glass-panel" aria-live="polite">
-      <div class="restaurant-left">
-        <img id="restaurantLogo" class="restaurant-logo" src="assests/images/p1.png" alt="Restaurant logo">
-        <div>
-          <h2 id="restaurantName">DineFlow Restaurant</h2>
-          <p class="restaurant-meta"><span>★ <span id="restaurantRating">4.8</span></span><span>•</span><span id="restaurantStatus" class="open-status">Open Now</span></p>
+        <div class="header-controls">
+          <label class="language-picker" for="languageSelect">
+            <span aria-hidden="true">🌐</span>
+            <select id="languageSelect" aria-label="Choose language">
+              <option value="en">English</option>
+              <option value="hi">हिंदी</option>
+              <option value="gu">ગુજરાતી</option>
+            </select>
+          </label>
+          <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Enable dark mode">☾ <span>Dark mode</span></button>
         </div>
       </div>
-      <label class="table-card" for="tableNumber"><span data-i18n="table">Table</span><select id="tableNumber" aria-label="Select table number"></select></label>
+
+      <div class="hero-restaurant-info">
+        <div class="restaurant-left">
+          <img id="restaurantLogo" class="restaurant-logo" src="/images/dineflow_logo.jpg" alt="Restaurant logo">
+          <div>
+            <h2 id="restaurantName">DineFlow Gourmet Restaurant</h2>
+            <div class="restaurant-meta">
+              <span class="rating-badge">★ <span id="restaurantRating">4.8</span></span>
+              <span class="meta-dot">•</span>
+              <span id="restaurantStatus" class="open-status">Open Now</span>
+              <span class="meta-dot">•</span>
+              <span class="location-text" id="restaurantLocation">Patan, Gujarat</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card-wrapper">
+          <label class="table-card" for="tableNumber">
+            <span data-i18n="table">TABLE</span>
+            <select id="tableNumber" aria-label="Select table number"></select>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <!-- Live Order Status Tracker (Domino's/Zomato Style) -->
+    <section id="liveOrderTracker" class="live-tracker-panel" style="display: none !important;" hidden>
+      <div class="tracker-header">
+        <div class="tracker-title-box">
+          <span class="tracker-icon">🛵</span>
+          <span class="tracker-title">Live Order Status</span>
+          <span id="trackerOrderBadge" class="tracker-badge">#--</span>
+        </div>
+        <span id="trackerTimeEst" class="tracker-time">~12 Mins</span>
+      </div>
+
+      <!-- Step Progress Bar -->
+      <div class="order-progress-steps">
+        <div class="progress-line">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="step-item active" id="step1">
+          <div class="step-icon" id="stepIcon1">1</div>
+          <span id="stepLabel1" class="step-label">Received</span>
+        </div>
+
+        <div class="step-item" id="step2">
+          <div class="step-icon" id="stepIcon2">2</div>
+          <span id="stepLabel2" class="step-label">Cooking</span>
+        </div>
+
+        <div class="step-item" id="step3">
+          <div class="step-icon" id="stepIcon3">3</div>
+          <span id="stepLabel3" class="step-label">Served</span>
+        </div>
+      </div>
+
+      <div id="trackerStatusMsg" class="tracker-status-msg">Your order has been sent to the kitchen chef!</div>
     </section>
 
-    <section class="menu-tools" aria-label="Menu filters">
-      <label class="search-box" for="searchInput"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" data-i18n-placeholder="search" placeholder="Search delicious food..."></label>
-      <div class="diet-filter" role="group" aria-label="Dietary filter">
-        <button class="diet-btn active" data-diet="all" data-i18n="all">All</button>
-        <button class="diet-btn" data-diet="veg" data-i18n="veg">Veg</button>
-        <button class="diet-btn" data-diet="nonveg" data-i18n="nonveg">Non-Veg</button>
+    <!-- Search & Filter Controls -->
+    <section class="menu-tools-bar" aria-label="Menu filters">
+      <div class="search-wrapper">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input id="searchInput" type="search" autocomplete="off" aria-autocomplete="list" aria-controls="searchSuggestions" data-i18n-placeholder="search" placeholder="Search delicious food, pizza, burger...">
+        </div>
+        <div id="searchSuggestions" class="search-suggestions" role="listbox" hidden></div>
+      </div>
+
+      <div class="filter-controls-group">
+        <div class="diet-filter" role="group" aria-label="Dietary filter">
+          <button class="diet-btn active" data-diet="all" data-i18n="all">All</button>
+          <button class="diet-btn" data-diet="veg" data-i18n="veg">🟢 Veg</button>
+          <button class="diet-btn" data-diet="nonveg" data-i18n="nonveg">🔴 Non-Veg</button>
+        </div>
+
+        <div class="advanced-filter" role="group" aria-label="Advanced menu filters">
+          <button class="filter-btn" type="button" data-filter="popular">Popular</button>
+          <button class="filter-btn" type="button" data-filter="available">Available</button>
+          <button class="filter-btn" type="button" data-filter="rating">★ 4.5+</button>
+          <select id="sortSelect" aria-label="Sort menu items">
+            <option value="default">Sort By</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
+        </div>
       </div>
     </section>
 
-    <section id="categorySection" class="category-section" aria-label="Categories"></section>
-    <section class="section-title"><h2 data-i18n="menu">Our Menu</h2><p data-i18n="subtitle">Freshly prepared, just for you</p></section>
-    <p id="loadingState" class="loading-state" data-i18n="loading">Loading menu…</p>
+    <!-- Category Scrollable Pills -->
+    <section id="categorySection" class="category-scroll-bar" aria-label="Categories"></section>
+
+    <!-- Menu Title -->
+    <section class="section-title">
+      <h2 data-i18n="menu">Our Menu</h2>
+      <p data-i18n="subtitle">Freshly prepared, gourmet dishes just for you</p>
+    </section>
+
+    <!-- Featured Customer Sections -->
+    <section id="recommendedSection" class="promo-section" aria-live="polite"></section>
+    <section id="comboOffersSection" class="promo-section" aria-live="polite"></section>
+
+    <!-- Favorites & Recent Sections -->
+    <section id="favoritesSection" class="favorites-section" aria-live="polite"></section>
+    <section id="recentSection" class="favorites-section" aria-live="polite"></section>
+
+    <!-- Main Food Grid -->
     <section id="foodGrid" class="food-grid" aria-live="polite"></section>
+
   </main>
 
-  <button id="callWaiterBtn" class="call-waiter-btn btn-primary" type="button"><span aria-hidden="true">🔔</span> <span data-i18n="callWaiter">Call Waiter</span></button>
+  <!-- Bottom Floating Action Bar Dock -->
+  <div class="bottom-floating-actions">
+    <button id="payFullBillBtn" class="dock-btn btn-pay" type="button" onclick="openPayFullBillModal()">
+      <span aria-hidden="true">💳</span> <span>Pay Bill</span>
+    </button>
+    <button id="splitBillBtn" class="dock-btn btn-split" type="button" onclick="openSplitBillModal()">
+      <span aria-hidden="true">💸</span> <span>Split Bill</span>
+    </button>
+    <button id="callWaiterBtn" class="dock-btn btn-waiter" type="button">
+      <span aria-hidden="true">🔔</span> <span data-i18n="callWaiter">Call Waiter</span>
+    </button>
+  </div>
+
+  <!-- Floating Cart Dock Badge -->
+  <button id="floatingCartBtn" class="floating-cart-badge" aria-label="Open cart">
+    <span class="cart-icon">🛒</span>
+    <span class="cart-text">Cart</span>
+    <span id="cartBadge" class="cart-counter">0</span>
+  </button>
+
+  <!-- Cart Slide-Over Panel -->
+  <div id="cartPanel" role="dialog" aria-modal="true" hidden>
+    <div class="cart-backdrop" data-close-cart></div>
+    <article class="cart-modal-card glass-panel">
+      <div class="cart-header">
+        <h3>🛒 Your Order Cart</h3>
+        <button id="btnCloseCart" class="cart-close-btn" type="button" aria-label="Close cart">×</button>
+      </div>
+      <div id="cartList" class="cart-items-list"></div>
+      <div class="cart-summary-box">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">₹0.00</strong>
+      </div>
+      <div class="cart-actions-row">
+        <button id="checkoutBtn" class="btn-checkout">Place Order</button>
+        <button id="clearCartBtn" class="btn-clear-cart">Clear</button>
+      </div>
+    </article>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Item Detail Modal -->
   <div id="itemModal" class="item-modal" role="dialog" aria-modal="true" aria-labelledby="modalItemName" hidden>
     <div class="item-modal__backdrop" data-close-modal></div>
     <article class="item-modal__content glass-panel">
-      <button id="closeItemModal" class="item-modal__close" type="button" aria-label="Close details">×</button>
-      <img id="modalItemImage" class="item-modal__image" src="" alt="">
+      <button id="btnCloseModal" class="item-modal__close" type="button" aria-label="Close modal">×</button>
+      <img id="modalItemImage" class="item-modal__image" src="/images/placeholder-food.svg" alt="">
       <div class="item-modal__details">
         <p id="modalItemCategory" class="item-modal__category"></p>
         <h2 id="modalItemName"></h2>
         <p id="modalItemType" class="item-modal__type"></p>
         <p id="modalItemDescription" class="item-modal__description"></p>
         <strong id="modalItemPrice" class="item-modal__price"></strong>
+        <div style="margin-top:20px; display:flex; gap:10px;">
+          <button id="modalAddToCartBtn" class="btn-checkout" style="flex:1; padding:12px;">+ Add to Order</button>
+        </div>
       </div>
     </article>
   </div>
+
+  <!-- Split Bill Modal -->
+  <div id="splitBillModal" class="item-modal" role="dialog" aria-modal="true" hidden>
+    <div class="item-modal__backdrop" onclick="closeSplitBillModal()"></div>
+    <article class="item-modal__content glass-panel" style="display:block !important; max-width:550px; max-height:85vh; overflow-y:auto; padding:24px; border-radius:20px;">
+      <button class="item-modal__close" type="button" onclick="closeSplitBillModal()">×</button>
+      <h2 style="margin-top:0; font-family:'Outfit',sans-serif; color:#818CF8; font-size:1.4rem;">💸 Split Bill</h2>
+      <p style="font-size:13px; opacity:0.8; margin-bottom:16px;">Select your items to calculate and pay your share</p>
+
+      <div id="splitBillItemList" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px; max-height:220px; overflow-y:auto;"></div>
+
+      <div style="background:rgba(255,255,255,0.05); padding:12px 16px; border-radius:12px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+          <span>My Items Total:</span>
+          <span id="splitSubtotal">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+          <span>Tax (5%):</span>
+          <span id="splitTax">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; border-top:1px dashed rgba(255,255,255,0.15); padding-top:8px; color:#34D399;">
+          <span>My Share Total:</span>
+          <span id="splitTotal">₹0.00</span>
+        </div>
+      </div>
+
+      <div id="splitUpiSection" style="text-align:center; border-top:1px solid rgba(255,255,255,0.1); padding-top:16px;">
+        <p style="font-size:12px; font-weight:700; margin-bottom:10px; color:#818CF8;">Scan QR code to pay your share</p>
+        <div style="background:white; padding:10px; display:inline-block; border-radius:12px; margin-bottom:10px;">
+          <img id="splitUpiQrImg" src="" alt="UPI Payment QR" style="width:150px; height:150px; display:block;">
+        </div>
+        <p style="font-size:10px; opacity:0.6; margin:0;">Scan using GPay, PhonePe, Paytm or BHIM</p>
+      </div>
+    </article>
+  </div>
+
+  <!-- Pay Full Bill Modal -->
+  <div id="payFullBillModal" class="item-modal" role="dialog" aria-modal="true" hidden>
+    <div class="item-modal__backdrop" onclick="closePayFullBillModal()"></div>
+    <article class="item-modal__content glass-panel" style="display:block !important; max-width:550px; max-height:85vh; overflow-y:auto; padding:24px; border-radius:20px;">
+      <button class="item-modal__close" type="button" onclick="closePayFullBillModal()">×</button>
+      <h2 style="margin-top:0; font-family:'Outfit',sans-serif; color:#818CF8; font-size:1.4rem;">💳 Pay Total Bill</h2>
+      <p id="fullBillTableLabel" style="font-size:13px; font-weight:700; color:#34D399; margin-bottom:6px;"></p>
+      <p style="font-size:12px; opacity:0.7; margin-bottom:16px;">Scan UPI QR to pay the complete bill amount for this table</p>
+
+      <div id="fullBillItemList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px; max-height:200px; overflow-y:auto;"></div>
+
+
+      <div style="background:rgba(255,255,255,0.05); padding:12px 16px; border-radius:12px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+          <span>Subtotal:</span>
+          <span id="fullSubtotal">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+          <span>CGST + SGST (5%):</span>
+          <span id="fullTax">₹0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; border-top:1px dashed rgba(255,255,255,0.15); padding-top:8px; color:#818CF8;">
+          <span>Total Bill Amount:</span>
+          <span id="fullTotal">₹0.00</span>
+        </div>
+      </div>
+
+      <div id="fullUpiSection" style="text-align:center; border-top:1px solid rgba(255,255,255,0.1); padding-top:16px;">
+        <p style="font-size:12px; font-weight:700; margin-bottom:10px; color:#818CF8;">Scan QR code to pay total bill</p>
+        <div style="background:white; padding:10px; display:inline-block; border-radius:12px; margin-bottom:10px;">
+          <img id="fullUpiQrImg" src="" alt="UPI Payment QR" style="width:150px; height:150px; display:block;">
+        </div>
+        <p style="font-size:10px; opacity:0.6; margin:0;">Scan using GPay, PhonePe, Paytm or BHIM</p>
+      </div>
+    </article>
+  </div>
+
   <script src="data.js"></script>
   <script src="menu.js"></script>
 </body>
