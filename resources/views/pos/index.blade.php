@@ -937,30 +937,30 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Menu</div>
-      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
-      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
-      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/menu-manager.html', '<i class=\'fa-solid fa-utensils\' style=\'color:var(--primary);\'></i> 🍽️ Menu Items Management')" style="cursor:pointer;" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/menu-manager.html', '<i class=\'fa-solid fa-layer-group\' style=\'color:var(--primary);\'></i> 🍕 Categories Management')" style="cursor:pointer;" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/menu-manager.html', '<i class=\'fa-solid fa-puzzle-piece\' style=\'color:var(--primary);\'></i> 🧩 Modifiers')" style="cursor:pointer;" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/menu-manager.html', '<i class=\'fa-solid fa-tags\' style=\'color:var(--primary);\'></i> 🏷️ Combos & Deals')" style="cursor:pointer;" data-tip="Combos &amp; Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Operations</div>
       <a class="nav-item" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
-      <a class="nav-item" href="/admin/customers" target="_blank" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
-      <a class="nav-item" href="/admin/customers" target="_blank" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
-      <a class="nav-item" href="/admin/coupons" target="_blank" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/customers.html', '<i class=\'fa-solid fa-users\' style=\'color:var(--primary);\'></i> 👥 Customer Directory')" style="cursor:pointer;" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/customers.html', '<i class=\'fa-solid fa-star\' style=\'color:var(--primary);\'></i> ⭐ Loyalty Rewards')" style="cursor:pointer;" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/coupons.html', '<i class=\'fa-solid fa-ticket\' style=\'color:var(--primary);\'></i> 🎟️ Promo Coupons')" style="cursor:pointer;" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Reports</div>
-      <a class="nav-item" href="/z-report" target="_blank" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
-      <a class="nav-item" href="/admin/inventory" target="_blank" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
-      <a class="nav-item" href="/z-report" target="_blank" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" onclick="openAdminModule('/z-report', '<i class=\'fa-solid fa-chart-line\' style=\'color:var(--primary);\'></i> 📊 Daily Sales Z-Report')" style="cursor:pointer;" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/inventory.html', '<i class=\'fa-solid fa-box-open\' style=\'color:var(--primary);\'></i> 📦 Raw Ingredient Inventory')" style="cursor:pointer;" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
+      <a class="nav-item" onclick="openAdminModule('/z-report', '<i class=\'fa-solid fa-file-invoice-dollar\' style=\'color:var(--primary);\'></i> 💵 Expenses & Financial Summary')" style="cursor:pointer;" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Settings & Admin</div>
-      <a class="nav-item" href="/admin/feedback" target="_blank" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
+      <a class="nav-item" onclick="openAdminModule('/frontend/admin/feedback.html', '<i class=\'fa-solid fa-comment-dots\' style=\'color:var(--primary);\'></i> ⭐ Reviews & Feedback')" style="cursor:pointer;" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
       <a class="nav-item" href="/dashboard" data-tip="Staff & Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
       <a class="nav-item" onclick="window.print()" style="cursor:pointer;" data-tip="Printers"><i class="fa-solid fa-print"></i><span class="nav-label"> Printers</span></a>
     </div>
@@ -1413,6 +1413,25 @@
           <!-- Loaded dynamically from API -->
         </tbody>
       </table>
+    </div>
+</div>
+
+<!-- Admin Module Iframe Modal -->
+<div class="modal-overlay" id="adminModuleModal">
+  <div class="modal" style="width:96vw; max-width:1240px; height:92vh; max-height:860px; display:flex; flex-direction:column; padding:0; border-radius:20px; overflow:hidden; background:var(--card); border:1px solid var(--border); box-shadow:0 24px 60px rgba(0,0,0,0.6);">
+    <div class="modal-header" style="padding:14px 22px; background:#0B0F19; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
+      <div class="modal-title" id="adminModuleModalTitle" style="font-size:16px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-layer-group" style="color:var(--primary);"></i> Module View
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <a id="adminModuleExternalLink" href="#" target="_blank" style="color:var(--primary); font-size:12px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:6px; background:var(--primary-light); padding:6px 14px; border-radius:8px; transition:all 0.2s;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in New Tab
+        </a>
+        <button class="modal-close" type="button" onclick="closeModal('adminModuleModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0; flex:1; overflow:hidden; background:#090D1A;">
+      <iframe id="adminModuleIframe" src="" style="width:100%; height:100%; border:none; background:#090D1A;"></iframe>
     </div>
   </div>
 </div>
@@ -2483,8 +2502,19 @@
     }
   }
 
+  function openAdminModule(url, titleHtml) {
+    const titleEl = document.getElementById('adminModuleModalTitle');
+    const iframeEl = document.getElementById('adminModuleIframe');
+    const extEl = document.getElementById('adminModuleExternalLink');
+    if (titleEl) titleEl.innerHTML = titleHtml;
+    if (iframeEl) iframeEl.src = url;
+    if (extEl) extEl.href = url;
+    openModal('adminModuleModal');
+  }
+
   function openModal(id) {
     document.getElementById(id).classList.add('show');
+
     if (id === 'tableModal') {
       loadTablesData();
     }
