@@ -1563,9 +1563,6 @@
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
 <div class="cart-backdrop" id="cartBackdrop" onclick="toggleMobileCart()"></div>
 
-</body>
-</html>
-
 <script>
   // ─── CORE MODAL UTILITIES & ADMIN MODULE LAUNCHERS ───
   function openModal(id) {
@@ -2863,4 +2860,7 @@
   // Poll for payments every 6 seconds (fast and responsive!)
   setInterval(checkNewPayments, 6000);
 </script>
+</body>
+</html>
 @endsection
+
