@@ -463,10 +463,20 @@ window.DineFlowRBAC = {
   },
 
   getActiveRole() {
-    return (localStorage.getItem('dineflow_active_role') || 'admin').toLowerCase();
+    if (typeof window !== 'undefined' && window.AUTH_USER_ROLE && window.AUTH_USER_ROLE !== '' && window.AUTH_USER_ROLE !== 'undefined') {
+      const roleLower = String(window.AUTH_USER_ROLE).toLowerCase().trim();
+      localStorage.setItem('dineflow_active_role', roleLower);
+      return roleLower;
+    }
+    try {
+      const stored = localStorage.getItem('dineflow_active_role');
+      if (stored) return stored.toLowerCase();
+    } catch(e) {}
+    return 'admin';
   },
 
   setActiveRole(role) {
+    window.AUTH_USER_ROLE = role;
     localStorage.setItem('dineflow_active_role', role);
     location.reload();
   },
