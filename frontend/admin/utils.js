@@ -534,9 +534,7 @@ window.DineFlowRBAC = {
 
   applySidebarFilters() {
     const role = this.getActiveRole();
-    if (role === 'admin') return;
-
-    const perms = this.getPermissions()[role] || {};
+    const perms = (this.getPermissions()[role]) || {};
     const moduleMap = {
       '/pos': 'pos',
       '/admin/menu-manager': 'menu',
@@ -550,12 +548,42 @@ window.DineFlowRBAC = {
       '/admin/feedback': 'feedback'
     };
 
-    document.querySelectorAll('.sidebar nav a.nav-item, .sidebar-nav a.nav-item').forEach(link => {
+    document.querySelectorAll('.sidebar nav a.nav-item, .sidebar-nav a.nav-item, nav a.nav-item').forEach(link => {
       const href = link.getAttribute('href');
-      if (href && moduleMap[href] && perms[moduleMap[href]] === false) {
+      if (!href) return;
+
+      const modKey = moduleMap[href];
+      if (!modKey) return;
+
+      const isAllowed = role === 'admin' || perms[modKey] !== false;
+
+      if (!isAllowed) {
         link.style.opacity = '0.35';
-        link.style.pointerEvents = 'none';
-        link.title = `Access Restricted for role [${role}]`;
+        link.style.cursor = 'not-allowed';
+        link.style.filter = 'grayscale(1)';
+        link.removeAttribute('href'); // Remove link destination to prevent navigation!
+
+        // Add 🔒 lock badge if not already present
+        if (!link.querySelector('.sidebar-lock-badge')) {
+          const lockSpan = document.createElement('span');
+          lockSpan.className = 'sidebar-lock-badge';
+          lockSpan.innerHTML = '🔒';
+          lockSpan.style.marginLeft = 'auto';
+          lockSpan.style.fontSize = '12px';
+          lockSpan.style.opacity = '0.8';
+          link.appendChild(lockSpan);
+        }
+
+        link.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof Toast !== 'undefined' && Toast.error) {
+            Toast.error(`🔒 Access Locked: Role [${role.toUpperCase()}] does not have permission for this module.`);
+          } else {
+            alert(`🔒 Access Locked: Role [${role.toUpperCase()}] does not have permission for this module.`);
+          }
+          return false;
+        };
       }
     });
   }
@@ -563,4 +591,5 @@ window.DineFlowRBAC = {
 
 document.addEventListener('DOMContentLoaded', () => {
   DineFlowRBAC.enforcePageAccess();
+  DineFlowRBAC.applySidebarFilters();
 });
