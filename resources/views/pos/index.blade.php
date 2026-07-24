@@ -937,30 +937,30 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Menu</div>
-      <a class="nav-item" href="/frontend/admin/menu-manager.html" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="/frontend/admin/menu-manager.html" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
-      <a class="nav-item" href="/frontend/admin/menu-manager.html" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
-      <a class="nav-item" href="/frontend/admin/menu-manager.html" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
+      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
+      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
+      <a class="nav-item" href="/admin/menu-manager" target="_blank" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Operations</div>
       <a class="nav-item" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
-      <a class="nav-item" href="/frontend/admin/customers.html" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
-      <a class="nav-item" href="/frontend/admin/customers.html" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
-      <a class="nav-item" href="/frontend/admin/coupons.html" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
+      <a class="nav-item" href="/admin/customers" target="_blank" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+      <a class="nav-item" href="/admin/customers" target="_blank" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
+      <a class="nav-item" href="/admin/coupons" target="_blank" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Reports</div>
-      <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
-      <a class="nav-item" href="/frontend/admin/inventory.html" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
-      <a class="nav-item" href="/z-report" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" href="/z-report" target="_blank" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+      <a class="nav-item" href="/admin/inventory" target="_blank" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
+      <a class="nav-item" href="/z-report" target="_blank" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Settings & Admin</div>
-      <a class="nav-item" href="/frontend/admin/feedback.html" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
+      <a class="nav-item" href="/admin/feedback" target="_blank" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
       <a class="nav-item" href="/dashboard" data-tip="Staff & Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
       <a class="nav-item" onclick="window.print()" style="cursor:pointer;" data-tip="Printers"><i class="fa-solid fa-print"></i><span class="nav-label"> Printers</span></a>
     </div>
