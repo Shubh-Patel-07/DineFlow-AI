@@ -37,7 +37,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
 
     /* ─── SIDEBAR ─────────────────────────────── */
     .sidebar {
@@ -138,7 +138,7 @@
     .user-info p  { font-size: 11px; color: rgba(255,255,255,.4); }
     .sidebar.collapsed .user-info { opacity: 0; width: 0; overflow: hidden; }
 
-    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+    .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; min-width: 0; }
 
     .topbar {
       background: var(--sidebar-bg); border-bottom: 1px solid var(--border);
