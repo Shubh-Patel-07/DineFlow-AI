@@ -522,9 +522,9 @@ window.DineFlowRBAC = {
             <p style="color:#94A3B8; font-size:14px; margin:0 0 24px; line-height:1.6;">
               Your current logged-in role <strong style="color:#F87171; text-transform:uppercase;">[${activeRole}]</strong> does not have permission to access the <strong>${requiredModule.toUpperCase()}</strong> module.
             </p>
-            <div style="display:flex; gap:12px; justify-content:center;">
-              <a href="/pos" style="padding:12px 24px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; text-decoration:none; border-radius:12px; font-weight:700; font-size:13px;">Return to POS Terminal</a>
-              <button onclick="DineFlowRBAC.setActiveRole('admin')" style="padding:12px 20px; background:rgba(255,255,255,0.08); border:none; border-radius:12px; color:#94A3B8; font-weight:700; font-size:13px; cursor:pointer;">Switch to Admin</button>
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+              <a href="/pos" style="padding:12px 24px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; text-decoration:none; border-radius:12px; font-weight:700; font-size:13px;">Return to Allowed Module</a>
+              <a href="/login" style="padding:12px 20px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:12px; color:#94A3B8; font-weight:700; font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-right-from-bracket"></i> Logout & Switch PIN</a>
             </div>
           </div>
         `;
