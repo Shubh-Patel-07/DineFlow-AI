@@ -54,7 +54,25 @@ function getStaticMenuItems() {
 }
 
 
+function updateStatsHeader() {
+  const total = allMenuItems.length;
+  const veg = allMenuItems.filter(i => i.is_veg).length;
+  const nonVeg = total - veg;
+  const unavailable = allMenuItems.filter(i => !i.is_available).length;
+
+  const totalEl = document.getElementById('statTotalItems');
+  const vegEl = document.getElementById('statVegItems');
+  const nonVegEl = document.getElementById('statNonVegItems');
+  const outEl = document.getElementById('statOutItems');
+
+  if (totalEl) totalEl.textContent = total;
+  if (vegEl) vegEl.textContent = veg;
+  if (nonVegEl) nonVegEl.textContent = nonVeg;
+  if (outEl) outEl.textContent = unavailable;
+}
+
 function renderMenuItems() {
+  updateStatsHeader();
   const container = document.getElementById('menuGridContainer');
   if (!container) return;
 
@@ -68,32 +86,45 @@ function renderMenuItems() {
 
   if (!filtered.length) {
     container.innerHTML = `
-      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#94A3B8;">
-        <i class="fa-solid fa-utensils" style="font-size:40px; margin-bottom:12px; opacity:0.5;"></i>
-        <h3 style="font-family:'Outfit',sans-serif; color:#F8FAFC; margin:0 0 6px;">No Menu Items Found</h3>
-        <p style="font-size:13px; margin:0;">Try adjusting your search or category filter, or add a new menu item.</p>
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; background:rgba(30,41,59,0.4); border-radius:20px; border:1px dashed var(--border); color:#94A3B8;">
+        <div style="width:64px; height:64px; margin:0 auto 16px; border-radius:18px; background:rgba(99,102,241,0.1); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px;">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#F8FAFC; margin:0 0 6px;">No Menu Items Found</h3>
+        <p style="font-size:13px; margin:0; color:#94A3B8;">No dishes match your selected filter. Click "Add New Menu Item" to create one.</p>
       </div>`;
     return;
   }
 
   container.innerHTML = filtered.map(item => `
-    <div class="item-card">
+    <div class="item-card ${!item.is_available ? 'unavailable-card' : ''}">
       <div class="item-img-wrap">
         <img src="${escapeHtml(item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400')}" alt="${escapeHtml(item.name)}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'">
-        <span class="item-badge ${item.is_veg ? 'veg' : 'nonveg'}">${item.is_veg ? 'VEG' : 'NON-VEG'}</span>
+        <div class="item-badges-group">
+          <span class="item-badge ${item.is_veg ? 'veg' : 'nonveg'}">
+            <span class="badge-dot"></span> ${item.is_veg ? 'VEG' : 'NON-VEG'}
+          </span>
+          <span class="category-badge">${escapeHtml(item.category || 'Mains')}</span>
+        </div>
+        ${!item.is_available ? '<div class="sold-out-overlay">SOLD OUT</div>' : ''}
       </div>
       <div class="item-card-body">
-        <h3 class="item-card-title">${escapeHtml(item.name)}</h3>
+        <div class="item-header-row">
+          <h3 class="item-card-title">${escapeHtml(item.name)}</h3>
+        </div>
         <p class="item-card-desc">${escapeHtml(item.description || 'Fresh gourmet dish prepared with finest ingredients.')}</p>
         <div class="item-card-footer">
-          <span class="item-price">₹${parseFloat(item.price || 0).toFixed(2)}</span>
+          <div class="price-box">
+            <span class="currency-symbol">₹</span>
+            <span class="item-price">${parseFloat(item.price || 0).toFixed(2)}</span>
+          </div>
           <div class="item-actions">
-            <label class="toggle-switch" title="Toggle Available/Sold Out">
+            <label class="toggle-switch" title="${item.is_available ? 'Available (Click to mark Sold Out)' : 'Sold Out (Click to mark Available)'}">
               <input type="checkbox" ${item.is_available ? 'checked' : ''} onchange="toggleItemAvailability('${item.id}', this.checked)">
               <span class="slider"></span>
             </label>
-            <button class="action-btn" onclick="openEditItemModal('${item.id}')" title="Edit Item"><i class="fa-solid fa-pen"></i></button>
-            <button class="action-btn delete" onclick="deleteMenuItem('${item.id}')" title="Delete Item"><i class="fa-solid fa-trash"></i></button>
+            <button class="action-btn edit-btn" onclick="openEditItemModal('${item.id}')" title="Edit Item"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button class="action-btn delete-btn" onclick="deleteMenuItem('${item.id}')" title="Delete Item"><i class="fa-solid fa-trash-can"></i></button>
           </div>
         </div>
       </div>
