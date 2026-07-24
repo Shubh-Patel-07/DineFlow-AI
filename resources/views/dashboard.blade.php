@@ -244,38 +244,43 @@
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-label">Menu & Stock</div>
+      <div class="sidebar-section-label">Menu</div>
       <a class="nav-item" href="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+      <a class="nav-item" href="/admin/menu-manager" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
+      <a class="nav-item" href="/admin/menu-manager" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
+      <a class="nav-item" href="/admin/menu-manager" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Operations</div>
+      <a class="nav-item" href="/pos?openModal=orders" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
       <a class="nav-item" href="/admin/customers" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+      <a class="nav-item" href="/admin/customers" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
       <a class="nav-item" href="/admin/coupons" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
-      <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-label">Settings</div>
+      <div class="sidebar-section-label">Reports</div>
+      <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+      <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
+      <a class="nav-item" href="/z-report" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Settings & Admin</div>
       <a class="nav-item" href="/admin/staff" data-tip="Staff & Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
       <a class="nav-item" href="/admin/settings" data-tip="Settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> Settings</span></a>
-      <a class="nav-item" href="/admin/feedback" data-tip="Feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
-      <form action="{{ route('auth.logout') }}" method="POST" style="display: flex; width: 100%;">
-        @csrf
-        <button type="submit" class="nav-item" data-tip="Logout" style="border: none; background: none; cursor: pointer; width: 100%; justify-content: flex-start;">
-          <i class="fa-solid fa-sign-out-alt"></i><span class="nav-label"> Logout</span>
-        </button>
-      </form>
+      <a class="nav-item" href="/admin/settings" data-tip="Printers"><i class="fa-solid fa-print"></i><span class="nav-label"> Printers</span></a>
+      <a class="nav-item" href="/admin/feedback" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
     </div>
   </div>
 
   <div class="sidebar-footer">
-    <div class="user-card">
-      <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}{{ str_contains(Auth::user()->name, ' ') ? strtoupper(substr(explode(' ', Auth::user()->name)[1], 0, 1)) : '' }}</div>
+    <div class="user-card" onclick="location.href='/login'">
+      <div class="user-avatar" style="background:var(--primary);">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
       <div class="user-info">
         <h4>{{ Auth::user()->name }}</h4>
-        <p>Staff</p>
+        <p>User</p>
       </div>
     </div>
   </div>
@@ -287,21 +292,39 @@
   <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-title-group">
-      <div class="topbar-title">Dashboard</div>
-      <div class="topbar-sub">{{ now()->format('l, d M Y') }} · System Overview</div>
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover;">
+          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
+        </div>
+        <div id="liveClockBadge" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); color: #818CF8; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: monospace; letter-spacing: 0.5px;">--:--:-- --</div>
+        <div id="localWeatherBadge" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34D399; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
+      </div>
+      <div class="topbar-sub" id="topbarDate">{{ now()->format('l, M d, Y') }} • Shift: Evening (16:00 - 24:00)</div>
     </div>
     <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
-    <div class="topbar-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <div class="topbar-btn" title="Notifications">
+    
+    <!-- Gujarati Soundbox Voice Mute Toggle -->
+    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Gujarati Soundbox Toggle" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px;">
+      <i class="fa-solid fa-volume-high"></i>
+      <span style="font-size:11px; font-weight:700;">ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊</span>
+    </div>
+
+    <!-- Test Voice Sound Button -->
+    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="alert('🔊 DineFlow Gujarati Soundbox Active!')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px;">
+      <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
+    </div>
+    <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div class="topbar-btn topbar-desktop-only" title="Notifications">
       <i class="fa-solid fa-bell"></i>
       <span class="notif-dot"></span>
     </div>
-    <div class="topbar-btn" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
-    <div style="width:1px;height:26px;background:var(--border);"></div>
-    <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+    <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
+    <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
+    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="location.href='/login'">
       <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
       <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()->name }}</span>
       <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
@@ -475,7 +498,15 @@ document.addEventListener("DOMContentLoaded", function() {
       },
       cutout: '70%'
     }
-  });
+  function updateLiveClock() {
+    const now = new Date();
+    const clockEl = document.getElementById('liveClockBadge');
+    if (clockEl) {
+      clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+  }
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
 });
 </script>
 
