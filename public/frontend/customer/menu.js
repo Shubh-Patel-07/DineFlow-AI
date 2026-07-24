@@ -153,6 +153,7 @@ function resolveImagePath(image, fallback = 'assests/images/placeholder-food.svg
 
 function setTableOptions(tables = []) {
   const select = $('#tableNumber');
+  if (!select) return;
   const availableTables = tables.length ? tables : Array.from({ length: 20 }, (_, index) => ({ id: String(index + 1), tableNumber: String(index + 1) }));
   select.innerHTML = availableTables.map(table => {
     const id = table.id || table._id || table.table_id || table.tableNumber || table.table_number;
@@ -417,14 +418,17 @@ function updateBuildPrice() {
 function buildDescription() {
   if (!currentBuildItem) return '';
   const parts = [];
-  const spicy = $('#buildSpicy').value;
-  const portion = $('#buildPortion').value;
+  const spicyEl = $('#buildSpicy');
+  const portionEl = $('#buildPortion');
+  const spicy = spicyEl ? spicyEl.value : 'Medium';
+  const portion = portionEl ? portionEl.value : 'full';
   parts.push(`${spicy} spicy`);
   const removes = [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove);
   removes.forEach(r => parts.push(r));
   const addons = [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => `${c.dataset.addon}${c.dataset.price ? ` (+₹${c.dataset.price})` : ''}`);
   addons.forEach(a => parts.push(a));
-  const instr = $('#buildInstruction').value.trim();
+  const instrEl = $('#buildInstruction');
+  const instr = instrEl ? instrEl.value.trim() : '';
   if (instr) parts.push(`Note: ${instr}`);
   return parts.join(', ');
 }
@@ -794,18 +798,19 @@ async function loadMenu() {
       request(`/tables/restaurant/${encodeURIComponent(restaurantId)}`)
     ]);
     if (restaurantResult.status === 'fulfilled' && restaurantResult.value) {
-      const data = restaurantResult.value;
-      if (data.name) $('#restaurantName').textContent = data.name;
-      if (data.address || data.location) $('#restaurantLocation').textContent = data.address || data.location;
-      if (data.logo) $('#restaurantLogo').src = resolveImagePath(data.logo);
+      const rData = restaurantResult.value;
+      const nameEl = $('#restaurantName'); if (nameEl && rData.name) nameEl.textContent = rData.name;
+      const locEl = $('#restaurantLocation'); if (locEl && (rData.address || rData.location)) locEl.textContent = rData.address || rData.location;
+      const logoEl = $('#restaurantLogo'); if (logoEl && rData.logo) logoEl.src = resolveImagePath(rData.logo);
     }
     const restaurantTables = tablesResult.status === 'fulfilled' && Array.isArray(tablesResult.value) ? tablesResult.value : [];
     setTableOptions(restaurantTables);
     if (tableResult.status === 'fulfilled' && tableResult.value) {
-      const data = tableResult.value;
-      const number = data.table_number || data.tableNumber || tableId;
-      if ($('#tableNumber').options[$('#tableNumber').selectedIndex]) {
-        $('#tableNumber').options[$('#tableNumber').selectedIndex].text = `#${number}`;
+      const tData = tableResult.value;
+      const number = tData.table_number || tData.tableNumber || tableId;
+      const tSelect = $('#tableNumber');
+      if (tSelect && tSelect.options[tSelect.selectedIndex]) {
+        tSelect.options[tSelect.selectedIndex].text = `#${number}`;
       }
     }
     if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
@@ -862,8 +867,9 @@ function highlightSuggestion(value, query) {
 
 function renderSuggestions() {
   const input = $('#searchInput');
-  const query = input.value.trim();
   const container = $('#searchSuggestions');
+  if (!input || !container) return;
+  const query = input.value.trim();
   if (!query) { container.hidden = true; container.innerHTML = ''; activeSuggestionIndex = -1; return; }
   const suggestions = menuItems.filter(item => `${item.name} ${item.category}`.toLowerCase().includes(query.toLowerCase())).slice(0, 6);
   container.innerHTML = suggestions.map((item, index) => `<button type="button" class="search-suggestion ${index === activeSuggestionIndex ? 'is-active' : ''}" role="option" aria-selected="${index === activeSuggestionIndex}" data-suggestion-id="${escapeHtml(item.id)}"><span>${highlightSuggestion(item.name, query)}</span><small>${escapeHtml(item.category || '')}</small></button>`).join('');
@@ -895,25 +901,37 @@ function applyTheme(theme) {
   localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
 }
 
-$('#searchInput').addEventListener('input', () => { activeSuggestionIndex = -1; renderSuggestions(); renderMenu(); });
-$('#searchInput').addEventListener('keydown', event => {
-  const suggestions = [...document.querySelectorAll('.search-suggestion')];
-  if (!suggestions.length) return;
-  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); activeSuggestionIndex = event.key === 'ArrowDown' ? (activeSuggestionIndex + 1) % suggestions.length : (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length; renderSuggestions(); }
-  if (event.key === 'Enter' && activeSuggestionIndex >= 0) { event.preventDefault(); selectSuggestion(suggestions[activeSuggestionIndex].dataset.suggestionId); }
-  if (event.key === 'Escape') $('#searchSuggestions').hidden = true;
-});
-$('#searchSuggestions').addEventListener('click', event => { const suggestion = event.target.closest('[data-suggestion-id]'); if (suggestion) selectSuggestion(suggestion.dataset.suggestionId); });
-document.addEventListener('click', event => { if (!event.target.closest('.search-wrapper')) $('#searchSuggestions').hidden = true; });
-$('#themeToggle').addEventListener('click', () => applyTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'));
+// --- Safe event listener bindings (null-guarded) ---
+const _searchInput = $('#searchInput');
+const _searchSuggestions = $('#searchSuggestions');
+const _themeToggle = $('#themeToggle');
+const _sortSelect = $('#sortSelect');
+const _languageSelect = $('#languageSelect');
+const _tableNumber = $('#tableNumber');
+const _categorySection = $('#categorySection');
+
+if (_searchInput) {
+  _searchInput.addEventListener('input', () => { activeSuggestionIndex = -1; renderSuggestions(); renderMenu(); });
+  _searchInput.addEventListener('keydown', event => {
+    const suggestions = [...document.querySelectorAll('.search-suggestion')];
+    if (!suggestions.length) return;
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); activeSuggestionIndex = event.key === 'ArrowDown' ? (activeSuggestionIndex + 1) % suggestions.length : (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length; renderSuggestions(); }
+    if (event.key === 'Enter' && activeSuggestionIndex >= 0) { event.preventDefault(); selectSuggestion(suggestions[activeSuggestionIndex].dataset.suggestionId); }
+    if (event.key === 'Escape' && _searchSuggestions) _searchSuggestions.hidden = true;
+  });
+}
+if (_searchSuggestions) _searchSuggestions.addEventListener('click', event => { const suggestion = event.target.closest('[data-suggestion-id]'); if (suggestion) selectSuggestion(suggestion.dataset.suggestionId); });
+document.addEventListener('click', event => { if (!event.target.closest('.search-wrapper') && _searchSuggestions) _searchSuggestions.hidden = true; });
+if (_themeToggle) _themeToggle.addEventListener('click', () => applyTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'));
 document.querySelectorAll('.filter-btn').forEach(button => button.addEventListener('click', () => { const { filter } = button.dataset; activeFilters.has(filter) ? activeFilters.delete(filter) : activeFilters.add(filter); button.classList.toggle('is-active', activeFilters.has(filter)); renderMenu(); }));
-$('#sortSelect').addEventListener('change', renderMenu);
-$('#languageSelect').addEventListener('change', event => { language = event.target.value; localStorage.setItem('dineflow-language', language); applyLanguage(); });
-$('#tableNumber').addEventListener('change', event => { tableId = event.target.value; const nextUrl = new URL(window.location.href); nextUrl.searchParams.set('tableId', tableId); window.history.replaceState({}, '', nextUrl); loadMenu(); });
-$('#categorySection').addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; category = button.dataset.category; renderCategories(); renderMenu(); });
+if (_sortSelect) _sortSelect.addEventListener('change', renderMenu);
+if (_languageSelect) _languageSelect.addEventListener('change', event => { language = event.target.value; localStorage.setItem('dineflow-language', language); applyLanguage(); });
+if (_tableNumber) _tableNumber.addEventListener('change', event => { tableId = event.target.value; const nextUrl = new URL(window.location.href); nextUrl.searchParams.set('tableId', tableId); window.history.replaceState({}, '', nextUrl); loadMenu(); });
+if (_categorySection) _categorySection.addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; category = button.dataset.category; renderCategories(); renderMenu(); });
 document.querySelectorAll('.diet-btn').forEach(button => button.addEventListener('click', () => { diet = button.dataset.diet; document.querySelectorAll('.diet-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
 document.querySelectorAll('.view-btn').forEach(button => button.addEventListener('click', () => { activeView = button.dataset.view; document.querySelectorAll('.view-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
-$('#foodGrid').addEventListener('click', event => {
+const _foodGrid = $('#foodGrid');
+if (_foodGrid) _foodGrid.addEventListener('click', event => {
   const favoriteButton = event.target.closest('[data-favorite-toggle]');
   if (favoriteButton) {
     event.stopPropagation();
@@ -933,14 +951,16 @@ $('#foodGrid').addEventListener('click', event => {
   if (card) openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId));
 });
 
-$('#favoritesSection').addEventListener('click', event => {
+const _favSection = $('#favoritesSection');
+if (_favSection) _favSection.addEventListener('click', event => {
   const removeButton = event.target.closest('[data-favorite-remove-id]');
   if (!removeButton) return;
   event.stopPropagation();
   removeFavorite(removeButton.dataset.favoriteRemoveId);
 });
 
-$('#recentSection').addEventListener('click', event => {
+const _recentSection = $('#recentSection');
+if (_recentSection) _recentSection.addEventListener('click', event => {
   if (event.target.closest('[data-clear-recent]')) {
     clearRecentlyViewed();
     return;
@@ -950,7 +970,7 @@ $('#recentSection').addEventListener('click', event => {
   const item = menuItems.find(entry => String(entry.id) === recentButton.dataset.recentItemId);
   if (item) openItemModal(item);
 });
-$('#foodGrid').addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { const card = event.target.closest('[data-item-id]'); if (card) { event.preventDefault(); openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); } } });
+if (_foodGrid) _foodGrid.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { const card = event.target.closest('[data-item-id]'); if (card) { event.preventDefault(); openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); } } });
 
 const btnCloseModal = $('#btnCloseModal') || $('#closeItemModal');
 if (btnCloseModal) btnCloseModal.addEventListener('click', closeItemModal);
@@ -980,58 +1000,65 @@ if (callWaiterButton) {
 let tableUnpaidItems = [];
 
 async function openSplitBillModal() {
+  const setEl = (id, val) => { const el = $(id); if (el) el.textContent = val; };
   const upiSec = $('#splitUpiSection');
   if (upiSec) upiSec.style.display = 'block';
-
   const listEl = $('#splitBillItemList') || $('#splitBillItemsList');
+  const qrImg = $('#splitUpiQrImg');
+  if (qrImg) qrImg.src = '';
+  setEl('#splitSubtotal', '₹0.00');
+  setEl('#splitTax', '₹0.00');
+  setEl('#splitTotal', '₹0.00');
 
-  $('#splitSubtotal').textContent = '₹0.00';
-  $('#splitTax').textContent = '₹0.00';
-  $('#splitTotal').textContent = '₹0.00';
+  function renderSplitItems(items, source) {
+    tableUnpaidItems = items;
+    if (listEl) {
+      listEl.innerHTML = items.map((item, idx) => `
+        <label style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 12px; border-radius: 8px; cursor: pointer;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: #6366F1;">
+            <div style="text-align: left; font-size: 13px;">
+              <div style="font-weight: 700; color: white;">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
+              <div style="font-size: 10px; opacity: 0.6;">₹${Number(item.price || 0).toFixed(2)} each</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; font-weight: 700; color: white;">
+            Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
+              ${Array.from({ length: item.quantity || 1 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+            </select>
+          </div>
+        </label>
+      `).join('');
+    }
+  }
 
+  // Try DB order first
   try {
     const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
       const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
-      
-      if (!activeOrder || !Array.isArray(activeOrder.items) || activeOrder.items.length === 0) {
-        if (listEl) {
-          listEl.innerHTML = `
-            <div style="text-align: center; padding: 20px 10px; opacity: 0.6; font-size: 13px;">
-              <p>No active unpaid items found on this table!</p>
-            </div>
-          `;
-        }
+      if (activeOrder && Array.isArray(activeOrder.items) && activeOrder.items.length > 0) {
+        renderSplitItems(activeOrder.items, 'order');
         const modal = $('#splitBillModal');
         if (modal) modal.hidden = false;
         return;
       }
-
-      tableUnpaidItems = activeOrder.items;
-
-      if (listEl) {
-        listEl.innerHTML = tableUnpaidItems.map((item, idx) => `
-          <label style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 12px; border-radius: 8px; cursor: pointer;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: #6366F1;">
-              <div style="text-align: left; font-size: 13px;">
-                <div style="font-weight: 700; color: white;">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
-                <div style="font-size: 10px; opacity: 0.6;">₹${item.price} each</div>
-              </div>
-            </div>
-            <div style="font-size: 12px; font-weight: 700; color: white;">
-              Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
-                ${Array.from({ length: item.quantity || 1 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
-              </select>
-            </div>
-          </label>
-        `).join('');
-      }
     }
   } catch (err) {
-    console.log('Error loading split bill items:', err);
-    if (listEl) listEl.innerHTML = `<p style="color:#F87171; text-align:center; font-size:12px;">No active order items found to split.</p>`;
+    console.log('Split bill DB fetch failed, trying cart:', err);
+  }
+
+  // Fallback: use cart items
+  const cart = getCart();
+  if (cart && cart.length > 0) {
+    renderSplitItems(cart, 'cart');
+  } else {
+    tableUnpaidItems = [];
+    if (listEl) {
+      listEl.innerHTML = `<div style="text-align: center; padding: 20px 10px; opacity: 0.6; font-size: 13px;"><p>No items found. Add items to your cart first!</p></div>`;
+    }
+    if (upiSec) upiSec.style.display = 'none';
   }
 
   const modal = $('#splitBillModal');
@@ -1044,6 +1071,7 @@ function closeSplitBillModal() {
 }
 
 function recalculateSplit() {
+  const setEl = (id, val) => { const el = $(id); if (el) el.textContent = val; };
   let subtotal = 0;
   const checkboxes = document.querySelectorAll('.split-item-chk');
   const qtySelects = document.querySelectorAll('.split-item-qty');
@@ -1052,26 +1080,36 @@ function recalculateSplit() {
     if (chk.checked) {
       const idx = parseInt(chk.value);
       const item = tableUnpaidItems[idx];
-      const selectedQty = parseInt(qtySelects[index].value);
-      subtotal += parseFloat(item.price) * selectedQty;
+      if (!item) return;
+      const selectedQty = parseInt(qtySelects[index]?.value || 1);
+      subtotal += parseFloat(item.price || 0) * selectedQty;
     }
   });
 
   const tax = subtotal * 0.05;
   const total = subtotal + tax;
 
-  $('#splitSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
-  $('#splitTax').textContent = `₹${tax.toFixed(2)}`;
-  $('#splitTotal').textContent = `₹${total.toFixed(2)}`;
+  setEl('#splitSubtotal', `₹${subtotal.toFixed(2)}`);
+  setEl('#splitTax', `₹${tax.toFixed(2)}`);
+  setEl('#splitTotal', `₹${total.toFixed(2)}`);
 
-  const totalAmount = total;
-  const merchantUpi = "7777938338@omni";
-  const merchantName = "DineFlow AI Restaurant";
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+  const merchantUpi = '7777938338@omni';
+  const merchantName = 'DineFlow AI Restaurant';
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
 
   const qrImg = $('#splitUpiQrImg');
-  if (qrImg) qrImg.src = qrUrl;
+  if (qrImg) {
+    if (total > 0) {
+      qrImg.src = qrUrl;
+      qrImg.style.display = 'block';
+    } else {
+      qrImg.src = '';
+      qrImg.style.display = 'none';
+    }
+  }
+  const upiSec = $('#splitUpiSection');
+  if (upiSec) upiSec.style.display = total > 0 ? 'block' : 'none';
 }
 
 if (document.readyState === 'loading') {
