@@ -559,9 +559,11 @@ html, body {
 body {
   display: flex !important;
   flex-direction: row !important;
-  height: 100vh !important;
-  overflow: hidden !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
+
 
 .sidebar {
   width: 240px;
@@ -841,10 +843,13 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden;
   min-width: 0;
   background: var(--bg);
+  -webkit-overflow-scrolling: touch;
 }
+
 
 .topbar {
   background: #0f172a;
