@@ -102,7 +102,48 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen');
     Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar');
     Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined');
+
+    Route::get('/z-report', function (Illuminate\Http\Request $request) {
+        $reportDate = $request->query('date', \Carbon\Carbon::today()->format('Y-m-d'));
+        $orders = \App\Models\Order::whereDate('created_at', $reportDate)->where('payment_status', 'paid')->get();
+
+        $grossRevenue = $orders->sum('total_amount');
+        $netSubtotal = $grossRevenue / 1.18; // 18% tax inclusive calculation
+        $taxTotal = $grossRevenue - $netSubtotal;
+        $totalOrdersCount = $orders->count();
+
+        $paymentSplit = [
+            'cash' => ['count' => 0, 'amount' => 0],
+            'online' => ['count' => 0, 'amount' => 0],
+            'card' => ['count' => 0, 'amount' => 0],
+        ];
+
+        foreach ($orders as $order) {
+            $method = strtolower($order->payment_method ?: 'cash');
+            if (str_contains($method, 'upi') || str_contains($method, 'online') || str_contains($method, 'gpay')) {
+                $method = 'online';
+            } elseif (str_contains($method, 'card')) {
+                $method = 'card';
+            } else {
+                $method = 'cash';
+            }
+            $paymentSplit[$method]['count']++;
+            $paymentSplit[$method]['amount'] += $order->total_amount;
+        }
+
+        $categoryBreakdown = \DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
+            ->whereDate('orders.created_at', $reportDate)
+            ->where('orders.payment_status', 'paid')
+            ->select('menu_items.category', \DB::raw('SUM(order_items.quantity) as total_qty'), \DB::raw('SUM(order_items.price * order_items.quantity) as total_sales'))
+            ->groupBy('menu_items.category')
+            ->get();
+
+        return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
+    })->name('pos.z-report');
 });
+
 
 // Simple shortcuts for testing/presentations
 Route::get('/menu', function () {
