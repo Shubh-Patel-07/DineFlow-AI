@@ -143,62 +143,43 @@ Route::middleware('auth')->group(function () {
         return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
     })->name('pos.z-report');
 
-    // Admin Static Page Routes (Guaranteed 100% MIME type & file serving)
-    Route::get('/frontend/admin/menu-manager.html', function () {
-        return response()->file(public_path('frontend/admin/menu-manager.html'));
-    });
-    Route::get('/admin/menu-manager', function () {
-        return response()->file(public_path('frontend/admin/menu-manager.html'));
-    });
+    // Helper to serve Admin HTML files with dynamic Auth User Role injection
+    $serveAdminPage = function ($filename) {
+        $path = public_path($filename);
+        if (!file_exists($path)) {
+            return response("File not found", 404);
+        }
+        $content = file_get_contents($path);
+        $userRole = auth()->check() ? (auth()->user()->role ?? auth()->user()->username ?? 'admin') : (session('active_role') ?? 'admin');
+        $script = "<script>window.AUTH_USER_ROLE = " . json_encode($userRole) . ";</script>";
+        $content = str_replace('<head>', "<head>\n  {$script}", $content);
+        return response($content)->header('Content-Type', 'text/html; charset=UTF-8');
+    };
 
-    Route::get('/frontend/admin/inventory.html', function () {
-        return response()->file(public_path('frontend/admin/inventory.html'));
-    });
-    Route::get('/admin/inventory', function () {
-        return response()->file(public_path('frontend/admin/inventory.html'));
-    });
+    // Admin Page Routes (With RBAC Role Injection)
+    Route::get('/frontend/admin/menu-manager.html', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
+    Route::get('/admin/menu-manager', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
 
-    Route::get('/frontend/admin/coupons.html', function () {
-        return response()->file(public_path('frontend/admin/coupons.html'));
-    });
-    Route::get('/admin/coupons', function () {
-        return response()->file(public_path('frontend/admin/coupons.html'));
-    });
+    Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('frontend/admin/inventory.html'));
+    Route::get('/admin/inventory', fn() => $serveAdminPage('frontend/admin/inventory.html'));
 
-    Route::get('/frontend/admin/customers.html', function () {
-        return response()->file(public_path('frontend/admin/customers.html'));
-    });
-    Route::get('/admin/customers', function () {
-        return response()->file(public_path('frontend/admin/customers.html'));
-    });
+    Route::get('/frontend/admin/coupons.html', fn() => $serveAdminPage('frontend/admin/coupons.html'));
+    Route::get('/admin/coupons', fn() => $serveAdminPage('frontend/admin/coupons.html'));
 
-    Route::get('/frontend/admin/tables.html', function () {
-        return response()->file(public_path('frontend/admin/tables.html'));
-    });
-    Route::get('/admin/tables', function () {
-        return response()->file(public_path('frontend/admin/tables.html'));
-    });
+    Route::get('/frontend/admin/customers.html', fn() => $serveAdminPage('frontend/admin/customers.html'));
+    Route::get('/admin/customers', fn() => $serveAdminPage('frontend/admin/customers.html'));
 
-    Route::get('/frontend/admin/feedback.html', function () {
-        return response()->file(public_path('frontend/admin/feedback.html'));
-    });
-    Route::get('/admin/feedback', function () {
-        return response()->file(public_path('frontend/admin/feedback.html'));
-    });
+    Route::get('/frontend/admin/tables.html', fn() => $serveAdminPage('frontend/admin/tables.html'));
+    Route::get('/admin/tables', fn() => $serveAdminPage('frontend/admin/tables.html'));
 
-    Route::get('/frontend/admin/staff.html', function () {
-        return response()->file(public_path('frontend/admin/staff.html'));
-    });
-    Route::get('/admin/staff', function () {
-        return response()->file(public_path('frontend/admin/staff.html'));
-    });
+    Route::get('/frontend/admin/feedback.html', fn() => $serveAdminPage('frontend/admin/feedback.html'));
+    Route::get('/admin/feedback', fn() => $serveAdminPage('frontend/admin/feedback.html'));
 
-    Route::get('/frontend/admin/settings.html', function () {
-        return response()->file(public_path('frontend/admin/settings.html'));
-    });
-    Route::get('/admin/settings', function () {
-        return response()->file(public_path('frontend/admin/settings.html'));
-    });
+    Route::get('/frontend/admin/staff.html', fn() => $serveAdminPage('frontend/admin/staff.html'));
+    Route::get('/admin/staff', fn() => $serveAdminPage('frontend/admin/staff.html'));
+
+    Route::get('/frontend/admin/settings.html', fn() => $serveAdminPage('frontend/admin/settings.html'));
+    Route::get('/admin/settings', fn() => $serveAdminPage('frontend/admin/settings.html'));
 });
 
 
