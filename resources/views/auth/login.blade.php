@@ -490,20 +490,32 @@
             <form method="POST" action="/pin-login" id="pinSubmitForm">
                 @csrf
                 
-                <!-- Role Pills -->
-                <div style="margin-bottom: 6px;">
-                    <label style="font-size: 11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Select Staff Account:</label>
-                    <div class="role-pills">
-                        <button type="button" class="role-pill active" onclick="selectRole('admin', this)"><i class="fa-solid fa-crown"></i> Admin</button>
-                        <button type="button" class="role-pill" onclick="selectRole('manager', this)"><i class="fa-solid fa-user-tie"></i> Manager</button>
-                        <button type="button" class="role-pill" onclick="selectRole('cashier', this)"><i class="fa-solid fa-cash-register"></i> Cashier</button>
-                        <button type="button" class="role-pill" onclick="selectRole('kitchen', this)"><i class="fa-solid fa-utensils"></i> Chef</button>
-                        <button type="button" class="role-pill" onclick="selectRole('waiter', this)"><i class="fa-solid fa-bell"></i> Waiter</button>
+                <!-- Select Staff Account Dropdown & Pills -->
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 11.5px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Select Staff Account</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
+                        <select name="username" id="pinUsername" class="form-control" onchange="onRoleSelectDropdownChange(this.value)" style="padding-left:42px; appearance:none; -webkit-appearance:none; background:var(--card); font-weight:600; cursor:pointer;">
+                            <option value="admin">👑 admin (Admin User — PIN: 1234)</option>
+                            <option value="manager">👔 manager (Store Manager — PIN: 5678)</option>
+                            <option value="cashier">💳 cashier (POS Cashier — PIN: 9999)</option>
+                            <option value="kitchen">👨‍🍳 kitchen (Head Chef — PIN: 2580)</option>
+                            <option value="waiter">🛎️ waiter (Table Staff — PIN: 3690)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down" style="left:auto; right:14px; pointer-events:none; font-size:12px;"></i>
                     </div>
                 </div>
 
-                <input type="hidden" name="username" id="pinUsername" value="admin">
+                <div class="role-pills" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+                    <button type="button" class="role-pill active" data-role="admin" onclick="selectRole('admin', this)"><i class="fa-solid fa-crown"></i> Admin</button>
+                    <button type="button" class="role-pill" data-role="manager" onclick="selectRole('manager', this)"><i class="fa-solid fa-user-tie"></i> Manager</button>
+                    <button type="button" class="role-pill" data-role="cashier" onclick="selectRole('cashier', this)"><i class="fa-solid fa-cash-register"></i> Cashier</button>
+                    <button type="button" class="role-pill" data-role="kitchen" onclick="selectRole('kitchen', this)"><i class="fa-solid fa-utensils"></i> Chef</button>
+                    <button type="button" class="role-pill" data-role="waiter" onclick="selectRole('waiter', this)"><i class="fa-solid fa-bell"></i> Waiter</button>
+                </div>
+
                 <input type="hidden" name="numeric_pin" id="hiddenPinInput">
+
 
                 <!-- PIN Dots -->
                 <div class="pin-dots">
@@ -574,13 +586,23 @@
             }
         }
 
-        // Role Selector Pills
+        // Role Selector Sync
         function selectRole(role, btnEl) {
-            document.getElementById('pinUsername').value = role;
-            document.querySelectorAll('.role-pill').forEach(btn => btn.classList.remove('active'));
-            if (btnEl) btnEl.classList.add('active');
+            const sel = document.getElementById('pinUsername');
+            if (sel) sel.value = role;
+            document.querySelectorAll('.role-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-role') === role || btn === btnEl);
+            });
             clearPin();
         }
+
+        function onRoleSelectDropdownChange(role) {
+            document.querySelectorAll('.role-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-role') === role);
+            });
+            clearPin();
+        }
+
 
         // Quick PIN Logic
         let enteredPin = '';
