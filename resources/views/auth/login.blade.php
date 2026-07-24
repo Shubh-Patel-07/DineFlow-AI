@@ -29,8 +29,10 @@
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
+
 
         /* ─── SPLIT LAYOUT ─── */
         .split-left {
