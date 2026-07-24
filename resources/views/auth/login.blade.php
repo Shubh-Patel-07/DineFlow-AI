@@ -494,7 +494,8 @@
                     <button type="button" class="key key-action" onclick="clearPin()">C</button>
                     <button type="button" class="key" onclick="pressKey(0)">0</button>
                     <button type="button" class="key key-action" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
-                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: var(--primary); color: white;" onclick="manualPinSubmit()">Submit</button>
+                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--primary), #4F46E5); color: white; border-radius: 12px; height: 46px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);" onclick="manualPinSubmit()"><i class="fa-solid fa-right-to-bracket"></i> Submit PIN</button>
+
                 </div>
             </form>
         </div>
@@ -573,8 +574,11 @@
             if (enteredPin.length >= 4) {
                 hiddenPinInput.value = enteredPin;
                 pinSubmitForm.submit();
+            } else {
+                alert('Please enter a 4-digit PIN (e.g. 1234 for Admin) to login.');
             }
         }
+
 
 
         function clearPin() {
