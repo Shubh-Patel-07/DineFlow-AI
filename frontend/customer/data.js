@@ -1,5 +1,5 @@
 window.restaurant = {
-    name: "DineFlow Gourmet Restaurant",
+    name: "DineFlow Restaurant",
     rating: 4.8,
     status: "Open Now",
     location: "Patan, Gujarat",
@@ -112,6 +112,45 @@ window.foodItems = [
     isVeg: true
 },
 {
+    id: 8.5,
+    name: "Soft Drink",
+    category: "Drinks",
+    price: 80,
+    rating: 4.5,
+    badge: "Refresh",
+    popular: true,
+    image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&q=75&auto=format",
+    description: "Chilled soft drink served cold with your meal.",
+    available: true,
+    isVeg: true
+},
+{
+    id: 8.6,
+    name: "French Fries",
+    category: "Starters",
+    price: 120,
+    rating: 4.6,
+    badge: "Crispy",
+    popular: true,
+    image: "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=400&q=75&auto=format",
+    description: "Golden crispy fries with a light seasoning.",
+    available: true,
+    isVeg: true
+},
+{
+    id: 8.7,
+    name: "Mocktail",
+    category: "Drinks",
+    price: 140,
+    rating: 4.7,
+    badge: "Fresh",
+    popular: true,
+    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&q=75&auto=format",
+    description: "Refreshing mocktail crafted with fruit and mint.",
+    available: true,
+    isVeg: true
+},
+{
     id: 9,
     name: "Chocolate Brownie",
     category: "Desserts",
@@ -126,13 +165,13 @@ window.foodItems = [
 },
 {
     id: 10,
-    name: "Gulab Jamun",
+    name: "Pastry",
     category: "Desserts",
     price: 120,
     rating: 4.8,
     badge: "Traditional",
-    popular: false,
-    image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=75&auto=format",
+    popular: true,
+    image: "https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=400&q=75&auto=format",
     description: "Soft milk-solid balls dipped in rose-flavored sugar syrup.",
     available: true,
     isVeg: true

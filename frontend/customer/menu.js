@@ -19,6 +19,11 @@ const activeFilters = new Set();
 const FAVORITES_STORAGE_KEY = 'dineflow-favorites';
 const RECENT_STORAGE_KEY = 'dineflow-recent-items';
 const THEME_STORAGE_KEY = 'dineflow-theme';
+const COMBO_OFFERS = [
+  { id: 'combo-lunch', name: 'Lunch Combo', price: 499, includes: ['1 Pizza', '1 Soft Drink', '1 Dessert'], description: 'Perfect for a quick midday meal.' },
+  { id: 'combo-family', name: 'Family Feast', price: 799, includes: ['2 Burgers', '2 Fries', '2 Drinks'], description: 'Great for sharing with friends or family.' },
+  { id: 'combo-date', name: 'Date Night', price: 649, includes: ['1 Pasta', '2 Mocktails', '1 Brownie'], description: 'A cozy option for a relaxed evening.' }
+];
 
 const $ = (selector) => document.querySelector(selector);
 const getText = (key) => translations[language][key] || translations.en[key] || key;
@@ -74,6 +79,62 @@ function removeFavorite(itemId) {
 function getFavoriteItems() {
   const favorites = getStoredItems(FAVORITES_STORAGE_KEY).map(String);
   return favorites.map(id => menuItems.find(item => String(item.id) === id)).filter(Boolean);
+}
+
+function renderRecommendedSection() {
+  const section = $('#recommendedSection');
+  if (!section) return;
+
+  const recommendedItems = menuItems
+    .filter(item => item.popular || getFavoriteIds().has(String(item.id)) || getRecentItemIds().includes(String(item.id)))
+    .slice(0, 4);
+
+  if (!recommendedItems.length) {
+    section.style.display = 'none';
+    section.innerHTML = '';
+    return;
+  }
+
+  section.style.display = 'block';
+  section.innerHTML = `
+    <div class="promo-section__header">
+      <h3 class="promo-section__title">Recommended for You</h3>
+      <span class="promo-section__meta">Picked for your taste</span>
+    </div>
+    <div class="promo-grid">
+      ${recommendedItems.map(item => `
+        <div class="promo-card">
+          <span class="promo-card__tag">${escapeHtml(item.popular ? 'Popular' : 'Suggested')}</span>
+          <div class="promo-card__name">${escapeHtml(item.name)}</div>
+          <div class="promo-card__desc">${escapeHtml(item.description || 'A fresh pick from our menu')}</div>
+          <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}">View Item</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderComboOffersSection() {
+  const section = $('#comboOffersSection');
+  if (!section) return;
+
+  section.style.display = 'block';
+  section.innerHTML = `
+    <div class="promo-section__header">
+      <h3 class="promo-section__title">Combo Offers</h3>
+      <span class="promo-section__meta">Great value deals</span>
+    </div>
+    <div class="promo-grid">
+      ${COMBO_OFFERS.map(combo => `
+        <div class="combo-card">
+          <div class="combo-card__title">${escapeHtml(combo.name)}</div>
+          <div class="combo-card__includes">${escapeHtml(combo.includes.join(' • '))}</div>
+          <div class="combo-card__price">₹${escapeHtml(combo.price)}</div>
+          <button class="combo-card__btn" type="button" data-combo-add-id="${escapeHtml(combo.id)}">Add Combo</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function renderFavoritesSection() {
@@ -250,6 +311,8 @@ function filteredItems() {
 function renderMenu() {
   const items = filteredItems();
   const favorites = getFavoriteIds();
+  renderRecommendedSection();
+  renderComboOffersSection();
   renderFavoritesSection();
   renderRecentSection();
   const loadingEl = $('#loadingState');
@@ -350,6 +413,31 @@ function closeItemModal() { const m = $('#itemModal'); if (m) m.hidden = true; }
 
 // Wire modal Add to Cart button
 document.addEventListener('click', event => {
+  const recommendedButton = event.target.closest('[data-recommended-item-id]');
+  if (recommendedButton) {
+    const item = menuItems.find(i => String(i.id) === String(recommendedButton.dataset.recommendedItemId));
+    if (item) openItemModal(item);
+    return;
+  }
+
+  const comboButton = event.target.closest('[data-combo-add-id]');
+  if (comboButton) {
+    const combo = COMBO_OFFERS.find(item => item.id === comboButton.dataset.comboAddId);
+    if (combo) {
+      addToCart({
+        id: `${combo.id}-${Date.now()}`,
+        name: combo.name,
+        description: combo.description,
+        price: combo.price,
+        quantity: 1,
+        isCombo: true,
+        includes: combo.includes
+      });
+      showToast(`${combo.name} added to cart`);
+    }
+    return;
+  }
+
   if (event.target.closest('#modalAddToCartBtn')) {
     const name = $('#modalItemName')?.textContent;
     const item = menuItems.find(i => i.name === name);
