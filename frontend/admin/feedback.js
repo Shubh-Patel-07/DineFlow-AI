@@ -4,7 +4,23 @@
 
 let allFeedback = [];
 
+function showLoader() {
+  const loader = document.querySelector('[data-loader]');
+  if (loader) { loader.style.opacity = '1'; loader.style.display = 'flex'; }
+}
+
+function hideLoader() {
+  const loader = document.querySelector('[data-loader]');
+  if (loader) { loader.style.opacity = '0'; loader.style.display = 'none'; }
+}
+
+function toast(msg, type = 'info') {
+  if (typeof Toast !== 'undefined' && Toast.show) { Toast.show(msg, type); }
+  else if (typeof Toast !== 'undefined' && Toast.error && type === 'error') { Toast.error(msg); }
+}
+
 async function loadFeedback() {
+
   showLoader();
   const restaurantId = new URLSearchParams(window.location.search).get('restaurant_id') || window.APP_CONFIG?.restaurant_id || 1;
   const result = await APIService.getFeedback(restaurantId);
