@@ -10,14 +10,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-glow: rgba(79, 70, 229, 0.25);
-            --primary-dark: #3730A3;
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --primary-dark: #4338CA;
             --success: #10B981;
             --danger: #EF4444;
-            --bg: #0F172A;
-            --card: #1E293B;
-            --border: #334155;
+            --bg: #090D1A;
+            --card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
             --text-primary: #F8FAFC;
             --text-secondary: #94A3B8;
         }
@@ -35,9 +35,7 @@
         /* ─── SPLIT LAYOUT ─── */
         .split-left {
             flex: 1;
-            background: linear-gradient(-45deg, #1e1b4b, #311042, #1e293b, #0f172a);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
+            background: linear-gradient(135deg, #090D1A 0%, #1e1b4b 50%, #0f172a 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -45,17 +43,11 @@
             position: relative;
         }
 
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .split-left::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.2) 0%, transparent 50%);
+            top: -200px; left: -200px; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -72,19 +64,21 @@
         }
 
         .logo-img {
-            height: 54px;
+            height: 56px;
             width: auto;
             border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 8px 24px var(--primary-glow);
             background: #fff;
-            padding: 3px;
+            padding: 4px;
+            object-fit: contain;
         }
 
         .logo-text {
             font-family: 'Outfit', sans-serif;
-            font-size: 30px;
+            font-size: 32px;
             font-weight: 800;
             letter-spacing: -0.5px;
+            color: #fff;
         }
 
         .logo-text span {
@@ -177,7 +171,7 @@
         .tab-btn.active {
             background: var(--primary);
             color: #fff;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 14px var(--primary-glow);
         }
 
         /* ─── FORM ELEMENTS ─── */
@@ -236,7 +230,7 @@
         .btn-submit {
             width: 100%;
             padding: 13px;
-            background: linear-gradient(135deg, var(--primary), #7C3AED);
+            background: linear-gradient(135deg, var(--primary), #4F46E5);
             border: none;
             color: white;
             font-size: 15px;
@@ -244,7 +238,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 14px var(--primary-glow);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -253,7 +247,7 @@
 
         .btn-submit:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 6px 20px var(--primary-glow);
         }
 
         .error-container {
@@ -269,11 +263,43 @@
             align-items: flex-start;
         }
 
+        /* ─── ROLE SELECTOR PILLS ─── */
+        .role-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+
+        .role-pill {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .role-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
         /* ─── PIN KEYPAD ─── */
         .pin-dots {
             display: flex;
             justify-content: center;
-            gap: 16px;
+            gap: 18px;
             margin: 20px 0;
         }
 
@@ -282,25 +308,26 @@
             height: 16px;
             border: 2px solid var(--border);
             border-radius: 50%;
-            transition: all 0.15s;
+            transition: all 0.18s ease;
         }
 
         .pin-dot.active {
             background-color: var(--primary);
             border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
+            box-shadow: 0 0 12px var(--primary);
+            transform: scale(1.1);
         }
 
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            max-width: 300px;
+            max-width: 310px;
             margin: 0 auto;
         }
 
         .key {
-            height: 54px;
+            height: 52px;
             background: var(--card);
             border: 1px solid var(--border);
             color: var(--text-primary);
@@ -322,13 +349,13 @@
         .key-action {
             font-size: 14px;
             font-weight: 600;
-            background: rgba(51, 65, 85, 0.4);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         /* ─── DEMO CREDENTIALS DRAWER ─── */
         .credentials-box {
-            background: rgba(79, 70, 229, 0.12);
-            border: 1px dashed rgba(79, 70, 229, 0.4);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px dashed rgba(99, 102, 241, 0.35);
             border-radius: 12px;
             padding: 14px;
             margin-top: 24px;
@@ -401,9 +428,9 @@
     <!-- Right Split -->
     <div class="split-right">
         <div style="margin-bottom: 24px; display:flex; align-items:center; gap:14px;">
-            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:44px; width:auto; border-radius:10px; box-shadow:0 4px 14px rgba(79,70,229,0.25); background:#fff; padding:3px;" onerror="this.src='/images/dineflow_logo.png'">
+            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:46px; width:auto; border-radius:10px; box-shadow:0 4px 14px rgba(99,102,241,0.25); background:#fff; padding:3px; object-fit:contain;" onerror="this.src='/images/dineflow_logo.png'">
             <div>
-                <h2 style="font-family:'Outfit', sans-serif; font-size:24px; font-weight:800; margin-bottom:2px;">Welcome Back</h2>
+                <h2 style="font-family:'Outfit', sans-serif; font-size:24px; font-weight:800; margin-bottom:2px; color:#fff;">Welcome Back</h2>
                 <p style="color:var(--text-secondary); font-size:13px;">Sign in to access your DineFlow POS dashboard.</p>
             </div>
         </div>
@@ -422,7 +449,7 @@
         <!-- Switcher Tabs -->
         <div class="tab-group">
             <button class="tab-btn active" id="tabPassword" onclick="switchTab('password')">
-                <i class="fa-solid fa-key"></i> Password
+                <i class="fa-solid fa-key"></i> Password Login
             </button>
             <button class="tab-btn" id="tabPin" onclick="switchTab('pin')">
                 <i class="fa-solid fa-fingerprint"></i> Quick PIN
@@ -437,7 +464,7 @@
                     <label>Username</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" name="username" class="form-control" placeholder="Enter username" value="{{ old('username') }}" required>
+                        <input type="text" name="username" class="form-control" placeholder="Enter username (e.g. admin)" value="{{ old('username') }}" required>
                     </div>
                 </div>
 
@@ -445,7 +472,7 @@
                     <label>Password</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password (e.g. password)" required>
                     </div>
                 </div>
 
@@ -459,23 +486,23 @@
         <div class="form-panel" id="panelPin">
             <form method="POST" action="/pin-login" id="pinSubmitForm">
                 @csrf
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label>Select Staff Account</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-user-tag"></i>
-                        <select name="username" id="pinUsername" class="form-control" style="padding-left:42px; appearance:none; -webkit-appearance:none;">
-                            <option value="admin">admin (Admin User)</option>
-                            <option value="manager">manager (Manager)</option>
-                            <option value="cashier">cashier (Cashier)</option>
-                            <option value="kitchen">kitchen (Chef)</option>
-                            <option value="waiter">waiter (Waiter)</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down" style="left:auto; right:14px; pointer-events:none;"></i>
+                
+                <!-- Role Pills -->
+                <div style="margin-bottom: 6px;">
+                    <label style="font-size: 11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Select Staff Account:</label>
+                    <div class="role-pills">
+                        <button type="button" class="role-pill active" onclick="selectRole('admin', this)"><i class="fa-solid fa-crown"></i> Admin</button>
+                        <button type="button" class="role-pill" onclick="selectRole('manager', this)"><i class="fa-solid fa-user-tie"></i> Manager</button>
+                        <button type="button" class="role-pill" onclick="selectRole('cashier', this)"><i class="fa-solid fa-cash-register"></i> Cashier</button>
+                        <button type="button" class="role-pill" onclick="selectRole('kitchen', this)"><i class="fa-solid fa-utensils"></i> Chef</button>
+                        <button type="button" class="role-pill" onclick="selectRole('waiter', this)"><i class="fa-solid fa-bell"></i> Waiter</button>
                     </div>
                 </div>
 
+                <input type="hidden" name="username" id="pinUsername" value="admin">
                 <input type="hidden" name="numeric_pin" id="hiddenPinInput">
 
+                <!-- PIN Dots -->
                 <div class="pin-dots">
                     <div class="pin-dot" id="dot1"></div>
                     <div class="pin-dot" id="dot2"></div>
@@ -483,6 +510,7 @@
                     <div class="pin-dot" id="dot4"></div>
                 </div>
 
+                <!-- Keypad -->
                 <div class="keypad">
                     <button type="button" class="key" onclick="pressKey(1)">1</button>
                     <button type="button" class="key" onclick="pressKey(2)">2</button>
@@ -496,7 +524,7 @@
                     <button type="button" class="key key-action" onclick="clearPin()">C</button>
                     <button type="button" class="key" onclick="pressKey(0)">0</button>
                     <button type="button" class="key key-action" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
-                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--primary), #4F46E5); color: white; border-radius: 12px; height: 48px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);" onclick="manualPinSubmit()"><i class="fa-solid fa-right-to-bracket"></i> Submit PIN</button>
+                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--primary), #4338CA); color: white; border-radius: 12px; height: 48px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 14px var(--primary-glow);" onclick="manualPinSubmit()"><i class="fa-solid fa-right-to-bracket"></i> Submit Quick PIN</button>
                 </div>
             </form>
         </div>
@@ -508,9 +536,9 @@
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:6px;">
                 <button type="button" onclick="quickFillPassword('admin', 'password')" class="demo-chip">🔑 Admin</button>
-                <button type="button" onclick="quickFillPin('admin', '1234')" class="demo-chip">🔢 Admin PIN (1234)</button>
-                <button type="button" onclick="quickFillPin('manager', '5678')" class="demo-chip">🔢 Manager PIN (5678)</button>
-                <button type="button" onclick="quickFillPin('cashier', '9999')" class="demo-chip">🔢 Cashier PIN (9999)</button>
+                <button type="button" onclick="quickFillPin('admin', '1234')" class="demo-chip">👑 Admin PIN (1234)</button>
+                <button type="button" onclick="quickFillPin('manager', '5678')" class="demo-chip">👔 Manager PIN (5678)</button>
+                <button type="button" onclick="quickFillPin('cashier', '9999')" class="demo-chip">💳 Cashier PIN (9999)</button>
             </div>
         </div>
     </div>
@@ -541,6 +569,14 @@
                 document.getElementById('panelPin').classList.add('active');
                 clearPin();
             }
+        }
+
+        // Role Selector Pills
+        function selectRole(role, btnEl) {
+            document.getElementById('pinUsername').value = role;
+            document.querySelectorAll('.role-pill').forEach(btn => btn.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            clearPin();
         }
 
         // Quick PIN Logic
@@ -608,8 +644,12 @@
 
         function quickFillPin(username, pin) {
             switchTab('pin');
-            const sel = document.getElementById('pinUsername');
-            if (sel) sel.value = username;
+            const pills = document.querySelectorAll('.role-pill');
+            pills.forEach(pill => {
+                if (pill.textContent.toLowerCase().includes(username)) {
+                    selectRole(username, pill);
+                }
+            });
             clearPin();
             for (let char of String(pin)) {
                 pressKey(parseInt(char));
@@ -620,7 +660,6 @@
         document.addEventListener('keydown', (e) => {
             const pinPanel = document.getElementById('panelPin');
             if (!pinPanel || !pinPanel.classList.contains('active')) return;
-            if (document.activeElement && document.activeElement.tagName === 'SELECT') return;
 
             if (e.key >= '0' && e.key <= '9') {
                 pressKey(parseInt(e.key));
