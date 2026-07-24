@@ -143,49 +143,50 @@ Route::middleware('auth')->group(function () {
         return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
     })->name('pos.z-report');
 
-    // Admin Static Page Routes (Guaranteed 100% loading)
+    // Admin Static Page Routes (Guaranteed 100% MIME type & file serving)
     Route::get('/frontend/admin/menu-manager.html', function () {
-        return file_get_contents(public_path('frontend/admin/menu-manager.html'));
+        return response()->file(public_path('frontend/admin/menu-manager.html'));
     });
     Route::get('/admin/menu-manager', function () {
-        return file_get_contents(public_path('frontend/admin/menu-manager.html'));
+        return response()->file(public_path('frontend/admin/menu-manager.html'));
     });
 
     Route::get('/frontend/admin/inventory.html', function () {
-        return file_get_contents(public_path('frontend/admin/inventory.html'));
+        return response()->file(public_path('frontend/admin/inventory.html'));
     });
     Route::get('/admin/inventory', function () {
-        return file_get_contents(public_path('frontend/admin/inventory.html'));
+        return response()->file(public_path('frontend/admin/inventory.html'));
     });
 
     Route::get('/frontend/admin/coupons.html', function () {
-        return file_get_contents(public_path('frontend/admin/coupons.html'));
+        return response()->file(public_path('frontend/admin/coupons.html'));
     });
     Route::get('/admin/coupons', function () {
-        return file_get_contents(public_path('frontend/admin/coupons.html'));
+        return response()->file(public_path('frontend/admin/coupons.html'));
     });
 
     Route::get('/frontend/admin/customers.html', function () {
-        return file_get_contents(public_path('frontend/admin/customers.html'));
+        return response()->file(public_path('frontend/admin/customers.html'));
     });
     Route::get('/admin/customers', function () {
-        return file_get_contents(public_path('frontend/admin/customers.html'));
+        return response()->file(public_path('frontend/admin/customers.html'));
     });
 
     Route::get('/frontend/admin/tables.html', function () {
-        return file_get_contents(public_path('frontend/admin/tables.html'));
+        return response()->file(public_path('frontend/admin/tables.html'));
     });
     Route::get('/admin/tables', function () {
-        return file_get_contents(public_path('frontend/admin/tables.html'));
+        return response()->file(public_path('frontend/admin/tables.html'));
     });
 
     Route::get('/frontend/admin/feedback.html', function () {
-        return file_get_contents(public_path('frontend/admin/feedback.html'));
+        return response()->file(public_path('frontend/admin/feedback.html'));
     });
     Route::get('/admin/feedback', function () {
-        return file_get_contents(public_path('frontend/admin/feedback.html'));
+        return response()->file(public_path('frontend/admin/feedback.html'));
     });
 });
+
 
 
 
