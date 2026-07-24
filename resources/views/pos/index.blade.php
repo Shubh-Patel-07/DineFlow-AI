@@ -1775,7 +1775,8 @@
   updatePosMuteUI();
 
   /* ─── DATA ─────────────────────────────────── */
-  const MENU = [
+  /* ─── DATA & API SYNC ────────────────────────── */
+  let MENU = [
     { id:1,  name:'Paneer Butter Masala', cat:'mains',     price:240, emoji:'🍛', badge:'veg',    desc:'Creamy tomato butter curry',   qty:0 },
     { id:2,  name:'Chicken Tikka Masala',  cat:'mains',     price:320, emoji:'🍗', badge:'nonveg', desc:'Smoky grilled chicken curry',   qty:0 },
     { id:3,  name:'Garlic Naan',           cat:'breads',    price:60,  emoji:'🫓', badge:'veg',    desc:'Soft buttery garlic flatbread', qty:0 },
@@ -1789,6 +1790,44 @@
     { id:11, name:'Veg Biryani',           cat:'rice',      price:280, emoji:'🍙', badge:'best',   desc:'Aromatic vegetable biryani',    qty:0 },
     { id:12, name:'Cold Coffee',           cat:'beverages', price:140, emoji:'☕', badge:'veg',    desc:'Rich blended cold coffee',      qty:0 },
   ];
+
+  async function syncPosMenuWithDatabase() {
+    try {
+      const res = await fetch('/api/menu/restaurant/1');
+      const data = await res.json();
+      if (res.ok && (data.success || Array.isArray(data.data)) && Array.isArray(data.data) && data.data.length > 0) {
+        MENU = data.data.map(item => {
+          const catLower = (item.category || 'mains').toLowerCase();
+          let catKey = 'mains';
+          let emoji = item.is_veg !== false ? '🟢' : '🔴';
+          
+          if (catLower.includes('starter') || catLower.includes('appetizer')) { catKey = 'starters'; emoji = '🥢'; }
+          else if (catLower.includes('bread') || catLower.includes('roti') || catLower.includes('naan')) { catKey = 'breads'; emoji = '🫓'; }
+          else if (catLower.includes('rice') || catLower.includes('biryani')) { catKey = 'rice'; emoji = '🍚'; }
+          else if (catLower.includes('dessert') || catLower.includes('sweet')) { catKey = 'desserts'; emoji = '🍮'; }
+          else if (catLower.includes('drink') || catLower.includes('beverage')) { catKey = 'beverages'; emoji = '🍹'; }
+          else if (catLower.includes('pizza')) { catKey = 'mains'; emoji = '🍕'; }
+          else if (catLower.includes('burger')) { catKey = 'starters'; emoji = '🍔'; }
+
+          return {
+            id: item.id,
+            name: item.name,
+            cat: catKey,
+            price: parseFloat(item.price),
+            emoji: emoji,
+            badge: item.is_veg !== false ? 'veg' : 'nonveg',
+            desc: item.description || '',
+            qty: 0,
+            is_available: item.is_available !== false
+          };
+        });
+        renderMenu();
+        renderCategories();
+      }
+    } catch (err) {
+      console.warn('POS dynamic menu sync warning, keeping fallback', err);
+    }
+  }
 
   const META_PICKERS = {
     waiter: {
@@ -1820,15 +1859,17 @@
   let currentCat = 'all';
   let searchTerm = '';
 
-  const CATS = [
-    { key:'all',       label:'All Items',      emoji:'🍽️', count: MENU.length },
-    { key:'starters',  label:'Starters',       emoji:'🥢', count: MENU.filter(i=>i.cat==='starters').length },
-    { key:'mains',     label:'Main Course',    emoji:'🍛', count: MENU.filter(i=>i.cat==='mains').length },
-    { key:'breads',    label:'Breads',         emoji:'🫓', count: MENU.filter(i=>i.cat==='breads').length },
-    { key:'rice',      label:'Rice & Biryani', emoji:'🍚', count: MENU.filter(i=>i.cat==='rice').length },
-    { key:'desserts',  label:'Desserts',       emoji:'🍮', count: MENU.filter(i=>i.cat==='desserts').length },
-    { key:'beverages', label:'Beverages',      emoji:'🥭', count: MENU.filter(i=>i.cat==='beverages').length },
-  ];
+  function getCats() {
+    return [
+      { key:'all',       label:'All Items',      emoji:'🍽️', count: MENU.length },
+      { key:'starters',  label:'Starters',       emoji:'🥢', count: MENU.filter(i=>i.cat==='starters').length },
+      { key:'mains',     label:'Main Course',    emoji:'🍛', count: MENU.filter(i=>i.cat==='mains').length },
+      { key:'breads',    label:'Breads',         emoji:'🫓', count: MENU.filter(i=>i.cat==='breads').length },
+      { key:'rice',      label:'Rice & Biryani', emoji:'🍚', count: MENU.filter(i=>i.cat==='rice').length },
+      { key:'desserts',  label:'Desserts',       emoji:'🍮', count: MENU.filter(i=>i.cat==='desserts').length },
+      { key:'beverages', label:'Beverages',      emoji:'🥭', count: MENU.filter(i=>i.cat==='beverages').length },
+    ];
+  }
 
   /* ─── RENDER MENU ────────────────────────── */
   function renderMenu() {
@@ -2806,6 +2847,9 @@
   }
   setInterval(updateLiveClock, 1000);
   updateLiveClock();
+
+  // Sync POS menu items dynamically from Database API (Menu Manager)
+  syncPosMenuWithDatabase();
 
   // Open modal automatically if query parameter is set
   const urlParams = new URLSearchParams(window.location.search);
