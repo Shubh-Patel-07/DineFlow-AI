@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Chhas buttermilk">
+  <rect width="800" height="600" rx="40" fill="#f0fdf4"/>
+  <rect x="170" y="160" width="460" height="280" rx="36" fill="#dcfce7"/>
+  <rect x="220" y="220" width="340" height="140" rx="24" fill="#ffffff"/>
+  <path d="M300 300c22-58 92-92 154-86 54 5 104 36 118 86-52 20-106 30-164 30-41 0-81-8-108-30Z" fill="#86efac"/>
+  <path d="M290 280c0-47 33-84 74-84 41 0 74 37 74 84" stroke="#16a34a" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <path d="M258 214c24-32 76-48 120-45" stroke="#4ade80" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M520 218c18-10 38-16 58-16" stroke="#22c55e" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <circle cx="250" cy="232" r="12" fill="#fde68a"/>
+  <circle cx="548" cy="262" r="10" fill="#fde68a"/>
+</svg>

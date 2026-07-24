@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Management | DineFlow AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="admin.css?v=1.0.1">
+</head>
+<body>
+  <!-- Loader -->
+  <div data-loader class="loader">
+    <div class="spinner-ring"></div>
+    <p>Loading tables...</p>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+        <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div class="brand-text">
+        <h2>DineFlow AI</h2>
+        <span>Management Suite</span>
+      </div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+    
+    <div class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Main</div>
+        <a class="nav-item" href="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+        <a class="nav-item" href="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
+        <a class="nav-item" href="/frontend/admin/menu-manager.html" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+        <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+        <a class="nav-item" href="/frontend/admin/inventory.html" data-tip="Inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+        <a class="nav-item" href="/frontend/admin/coupons.html" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
+        <a class="nav-item" href="/frontend/admin/customers.html" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+        <a class="nav-item active" href="/frontend/admin/tables.html" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+        <a class="nav-item" href="/frontend/admin/feedback.html" data-tip="Reviews & Feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews & Feedback</span></a>
+      </div>
+
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="Auth.logout()">
+        <div class="user-avatar">A</div>
+        <div class="user-info">
+          <h4>Admin User</h4>
+          <p>Logout</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View -->
+  <div class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="sidebar-toggle topbar-mobile-menu" onclick="toggleSidebar()" style="display: none; border: none; background: transparent; color: #fff; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+        <div class="topbar-title-group">
+          <h2 class="topbar-title">Table Management</h2>
+          <p class="topbar-sub">Manage and monitor dine-in restaurant tables</p>
+        </div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <button onclick="openAddTableModal()" class="btn-primary" style="height: 36px; padding: 0 16px; font-size: 12.5px; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-plus"></i> Add Table</button>
+    </header>
+
+    <!-- Main Content -->
+    <div style="flex: 1; overflow-y: auto; padding: 24px;">
+      <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; color: #FFFFFF; margin: 0;">Restaurant Tables</h2>
+      </div>
+      
+      <!-- Tables Grid -->
+      <div data-tables-container class="tables-grid">
+        <!-- Tables rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Add Table Modal -->
+  <div id="addTableModal" class="qr-modal" hidden>
+    <div class="qr-modal-content" style="width: 340px; max-width: 92%; background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.4);">
+      <button onclick="closeAddTableModal()" class="qr-modal-close" style="color: rgba(255,255,255,0.6); position: absolute; top: 12px; right: 16px; border: none; background: transparent; font-size: 24px; cursor: pointer;">&times;</button>
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #FFFFFF; margin-top: 0; margin-bottom: 8px;">Add New Table</h3>
+      <p style="font-size: 12px; color: #94A3B8; margin-bottom: 20px;">Enter a unique table label or number (e.g. T-13, Table 13)</p>
+      <input type="text" id="newTableNumberInput" placeholder="Table Number (e.g. T-13)" style="width: 100%; height: 42px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: #FFFFFF; padding: 0 14px; font-size: 14px; font-weight: 600; margin-bottom: 20px; outline: none; transition: border 0.2s;" onfocus="this.style.borderColor='#6366F1';" onblur="this.style.borderColor='rgba(255,255,255,0.1)';">
+      <div style="display: flex; gap: 10px;">
+        <button onclick="submitAddTable()" class="btn-primary" style="flex: 1; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 10px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">Save Table</button>
+        <button onclick="closeAddTableModal()" style="flex: 1; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.05); color: #E2E8F0; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="qr-modal" hidden>
+    <div class="qr-modal-content">
+      <button onclick="closeQrModal()" class="qr-modal-close">&times;</button>
+      <h3 id="qrModalTitle">Table QR Code</h3>
+      <div class="qr-container">
+        <img id="qrModalImage" src="" alt="QR Code">
+      </div>
+      <p class="qr-modal-hint">Scan this code using a mobile phone to open the menu</p>
+      <div class="qr-modal-actions">
+        <button onclick="printQrCode()" class="btn-primary"><i class="fa-solid fa-print"></i> Print QR</button>
+        <button onclick="closeQrModal()" class="btn-secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Print Layout (Hidden on screen, styled for print only) -->
+  <div id="qrPrintLayout" class="qr-print-layout">
+    <div class="qr-print-card">
+      <div class="qr-print-header">
+        <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="logo-image">
+        <h2>DineFlow AI</h2>
+        <p>Smart Dining Experience</p>
+      </div>
+      <div class="qr-print-body">
+        <div class="qr-print-code-wrapper">
+          <img id="qrPrintImage" src="" alt="Table QR Code">
+        </div>
+        <div class="table-badge-container">
+          <span class="table-badge-label">TABLE</span>
+          <h1 id="qrPrintTableNumber">T-01</h1>
+        </div>
+        <p class="scan-instructions">📸 Scan QR Code using your phone camera to view menu & place order</p>
+      </div>
+      <div class="qr-print-footer">
+        <p class="thank-you">Thank you for dining with us!</p>
+        <p class="branding-footer">Powered by DineFlow AI • www.dineflow.ai</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../auth.js"></script>
+  <script src="utils.js?v=1.0.1"></script>
+  <script src="api.js?v=1.0.1"></script>
+  <script src="tables.js?v=1.0.1"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMobile) {
+        sidebar.classList.toggle('mobile-open');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+  </script>
+</body>
+</html>

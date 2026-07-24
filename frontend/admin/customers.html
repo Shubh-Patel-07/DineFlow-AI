@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers & Loyalty | DineFlow AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/frontend/admin/admin.css?v=1.0.1">
+
+  <style>
+    .cust-table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+    .cust-table th, .cust-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); }
+    .cust-table th { background: rgba(255,255,255,0.03); color: var(--text-secondary); font-size: 11px; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <!-- Loader -->
+  <div data-loader class="loader">
+    <div class="spinner-ring"></div>
+    <p>Loading Customer Directory...</p>
+  </div>
+  <script>setTimeout(() => { const l = document.querySelector('[data-loader]'); if (l) l.style.display = 'none'; }, 400);</script>
+
+
+  <div style="display: flex; min-height: 100vh;">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" style="width: 240px; background: #0B0F19; border-right: 1px solid rgba(255,255,255,0.08); padding: 16px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);">
+        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width:34px; height:34px; border-radius:8px;">
+        <div>
+          <h2 style="font-size:14px; font-weight:700; margin:0; color:#fff;">DineFlow AI</h2>
+          <span style="font-size:11px; color:#64748B;">Admin Suite</span>
+        </div>
+      </div>
+      <nav style="display:flex; flex-direction:column; gap:4px;">
+        <a href="/dashboard" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="/pos" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-cash-register"></i> POS Terminal</a>
+        <a href="/frontend/admin/menu-manager.html" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
+        <a href="/z-report" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
+        <a href="/frontend/admin/inventory.html" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
+        <a href="/frontend/admin/coupons.html" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-ticket"></i> Coupons</a>
+        <a href="/frontend/admin/customers.html" class="nav-item active" style="padding:10px; background:#6366F1; color:#fff; text-decoration:none; border-radius:8px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-users"></i> Customers</a>
+        <a href="/frontend/admin/tables.html" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-table-cells-large"></i> Table Manager</a>
+        <a href="/frontend/admin/feedback.html" class="nav-item" style="padding:10px; color:#94A3B8; text-decoration:none; border-radius:8px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-star"></i> Reviews & Feedback</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main style="flex: 1; padding: 28px; overflow-y: auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div>
+          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:#F8FAFC;">👥 Customer Directory & Loyalty Rewards</h1>
+          <p style="margin:0; color:#94A3B8; font-size:13px;">View customer visit frequency, total spending, and reward points</p>
+        </div>
+      </div>
+
+      <table class="cust-table">
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Phone Number</th>
+            <th>Total Visits</th>
+            <th>Total Spent</th>
+            <th>Loyalty Points</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="customerTableBody">
+          <!-- Rendered via JS -->
+        </tbody>
+      </table>
+    </main>
+  </div>
+
+  <script src="/frontend/admin/utils.js"></script>
+  <script src="/frontend/admin/customers.js"></script>
+
+</body>
+</html>
