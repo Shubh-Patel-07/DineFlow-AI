@@ -498,6 +498,9 @@ document.addEventListener("DOMContentLoaded", function() {
       },
       cutout: '70%'
     }
+  });
+
+  // Live Clock Ticker
   function updateLiveClock() {
     const now = new Date();
     const clockEl = document.getElementById('liveClockBadge');
@@ -507,6 +510,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   updateLiveClock();
   setInterval(updateLiveClock, 1000);
+
 });
 </script>
 
