@@ -152,7 +152,8 @@ function openAddItemModal() {
   document.getElementById('itemPrice').value = '';
   document.getElementById('itemImage').value = '';
   document.getElementById('itemDesc').value = '';
-  document.getElementById('itemIsVeg').checked = true;
+  const vegRadio = document.getElementById('typeVegRadio');
+  if (vegRadio) vegRadio.checked = true;
   document.getElementById('itemIsAvailable').checked = true;
   document.getElementById('itemModal').style.display = 'flex';
 }
@@ -168,7 +169,15 @@ function openEditItemModal(id) {
   document.getElementById('itemPrice').value = item.price || '';
   document.getElementById('itemImage').value = item.image || '';
   document.getElementById('itemDesc').value = item.description || '';
-  document.getElementById('itemIsVeg').checked = item.is_veg !== false;
+  
+  if (item.is_veg !== false) {
+    const vRadio = document.getElementById('typeVegRadio');
+    if (vRadio) vRadio.checked = true;
+  } else {
+    const nvRadio = document.getElementById('typeNonVegRadio');
+    if (nvRadio) nvRadio.checked = true;
+  }
+
   document.getElementById('itemIsAvailable').checked = item.is_available !== false;
   document.getElementById('itemModal').style.display = 'flex';
 }
@@ -180,6 +189,7 @@ function closeItemModal() {
 async function handleSaveItem(event) {
   event.preventDefault();
   const id = document.getElementById('itemId').value;
+  const isVegSelected = document.getElementById('typeVegRadio')?.checked ?? true;
   const payload = {
     restaurant_id: 1,
     name: document.getElementById('itemName').value.trim(),
@@ -187,7 +197,7 @@ async function handleSaveItem(event) {
     price: parseFloat(document.getElementById('itemPrice').value),
     image: document.getElementById('itemImage').value.trim(),
     description: document.getElementById('itemDesc').value.trim(),
-    is_veg: document.getElementById('itemIsVeg').checked,
+    is_veg: isVegSelected,
     is_available: document.getElementById('itemIsAvailable').checked
   };
 
