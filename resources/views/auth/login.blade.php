@@ -340,17 +340,37 @@
 
         /* ─── DEMO CREDENTIALS BOX ─── */
         .credentials-box {
-            background: rgba(79, 70, 229, 0.08);
-            border: 1px dashed rgba(79, 70, 229, 0.3);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 30px;
+            background: rgba(79, 70, 229, 0.12);
+            border: 1px dashed rgba(79, 70, 229, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 24px;
             font-size: 12.5px;
             color: #A5B4FC;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
         }
+
+        .demo-chip {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #E2E8F0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
 
         /* ─── RESPONSIVE ─── */
         @media (max-width: 900px) {
@@ -500,16 +520,20 @@
             </form>
         </div>
 
-        <!-- Credentials Drawer -->
+        <!-- Quick Login Demo Drawer -->
         <div class="credentials-box">
-            <div>🔑 Standard: <strong>admin</strong> | <strong>password</strong></div>
-            <div>🔢 Quick PINs:
-                <strong>admin: 1234</strong> | 
-                <strong>manager: 5678</strong> | 
-                <strong>cashier: 9999</strong>
+            <div style="font-weight:700; color:#fff; font-size:12px; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-bolt" style="color:var(--success);"></i> 1-Click Quick Demo Login:
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button type="button" onclick="quickFillPassword('admin', 'password')" class="demo-chip">🔑 Admin</button>
+                <button type="button" onclick="quickFillPin('admin', '1234')" class="demo-chip">🔢 Admin PIN (1234)</button>
+                <button type="button" onclick="quickFillPin('manager', '5678')" class="demo-chip">🔢 Manager PIN (5678)</button>
+                <button type="button" onclick="quickFillPin('cashier', '9999')" class="demo-chip">🔢 Cashier PIN (9999)</button>
             </div>
         </div>
     </div>
+
 
     <!-- JavaScript Slider & Tab Control -->
     <script>
@@ -536,6 +560,37 @@
                 clearPin();
             }
         }
+
+        // 1-Click Quick Demo Login Fillers
+        function quickFillPassword(username, password) {
+            switchTab('password');
+            const userInput = document.querySelector('input[name="username"]');
+            const passInput = document.querySelector('input[name="password"]');
+            if (userInput) userInput.value = username;
+            if (passInput) passInput.value = password;
+            setTimeout(() => {
+                const form = document.querySelector('#panelPassword form');
+                if (form) form.submit();
+            }, 150);
+        }
+
+        function quickFillPin(username, pin) {
+            switchTab('pin');
+            const sel = document.getElementById('pinUsername');
+            if (sel) sel.value = username;
+            clearPin();
+            for (let char of String(pin)) {
+                pressKey(parseInt(char));
+            }
+        }
+
+        // Keyboard support for Quick PIN
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('panelPin').classList.contains('active')) {
+                if (e.key >= 0 && e.key <= 9) pressKey(e.key);
+                if (e.key === 'Backspace') backspacePin();
+            }
+        });
 
         // PIN Keypad Logic
         let enteredPin = '';
