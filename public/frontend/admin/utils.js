@@ -548,7 +548,7 @@ window.DineFlowRBAC = {
       '/admin/feedback': 'feedback'
     };
 
-    document.querySelectorAll('.sidebar nav a.nav-item, .sidebar-nav a.nav-item, nav a.nav-item').forEach(link => {
+    document.querySelectorAll('.sidebar nav a.nav-item, .sidebar-nav a.nav-item, nav a.nav-item, a[href^="/admin/"], a[href="/pos"], a[href="/z-report"]').forEach(link => {
       const href = link.getAttribute('href');
       if (!href) return;
 
