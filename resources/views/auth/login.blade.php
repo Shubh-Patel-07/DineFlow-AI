@@ -64,14 +64,14 @@
         }
 
         .logo-img {
-            height: 56px;
-            width: auto;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px var(--primary-glow);
-            background: #fff;
-            padding: 4px;
-            object-fit: contain;
+            height: 64px;
+            width: 64px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            object-fit: cover;
+            border: 1px solid rgba(99, 102, 241, 0.4);
         }
+
 
         .logo-text {
             font-family: 'Outfit', sans-serif;
@@ -428,12 +428,13 @@
     <!-- Right Split -->
     <div class="split-right">
         <div style="margin-bottom: 24px; display:flex; align-items:center; gap:14px;">
-            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:46px; width:auto; border-radius:10px; box-shadow:0 4px 14px rgba(99,102,241,0.25); background:#fff; padding:3px; object-fit:contain;" onerror="this.src='/images/dineflow_logo.png'">
+            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:50px; width:50px; border-radius:12px; box-shadow:0 4px 18px rgba(99,102,241,0.35); object-fit:cover; border:1px solid rgba(99,102,241,0.3);" onerror="this.src='/images/dineflow_logo.png'">
             <div>
                 <h2 style="font-family:'Outfit', sans-serif; font-size:24px; font-weight:800; margin-bottom:2px; color:#fff;">Welcome Back</h2>
                 <p style="color:var(--text-secondary); font-size:13px;">Sign in to access your DineFlow POS dashboard.</p>
             </div>
         </div>
+
 
         @if ($errors->any())
             <div class="error-container">
