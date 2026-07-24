@@ -1430,9 +1430,10 @@
         <button class="modal-close" type="button" onclick="closeModal('adminModuleModal')"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
-    <div class="modal-body" style="padding:0; flex:1; overflow:hidden; background:#090D1A;">
-      <iframe id="adminModuleIframe" src="" style="width:100%; height:100%; border:none; background:#090D1A;"></iframe>
+    <div class="modal-body" style="padding:0; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; background:#090D1A;">
+      <iframe id="adminModuleIframe" src="" style="width:100%; height:100%; min-height:100%; border:none; background:#090D1A;"></iframe>
     </div>
+
   </div>
 </div>
 
