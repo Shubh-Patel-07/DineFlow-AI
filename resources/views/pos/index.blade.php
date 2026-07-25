@@ -1311,19 +1311,19 @@
         <div class="payment-label">Payment Method</div>
         <div class="pay-methods">
           <div class="pay-method active" onclick="selectPay(this)">
-            <i class="fa-solid fa-money-bill-wave"></i><span>Cash</span>
+            <i class="fa-solid fa-money-bill-wave" style="pointer-events:none;"></i><span style="pointer-events:none;">Cash</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
-            <i class="fa-solid fa-credit-card"></i><span>Card</span>
+            <i class="fa-solid fa-credit-card" style="pointer-events:none;"></i><span style="pointer-events:none;">Card</span>
           </div>
           <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
-            <i class="fa-brands fa-google-pay" style="font-size:16px; color:#34D399;"></i><span>GPay / UPI</span>
+            <i class="fa-brands fa-google-pay" style="font-size:16px; color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">GPay / UPI</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
-            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+            <i class="fa-solid fa-wallet" style="pointer-events:none;"></i><span style="pointer-events:none;">Wallet</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
-            <i class="fa-solid fa-code-branch"></i><span>Split</span>
+            <i class="fa-solid fa-code-branch" style="pointer-events:none;"></i><span style="pointer-events:none;">Split</span>
           </div>
         </div>
         <div class="split-row" id="splitRow" style="display:none;">
@@ -2600,11 +2600,24 @@
 
   /* ─── PAYMENT ────────────────────────────── */
   function selectPay(el) {
-    document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    const label = el.querySelector('span').textContent;
-    document.getElementById('splitRow').style.display = (label === 'Split') ? 'flex' : 'none';
-    if (label.includes('UPI') || label.includes('QR')) {
+    try {
+      document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
+      const targetDiv = (el && el.closest) ? el.closest('.pay-method') : el;
+      if (targetDiv) {
+        targetDiv.classList.add('active');
+      }
+      
+      const labelText = targetDiv ? (targetDiv.textContent || '').trim() : '';
+      const splitRow = document.getElementById('splitRow');
+      if (splitRow) {
+        splitRow.style.display = labelText.toLowerCase().includes('split') ? 'flex' : 'none';
+      }
+
+      if (labelText.toLowerCase().includes('upi') || labelText.toLowerCase().includes('gpay') || labelText.toLowerCase().includes('qr')) {
+        openUpiQrModal();
+      }
+    } catch (err) {
+      console.error('Error in selectPay:', err);
       openUpiQrModal();
     }
   }
@@ -2675,11 +2688,16 @@
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
         
-        // Open Print Hub modal for clean manual selections
-        document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
-        document.getElementById('printHubKitchenBtn').style.display = activeOrderHasKitchen ? 'flex' : 'none';
-        document.getElementById('printHubBarBtn').style.display = activeOrderHasBar ? 'flex' : 'none';
-        openModal('printHubModal');
+        // If GPay / UPI was active payment method, open QR modal for payment collection!
+        const activePayMethod = document.querySelector('.pay-method.active')?.textContent || '';
+        if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('gpay')) {
+          openUpiQrModal();
+        } else {
+          document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
+          document.getElementById('printHubKitchenBtn').style.display = activeOrderHasKitchen ? 'flex' : 'none';
+          document.getElementById('printHubBarBtn').style.display = activeOrderHasBar ? 'flex' : 'none';
+          openModal('printHubModal');
+        }
       } else {
         showToast(data.message || 'Failed to place order', 'error');
       }
