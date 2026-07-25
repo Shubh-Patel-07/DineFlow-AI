@@ -957,7 +957,7 @@
       <div class="sidebar-section-label">Reports</div>
       <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
       <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
-      <a class="nav-item" href="/z-report" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" href="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
 
     <div class="sidebar-section">
@@ -2330,25 +2330,27 @@
   function openUpiQrModal() {
     const activeCartItems = MENU.filter(i => i.qty > 0);
     let subtotal = 0;
+    let serviceCharge = 0;
+    let gst = 0;
+    let finalGrandTotal = 0;
+
     if (activeCartItems.length > 0) {
       subtotal = activeCartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    } else {
-      showToast('Please add items to cart first to scan QR!', 'error');
-      return;
+      serviceCharge = subtotal * 0.05;
+      gst = (subtotal + serviceCharge) * 0.18;
+      finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
     }
+    // Allow opening with empty cart (₹0 QR for showing or manual entry)
 
     const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-    const serviceCharge = subtotal * 0.05;
-    const gst = (subtotal + serviceCharge) * 0.18;
-    const finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
     currentUpiPayAmount = finalGrandTotal;
 
     document.getElementById('upiModalTable').textContent = tableNumber;
     document.getElementById('upiModalSubtotal').textContent = '₹' + subtotal.toFixed(2);
     document.getElementById('upiModalService').textContent = '₹' + serviceCharge.toFixed(2);
     document.getElementById('upiModalGst').textContent = '₹' + gst.toFixed(2);
-    document.getElementById('upiModalTotal').textContent = '₹' + finalGrandTotal.toFixed(2);
-    document.getElementById('upiModalBreakdownTotal').textContent = '₹' + finalGrandTotal.toFixed(2);
+    document.getElementById('upiModalTotal').textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ --';
+    document.getElementById('upiModalBreakdownTotal').textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ --';
 
     const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
     if (document.getElementById('merchantVpaInput')) {
