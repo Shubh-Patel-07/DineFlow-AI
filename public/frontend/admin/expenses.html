@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expenses — DineFlow AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link href="/frontend/admin/admin.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #6366F1; --primary-light: rgba(99,102,241,0.15);
+      --success: #10B981; --success-light: rgba(16,185,129,0.15);
+      --danger: #EF4444;  --danger-light: rgba(239,68,68,0.15);
+      --warning: #F59E0B; --warning-light: rgba(245,158,11,0.15);
+      --bg: #0F172A; --card: #1E293B; --border: #334155;
+      --text-primary: #F8FAFC; --text-secondary: #94A3B8; --text-muted: #64748B;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+
+    .page-header {
+      background: #0B0F19; border-bottom: 1px solid var(--border);
+      padding: 18px 28px; display: flex; align-items: center; gap: 16px;
+    }
+    .page-header-back {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-secondary); text-decoration: none;
+      transition: all .15s;
+    }
+    .page-header-back:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+    .page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+    .content { padding: 24px 28px; max-width: 1200px; margin: 0 auto; }
+
+    /* Summary cards */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .summary-card {
+      background: var(--card); border-radius: 16px; padding: 20px;
+      border: 1px solid var(--border); display: flex; align-items: center; gap: 14px;
+      transition: all .2s;
+    }
+    .summary-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+    .summary-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .summary-icon.red   { background: var(--danger-light);  color: var(--danger); }
+    .summary-icon.green { background: var(--success-light); color: var(--success); }
+    .summary-icon.blue  { background: var(--primary-light); color: var(--primary); }
+    .summary-icon.amber { background: var(--warning-light); color: var(--warning); }
+    .summary-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+    .summary-val   { font-size: 26px; font-weight: 700; color: var(--text-primary); margin-top: 2px; }
+    .summary-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Toolbar */
+    .toolbar {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 14px 18px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .toolbar input, .toolbar select {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text-primary);
+      border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: 'Outfit', sans-serif;
+      outline: none; transition: border-color .15s;
+    }
+    .toolbar input:focus, .toolbar select:focus { border-color: var(--primary); }
+    .toolbar input[type="text"] { flex: 1; min-width: 200px; }
+    .btn {
+      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; display: flex; align-items: center; gap: 6px;
+      font-family: 'Outfit', sans-serif; transition: all .15s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #4F46E5; transform: translateY(-1px); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover { background: #059669; }
+    .btn-danger  { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover  { background: rgba(239,68,68,0.3); }
+    .btn-outline { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+
+    /* Table */
+    .table-wrapper {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .table-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .table-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px;
+      background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background .12s; }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 13px 16px; font-size: 13.5px; color: var(--text-primary); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600;
+    }
+    .badge-red   { background: var(--danger-light);  color: #F87171; }
+    .badge-green { background: var(--success-light); color: #34D399; }
+    .badge-amber { background: var(--warning-light); color: #FCD34D; }
+    .badge-blue  { background: var(--primary-light); color: #A5B4FC; }
+
+    /* Modal */
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); z-index:999; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:var(--card); border:1px solid var(--border); border-radius:20px; width:460px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.6); }
+    .modal-head { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .modal-head h3 { font-size:16px; font-weight:700; }
+    .modal-close { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px; }
+    .modal-body { padding:20px; display:flex; flex-direction:column; gap:14px; }
+    .modal-foot { padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+    .form-row { display:flex; flex-direction:column; gap:5px; }
+    .form-row label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+    .form-row input, .form-row select, .form-row textarea {
+      background:var(--bg); border:1px solid var(--border); color:var(--text-primary);
+      border-radius:8px; padding:9px 12px; font-size:13px; font-family:'Outfit',sans-serif;
+      outline:none; transition:border-color .15s; resize:vertical;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color:var(--primary); }
+    .form-2col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    /* Empty state */
+    .empty-state { text-align:center; padding:60px 20px; color:var(--text-muted); }
+    .empty-state i { font-size:48px; margin-bottom:16px; opacity:.3; }
+    .empty-state h3 { font-size:16px; font-weight:600; margin-bottom:8px; color:var(--text-secondary); }
+    .empty-state p  { font-size:13px; }
+  </style>
+</head>
+<body>
+
+<!-- Page Header -->
+<div class="page-header">
+  <a href="/pos" class="page-header-back" title="Back to POS">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+  <div>
+    <div class="page-title"><i class="fa-solid fa-file-invoice-dollar" style="color:#F59E0B; margin-right:8px;"></i>Expenses</div>
+    <div class="page-subtitle">Track & manage restaurant expenses</div>
+  </div>
+  <div style="margin-left:auto; display:flex; gap:10px;">
+    <button class="btn btn-outline" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+    <button class="btn btn-primary" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Add Expense</button>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon red"><i class="fa-solid fa-rupee-sign"></i></div>
+      <div>
+        <div class="summary-label">This Month</div>
+        <div class="summary-val" id="totalMonthly">₹0</div>
+        <div class="summary-sub">Total Expenses</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon amber"><i class="fa-solid fa-calendar-week"></i></div>
+      <div>
+        <div class="summary-label">This Week</div>
+        <div class="summary-val" id="totalWeekly">₹0</div>
+        <div class="summary-sub">Last 7 Days</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon blue"><i class="fa-solid fa-list-check"></i></div>
+      <div>
+        <div class="summary-label">Total Entries</div>
+        <div class="summary-val" id="totalEntries">0</div>
+        <div class="summary-sub">All records</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon green"><i class="fa-solid fa-tag"></i></div>
+      <div>
+        <div class="summary-label">Top Category</div>
+        <div class="summary-val" id="topCategory" style="font-size:16px; margin-top:4px;">—</div>
+        <div class="summary-sub">Highest spend</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <input type="text" id="searchInput" placeholder="🔍  Search expenses..." oninput="renderTable()"/>
+    <select id="filterCategory" onchange="renderTable()">
+      <option value="">All Categories</option>
+      <option value="Groceries">Groceries</option>
+      <option value="Utilities">Utilities</option>
+      <option value="Staff">Staff / Salary</option>
+      <option value="Rent">Rent</option>
+      <option value="Maintenance">Maintenance</option>
+      <option value="Marketing">Marketing</option>
+      <option value="Equipment">Equipment</option>
+      <option value="Other">Other</option>
+    </select>
+    <select id="filterMonth" onchange="renderTable()">
+      <option value="">All Months</option>
+    </select>
+    <button class="btn btn-outline" onclick="clearFilters()"><i class="fa-solid fa-xmark"></i> Clear</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <div class="table-header">
+      <div class="table-title">📋 Expense Records</div>
+      <span id="recordCount" style="font-size:12px; color:var(--text-muted);"></span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>Payment</th>
+          <th>Notes</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="expenseTableBody">
+      </tbody>
+    </table>
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <i class="fa-solid fa-receipt"></i>
+      <h3>No expenses found</h3>
+      <p>Click "Add Expense" to record your first expense entry.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-bg" id="expenseModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle"><i class="fa-solid fa-plus-circle" style="color:var(--primary);"></i> Add Expense</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-2col">
+        <div class="form-row">
+          <label>Date *</label>
+          <input type="date" id="expDate" required/>
+        </div>
+        <div class="form-row">
+          <label>Amount (₹) *</label>
+          <input type="number" id="expAmount" placeholder="0.00" min="0" step="0.01" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Title / Description *</label>
+        <input type="text" id="expTitle" placeholder="e.g. Monthly vegetable purchase"/>
+      </div>
+      <div class="form-2col">
+        <div class="form-row">
+          <label>Category</label>
+          <select id="expCategory">
+            <option value="Groceries">Groceries</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Staff">Staff / Salary</option>
+            <option value="Rent">Rent</option>
+            <option value="Maintenance">Maintenance</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Equipment">Equipment</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Payment Mode</label>
+          <select id="expPayment">
+            <option value="Cash">Cash</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="UPI">UPI / GPay</option>
+            <option value="Card">Card</option>
+            <option value="Cheque">Cheque</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Notes (optional)</label>
+        <textarea id="expNotes" rows="2" placeholder="Any additional notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveExpense()"><i class="fa-solid fa-check"></i> Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'dineflow_expenses';
+  let expenses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let editIndex = -1;
+
+  const CATEGORY_COLORS = {
+    'Groceries':   'badge-amber',
+    'Utilities':   'badge-blue',
+    'Staff':       'badge-green',
+    'Rent':        'badge-red',
+    'Maintenance': 'badge-amber',
+    'Marketing':   'badge-blue',
+    'Equipment':   'badge-blue',
+    'Other':       'badge-blue',
+  };
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function populateMonthFilter() {
+    const months = [...new Set(expenses.map(e => e.date?.substring(0,7)))].sort().reverse();
+    const sel = document.getElementById('filterMonth');
+    months.forEach(m => {
+      if (m && !sel.querySelector(`option[value="${m}"]`)) {
+        const dt = new Date(m + '-01');
+        const label = dt.toLocaleDateString('en-IN', { month:'long', year:'numeric' });
+        sel.insertAdjacentHTML('beforeend', `<option value="${m}">${label}</option>`);
+      }
+    });
+  }
+
+  function updateSummary(filtered) {
+    const now = new Date();
+    const monthStr = now.toISOString().substring(0,7);
+    const weekAgo = new Date(now - 7 * 86400000).toISOString().substring(0,10);
+
+    const monthly = expenses.filter(e => e.date?.startsWith(monthStr)).reduce((s,e) => s + (+e.amount||0), 0);
+    const weekly  = expenses.filter(e => e.date >= weekAgo).reduce((s,e) => s + (+e.amount||0), 0);
+
+    document.getElementById('totalMonthly').textContent = '₹' + monthly.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+    document.getElementById('totalWeekly').textContent  = '₹' + weekly.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+    document.getElementById('totalEntries').textContent = expenses.length;
+
+    // Top category
+    const catTotals = {};
+    expenses.forEach(e => { catTotals[e.category] = (catTotals[e.category]||0) + (+e.amount||0); });
+    const topCat = Object.entries(catTotals).sort((a,b) => b[1]-a[1])[0];
+    document.getElementById('topCategory').textContent = topCat ? topCat[0] : '—';
+  }
+
+  function renderTable() {
+    const search   = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('filterCategory').value;
+    const month    = document.getElementById('filterMonth').value;
+
+    let filtered = expenses.filter((e, i) => {
+      e._idx = i;
+      const matchSearch   = !search   || e.title?.toLowerCase().includes(search) || e.notes?.toLowerCase().includes(search);
+      const matchCategory = !category || e.category === category;
+      const matchMonth    = !month    || e.date?.startsWith(month);
+      return matchSearch && matchCategory && matchMonth;
+    });
+
+    const tbody = document.getElementById('expenseTableBody');
+    const empty = document.getElementById('emptyState');
+    document.getElementById('recordCount').textContent = `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      tbody.innerHTML = filtered.sort((a,b) => b.date?.localeCompare(a.date)).map((e, idx) => `
+        <tr>
+          <td style="color:var(--text-muted); font-size:12px;">${idx+1}</td>
+          <td style="font-weight:600;">${formatDate(e.date)}</td>
+          <td>${e.title || '—'}</td>
+          <td><span class="badge ${CATEGORY_COLORS[e.category]||'badge-blue'}">${e.category||'Other'}</span></td>
+          <td style="font-weight:700; color:#F87171;">₹${(+e.amount||0).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+          <td><span class="badge badge-blue">${e.payment||'Cash'}</span></td>
+          <td style="color:var(--text-muted); font-size:12px; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${e.notes||''}">${e.notes||'—'}</td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-outline" style="padding:5px 10px; font-size:12px;" onclick="editExpense(${e._idx})"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger"  style="padding:5px 10px; font-size:12px;" onclick="deleteExpense(${e._idx})"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`).join('');
+    }
+
+    updateSummary(filtered);
+  }
+
+  function openAddModal() {
+    editIndex = -1;
+    document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-plus-circle" style="color:var(--primary);"></i> Add Expense';
+    document.getElementById('expDate').value    = new Date().toISOString().substring(0,10);
+    document.getElementById('expTitle').value   = '';
+    document.getElementById('expAmount').value  = '';
+    document.getElementById('expCategory').value = 'Groceries';
+    document.getElementById('expPayment').value  = 'Cash';
+    document.getElementById('expNotes').value    = '';
+    document.getElementById('expenseModal').classList.add('open');
+  }
+
+  function editExpense(idx) {
+    editIndex = idx;
+    const e = expenses[idx];
+    document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-pen" style="color:var(--warning);"></i> Edit Expense';
+    document.getElementById('expDate').value     = e.date || '';
+    document.getElementById('expTitle').value    = e.title || '';
+    document.getElementById('expAmount').value   = e.amount || '';
+    document.getElementById('expCategory').value = e.category || 'Other';
+    document.getElementById('expPayment').value  = e.payment || 'Cash';
+    document.getElementById('expNotes').value    = e.notes || '';
+    document.getElementById('expenseModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('expenseModal').classList.remove('open');
+  }
+
+  function saveExpense() {
+    const date     = document.getElementById('expDate').value;
+    const title    = document.getElementById('expTitle').value.trim();
+    const amount   = parseFloat(document.getElementById('expAmount').value);
+    const category = document.getElementById('expCategory').value;
+    const payment  = document.getElementById('expPayment').value;
+    const notes    = document.getElementById('expNotes').value.trim();
+
+    if (!date)           { alert('Please select a date.'); return; }
+    if (!title)          { alert('Please enter a title.'); return; }
+    if (!amount || amount <= 0) { alert('Please enter a valid amount.'); return; }
+
+    const entry = { date, title, amount, category, payment, notes, createdAt: new Date().toISOString() };
+
+    if (editIndex >= 0) {
+      expenses[editIndex] = { ...expenses[editIndex], ...entry };
+    } else {
+      expenses.unshift(entry);
+    }
+
+    save();
+    populateMonthFilter();
+    renderTable();
+    closeModal();
+  }
+
+  function deleteExpense(idx) {
+    if (!confirm('Delete this expense entry?')) return;
+    expenses.splice(idx, 1);
+    save();
+    renderTable();
+  }
+
+  function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterCategory').value = '';
+    document.getElementById('filterMonth').value = '';
+    renderTable();
+  }
+
+  function exportCSV() {
+    if (expenses.length === 0) { alert('No expenses to export.'); return; }
+    const rows = [['Date','Title','Category','Amount','Payment','Notes']];
+    expenses.forEach(e => rows.push([e.date, e.title, e.category, e.amount, e.payment, e.notes]));
+    const csv = rows.map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `expenses_${new Date().toISOString().substring(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  // Seed sample data on first load
+  if (expenses.length === 0) {
+    const today = new Date();
+    const fmt = d => d.toISOString().substring(0,10);
+    expenses = [
+      { date: fmt(new Date(today - 1*86400000)), title: 'Vegetable & Dal Purchase', category: 'Groceries',    amount: 4200, payment: 'Cash',          notes: 'Daily market purchase' },
+      { date: fmt(new Date(today - 2*86400000)), title: 'Electricity Bill - July',  category: 'Utilities',    amount: 8500, payment: 'UPI',           notes: 'PGVCL bill paid' },
+      { date: fmt(new Date(today - 5*86400000)), title: 'Chef Salary - Ramesh',      category: 'Staff',        amount: 18000, payment: 'Bank Transfer', notes: 'Monthly salary' },
+      { date: fmt(new Date(today - 7*86400000)), title: 'Cooking Oil - 20L',         category: 'Groceries',    amount: 2400, payment: 'Cash',          notes: '' },
+      { date: fmt(new Date(today - 8*86400000)), title: 'Gas Cylinder x 3',          category: 'Utilities',    amount: 2850, payment: 'Cash',          notes: '3 cylinder refill' },
+      { date: fmt(new Date(today - 10*86400000)), title: 'Restaurant Rent - July',   category: 'Rent',         amount: 25000, payment: 'Cheque',       notes: 'Monthly rent' },
+      { date: fmt(new Date(today - 12*86400000)), title: 'Refrigerator Repair',      category: 'Maintenance',  amount: 1800, payment: 'Cash',          notes: 'Compressor fixed' },
+      { date: fmt(new Date(today - 15*86400000)), title: 'Waiter Salary x 2',        category: 'Staff',        amount: 14000, payment: 'Bank Transfer', notes: '' },
+      { date: fmt(new Date(today - 18*86400000)), title: 'Instagram Ads - June',     category: 'Marketing',    amount: 3000, payment: 'Card',          notes: 'Meta ads campaign' },
+      { date: fmt(new Date(today - 20*86400000)), title: 'New Dinner Set - 20 pcs',  category: 'Equipment',    amount: 5600, payment: 'Card',          notes: 'Ceramic plates' },
+    ];
+    save();
+  }
+
+  // Init
+  document.addEventListener('DOMContentLoaded', () => {
+    populateMonthFilter();
+    renderTable();
+  });
+</script>
+</body>
+</html>

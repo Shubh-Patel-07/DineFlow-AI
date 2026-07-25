@@ -131,14 +131,15 @@
     .user-card {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 10px; border-radius: var(--radius-sm);
-      cursor: pointer; transition: background .15s; white-space: nowrap;
+      transition: background .15s; white-space: nowrap;
     }
     .user-card:hover { background: var(--sidebar-hover); }
     .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; }
-    .user-info { transition: opacity .2s; }
+    .user-info { transition: opacity .2s; overflow: hidden; }
     .user-info h4 { font-size: 13px; font-weight: 600; color: #fff; }
     .user-info p  { font-size: 11px; color: rgba(255,255,255,.4); }
-    .sidebar.collapsed .user-info { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .user-info { opacity: 0; width: 0; }
+    .sidebar.collapsed #dashLogoutForm { margin-left: 0 !important; }
 
     .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; min-width: 0; }
 
@@ -263,7 +264,7 @@
       <div class="sidebar-section-label">Reports</div>
       <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
       <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
-      <a class="nav-item" href="/z-report" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" href="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
 
     <div class="sidebar-section">
@@ -276,12 +277,24 @@
   </div>
 
   <div class="sidebar-footer">
-    <div class="user-card" onclick="location.href='/login'">
+    <div class="user-card">
       <div class="user-avatar" style="background:var(--primary);">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
       <div class="user-info">
         <h4>{{ Auth::user()->name }}</h4>
-        <p>User</p>
+        <p style="text-transform:capitalize;">{{ Auth::user()->role ?? 'User' }}</p>
       </div>
+      <form method="POST" action="{{ route('auth.logout') }}" id="dashLogoutForm" style="margin-left:auto;">
+        @csrf
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:32px; height:32px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:14px;
+                 transition:all .2s;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </form>
     </div>
   </div>
 </aside>
