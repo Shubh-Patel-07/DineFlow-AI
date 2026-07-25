@@ -1316,8 +1316,8 @@
           <div class="pay-method" onclick="selectPay(this)">
             <i class="fa-solid fa-credit-card"></i><span>Card</span>
           </div>
-          <div class="pay-method" onclick="selectPay(this)">
-            <i class="fa-brands fa-google-pay"></i><span>UPI</span>
+          <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
+            <i class="fa-brands fa-google-pay" style="font-size:16px; color:#34D399;"></i><span>GPay / UPI</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
             <i class="fa-solid fa-wallet"></i><span>Wallet</span>
@@ -1343,6 +1343,9 @@
           <button class="btn-outline danger" onclick="clearCart()"><i class="fa-solid fa-trash"></i> Clear</button>
         </div>
         <div class="cart-btns-row" style="margin-top: 6px;">
+          <button class="btn-outline" onclick="openUpiQrModal()" style="flex: 1; background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.4); color: #34D399; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
+            <i class="fa-brands fa-google-pay" style="font-size: 16px;"></i> GPay / QR Code
+          </button>
           <button class="btn-outline" onclick="printA4Invoice()" style="flex: 1; background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.4); color: #6366F1; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
             <i class="fa-solid fa-file-pdf" style="font-size: 14px;"></i> A4 Bill PDF
           </button>
@@ -2493,37 +2496,52 @@
   }
 
   function openUpiQrModal() {
-    const activeCartItems = MENU.filter(i => i.qty > 0);
-    let subtotal = 0;
-    let serviceCharge = 0;
-    let gst = 0;
-    let finalGrandTotal = 0;
+    try {
+      const activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
+      let subtotal = 0;
+      let serviceCharge = 0;
+      let gst = 0;
+      let finalGrandTotal = 0;
 
-    if (activeCartItems.length > 0) {
-      subtotal = activeCartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      serviceCharge = subtotal * 0.05;
-      gst = (subtotal + serviceCharge) * 0.18;
-      finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+      if (activeCartItems.length > 0) {
+        subtotal = activeCartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        serviceCharge = subtotal * 0.05;
+        gst = (subtotal + serviceCharge) * 0.18;
+        finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+      }
+
+      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      currentUpiPayAmount = finalGrandTotal;
+
+      const tblEl = document.getElementById('upiModalTable');
+      if (tblEl) tblEl.textContent = tableNumber;
+
+      const subEl = document.getElementById('upiModalSubtotal');
+      if (subEl) subEl.textContent = '₹' + subtotal.toFixed(2);
+
+      const servEl = document.getElementById('upiModalService');
+      if (servEl) servEl.textContent = '₹' + serviceCharge.toFixed(2);
+
+      const gstEl = document.getElementById('upiModalGst');
+      if (gstEl) gstEl.textContent = '₹' + gst.toFixed(2);
+
+      const totEl = document.getElementById('upiModalTotal');
+      if (totEl) totEl.textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ 0.00';
+
+      const brkEl = document.getElementById('upiModalBreakdownTotal');
+      if (brkEl) brkEl.textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ 0.00';
+
+      const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
+      if (document.getElementById('merchantVpaInput')) {
+        document.getElementById('merchantVpaInput').value = savedVpa;
+      }
+
+      updateUpiQrCodeFromInput();
+      openModal('upiQrModal');
+    } catch (err) {
+      console.error('Error opening UPI QR Modal:', err);
+      openModal('upiQrModal');
     }
-    // Allow opening with empty cart (₹0 QR for showing or manual entry)
-
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-    currentUpiPayAmount = finalGrandTotal;
-
-    document.getElementById('upiModalTable').textContent = tableNumber;
-    document.getElementById('upiModalSubtotal').textContent = '₹' + subtotal.toFixed(2);
-    document.getElementById('upiModalService').textContent = '₹' + serviceCharge.toFixed(2);
-    document.getElementById('upiModalGst').textContent = '₹' + gst.toFixed(2);
-    document.getElementById('upiModalTotal').textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ --';
-    document.getElementById('upiModalBreakdownTotal').textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ --';
-
-    const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
-    if (document.getElementById('merchantVpaInput')) {
-      document.getElementById('merchantVpaInput').value = savedVpa;
-    }
-
-    updateUpiQrCodeFromInput();
-    openModal('upiQrModal');
   }
 
   function confirmUpiPaymentCompleted() {
