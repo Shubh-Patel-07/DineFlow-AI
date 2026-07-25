@@ -1317,7 +1317,7 @@
             <i class="fa-solid fa-credit-card" style="pointer-events:none;"></i><span style="pointer-events:none;">Card</span>
           </div>
           <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
-            <i class="fa-brands fa-google-pay" style="font-size:16px; color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">GPay / UPI</span>
+            <i class="fa-solid fa-qrcode" style="font-size:16px; color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">UPI</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
             <i class="fa-solid fa-wallet" style="pointer-events:none;"></i><span style="pointer-events:none;">Wallet</span>
@@ -1344,7 +1344,7 @@
         </div>
         <div class="cart-btns-row" style="margin-top: 6px;">
           <button class="btn-outline" onclick="openUpiQrModal()" style="flex: 1; background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.4); color: #34D399; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
-            <i class="fa-brands fa-google-pay" style="font-size: 16px;"></i> GPay / QR Code
+            <i class="fa-solid fa-qrcode" style="font-size: 14px;"></i> UPI QR Code
           </button>
           <button class="btn-outline" onclick="printA4Invoice()" style="flex: 1; background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.4); color: #6366F1; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
             <i class="fa-solid fa-file-pdf" style="font-size: 14px;"></i> A4 Bill PDF
@@ -1674,8 +1674,8 @@
   <div class="modal" style="width:440px; max-width:95%; background:linear-gradient(145deg, #0F172A, #0B0F19); color:#F8FAFC; border-radius:24px; border:1px solid rgba(16,185,129,0.3); box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(16,185,129,0.15); overflow:hidden;">
     <div class="modal-header" style="background:linear-gradient(135deg, #064E3B, #022C22); border-bottom:1px solid rgba(16,185,129,0.3); padding:16px 20px;">
       <div class="modal-title" style="color:#A7F3D0; font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
-        <i class="fa-brands fa-google-pay" style="font-size:24px; color:#34D399;"></i>
-        GPay &amp; Live UPI Payment Terminal
+        <i class="fa-solid fa-qrcode" style="font-size:22px; color:#34D399;"></i>
+        Live UPI Payment Terminal
       </div>
       <button class="modal-close" onclick="closeModal('upiQrModal')" style="color:#94A3B8;"><i class="fa-solid fa-xmark"></i></button>
     </div>
