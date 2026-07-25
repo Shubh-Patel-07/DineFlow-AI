@@ -1754,6 +1754,9 @@
   function openModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
+      modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      modal.style.pointerEvents = 'all';
       modal.classList.add('show');
       if (id === 'tableModal' && typeof loadTablesData === 'function') loadTablesData();
       if (id === 'ordersModal' && typeof loadOrdersData === 'function') loadOrdersData();
@@ -1763,8 +1766,17 @@
 
   function closeModal(id) {
     const modal = document.getElementById(id);
-    if (modal) modal.classList.remove('show');
-    if (id === 'catPopupModal') { const btn = document.getElementById('catPopupBtn'); if (btn) btn.classList.remove('open'); }
+    if (modal) {
+      modal.classList.remove('show');
+      modal.style.opacity = '0';
+      modal.style.pointerEvents = 'none';
+      setTimeout(() => {
+        if (!modal.classList.contains('show')) {
+          modal.style.display = 'none';
+        }
+      }, 200);
+      if (id === 'catPopupModal') { const btn = document.getElementById('catPopupBtn'); if (btn) btn.classList.remove('open'); }
+    }
   }
 
 
@@ -2367,7 +2379,11 @@
 
   function selectTable(el, tno, id) {
     selectedTableId = id;
-    document.getElementById('selectedTableNo').textContent = tno;
+    const noEl = document.getElementById('selectedTableNo');
+    if (noEl) noEl.textContent = tno;
+    const labelEl = document.getElementById('selectedTableLabel');
+    if (labelEl) labelEl.textContent = tno;
+
     document.querySelectorAll('.table-cell').forEach(c => c.classList.remove('selected'));
     el.className = 'table-cell selected';
     el.querySelector('span:last-child').textContent = 'Selected';
@@ -2549,7 +2565,7 @@
         finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
       }
 
-      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
       currentUpiPayAmount = finalGrandTotal;
 
       const tblEl = document.getElementById('upiModalTable');
