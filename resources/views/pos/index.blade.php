@@ -1332,38 +1332,47 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="cart-actions" style="display:flex; flex-direction:column; gap:8px;">
+      <!-- Professional Action Buttons Section -->
+      <div class="cart-actions" style="display:flex; flex-direction:column; gap:8px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
+        
         <!-- Primary Checkout Button -->
-        <button class="btn-checkout" onclick="checkout()" style="width:100%; height:44px; border-radius:14px; font-size:14px; font-weight:800;">
+        <button class="btn-checkout" onclick="checkout()" style="width:100%; height:46px; border-radius:14px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#FFFFFF; font-size:14px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(99,102,241,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
           <i class="fa-solid fa-circle-check" style="font-size:16px;"></i> Place Order &nbsp;·&nbsp; <span id="checkoutAmount">₹ 0.00</span>
         </button>
 
-        <!-- UPI QR Button (Prominent Dedicated Button) -->
-        <button onclick="openUpiQrModal()" style="width:100%; height:38px; border-radius:12px; background:linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.25)); border:1px solid rgba(16,185,129,0.4); color:#34D399; font-size:13px; font-weight:800; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; box-shadow:0 4px 12px rgba(16,185,129,0.15);" onmouseover="this.style.background='linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.4))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.25))'">
-          <i class="fa-solid fa-qrcode" style="font-size:16px;"></i> Scan &amp; Pay Live UPI QR
+        <!-- Dedicated UPI QR Code Button -->
+        <button onclick="openUpiQrModal()" style="width:100%; height:40px; border-radius:12px; background:linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.25)); border:1px solid rgba(16,185,129,0.4); color:#34D399; font-size:13px; font-weight:800; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; box-shadow:0 4px 14px rgba(16,185,129,0.18);" onmouseover="this.style.background='linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.4))'" onmouseout="this.style.background='linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.25))'">
+          <i class="fa-solid fa-qrcode" style="font-size:16px; color:#34D399;"></i> Scan &amp; Pay Live UPI QR
         </button>
 
-        <!-- Print & Share Actions Row -->
+        <!-- 3-Column Print & Share Grid -->
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
-          <button class="btn-outline" onclick="printBill()" style="height:36px; border-radius:10px; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:5px;" title="Print Thermal Bill">
-            <i class="fa-solid fa-print"></i> Thermal
+          <!-- Thermal Print -->
+          <button onclick="printBill()" style="height:36px; border-radius:10px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); color:#FCD34D; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:all 0.15s;" onmouseover="this.style.background='rgba(245,158,11,0.25)'" onmouseout="this.style.background='rgba(245,158,11,0.12)'" title="Print Thermal Receipt">
+            <i class="fa-solid fa-print" style="font-size:12px;"></i> Thermal
           </button>
-          <button class="btn-outline" onclick="printA4Invoice()" style="height:36px; border-radius:10px; font-size:11.5px; font-weight:700; background:rgba(99,102,241,0.12); border-color:rgba(99,102,241,0.4); color:#818CF8; display:flex; align-items:center; justify-content:center; gap:5px;" title="Print A4 PDF Bill">
-            <i class="fa-solid fa-file-pdf"></i> A4 PDF
+          
+          <!-- A4 PDF -->
+          <button onclick="printA4Invoice()" style="height:36px; border-radius:10px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.35); color:#A5B4FC; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:all 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'" title="Print A4 PDF Bill">
+            <i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> A4 PDF
           </button>
-          <button class="btn-outline" onclick="sendWhatsAppInvoice()" style="height:36px; border-radius:10px; font-size:11.5px; font-weight:700; background:rgba(37,211,102,0.12); border-color:rgba(37,211,102,0.4); color:#25D366; display:flex; align-items:center; justify-content:center; gap:5px;" title="Send WhatsApp Bill">
-            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+          
+          <!-- WhatsApp -->
+          <button onclick="sendWhatsAppInvoice()" style="height:36px; border-radius:10px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.35); color:#4ADE80; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:all 0.15s;" onmouseover="this.style.background='rgba(37,211,102,0.25)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Send WhatsApp Bill">
+            <i class="fa-brands fa-whatsapp" style="font-size:13px;"></i> WhatsApp
           </button>
         </div>
 
-        <!-- Secondary Actions Row -->
+        <!-- 2-Column Kitchen & Utility Row -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-          <button class="btn-outline" onclick="openModal('kotModal')" style="height:34px; border-radius:10px; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:5px;">
-            <i class="fa-solid fa-fire" style="color:#F59E0B;"></i> Send KOT
+          <!-- KOT -->
+          <button onclick="openModal('kotModal')" style="height:34px; border-radius:10px; background:rgba(251,146,60,0.12); border:1px solid rgba(251,146,60,0.35); color:#FB923C; font-size:11.5px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(251,146,60,0.25)'" onmouseout="this.style.background='rgba(251,146,60,0.12)'">
+            <i class="fa-solid fa-fire" style="font-size:12px;"></i> Send KOT
           </button>
-          <button class="btn-outline danger" onclick="clearCart()" style="height:34px; border-radius:10px; font-size:11.5px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:5px;">
-            <i class="fa-solid fa-trash"></i> Clear Cart
+          
+          <!-- Clear -->
+          <button onclick="clearCart()" style="height:34px; border-radius:10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); color:#FCA5A5; font-size:11.5px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
+            <i class="fa-solid fa-trash" style="font-size:12px;"></i> Clear Cart
           </button>
         </div>
       </div>
