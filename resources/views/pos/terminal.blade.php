@@ -239,7 +239,7 @@
                             <i class="fa-solid fa-credit-card"></i><span>Card</span>
                         </div>
                         <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
-                            <i class="fa-brands fa-google-pay" style="color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">GPay / UPI</span>
+                            <i class="fa-solid fa-qrcode" style="color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">UPI</span>
                         </div>
                     </div>
                 </div>
