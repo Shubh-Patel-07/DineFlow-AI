@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1924,53 +1921,7 @@
     window.speechSynthesis.speak(utterance);
   }
 
-  async function confirmUpiPaymentCompleted() {
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
 
-    // Automatically highlight UPI payment method in POS terminal as active and verified
-    document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
-    const upiPayBtn = Array.from(document.querySelectorAll('.pay-method')).find(p => p.textContent.includes('UPI') || p.textContent.includes('GPay'));
-    if (upiPayBtn) {
-      upiPayBtn.classList.add('active');
-    }
-
-    // Call API to mark active order / last placed order / latest unpaid order as PAID in DB!
-    try {
-      let targetOrderId = lastPlacedOrderId;
-      
-      // If no lastPlacedOrderId, find latest unpaid order from backend API
-      if (!targetOrderId) {
-        const res = await fetch('/api/orders/restaurant/1');
-        const ordersRes = await res.json();
-        if (ordersRes.success && Array.isArray(ordersRes.data)) {
-          const unpaidOrder = ordersRes.data.find(o => o.payment_status === 'pending');
-          if (unpaidOrder) targetOrderId = unpaidOrder.id;
-        }
-      }
-
-      if (targetOrderId) {
-        await fetch(`/api/orders/${targetOrderId}/pay`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-          },
-          body: JSON.stringify({ payment_method: 'upi' })
-        });
-      }
-    } catch(e){
-      console.log('Error updating UPI payment in DB:', e);
-    }
-
-    announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
-    showToast(`✅ UPI/GPay Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
-    
-    // Refresh active orders list and tables grid immediately
-    await loadOrdersData();
-    loadTablesData();
-    closeModal('upiQrModal');
-  }
 
   function announceWaiterCallVoice(tableNumber) {
     if (isPosVoiceMuted) return;
@@ -2100,7 +2051,7 @@
     });
 
     grid.innerHTML = items.map(item => `
-      <div class="item-card ${item.qty > 0 ? 'in-cart' : ''}" onclick="addQuickItem(${item.id})">
+      <div class="item-card ${item.qty > 0 ? 'in-cart' : ''}" onclick="addQuickItem('${item.id}')">
         <div class="item-img">
           ${item.emoji}
           <span class="item-badge ${item.badge}">${item.badge.toUpperCase()}</span>
@@ -2112,7 +2063,7 @@
             <div class="item-footer-actions">
               ${item.qty > 0
                 ? `<div class="item-in-cart-badge">${item.qty}</div>`
-                : `<button class="item-add-btn" onclick="event.stopPropagation();addQuickItem(${item.id})">+</button>`
+                : `<button class="item-add-btn" onclick="event.stopPropagation();addQuickItem('${item.id}')">+</button>`
               }
             </div>
           </div>
@@ -2138,11 +2089,11 @@
           </div>
           <div class="ci-bottom">
             <div class="ci-controls">
-              <div class="ci-btn" onclick="updateQty(${item.id},-1)">−</div>
+              <div class="ci-btn" onclick="updateQty('${item.id}',-1)">−</div>
               <div class="ci-qty">${item.qty}</div>
-              <div class="ci-btn" onclick="updateQty(${item.id},1)">+</div>
+              <div class="ci-btn" onclick="updateQty('${item.id}',1)">+</div>
             </div>
-            <button class="ci-del" onclick="removeItem(${item.id})"><i class="fa-solid fa-trash-can"></i></button>
+            <button class="ci-del" onclick="removeItem('${item.id}')"><i class="fa-solid fa-trash-can"></i></button>
           </div>
         </div>
       </div>
@@ -3261,5 +3212,4 @@
 </script>
 </body>
 </html>
-@endsection
 
