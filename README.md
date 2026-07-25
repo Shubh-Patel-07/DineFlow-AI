@@ -97,8 +97,6 @@ The following enhancements were implemented in this module:
 - Added **Recommended for You** section.
 - Added **Combo Offers** section.
 - Added missing combo menu items.
-- Updated restaurant name to **DineFlow Restaurant**.
-- Renamed **Gulab Jamun** to **Pastry**.
 - Replaced the dessert image with a realistic pastry image.
 - Improved overall customer menu presentation and user experience.
 
