@@ -1105,7 +1105,7 @@
     <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px;">
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
-    <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div class="topbar-btn topbar-desktop-only" title="Search" onclick="focusItemSearch()" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
       <span class="notif-dot"></span>
@@ -2195,11 +2195,18 @@
 
   /* ─── CATEGORY POPUP ─────────────────────── */
   function renderCatPopup() {
-    document.getElementById('catPopupGrid').innerHTML = CATS.map(c => `
-      <div class="cat-popup-item ${currentCat === c.key ? 'active' : ''}" onclick="selectCat('${c.key}','${c.label}')">
-        <span class="cpi-emoji">${c.emoji}</span>
-        <span class="cpi-name">${c.label}</span>
-        <span class="cpi-count">${c.count} items</span>
+    const categories = typeof getCats === 'function' ? getCats() : [];
+    const grid = document.getElementById('catPopupGrid');
+    if (!grid) return;
+
+    grid.innerHTML = categories.map(c => `
+      <div class="cat-popup-item ${currentCat === c.key ? 'active' : ''}" onclick="selectCat('${c.key}','${c.label}')" style="display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; background:${currentCat === c.key ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${currentCat === c.key ? 'rgba(99,102,241,0.4)' : 'rgba(255,255,255,0.06)'}; cursor:pointer; transition:all 0.2s;">
+        <span class="cpi-emoji" style="font-size:22px;">${c.emoji}</span>
+        <div style="flex:1;">
+          <div class="cpi-name" style="font-size:13.5px; font-weight:700; color:#F8FAFC;">${c.label}</div>
+          <div class="cpi-count" style="font-size:11px; color:#94A3B8;">${c.count} items</div>
+        </div>
+        ${currentCat === c.key ? '<i class="fa-solid fa-check-circle" style="color:var(--primary); font-size:16px;"></i>' : ''}
       </div>
     `).join('');
   }
@@ -2226,8 +2233,17 @@
 
   /* ─── FILTER ─────────────────────────────── */
   function filterItems(val) {
-    searchTerm = val;
+    searchTerm = val || '';
     renderMenu();
+  }
+
+  function focusItemSearch() {
+    const input = document.querySelector('.search-input');
+    if (input) {
+      input.focus();
+      input.select();
+      showToast('Search POS Menu Items', 'info');
+    }
   }
 
   /* ─── DELIVERY TYPE ──────────────────────── */
