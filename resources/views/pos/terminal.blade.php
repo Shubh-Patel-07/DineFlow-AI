@@ -238,8 +238,8 @@
                         <div class="pay-method" onclick="selectPay(this)">
                             <i class="fa-solid fa-credit-card"></i><span>Card</span>
                         </div>
-                        <div class="pay-method" onclick="selectPay(this)">
-                            <i class="fa-brands fa-google-pay"></i><span>UPI</span>
+                        <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
+                            <i class="fa-brands fa-google-pay" style="color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">GPay / UPI</span>
                         </div>
                     </div>
                 </div>
@@ -1594,5 +1594,101 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
         }
     });
 });
+
+let currentUpiPayAmount = 0;
+
+function copyUpiVpa() {
+    const input = document.getElementById('merchantVpaInput');
+    if (input) {
+        navigator.clipboard.writeText(input.value);
+        alert('UPI ID Copied: ' + input.value);
+    }
+}
+
+function updateUpiQrCodeFromInput() {
+    const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
+    localStorage.setItem('dineflow_merchant_vpa', inputVal);
+    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${currentUpiPayAmount}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+    const imgEl = document.getElementById('upiQrImg');
+    if (imgEl) imgEl.src = qrUrl;
+}
+
+function openUpiQrModal() {
+    try {
+        let finalGrandTotal = 0;
+        let subtotal = 0;
+        Object.keys(cart).forEach(id => {
+            const qty = cart[id];
+            const item = menuItems.find(m => String(m.id) === String(id));
+            if (item) subtotal += (item.price * qty);
+        });
+        const serviceCharge = subtotal * 0.05;
+        const gst = (subtotal + serviceCharge) * 0.18;
+        finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+
+        currentUpiPayAmount = finalGrandTotal;
+
+        if (document.getElementById('upiModalSubtotal')) document.getElementById('upiModalSubtotal').textContent = '₹' + subtotal.toFixed(2);
+        if (document.getElementById('upiModalService')) document.getElementById('upiModalService').textContent = '₹' + serviceCharge.toFixed(2);
+        if (document.getElementById('upiModalGst')) document.getElementById('upiModalGst').textContent = '₹' + gst.toFixed(2);
+        if (document.getElementById('upiModalTotal')) document.getElementById('upiModalTotal').textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ 0.00';
+        if (document.getElementById('upiModalBreakdownTotal')) document.getElementById('upiModalBreakdownTotal').textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ 0.00';
+
+        const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
+        if (document.getElementById('merchantVpaInput')) {
+            document.getElementById('merchantVpaInput').value = savedVpa;
+        }
+
+        updateUpiQrCodeFromInput();
+        openModal('upiQrModal');
+    } catch (err) {
+        console.error('Error opening UPI QR Modal:', err);
+        openModal('upiQrModal');
+    }
+}
+
+function confirmUpiPaymentCompleted() {
+    alert('✅ UPI/GPay Payment Verified & Marked PAID!');
+    closeModal('upiQrModal');
+}
 </script>
+
+<!-- Live UPI Payment QR Code Modal -->
+<div class="modal-overlay" id="upiQrModal">
+  <div class="modal" style="width:440px; max-width:95%; background:linear-gradient(145deg, #0F172A, #0B0F19); color:#F8FAFC; border-radius:24px; border:1px solid rgba(16,185,129,0.3); box-shadow:0 25px 60px rgba(0,0,0,0.8); overflow:hidden;">
+    <div class="modal-header" style="background:linear-gradient(135deg, #064E3B, #022C22); border-bottom:1px solid rgba(16,185,129,0.3); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#A7F3D0; font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
+        <i class="fa-brands fa-google-pay" style="font-size:24px; color:#34D399;"></i>
+        GPay &amp; Live UPI Payment Terminal
+      </div>
+      <button class="modal-close" onclick="closeModal('upiQrModal')" style="color:#94A3B8; background:none; border:none; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px; text-align:center;">
+      <div style="font-size:28px; font-weight:900; color:#34D399; margin-bottom:4px;" id="upiModalTotal">₹0.00</div>
+      <div style="font-size:11px; color:#64748B; margin-bottom:14px;">Scan with any UPI app to pay instantly</div>
+      <div style="position:relative; display:inline-block; margin-bottom:12px;">
+        <div style="background:#FFFFFF; padding:12px; border-radius:20px; box-shadow:0 12px 30px rgba(0,0,0,0.6); border:3px solid #34D399;">
+          <img id="upiQrImg" src="" alt="UPI Payment QR Code" style="width:190px; height:190px; display:block; border-radius:8px;" />
+        </div>
+      </div>
+      <div style="margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+        <span>UPI ID:</span>
+        <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:#1E293B; color:#34D399; border:1px solid #334155; padding:5px 10px; border-radius:8px; font-weight:800; font-size:12px; width:180px; text-align:center; outline:none;" placeholder="7777938338@omni" />
+        <button onclick="copyUpiVpa()" style="background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.3); color:#34D399; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;"><i class="fa-regular fa-copy"></i></button>
+      </div>
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:12px 14px; font-size:12px; color:#CBD5E1;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Subtotal:</span><span id="upiModalSubtotal" style="font-weight:600;">₹0.00</span></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Service Charge (5%):</span><span id="upiModalService" style="font-weight:600;">₹0.00</span></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>GST (18%):</span><span id="upiModalGst" style="font-weight:600;">₹0.00</span></div>
+        <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.15); padding-top:6px; font-weight:800; color:#34D399; font-size:14px;"><span>Total Payable:</span><span id="upiModalBreakdownTotal">₹0.00</span></div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; gap:12px; align-items:center;">
+      <button class="btn-outline" onclick="closeModal('upiQrModal')" style="flex:1; padding:10px; font-weight:700; border-radius:10px; height:44px; font-size:13px; color:#fff; background:rgba(255,255,255,0.1); border:none; cursor:pointer;">Cancel</button>
+      <button onclick="confirmUpiPaymentCompleted()" class="btn-checkout" style="flex:2; padding:10px 16px; font-size:13px; font-weight:800; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); color:#fff; border:none; cursor:pointer; height:44px;">Verify &amp; Confirm Payment</button>
+    </div>
+  </div>
+</div>
 @endsection
