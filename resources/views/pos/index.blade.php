@@ -1317,7 +1317,7 @@
             <i class="fa-solid fa-credit-card" style="pointer-events:none;"></i><span style="pointer-events:none;">Card</span>
           </div>
           <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
-            <i class="fa-solid fa-qrcode" style="font-size:16px; color:#34D399; pointer-events:none;"></i><span style="pointer-events:none; font-weight:700;">UPI</span>
+            <i class="fa-solid fa-qrcode" style="pointer-events:none;"></i><span style="pointer-events:none;">UPI</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
             <i class="fa-solid fa-wallet" style="pointer-events:none;"></i><span style="pointer-events:none;">Wallet</span>
@@ -1343,8 +1343,8 @@
           <button class="btn-outline danger" onclick="clearCart()"><i class="fa-solid fa-trash"></i> Clear</button>
         </div>
         <div class="cart-btns-row" style="margin-top: 6px;">
-          <button class="btn-outline" onclick="openUpiQrModal()" style="flex: 1; background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.4); color: #34D399; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
-            <i class="fa-solid fa-qrcode" style="font-size: 14px;"></i> UPI QR Code
+          <button class="btn-outline" onclick="openUpiQrModal()" style="flex: 1; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
+            <i class="fa-solid fa-qrcode" style="font-size: 14px;"></i> UPI QR
           </button>
           <button class="btn-outline" onclick="printA4Invoice()" style="flex: 1; background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.4); color: #6366F1; font-weight: 700; height: 36px; border-radius: var(--radius-sm); font-size: 12px;">
             <i class="fa-solid fa-file-pdf" style="font-size: 14px;"></i> A4 Bill PDF
