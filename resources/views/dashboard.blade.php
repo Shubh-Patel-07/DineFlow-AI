@@ -337,10 +337,23 @@
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
     <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
-    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="location.href='/login'">
+    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
       <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
-      <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()->name }}</span>
-      <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+      <div style="display:flex;flex-direction:column;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()->name }}</span>
+        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()->role ?? 'staff' }}</span>
+      </div>
+      <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
+        @csrf
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:30px; height:30px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:13px;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </form>
     </div>
   </div>
 
