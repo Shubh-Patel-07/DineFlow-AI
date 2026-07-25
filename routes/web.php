@@ -181,6 +181,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/frontend/admin/settings.html', fn() => $serveAdminPage('frontend/admin/settings.html'));
     Route::get('/admin/settings', fn() => $serveAdminPage('frontend/admin/settings.html'));
+
+    Route::get('/frontend/admin/expenses.html', fn() => $serveAdminPage('frontend/admin/expenses.html'));
+    Route::get('/admin/expenses', fn() => $serveAdminPage('frontend/admin/expenses.html'));
 });
 
 
