@@ -1,94 +1,37 @@
-# 🍽️ DineFlow AI - Customer Menu Module
+# 🍽️ DineFlow AI – Customer Menu Module
 
-Customer-facing menu module developed for the **DineFlow AI Restaurant POS System**. This module provides a responsive and modern restaurant menu interface where customers can browse available food items with restaurant information and dynamic menu rendering.
+## Overview
 
----
-
-# ✨ Key Features
-
-✅ Responsive Customer Menu UI
-
-✅ Restaurant Information Section
-
-✅ Dynamic Menu Rendering using JavaScript
-
-✅ Food Cards with Images
-
-✅ Category & Badge Display
-
-✅ Price & Rating Display
-
-✅ Mobile Friendly Design
-
-✅ Clean & Modern Interface
+The Customer Menu Module is a customer-facing interface of the **DineFlow AI Restaurant POS System**. It allows users to browse restaurant menu items through a responsive and interactive interface with dynamic content rendering using JavaScript.
 
 ---
 
-# 📅 Development Status
+## Features
 
-## 🏁 Module Development - [COMPLETED ✅]
-
-### Customer Menu UI
-- Designed responsive customer menu page
-- Modern restaurant landing interface
-- Attractive food card layout
-
-### Dynamic Rendering
-- JavaScript based menu rendering
-- Restaurant details loaded dynamically
-- Food data managed through separate data file
-
-### Styling
-- Responsive CSS design
-- Mobile & Desktop compatible
-- Modern UI components
-
-### JavaScript Logic
-- Dynamic DOM generation
-- Menu loading functionality
-- Data management
+- Responsive customer menu interface
+- Dynamic menu rendering using JavaScript
+- Restaurant information section
+- Food cards with images and descriptions
+- Category-based menu display
+- Price and rating display
+- Recommended for You section
+- Combo Offers section
+- Updated restaurant branding to **DineFlow Restaurant**
+- Dessert item renamed from **Gulab Jamun** to **Pastry**
+- Updated pastry image with a realistic dessert image
+- Added missing combo menu items
+- Mobile-friendly layout
 
 ---
 
-# 🚀 Quick Start
-
-Clone the repository
-
-```bash
-git clone https://github.com/Shubh-Patel-07/DineFlow-AI.git
-```
-
-Move to project folder
-
-```bash
-cd DineFlow-AI
-```
-
-Open
-
-```
-frontend/customer/menu.html
-```
-
-or run any local web server.
-
----
-
-# 📁 Module Structure
+## Module Structure
 
 ```
 frontend/
 │
-├── auth.js
-├── dashboard.html
 ├── data.js
-├── index.html
-├── login.html
-├── menu.css
 ├── menu.html
 ├── menu.js
-├── signup.html
-├── style.css
 │
 └── customer/
     ├── data.js
@@ -99,41 +42,21 @@ frontend/
 
 ---
 
-# 📄 Module Files
+## Module Files
 
 | File | Description |
 |------|-------------|
-| menu.html | Customer Menu Interface |
-| menu.css | Customer Menu Styling |
-| menu.js | Dynamic Menu Logic |
-| data.js | Restaurant & Food Data |
+| customer/menu.html | Customer menu interface |
+| customer/menu.css | Styling for customer menu |
+| customer/menu.js | Dynamic menu rendering and interactions |
+| customer/data.js | Restaurant and menu data |
+| menu.html | Main menu page |
+| menu.js | Menu functionality |
+| data.js | Shared menu data |
 
 ---
 
-# 🎨 Customer Menu Features
-
-## Restaurant Information
-
-- Restaurant Name
-- Restaurant Rating
-- Location
-- Status
-- Logo
-
-## Food Menu
-
-- Food Image
-- Food Name
-- Description
-- Category
-- Price
-- Rating
-- Badge
-- Availability
-
----
-
-# 💻 Technologies Used
+## Technologies Used
 
 - HTML5
 - CSS3
@@ -141,57 +64,60 @@ frontend/
 
 ---
 
-# 📱 Responsive Design
+## Running the Module
 
-- Desktop Support
-- Laptop Support
-- Tablet Support
-- Mobile Friendly Layout
+Clone the repository:
+
+```bash
+git clone https://github.com/Shubh-Patel-07/DineFlow-AI.git
+```
+
+Move into the project directory:
+
+```bash
+cd DineFlow-AI
+```
+
+Open the customer menu:
+
+```
+frontend/customer/menu.html
+```
+
+or run the project using any local web server.
 
 ---
 
-# 🔄 Future Improvements
+## Development Summary
 
-- Backend API Integration
-- Real-time Menu Loading
-- Add to Cart
-- Quantity Selection
-- Checkout Flow
-- Payment Integration
-- Customer Order Tracking
+The following enhancements were implemented in this module:
+
+- Designed a responsive customer menu interface.
+- Implemented dynamic menu rendering using JavaScript.
+- Added **Recommended for You** section.
+- Added **Combo Offers** section.
+- Added missing combo menu items.
+- Updated restaurant name to **DineFlow Restaurant**.
+- Renamed **Gulab Jamun** to **Pastry**.
+- Replaced the dessert image with a realistic pastry image.
+- Improved overall customer menu presentation and user experience.
 
 ---
 
-# 👨‍💻 Developer
+## Developer
 
 **Krushank Dave**
 
-Member 2 – Customer Menu Module
+**Role:** Member 2 – Customer Menu Module
 
-Branch:
-
-```
-feature-krushank
-```
+**Branch:** `feature-krushank`
 
 ---
 
-# 📌 Module Status
+## Status
 
-✅ Customer Menu UI Completed
+**Version:** 1.1
 
-✅ Dynamic Rendering Completed
+**Module Status:** Completed
 
-✅ Responsive Design Completed
-
-✅ Ready for Backend Integration
-
----
-
-Version: 1.0
-
-Status: ✅ Completed
-
-Module: Customer Menu UI
-
-Project: DineFlow AI Restaurant POS System
+**Project:** DineFlow AI Restaurant POS System
