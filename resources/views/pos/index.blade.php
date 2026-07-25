@@ -514,6 +514,85 @@
     .tl-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--text-secondary); }
     .tl-dot  { width: 10px; height: 10px; border-radius: 3px; }
 
+    /* Customer Modal & Search */
+    .cust-search {
+      width: 100%;
+      background: #1E293B;
+      border: 1px solid #334155;
+      color: #F8FAFC;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+    .cust-search:focus {
+      border-color: var(--primary);
+    }
+    .cust-list {
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cust-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cust-row:hover, .cust-row.selected {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+    }
+    .cr-avatar {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      border-radius: 10px !important;
+      background: linear-gradient(135deg, #4F46E5, #6366F1);
+      color: #FFFFFF !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      flex-shrink: 0 !important;
+    }
+    .cr-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .cr-info h5 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin: 0 0 2px 0;
+    }
+    .cr-info p {
+      font-size: 11.5px;
+      color: #94A3B8;
+      margin: 0;
+    }
+    .cr-tag {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .cr-tag.loyal { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+    .cr-tag.vip   { background: rgba(236,72,153,0.15); color: #F472B6; border: 1px solid rgba(236,72,153,0.3); }
+    .cr-tag.new   { background: rgba(6,182,212,0.15);  color: #22D3EE; border: 1px solid rgba(6,182,212,0.3); }
+
     /* Meta Popup */
     .meta-option-list { display: flex; flex-direction: column; gap: 8px; }
     .meta-option-btn {
@@ -972,12 +1051,24 @@
 
 
   <div class="sidebar-footer">
-    <div class="user-card" onclick="logout()">
+    <div class="user-card">
       <div class="user-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
       <div class="user-info">
         <h4>{{ auth()->user()->name }}</h4>
-        <p>User</p>
+        <p style="text-transform:capitalize;">{{ auth()->user()->role ?? 'User' }}</p>
       </div>
+      <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:auto;">
+        @csrf
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:32px; height:32px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:14px;
+                 transition:all .2s;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </form>
     </div>
   </div>
 </aside>
@@ -1015,7 +1106,7 @@
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <div class="topbar-btn topbar-desktop-only" title="Notifications">
+    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
       <span class="notif-dot"></span>
     </div>
@@ -1305,28 +1396,89 @@
       <button class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body">
-      <input class="cust-search" placeholder="Search by name, phone, or email…" />
-      <div class="cust-list">
-        <div class="cust-row selected">
-          <div class="cr-avatar">RK</div>
+      <input class="cust-search" id="custSearchInput" placeholder="Search by name, phone, or email…" onkeyup="filterCustomerModalList()" />
+      <div class="cust-list" id="custModalList">
+        <div class="cust-row selected" onclick="selectCustomerItem(this, 'Rahul Kumar', '+91 98765 43210', 420, 'RK')">
+          <div class="cr-avatar" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">RK</div>
           <div class="cr-info"><h5>Rahul Kumar</h5><p>+91 98765 43210 &nbsp;·&nbsp; rahul@gmail.com</p></div>
           <span class="cr-tag loyal">Loyal</span>
         </div>
-        <div class="cust-row">
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Priya Sharma', '+91 87654 32109', 290, 'PS')">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#7C3AED,#EC4899);">PS</div>
           <div class="cr-info"><h5>Priya Sharma</h5><p>+91 87654 32109 &nbsp;·&nbsp; priya@gmail.com</p></div>
           <span class="cr-tag vip">VIP</span>
         </div>
-        <div class="cust-row">
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Anil Mehta', '+91 76543 21098', 120, 'AM')">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#0891B2,#06B6D4);">AM</div>
-          <div class="cr-info"><h5>Anil Mehta</h5><p>+91 76543 21098</p></div>
+          <div class="cr-info"><h5>Anil Mehta</h5><p>+91 76543 21098 &nbsp;·&nbsp; anil@gmail.com</p></div>
           <span class="cr-tag new">New</span>
+        </div>
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Neha Gupta', '+91 96345 67890', 145, 'NG')">
+          <div class="cr-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">NG</div>
+          <div class="cr-info"><h5>Neha Gupta</h5><p>+91 96345 67890 &nbsp;·&nbsp; neha@yahoo.com</p></div>
+          <span class="cr-tag loyal">Loyal</span>
+        </div>
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Virendra Singh', '+91 95456 78901', 410, 'VS')">
+          <div class="cr-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">VS</div>
+          <div class="cr-info"><h5>Virendra Singh</h5><p>+91 95456 78901 &nbsp;·&nbsp; vsingh@gmail.com</p></div>
+          <span class="cr-tag vip">VIP Gold</span>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-outline" style="flex:none;padding:0 16px;height:36px;" onclick="closeModal('customerModal')"><i class="fa-solid fa-times"></i>&nbsp; Close</button>
-      <button class="btn-checkout" style="flex:none;padding:0 20px;height:36px;" onclick="closeModal('customerModal')"><i class="fa-solid fa-check"></i>&nbsp; Confirm</button>
+      <button class="btn-checkout" style="flex:none;padding:0 20px;height:36px;" onclick="confirmCustomerSelection()"><i class="fa-solid fa-check"></i>&nbsp; Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Modal -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal" style="width:450px; background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px;">
+      <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
+        Notifications &amp; Live Alerts
+      </div>
+      <button class="modal-close" onclick="closeModal('notifModal')" style="color:#94A3B8;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px 20px; max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:12px; padding:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:rgba(239,68,68,0.2); color:#F87171; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid fa-bell-concierge"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Waiter Called — Table 4</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Customer requested waiter service at Table 4</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">2 mins ago</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:12px; padding:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:rgba(16,185,129,0.2); color:#34D399; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">KOT Ready — Table 2</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Paneer Butter Masala &amp; Garlic Naan prepared by Kitchen</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">8 mins ago</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:rgba(245,158,11,0.2); color:#FCD34D; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Low Stock Alert</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Milk inventory is below 2 Litres threshold</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">15 mins ago</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn-outline" onclick="showToast('All notifications marked as read', 'success'); closeModal('notifModal');" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px;">Mark All as Read</button>
+      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px;">Close</button>
     </div>
   </div>
 </div>
@@ -2921,6 +3073,38 @@
 
   // Poll for payments every 6 seconds (fast and responsive!)
   setInterval(checkNewPayments, 6000);
+
+  // Customer Modal Selection & Filter Logic
+  let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 420, avatar: 'RK' };
+
+  function selectCustomerItem(el, name, phone, points, avatar) {
+    document.querySelectorAll('#custModalList .cust-row').forEach(r => r.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedCustomerData = { name, phone, points, avatar };
+  }
+
+  function confirmCustomerSelection() {
+    if (!selectedCustomerData) return;
+    const strip = document.querySelector('.customer-strip');
+    if (strip) {
+      const avatarEl = strip.querySelector('.cust-avatar');
+      const nameEl = strip.querySelector('.cust-info h5');
+      const subEl = strip.querySelector('.cust-info p');
+      if (avatarEl) avatarEl.textContent = selectedCustomerData.avatar;
+      if (nameEl) nameEl.textContent = selectedCustomerData.name;
+      if (subEl) subEl.innerHTML = `${selectedCustomerData.phone} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points} pts</span>`;
+    }
+    showToast(`Selected Customer: ${selectedCustomerData.name}`, 'success');
+    closeModal('customerModal');
+  }
+
+  function filterCustomerModalList() {
+    const q = (document.getElementById('custSearchInput')?.value || '').toLowerCase();
+    document.querySelectorAll('#custModalList .cust-row').forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(q) ? 'flex' : 'none';
+    });
+  }
 </script>
 </body>
 </html>
