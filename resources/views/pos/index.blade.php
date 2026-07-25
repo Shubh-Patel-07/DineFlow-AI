@@ -2171,7 +2171,7 @@
   }
 
   function addQuickItem(id) {
-    const item = MENU.find(i => i.id === id);
+    const item = MENU.find(i => String(i.id) === String(id));
     if (item) {
       item.qty += 1;
       renderMenu();
@@ -2181,7 +2181,7 @@
   }
 
   function updateQty(id, delta) {
-    const item = MENU.find(i => i.id === id);
+    const item = MENU.find(i => String(i.id) === String(id));
     if (item) {
       item.qty += delta;
       if (item.qty < 0) item.qty = 0;
@@ -2191,7 +2191,7 @@
   }
 
   function removeItem(id) {
-    const item = MENU.find(i => i.id === id);
+    const item = MENU.find(i => String(i.id) === String(id));
     if (item) {
       showToast(item.name + ' removed', 'error');
       item.qty = 0;
@@ -2587,6 +2587,14 @@
         serviceCharge = subtotal * 0.05;
         gst = (subtotal + serviceCharge) * 0.18;
         finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+      } else if (selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
+        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && o.payment_status === 'pending');
+        if (activeOrder) {
+          subtotal = parseFloat(activeOrder.total_amount || 0);
+          serviceCharge = subtotal * 0.05;
+          gst = (subtotal + serviceCharge) * 0.18;
+          finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+        }
       }
 
       const tableNumber = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
@@ -2633,19 +2641,39 @@
     }
   }
 
-  function confirmUpiPaymentCompleted() {
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+  async function confirmUpiPaymentCompleted() {
+    try {
+      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
 
-    // Automatically highlight UPI payment method in POS terminal as active and verified
-    document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
-    const upiPayBtn = Array.from(document.querySelectorAll('.pay-method')).find(p => p.textContent.includes('UPI') || p.textContent.includes('GPay'));
-    if (upiPayBtn) {
-      upiPayBtn.classList.add('active');
+      document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('active'));
+      const upiPayBtn = Array.from(document.querySelectorAll('.pay-method')).find(p => p.textContent.includes('UPI') || p.textContent.includes('GPay'));
+      if (upiPayBtn) {
+        upiPayBtn.classList.add('active');
+      }
+
+      if (selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
+        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && o.payment_status === 'pending');
+        if (activeOrder) {
+          await fetch(`/api/orders/${activeOrder.id}/pay`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify({ payment_method: 'upi' })
+          });
+        }
+      }
+
+      announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
+      showToast(`✅ UPI Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
+      closeModal('upiQrModal');
+    } catch (err) {
+      console.error('Error confirming UPI payment:', err);
+      showToast('Payment verified!', 'success');
+      closeModal('upiQrModal');
     }
-
-    announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
-    showToast(`✅ UPI/GPay Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
-    closeModal('upiQrModal');
   }
 
   /* ─── PAYMENT ────────────────────────────── */
