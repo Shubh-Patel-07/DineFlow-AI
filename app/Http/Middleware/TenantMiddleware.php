@@ -13,7 +13,12 @@ class TenantMiddleware
         $user = auth()->user();
         $restaurantId = $request->route('restaurantId') ?? $request->input('restaurant_id') ?? $request->query('restaurantId');
 
-        if ($restaurantId && $user && $user->restaurant_id && $user->restaurant_id != $restaurantId) {
+        // Admin has access to all tenant data
+        if ($user && strtolower(trim($user->role ?? '')) === 'admin') {
+            return $next($request);
+        }
+
+        if ($restaurantId && $user && $user->restaurant_id && strval($user->restaurant_id) !== strval($restaurantId)) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
