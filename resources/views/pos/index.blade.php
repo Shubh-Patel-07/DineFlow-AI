@@ -1416,10 +1416,15 @@
 
 <!-- Customer Modal -->
 <div class="modal-overlay" id="customerModal">
-  <div class="modal" style="width:480px;">
+  <div class="modal" style="width:500px; max-width:94%;">
     <div class="modal-header">
       <div class="modal-title"><i class="fa-solid fa-user" style="color:var(--primary);"></i>&nbsp; Select Customer</div>
-      <button class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="openModal('newCustomerModal')" style="padding:6px 14px; background:linear-gradient(135deg,#10B981,#059669); border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <i class="fa-solid fa-user-plus"></i> + New Customer
+        </button>
+        <button class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
     </div>
     <div class="modal-body">
       <input class="cust-search" id="custSearchInput" placeholder="Search by name, phone, or email…" onkeyup="filterCustomerModalList()" />
@@ -1454,6 +1459,39 @@
     <div class="modal-footer">
       <button class="btn-outline" style="flex:none;padding:0 16px;height:36px;" onclick="closeModal('customerModal')"><i class="fa-solid fa-times"></i>&nbsp; Close</button>
       <button class="btn-checkout" style="flex:none;padding:0 20px;height:36px;" onclick="confirmCustomerSelection()"><i class="fa-solid fa-check"></i>&nbsp; Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Register New Customer Modal -->
+<div class="modal-overlay" id="newCustomerModal">
+  <div class="modal" style="width:440px; max-width:94%; background:rgba(30,41,59,0.95); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); border-radius:20px; overflow:hidden;">
+    <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.06); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#A5B4FC; font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-user-plus" style="color:#6366F1;"></i>
+        <span>Register New Customer</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('newCustomerModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div>
+          <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Full Name *</label>
+          <input type="text" id="newCustNameInput" placeholder="e.g. Ramesh Bhai" style="width:100%; height:40px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 12px; font-size:13px;" required />
+        </div>
+        <div>
+          <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Mobile / WhatsApp Number *</label>
+          <input type="tel" id="newCustPhoneInput" placeholder="e.g. 9898012345" style="width:100%; height:40px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 12px; font-size:13px;" required />
+        </div>
+        <div>
+          <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Email Address (Optional)</label>
+          <input type="email" id="newCustEmailInput" placeholder="e.g. ramesh@gmail.com" style="width:100%; height:40px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 12px; font-size:13px;" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 20px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-outline" style="height:36px; padding:0 16px; font-size:12.5px;" onclick="closeModal('newCustomerModal')">Cancel</button>
+      <button class="btn-checkout" style="height:36px; padding:0 20px; font-size:12.5px; background:linear-gradient(135deg,#6366F1,#4F46E5);" onclick="saveNewCustomer()"><i class="fa-solid fa-user-check"></i>&nbsp; Save &amp; Select</button>
     </div>
   </div>
 </div>
