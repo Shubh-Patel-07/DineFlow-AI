@@ -1264,7 +1264,7 @@
         </div>
         <div style="display:flex;gap:6px;">
           <div class="topbar-btn" title="Hold Order" onclick="holdOrder()"><i class="fa-solid fa-pause"></i></div>
-          <div class="topbar-btn" title="Print KOT" onclick="openModal('kotModal')"><i class="fa-solid fa-print"></i></div>
+          <div class="topbar-btn" title="Print KOT" onclick="openPrintHub(lastPlacedOrderId)" style="cursor:pointer;"><i class="fa-solid fa-print"></i></div>
           <div class="topbar-btn mobile-close-cart" title="Close Cart" onclick="toggleMobileCart()" style="display:none;"><i class="fa-solid fa-xmark"></i></div>
         </div>
       </div>
@@ -2929,13 +2929,26 @@
     }
   }
 
-  function openPrintHub(orderId = null) {
+  async function openPrintHub(orderId = null) {
     if (orderId) {
       lastPlacedOrderId = orderId;
     } else if (!lastPlacedOrderId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData) && allOrdersData.length > 0) {
       lastPlacedOrderId = allOrdersData[0].id;
     }
     
+    if (!lastPlacedOrderId) {
+      try {
+        const res = await fetch('/api/orders/restaurant/1');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          allOrdersData = data.data;
+          lastPlacedOrderId = data.data[0].id;
+        }
+      } catch (e) {
+        console.log('Error fetching order for print:', e);
+      }
+    }
+
     if (!lastPlacedOrderId) {
       showToast('No order available to print. Please place an order first!', 'warning');
       return;
