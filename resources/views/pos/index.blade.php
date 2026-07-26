@@ -2796,7 +2796,8 @@
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        lastPlacedOrderId = data.data.id || data.data;
+        const orderIdVal = (data.data && typeof data.data === 'object' && data.data.id) ? data.data.id : (data.data || lastPlacedOrderId);
+        lastPlacedOrderId = orderIdVal;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
         if (typeof loadOrdersData === 'function') loadOrdersData();
@@ -2805,9 +2806,13 @@
         const activePayMethod = document.querySelector('.pay-method.active')?.textContent || '';
         if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('qr') || activePayMethod.toLowerCase().includes('gpay')) {
           const tableLabel = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
-          openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
+          setTimeout(() => {
+            openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
+          }, 150);
         } else {
-          openPrintHub(lastPlacedOrderId);
+          setTimeout(() => {
+            openPrintHub(lastPlacedOrderId);
+          }, 150);
         }
       } else {
         showToast(data.message || 'Failed to place order', 'error');
