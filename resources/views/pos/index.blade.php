@@ -3209,8 +3209,8 @@
       dateSub.innerHTML = `${dateString} &nbsp;·&nbsp; Shift: ${shift}`;
     }
   }
-  setInterval(updateLiveClock, 1000);
   updateLiveClock();
+  setInterval(updateLiveClock, 1000);
 
   // Initial immediate menu render
   if (typeof renderMenu === 'function') renderMenu();
