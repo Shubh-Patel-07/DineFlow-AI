@@ -1040,7 +1040,7 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Menu</div>
       <a class="nav-item" href="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('catPopupModal')" style="cursor:pointer;" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="toggleCatPopup()" style="cursor:pointer;" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
       <a class="nav-item" href="javascript:void(0)" onclick="openModal('modifiersModal')" style="cursor:pointer;" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
       <a class="nav-item" href="javascript:void(0)" onclick="openModal('combosModal')" style="cursor:pointer;" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
     </div>
@@ -1692,7 +1692,7 @@
 
 <!-- Modifiers & Customizations Modal -->
 <div class="modal-overlay" id="modifiersModal">
-  <div class="modal selection-popup-modal" style="width:720px; max-width:95%;">
+  <div class="modal selection-popup-modal" style="width:740px; max-width:95%;">
     <div class="modal-header" style="background:linear-gradient(135deg,#312E81,#4338CA); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
       <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-puzzle-piece" style="color:#818CF8; font-size:18px;"></i>
@@ -1701,46 +1701,48 @@
       <button class="modal-close" onclick="closeModal('modifiersModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body" style="padding:20px;">
+      <p style="font-size:12px; color:#94A3B8; margin:-4px 0 16px;">Click any modifier to attach it live to the active cart item!</p>
+
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
         <div style="background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.25); border-radius:14px; padding:14px;">
           <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🧀 Extra Cheese Topping</div>
           <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Applicable for Pizza, Pasta &amp; Burgers</div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:800; color:#818CF8;">+ ₹ 40.00</span>
-            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+            <button onclick="applyModifierToCart('Extra Cheese', 40)" style="padding:6px 14px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Apply to Cart</button>
           </div>
         </div>
 
         <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:14px; padding:14px;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🌶️ Spice Preference (Mild / Medium / Hot)</div>
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🌶️ Extra Spicy / Tikha</div>
           <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Applicable for all Starters &amp; Curries</div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:800; color:#FCD34D;">Free Add-on</span>
-            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+            <button onclick="applyModifierToCart('Spicy', 0)" style="padding:6px 14px; background:linear-gradient(135deg,#F59E0B,#D97706); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Apply to Cart</button>
           </div>
         </div>
 
         <div style="background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:14px; padding:14px;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🫓 Extra Butter Naan / Roti</div>
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🫓 Extra Butter Naan</div>
           <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Applicable for Mains &amp; Thali Meals</div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:800; color:#67E8F9;">+ ₹ 30.00</span>
-            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+            <button onclick="applyModifierToCart('Extra Naan', 30)" style="padding:6px 14px; background:linear-gradient(135deg,#06B6D4,#0891B2); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Apply to Cart</button>
           </div>
         </div>
 
         <div style="background:rgba(236,72,153,0.08); border:1px solid rgba(236,72,153,0.25); border-radius:14px; padding:14px;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🥗 Jain / No Onion No Garlic</div>
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🥗 Jain Prep (No Onion/Garlic)</div>
           <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Dietary special preparation preference</div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:800; color:#F472B6;">Free Add-on</span>
-            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+            <button onclick="applyModifierToCart('Jain Prep', 0)" style="padding:6px 14px; background:linear-gradient(135deg,#EC4899,#DB2777); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Apply to Cart</button>
           </div>
         </div>
       </div>
 
       <div style="display:flex; justify-content:flex-end;">
-        <button onclick="showToast('Modifiers &amp; Add-ons updated', 'success'); closeModal('modifiersModal');" style="padding:10px 20px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer;">Save Modifiers</button>
+        <button onclick="closeModal('modifiersModal');" style="padding:10px 20px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer;">Done</button>
       </div>
     </div>
   </div>
@@ -3459,6 +3461,26 @@
     renderCart();
     showToast(`✅ ${name} added to cart!`, 'success');
     closeModal('combosModal');
+  }
+
+  function applyModifierToCart(modName, modPrice) {
+    const cartItems = MENU.filter(i => i.qty > 0);
+    if (cartItems.length === 0) {
+      showToast('Please add items to cart first to apply modifiers!', 'warning');
+      return;
+    }
+
+    const lastItem = cartItems[cartItems.length - 1];
+    if (modPrice > 0) {
+      lastItem.price += modPrice;
+    }
+    if (!lastItem.name.includes(`(${modName})`)) {
+      lastItem.name += ` (${modName})`;
+    }
+
+    renderMenu();
+    renderCart();
+    showToast(`✅ Applied "${modName}" to ${lastItem.name}!`, 'success');
   }
 
   // Poll for waiter calls every 45 seconds to save server threads and eliminate system lag
