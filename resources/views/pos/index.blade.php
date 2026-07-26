@@ -2757,8 +2757,8 @@
     const calculatedOrderTotal = Math.round(cartSubtotal + cartServiceCharge + cartGst);
 
     // Determine if we need to print Kitchen KOT or Bar KOT based on cart categories
-    activeOrderHasKitchen = cartItems.some(item => ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup'].includes(item.cat.toLowerCase()));
-    activeOrderHasBar = cartItems.some(item => ['beverages', 'desserts', 'drinks', 'dessert'].includes(item.cat.toLowerCase()));
+    activeOrderHasKitchen = cartItems.some(item => ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup'].includes((item.cat || '').toLowerCase()));
+    activeOrderHasBar = cartItems.some(item => ['beverages', 'desserts', 'drinks', 'dessert'].includes((item.cat || '').toLowerCase()));
 
     const payload = {
       restaurant_id: "1",
@@ -2784,25 +2784,22 @@
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        const orderIdVal = (typeof data.data === 'object' && data.data?.id) ? data.data.id : (data.data || lastPlacedOrderId);
-        lastPlacedOrderId = orderIdVal;
-        const apiOrderTotal = data.data?.total_amount ? Math.round(parseFloat(data.data.total_amount) * 1.239) : calculatedOrderTotal;
-        const finalPayTotal = (apiOrderTotal && apiOrderTotal > 0) ? apiOrderTotal : calculatedOrderTotal;
-
+        lastPlacedOrderId = data.data.id || data.data;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
         if (typeof loadOrdersData === 'function') loadOrdersData();
         if (typeof loadTablesData === 'function') loadTablesData();
         
-        // If GPay / UPI was active payment method, open QR modal for payment collection!
         const activePayMethod = document.querySelector('.pay-method.active')?.textContent || '';
         if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('qr') || activePayMethod.toLowerCase().includes('gpay')) {
           const tableLabel = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
-          openUpiQrModal(finalPayTotal, lastPlacedOrderId, tableLabel);
+          openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
         } else {
           document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
-          document.getElementById('printHubKitchenBtn').style.display = activeOrderHasKitchen ? 'flex' : 'none';
-          document.getElementById('printHubBarBtn').style.display = activeOrderHasBar ? 'flex' : 'none';
+          const kBtn = document.getElementById('printHubKitchenBtn');
+          if (kBtn) kBtn.style.display = 'flex';
+          const bBtn = document.getElementById('printHubBarBtn');
+          if (bBtn) bBtn.style.display = 'flex';
           openModal('printHubModal');
         }
       } else {
