@@ -1338,7 +1338,7 @@
         <!-- Secondary 4-Button Utility Toolbar -->
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px;">
           <!-- Print -->
-          <button onclick="printBill()" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="Print Receipt">
+          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="Print Receipt">
             <i class="fa-solid fa-print" style="color:#FCD34D;"></i> Print
           </button>
           
@@ -1348,7 +1348,7 @@
           </button>
           
           <!-- KOT -->
-          <button onclick="openModal('kotModal')" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="Send KOT">
+          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="Send / Print KOT">
             <i class="fa-solid fa-fire" style="color:#FB923C;"></i> KOT
           </button>
           
@@ -1656,13 +1656,13 @@
           <i class="fa-solid fa-file-invoice-dollar" style="font-size:13px;"></i> Print Customer Receipt
         </button>
         
-        <!-- Kitchen -->
-        <button id="printHubKitchenBtn" onclick="triggerPrintHubAction('kitchen')" class="ph-btn" style="width:100%; height:40px; display:none; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(245,158,11,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(245,158,11,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.25)';">
+        <!-- Kitchen KOT -->
+        <button id="printHubKitchenBtn" onclick="triggerPrintHubAction('kitchen')" class="ph-btn" style="width:100%; height:40px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(245,158,11,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(245,158,11,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.25)';">
           <i class="fa-solid fa-fire-burner" style="font-size:13px;"></i> Print Kitchen KOT
         </button>
         
-        <!-- Bar -->
-        <button id="printHubBarBtn" onclick="triggerPrintHubAction('bar')" class="ph-btn" style="width:100%; height:40px; display:none; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #06B6D4, #0891B2); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(6,182,212,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(6,182,212,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(6,182,212,0.25)';">
+        <!-- Bar KOT -->
+        <button id="printHubBarBtn" onclick="triggerPrintHubAction('bar')" class="ph-btn" style="width:100%; height:40px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #06B6D4, #0891B2); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(6,182,212,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(6,182,212,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(6,182,212,0.25)';">
           <i class="fa-solid fa-glass-water" style="font-size:13px;"></i> Print Bar KOT
         </button>
       </div>
@@ -2672,6 +2672,11 @@
       announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
       showToast(`✅ UPI Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
       closeModal('upiQrModal');
+
+      // Auto open KOT & Print choices modal for the completed order!
+      setTimeout(() => {
+        openPrintHub(targetOrderId);
+      }, 400);
     } catch (err) {
       console.error('Error confirming UPI payment:', err);
       if (typeof loadOrdersData === 'function') await loadOrdersData();
@@ -2898,6 +2903,19 @@
     } catch (err) {
       alert("WhatsApp Open Error: " + err.message);
     }
+  function openPrintHub(orderId = null) {
+    if (orderId) {
+      lastPlacedOrderId = orderId;
+    }
+    const orderIdLabel = document.getElementById('printHubOrderId');
+    if (orderIdLabel) {
+      orderIdLabel.textContent = 'Order ID: #' + (lastPlacedOrderId || '--');
+    }
+    const kBtn = document.getElementById('printHubKitchenBtn');
+    if (kBtn) kBtn.style.display = 'flex';
+    const bBtn = document.getElementById('printHubBarBtn');
+    if (bBtn) bBtn.style.display = 'flex';
+    openModal('printHubModal');
   }
 
   function triggerPrintHubAction(type) {
