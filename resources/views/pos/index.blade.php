@@ -2509,10 +2509,20 @@
       const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
       localStorage.setItem('dineflow_merchant_vpa', inputVal);
       const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-      const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${currentUpiPayAmount}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+      
+      const payAmount = (currentUpiPayAmount && currentUpiPayAmount > 0) ? Math.round(currentUpiPayAmount) : 1;
+      
+      const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${payAmount}&cu=INR&tn=${encodeURIComponent('Bill Payment ' + tableNumber)}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(upiString)}`;
+      
       const imgEl = document.getElementById('upiQrImg');
-      if (imgEl) imgEl.src = qrUrl;
+      if (imgEl) {
+        imgEl.src = qrUrl;
+        imgEl.onerror = function() {
+          this.onerror = null;
+          this.src = `https://chart.googleapis.com/chart?chs=280x280&cht=qr&chl=${encodeURIComponent(upiString)}&choe=UTF-8`;
+        };
+      }
     } catch (e) {
       console.warn('QR update error:', e);
     }
@@ -2539,12 +2549,20 @@
       let finalGrandTotal = 0;
 
       if (activeCartItems.length > 0) {
-        subtotal = activeCartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        subtotal = activeCartItems.reduce((sum, item) => sum + (parseFloat(item.price || 0) * item.qty), 0);
         serviceCharge = subtotal * 0.05;
         gst = (subtotal + serviceCharge) * 0.18;
         finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+      } else if (lastPlacedOrderId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
+        const lastOrder = allOrdersData.find(o => String(o.id) === String(lastPlacedOrderId));
+        if (lastOrder) {
+          subtotal = parseFloat(lastOrder.total_amount || 0);
+          serviceCharge = subtotal * 0.05;
+          gst = (subtotal + serviceCharge) * 0.18;
+          finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+        }
       } else if (selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
-        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && o.payment_status === 'pending');
+        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && String(o.payment_status).toLowerCase() === 'pending');
         if (activeOrder) {
           subtotal = parseFloat(activeOrder.total_amount || 0);
           serviceCharge = subtotal * 0.05;
@@ -2557,7 +2575,7 @@
         const grandTotalText = document.getElementById('grandTotal')?.textContent || '0';
         const parsedVal = parseFloat(grandTotalText.replace(/[^0-9.]/g, ''));
         if (parsedVal > 0) {
-          finalGrandTotal = parsedVal;
+          finalGrandTotal = Math.round(parsedVal);
           subtotal = Math.round(finalGrandTotal / 1.239);
           serviceCharge = subtotal * 0.05;
           gst = subtotal * 0.18;
