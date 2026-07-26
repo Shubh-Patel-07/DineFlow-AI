@@ -321,13 +321,13 @@
     <div class="topbar-spacer"></div>
     
     <!-- Gujarati Soundbox Voice Mute Toggle -->
-    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Gujarati Soundbox Toggle" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px;">
-      <i class="fa-solid fa-volume-high"></i>
-      <span style="font-size:11px; font-weight:700;">ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊</span>
+    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" onclick="togglePosVoiceMute()" title="Gujarati Soundbox Toggle" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
+      <span id="posMuteText" style="font-size:11px; font-weight:700;">ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊</span>
     </div>
 
     <!-- Test Voice Sound Button -->
-    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="alert('🔊 DineFlow Gujarati Soundbox Active!')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px;">
+    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer;">
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -552,17 +552,75 @@ function toggleSidebar() {
   }
 }
 
-function toggleFull() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-    document.body.style.height = '100vh';
-    document.body.style.overflow = 'hidden';
+let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
+
+function updatePosMuteUI() {
+  const icon = document.getElementById('posMuteIcon');
+  const text = document.getElementById('posMuteText');
+  const btn = document.getElementById('posVoiceMuteBtn');
+  if (!icon || !text || !btn) return;
+
+  if (isPosVoiceMuted) {
+    icon.className = 'fa-solid fa-volume-xmark';
+    icon.style.color = '#EF4444';
+    text.textContent = 'સાઉન્ડબોક્સ મ્યૂટ 🔇';
+    btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+    btn.style.background = 'rgba(239, 68, 68, 0.08)';
+    btn.style.color = '#EF4444';
   } else {
-    document.exitFullscreen();
-    document.body.style.height = 'auto';
-    document.body.style.overflow = 'auto';
+    icon.className = 'fa-solid fa-volume-high';
+    icon.style.color = '#10B981';
+    text.textContent = 'ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊';
+    btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+    btn.style.background = 'rgba(16, 185, 129, 0.08)';
+    btn.style.color = '#10B981';
   }
 }
+
+function togglePosVoiceMute() {
+  isPosVoiceMuted = !isPosVoiceMuted;
+  localStorage.setItem('dineflow_voice_muted', isPosVoiceMuted ? 'true' : 'false');
+  updatePosMuteUI();
+  if (!isPosVoiceMuted) {
+    announcePaymentVoice('Test', 0, 'test mode');
+  }
+}
+
+function announcePaymentVoice(tableNumber, amount, method = 'online') {
+  if (isPosVoiceMuted) return;
+
+  if (!('speechSynthesis' in window)) {
+    console.log('Text-to-speech not supported in this browser.');
+    return;
+  }
+  
+  window.speechSynthesis.cancel();
+  
+  let cleanTableNum = String(tableNumber).replace(/table/gi, '').replace(/#/g, '').replace(/T-/gi, '').trim();
+  if (!cleanTableNum || cleanTableNum === 'Walk-In') cleanTableNum = '1';
+
+  let msgText = "";
+  if (tableNumber === 'Test') {
+    msgText = "ડાઇનફ્લો એઆઇ સ્માર્ટ સાઉન્ડબોક્સ સફળતાપૂર્વક સક્રિય છે.";
+  } else {
+    const cashOrOnline = (method === 'cash') ? 'રોકડા' : 'ઓનલાઇન';
+    msgText = `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${cleanTableNum} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
+  }
+  
+  const utterance = new SpeechSynthesisUtterance(msgText);
+  utterance.lang = 'gu-IN';
+  utterance.rate = 0.95;
+  utterance.pitch = 1.0;
+  
+  let guVoice = window.speechSynthesis.getVoices().find(v => v.lang.includes('gu') || v.name.includes('Gujarati') || v.lang.includes('hi') || v.lang.includes('IN'));
+  if (guVoice) utterance.voice = guVoice;
+  
+  window.speechSynthesis.speak(utterance);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePosMuteUI();
+});
 </script>
 
 </body>
