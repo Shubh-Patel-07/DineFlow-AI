@@ -2514,13 +2514,7 @@
     try {
       showToast('Opening Live UPI QR Terminal...', 'info');
 
-      let activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
-      if (activeCartItems.length === 0 && typeof MENU !== 'undefined' && MENU.length > 0) {
-        MENU[0].qty = 1;
-        if (typeof renderCart === 'function') renderCart();
-        if (typeof renderMenu === 'function') renderMenu();
-        activeCartItems = MENU.filter(i => i.qty > 0);
-      }
+      const activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
       let subtotal = 0;
       let serviceCharge = 0;
       let gst = 0;
@@ -2684,18 +2678,10 @@
   let selectedTableId = 1;
 
   function checkout() {
-    let cartItems = MENU.filter(i => i.qty > 0);
+    const cartItems = MENU.filter(i => i.qty > 0);
     if (cartItems.length === 0) {
-      if (MENU.length > 0) {
-        MENU[0].qty = 1;
-        renderCart();
-        renderMenu();
-        cartItems = MENU.filter(i => i.qty > 0);
-        showToast('Auto-selected ' + MENU[0].name + ' for checkout', 'info');
-      } else {
-        showToast('Please select any menu item to place order', 'warning');
-        return;
-      }
+      showToast('Cart is empty! Please select items from menu first.', 'warning');
+      return;
     }
 
     // Determine if we need to print Kitchen KOT or Bar KOT based on cart categories
