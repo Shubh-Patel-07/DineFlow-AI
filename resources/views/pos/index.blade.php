@@ -1950,37 +1950,41 @@
     try {
       const res = await fetch('/api/menu/restaurant/1');
       const data = await res.json();
-      if (res.ok && (data.success || Array.isArray(data.data)) && Array.isArray(data.data) && data.data.length > 0) {
-        MENU = data.data.map(item => {
-          const catLower = (item.category || 'mains').toLowerCase();
-          let catKey = 'mains';
-          let emoji = item.is_veg !== false ? '🟢' : '🔴';
-          
-          if (catLower.includes('starter') || catLower.includes('appetizer')) { catKey = 'starters'; emoji = '🥢'; }
-          else if (catLower.includes('bread') || catLower.includes('roti') || catLower.includes('naan')) { catKey = 'breads'; emoji = '🫓'; }
-          else if (catLower.includes('rice') || catLower.includes('biryani')) { catKey = 'rice'; emoji = '🍚'; }
-          else if (catLower.includes('dessert') || catLower.includes('sweet')) { catKey = 'desserts'; emoji = '🍮'; }
-          else if (catLower.includes('drink') || catLower.includes('beverage')) { catKey = 'beverages'; emoji = '🍹'; }
-          else if (catLower.includes('pizza')) { catKey = 'mains'; emoji = '🍕'; }
-          else if (catLower.includes('burger')) { catKey = 'starters'; emoji = '🍔'; }
+      if (res.ok && data && (data.success || Array.isArray(data.data))) {
+        const rawItems = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        if (rawItems.length > 0) {
+          MENU = rawItems.map(item => {
+            const catLower = (item.category || 'mains').toLowerCase();
+            let catKey = 'mains';
+            let emoji = item.is_veg !== false ? '🟢' : '🔴';
+            
+            if (catLower.includes('starter') || catLower.includes('appetizer')) { catKey = 'starters'; emoji = '🥢'; }
+            else if (catLower.includes('bread') || catLower.includes('roti') || catLower.includes('naan')) { catKey = 'breads'; emoji = '🫓'; }
+            else if (catLower.includes('rice') || catLower.includes('biryani')) { catKey = 'rice'; emoji = '🍚'; }
+            else if (catLower.includes('dessert') || catLower.includes('sweet')) { catKey = 'desserts'; emoji = '🍮'; }
+            else if (catLower.includes('drink') || catLower.includes('beverage')) { catKey = 'beverages'; emoji = '🍹'; }
+            else if (catLower.includes('pizza')) { catKey = 'mains'; emoji = '🍕'; }
+            else if (catLower.includes('burger')) { catKey = 'starters'; emoji = '🍔'; }
 
-          return {
-            id: item.id,
-            name: item.name,
-            cat: catKey,
-            price: parseFloat(item.price),
-            emoji: emoji,
-            badge: item.is_veg !== false ? 'veg' : 'nonveg',
-            desc: item.description || '',
-            qty: 0,
-            is_available: item.is_available !== false
-          };
-        });
-        renderMenu();
-        renderCategories();
+            return {
+              id: item.id,
+              name: item.name,
+              cat: catKey,
+              price: parseFloat(item.price || 0),
+              emoji: emoji,
+              badge: item.is_veg !== false ? 'veg' : 'nonveg',
+              desc: item.description || '',
+              qty: 0,
+              is_available: item.is_available !== false
+            };
+          });
+        }
       }
     } catch (err) {
       console.warn('POS dynamic menu sync warning, keeping fallback', err);
+    } finally {
+      renderCategories();
+      renderMenu();
     }
   }
 
@@ -3166,7 +3170,6 @@
   function updateLiveClock() {
     const clock = document.getElementById('liveClockBadge');
     const dateSub = document.getElementById('topbarDate');
-    if (!clock) return;
     
     const now = new Date();
     
@@ -3176,7 +3179,9 @@
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12;
-    clock.textContent = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+    if (clock) {
+      clock.textContent = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+    }
     
     const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
     const dateString = now.toLocaleDateString('en-US', options);
@@ -3197,6 +3202,10 @@
   }
   setInterval(updateLiveClock, 1000);
   updateLiveClock();
+
+  // Initial immediate menu render
+  if (typeof renderCategories === 'function') renderCategories();
+  if (typeof renderMenu === 'function') renderMenu();
 
   // Sync POS menu items dynamically from Database API (Menu Manager)
   syncPosMenuWithDatabase();
