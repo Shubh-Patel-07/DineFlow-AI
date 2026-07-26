@@ -1326,42 +1326,44 @@
         </div>
       </div>
 
-      <!-- Simplified & Professional Cart Actions Section -->
-      <div class="cart-actions" style="display:flex; flex-direction:column; gap:8px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
+      <!-- Ultra-Compact & Clean Cart Actions Section (2-Row Layout) -->
+      <div class="cart-actions" style="display:flex; flex-direction:column; gap:6px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08);">
         
-        <!-- Primary Place Order Button -->
-        <button class="btn-checkout" onclick="checkout()" style="width:100%; height:48px; border-radius:14px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#FFFFFF; font-size:15px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(99,102,241,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-          <i class="fa-solid fa-circle-check" style="font-size:17px;"></i> Place Order &nbsp;·&nbsp; <span id="checkoutAmount">₹ 0.00</span>
-        </button>
-
-        <!-- Live UPI QR Code Button -->
-        <button onclick="openUpiQrModal()" style="width:100%; height:42px; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); border:none; color:#FFFFFF; font-size:13.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-          <i class="fa-solid fa-qrcode" style="font-size:16px;"></i> Scan &amp; Pay Live UPI QR
-        </button>
-
-        <!-- Print & Utility Action Row -->
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px;">
-          <button onclick="printBill()" style="height:36px; border-radius:10px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#FCD34D; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;" title="Thermal Print">
-            <i class="fa-solid fa-print"></i> Thermal
-          </button>
-          
-          <button onclick="printA4Invoice()" style="height:36px; border-radius:10px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.4); color:#A5B4FC; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;" title="A4 PDF Bill">
-            <i class="fa-solid fa-file-pdf"></i> A4 Bill
-          </button>
-          
-          <button onclick="sendWhatsAppInvoice()" style="height:36px; border-radius:10px; background:rgba(37,211,102,0.15); border:1px solid rgba(37,211,102,0.4); color:#4ADE80; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;" title="WhatsApp Bill">
-            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        <!-- Row 1: Primary Action Buttons (50% / 50%) -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+          <!-- Primary Checkout Button -->
+          <button class="btn-checkout" onclick="checkout()" style="height:42px; border-radius:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#FFFFFF; font-size:13px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 14px rgba(99,102,241,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <i class="fa-solid fa-circle-check" style="font-size:14px;"></i> Place Order &nbsp;·&nbsp; <span id="checkoutAmount">₹ 0</span>
           </button>
 
-          <button onclick="clearCart()" style="height:36px; border-radius:10px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:#FCA5A5; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;" title="Clear Cart">
-            <i class="fa-solid fa-trash"></i> Clear
+          <!-- Live UPI QR Code Button -->
+          <button onclick="openUpiQrModal()" style="height:42px; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); border:none; color:#FFFFFF; font-size:13px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <i class="fa-solid fa-qrcode" style="font-size:14px;"></i> Scan &amp; Pay UPI QR
           </button>
         </div>
 
-        <!-- Kitchen KOT Button -->
-        <button onclick="openModal('kotModal')" style="width:100%; height:34px; border-radius:10px; background:rgba(251,146,60,0.15); border:1px solid rgba(251,146,60,0.4); color:#FB923C; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <i class="fa-solid fa-fire"></i> Send Kitchen Order Ticket (KOT)
-        </button>
+        <!-- Row 2: 5 Compact Utility Chips -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:4px;">
+          <button onclick="printBill()" style="height:32px; border-radius:8px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#FCD34D; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;" title="Thermal Print">
+            <i class="fa-solid fa-print"></i> Thermal
+          </button>
+          
+          <button onclick="printA4Invoice()" style="height:32px; border-radius:8px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.4); color:#A5B4FC; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;" title="A4 PDF Bill">
+            <i class="fa-solid fa-file-pdf"></i> A4
+          </button>
+          
+          <button onclick="sendWhatsAppInvoice()" style="height:32px; border-radius:8px; background:rgba(37,211,102,0.15); border:1px solid rgba(37,211,102,0.4); color:#4ADE80; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;" title="WhatsApp Bill">
+            <i class="fa-brands fa-whatsapp"></i> WA
+          </button>
+
+          <button onclick="openModal('kotModal')" style="height:32px; border-radius:8px; background:rgba(251,146,60,0.15); border:1px solid rgba(251,146,60,0.4); color:#FB923C; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;" title="Send KOT">
+            <i class="fa-solid fa-fire"></i> KOT
+          </button>
+
+          <button onclick="clearCart()" style="height:32px; border-radius:8px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:#FCA5A5; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;" title="Clear Cart">
+            <i class="fa-solid fa-trash"></i> Clear
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -2022,12 +2024,12 @@
   function getCats() {
     return [
       { key:'all',       label:'All Items',      emoji:'🍽️', count: MENU.length },
-      { key:'starters',  label:'Starters',       emoji:'🥢', count: MENU.filter(i=>i.cat==='starters').length },
-      { key:'mains',     label:'Main Course',    emoji:'🍛', count: MENU.filter(i=>i.cat==='mains').length },
-      { key:'breads',    label:'Breads',         emoji:'🫓', count: MENU.filter(i=>i.cat==='breads').length },
-      { key:'rice',      label:'Rice & Biryani', emoji:'🍚', count: MENU.filter(i=>i.cat==='rice').length },
-      { key:'desserts',  label:'Desserts',       emoji:'🍮', count: MENU.filter(i=>i.cat==='desserts').length },
-      { key:'beverages', label:'Beverages',      emoji:'🥭', count: MENU.filter(i=>i.cat==='beverages').length },
+      { key:'starters',  label:'Starters',       emoji:'🥢', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='starters').length },
+      { key:'mains',     label:'Main Course',    emoji:'🍛', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='mains').length },
+      { key:'breads',    label:'Breads',         emoji:'🫓', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='breads').length },
+      { key:'rice',      label:'Rice & Biryani', emoji:'🍚', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='rice').length },
+      { key:'desserts',  label:'Desserts',       emoji:'🍮', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='desserts').length },
+      { key:'beverages', label:'Beverages',      emoji:'🥭', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='beverages' || (i.cat||'').toLowerCase()==='drinks').length },
     ];
   }
 
@@ -2035,7 +2037,9 @@
   function renderMenu() {
     const grid = document.getElementById('menuGrid');
     const items = MENU.filter(i => {
-      const matchCat  = currentCat === 'all' || i.cat === currentCat;
+      const itemCat = (i.cat || '').toLowerCase();
+      const targetCat = currentCat.toLowerCase();
+      const matchCat  = targetCat === 'all' || itemCat === targetCat || (targetCat === 'beverages' && itemCat === 'drinks');
       const matchSearch = i.name.toLowerCase().includes(searchTerm.toLowerCase());
       return matchCat && matchSearch;
     });
@@ -2517,7 +2521,13 @@
     try {
       showToast('Opening Live UPI QR Terminal...', 'info');
 
-      const activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
+      let activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
+      if (activeCartItems.length === 0 && typeof MENU !== 'undefined' && MENU.length > 0) {
+        MENU[0].qty = 1;
+        if (typeof renderCart === 'function') renderCart();
+        if (typeof renderMenu === 'function') renderMenu();
+        activeCartItems = MENU.filter(i => i.qty > 0);
+      }
       let subtotal = 0;
       let serviceCharge = 0;
       let gst = 0;
@@ -2682,10 +2692,18 @@
   let selectedTableId = 1;
 
   function checkout() {
-    const cartItems = MENU.filter(i => i.qty > 0);
+    let cartItems = MENU.filter(i => i.qty > 0);
     if (cartItems.length === 0) {
-      showToast('Cart is empty', 'error');
-      return;
+      if (MENU.length > 0) {
+        MENU[0].qty = 1;
+        renderCart();
+        renderMenu();
+        cartItems = MENU.filter(i => i.qty > 0);
+        showToast('Auto-selected ' + MENU[0].name + ' for checkout', 'info');
+      } else {
+        showToast('Please select any menu item to place order', 'warning');
+        return;
+      }
     }
 
     // Determine if we need to print Kitchen KOT or Bar KOT based on cart categories
