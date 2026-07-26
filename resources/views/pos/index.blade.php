@@ -2397,26 +2397,6 @@
         
         tbody.innerHTML = sortedOrders.map(order => {
           const itemsSummary = order.items ? order.items.map(item => `${item.name} (x${item.quantity})`).join(', ') : 'Order Items';
-          const isPaid = (String(order.payment_status).toLowerCase() === 'paid');
-          
-          let payBadge = `<span style="background:rgba(239,68,68,0.1); color:#FCA5A5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Unpaid</span>`;
-          let actionBtns = `
-            <button onclick="payOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 10px; height:26px; font-size:11px; color:#10B981; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.1); margin-right:5px; cursor:pointer;">
-              <i class="fa-solid fa-circle-check"></i>&nbsp;Pay
-            </button>
-          `;
-          
-          if (isPaid) {
-            payBadge = `<span style="background:rgba(16,185,129,0.1); color:#34D399; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Paid</span>`;
-            actionBtns = '';
-          }
-          
-          actionBtns += `
-            <button onclick="reprintOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 10px; height:26px; font-size:11px; color:#818CF8; border-color:rgba(99,102,241,0.4); background:rgba(99,102,241,0.1); cursor:pointer;">
-              <i class="fa-solid fa-print"></i>&nbsp;Print
-            </button>
-          `;
-          
           const tableNum = order.table ? order.table.table_number : 'Table #' + order.table_id;
           
           let grandTotal = parseFloat(order.total_amount || 0);
@@ -2428,6 +2408,29 @@
           } else {
             grandTotal = Math.round(grandTotal);
           }
+
+          const isPaid = (String(order.payment_status).toLowerCase() === 'paid');
+          
+          let payBadge = `<span style="background:rgba(239,68,68,0.1); color:#FCA5A5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Unpaid</span>`;
+          let actionBtns = `
+            <button onclick="openUpiQrModal(${grandTotal}, ${order.id}, '${tableNum}')" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#34D399; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.1); margin-right:4px; cursor:pointer;" title="Pay via UPI QR">
+              <i class="fa-solid fa-qrcode"></i>&nbsp;Pay UPI
+            </button>
+            <button onclick="payOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#38BDF8; border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.1); margin-right:4px; cursor:pointer;" title="Mark Cash Paid">
+              <i class="fa-solid fa-money-bill-wave"></i>&nbsp;Cash
+            </button>
+          `;
+          
+          if (isPaid) {
+            payBadge = `<span style="background:rgba(16,185,129,0.1); color:#34D399; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Paid</span>`;
+            actionBtns = '';
+          }
+          
+          actionBtns += `
+            <button onclick="reprintOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#818CF8; border-color:rgba(99,102,241,0.4); background:rgba(99,102,241,0.1); cursor:pointer;">
+              <i class="fa-solid fa-print"></i>&nbsp;Print
+            </button>
+          `;
 
           return `
             <tr style="border-bottom:1px solid var(--border);">
@@ -2528,7 +2531,7 @@
     }
   }
 
-  function openUpiQrModal() {
+  function openUpiQrModal(customAmount = null, customOrderId = null, customTableNo = null) {
     // 1. Force Modal Open IMMEDIATELY
     const modal = document.getElementById('upiQrModal');
     if (modal) {
@@ -2542,47 +2545,58 @@
     try {
       showToast('Opening Live UPI QR Terminal...', 'info');
 
-      const activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
       let subtotal = 0;
       let serviceCharge = 0;
       let gst = 0;
       let finalGrandTotal = 0;
+      let tableNumber = customTableNo || document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
 
-      if (activeCartItems.length > 0) {
-        subtotal = activeCartItems.reduce((sum, item) => sum + (parseFloat(item.price || 0) * item.qty), 0);
-        serviceCharge = subtotal * 0.05;
-        gst = (subtotal + serviceCharge) * 0.18;
-        finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
-      } else if (lastPlacedOrderId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
-        const lastOrder = allOrdersData.find(o => String(o.id) === String(lastPlacedOrderId));
-        if (lastOrder) {
-          subtotal = parseFloat(lastOrder.total_amount || 0);
+      if (customAmount !== null && parseFloat(customAmount) > 0) {
+        finalGrandTotal = Math.round(parseFloat(customAmount));
+        subtotal = Math.round(finalGrandTotal / 1.239);
+        serviceCharge = Math.round(subtotal * 0.05);
+        gst = Math.round(subtotal * 0.18);
+      } else {
+        const activeCartItems = (typeof MENU !== 'undefined' && Array.isArray(MENU)) ? MENU.filter(i => i.qty > 0) : [];
+        if (activeCartItems.length > 0) {
+          subtotal = activeCartItems.reduce((sum, item) => sum + (parseFloat(item.price || 0) * item.qty), 0);
           serviceCharge = subtotal * 0.05;
           gst = (subtotal + serviceCharge) * 0.18;
           finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+        } else if (lastPlacedOrderId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
+          const lastOrder = allOrdersData.find(o => String(o.id) === String(lastPlacedOrderId));
+          if (lastOrder) {
+            subtotal = parseFloat(lastOrder.total_amount || 0);
+            serviceCharge = subtotal * 0.05;
+            gst = (subtotal + serviceCharge) * 0.18;
+            finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+          }
+        } else if (selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
+          const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && String(o.payment_status).toLowerCase() === 'pending');
+          if (activeOrder) {
+            subtotal = parseFloat(activeOrder.total_amount || 0);
+            serviceCharge = subtotal * 0.05;
+            gst = (subtotal + serviceCharge) * 0.18;
+            finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+          }
         }
-      } else if (selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
-        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && String(o.payment_status).toLowerCase() === 'pending');
-        if (activeOrder) {
-          subtotal = parseFloat(activeOrder.total_amount || 0);
-          serviceCharge = subtotal * 0.05;
-          gst = (subtotal + serviceCharge) * 0.18;
-          finalGrandTotal = Math.round(subtotal + serviceCharge + gst);
+
+        if (finalGrandTotal === 0) {
+          const grandTotalText = document.getElementById('grandTotal')?.textContent || '0';
+          const parsedVal = parseFloat(grandTotalText.replace(/[^0-9.]/g, ''));
+          if (parsedVal > 0) {
+            finalGrandTotal = Math.round(parsedVal);
+            subtotal = Math.round(finalGrandTotal / 1.239);
+            serviceCharge = subtotal * 0.05;
+            gst = subtotal * 0.18;
+          }
         }
       }
 
-      if (finalGrandTotal === 0) {
-        const grandTotalText = document.getElementById('grandTotal')?.textContent || '0';
-        const parsedVal = parseFloat(grandTotalText.replace(/[^0-9.]/g, ''));
-        if (parsedVal > 0) {
-          finalGrandTotal = Math.round(parsedVal);
-          subtotal = Math.round(finalGrandTotal / 1.239);
-          serviceCharge = subtotal * 0.05;
-          gst = subtotal * 0.18;
-        }
+      if (customOrderId) {
+        lastPlacedOrderId = customOrderId;
       }
 
-      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
       currentUpiPayAmount = finalGrandTotal;
 
       const tblEl = document.getElementById('upiModalTable');
@@ -2598,11 +2612,9 @@
       if (gstEl) gstEl.textContent = '₹' + gst.toFixed(2);
 
       const totEl = document.getElementById('upiModalTotal');
-      if (totEl) totEl.textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ 0.00';
+      if (totEl) totEl.textContent = '₹' + finalGrandTotal.toFixed(2);
 
       const brkEl = document.getElementById('upiModalBreakdownTotal');
-      if (brkEl) brkEl.textContent = finalGrandTotal > 0 ? '₹' + finalGrandTotal.toFixed(2) : '₹ 0.00';
-
       const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
       if (document.getElementById('merchantVpaInput')) {
         document.getElementById('merchantVpaInput').value = savedVpa;
@@ -2723,6 +2735,12 @@
       return;
     }
 
+    // Calculate exact cart total before clearing cart
+    const cartSubtotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price || 0) * item.qty), 0);
+    const cartServiceCharge = cartSubtotal * 0.05;
+    const cartGst = (cartSubtotal + cartServiceCharge) * 0.18;
+    const calculatedOrderTotal = Math.round(cartSubtotal + cartServiceCharge + cartGst);
+
     // Determine if we need to print Kitchen KOT or Bar KOT based on cart categories
     activeOrderHasKitchen = cartItems.some(item => ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup'].includes(item.cat.toLowerCase()));
     activeOrderHasBar = cartItems.some(item => ['beverages', 'desserts', 'drinks', 'dessert'].includes(item.cat.toLowerCase()));
@@ -2751,7 +2769,7 @@
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        lastPlacedOrderId = data.data.id;
+        lastPlacedOrderId = data.data.id || data.data;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
         if (typeof loadOrdersData === 'function') loadOrdersData();
@@ -2759,8 +2777,9 @@
         
         // If GPay / UPI was active payment method, open QR modal for payment collection!
         const activePayMethod = document.querySelector('.pay-method.active')?.textContent || '';
-        if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('gpay')) {
-          openUpiQrModal();
+        if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('qr') || activePayMethod.toLowerCase().includes('gpay')) {
+          const tableLabel = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
+          openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
         } else {
           document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
           document.getElementById('printHubKitchenBtn').style.display = activeOrderHasKitchen ? 'flex' : 'none';
