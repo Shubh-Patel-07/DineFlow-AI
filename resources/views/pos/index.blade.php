@@ -3061,7 +3061,17 @@
     if (kBtn) kBtn.style.display = 'flex';
     const bBtn = document.getElementById('printHubBarBtn');
     if (bBtn) bBtn.style.display = 'flex';
-    openModal('printHubModal');
+
+    const modal = document.getElementById('printHubModal');
+    if (modal) {
+      modal.style.zIndex = '999999';
+      modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      modal.style.pointerEvents = 'all';
+      modal.classList.add('show');
+    } else {
+      openModal('printHubModal');
+    }
   }
 
   function triggerPrintHubAction(type) {
