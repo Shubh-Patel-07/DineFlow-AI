@@ -1983,6 +1983,9 @@
     } catch (err) {
       console.warn('POS dynamic menu sync warning, keeping fallback', err);
     } finally {
+      if (typeof renderCategories === 'function') {
+        renderCategories();
+      }
       renderMenu();
     }
   }
