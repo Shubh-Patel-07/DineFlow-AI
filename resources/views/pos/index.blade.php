@@ -1313,7 +1313,7 @@
           <div class="pay-method" onclick="selectPay(this)">
             <i class="fa-solid fa-credit-card" style="pointer-events:none;"></i><span style="pointer-events:none;">Card</span>
           </div>
-          <div class="pay-method" onclick="selectPay(this); openUpiQrModal();" style="border-color:rgba(16,185,129,0.35);">
+          <div class="pay-method" onclick="selectPay(this)" style="border-color:rgba(16,185,129,0.35);">
             <i class="fa-solid fa-qrcode" style="pointer-events:none; color:#34D399;"></i><span style="pointer-events:none;">UPI QR</span>
           </div>
           <div class="pay-method" onclick="selectPay(this)">
@@ -2651,7 +2651,6 @@
       }
     } catch (err) {
       console.error('Error in selectPay:', err);
-      openUpiQrModal();
     }
   }
 
