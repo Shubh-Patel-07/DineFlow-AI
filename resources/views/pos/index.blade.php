@@ -1040,9 +1040,9 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Menu</div>
       <a class="nav-item" href="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('catPopupModal')" style="cursor:pointer;" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('modifiersModal')" style="cursor:pointer;" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('combosModal')" style="cursor:pointer;" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
     </div>
 
     <div class="sidebar-section">
@@ -1686,6 +1686,111 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modifiers & Customizations Modal -->
+<div class="modal-overlay" id="modifiersModal">
+  <div class="modal selection-popup-modal" style="width:720px; max-width:95%;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#312E81,#4338CA); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-puzzle-piece" style="color:#818CF8; font-size:18px;"></i>
+        <span>Dish Modifiers &amp; Customization Manager</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modifiersModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+        <div style="background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.25); border-radius:14px; padding:14px;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🧀 Extra Cheese Topping</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Applicable for Pizza, Pasta &amp; Burgers</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:#818CF8;">+ ₹ 40.00</span>
+            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:14px; padding:14px;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🌶️ Spice Preference (Mild / Medium / Hot)</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Applicable for all Starters &amp; Curries</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:#FCD34D;">Free Add-on</span>
+            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:14px; padding:14px;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🫓 Extra Butter Naan / Roti</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Applicable for Mains &amp; Thali Meals</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:#67E8F9;">+ ₹ 30.00</span>
+            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(236,72,153,0.08); border:1px solid rgba(236,72,153,0.25); border-radius:14px; padding:14px;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">🥗 Jain / No Onion No Garlic</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-bottom:10px;">Dietary special preparation preference</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:#F472B6;">Free Add-on</span>
+            <span style="background:rgba(16,185,129,0.15); color:#34D399; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px;">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button onclick="showToast('Modifiers &amp; Add-ons updated', 'success'); closeModal('modifiersModal');" style="padding:10px 20px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer;">Save Modifiers</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Combos & Deals Modal -->
+<div class="modal-overlay" id="combosModal">
+  <div class="modal selection-popup-modal" style="width:760px; max-width:95%;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#065F46,#047857); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#34D399; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-tags" style="color:#6EE7B7; font-size:18px;"></i>
+        <span>Special Combos &amp; Value Deals Manager</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('combosModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:14px; padding:14px;">
+          <div>
+            <div style="font-size:14px; font-weight:800; color:#F8FAFC;">🥘 Punjabi Thali Deluxe Combo</div>
+            <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Paneer Butter Masala + 2 Garlic Naan + Veg Biryani + Mango Lassi</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px; font-weight:800; color:#34D399;">₹ 380 <small style="text-decoration:line-through; color:#64748B; font-size:11px;">₹ 460</small></div>
+            <button onclick="addComboToCart('Punjabi Thali Deluxe', 380)" style="margin-top:6px; padding:5px 12px; background:linear-gradient(135deg,#10B981,#059669); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Add Combo</button>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.25); border-radius:14px; padding:14px;">
+          <div>
+            <div style="font-size:14px; font-weight:800; color:#F8FAFC;">🍗 Chicken Tikka Feast Combo</div>
+            <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Chicken Tikka Masala + 2 Laccha Paratha + Chicken Biryani + Cold Drink</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px; font-weight:800; color:#818CF8;">₹ 490 <small style="text-decoration:line-through; color:#64748B; font-size:11px;">₹ 580</small></div>
+            <button onclick="addComboToCart('Chicken Tikka Feast', 490)" style="margin-top:6px; padding:5px 12px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Add Combo</button>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:14px; padding:14px;">
+          <div>
+            <div style="font-size:14px; font-weight:800; color:#F8FAFC;">🍟 Starter Snack Combo</div>
+            <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Veg Spring Rolls + Paneer Tikka + Cold Coffee</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px; font-weight:800; color:#FCD34D;">₹ 290 <small style="text-decoration:line-through; color:#64748B; font-size:11px;">₹ 350</small></div>
+            <button onclick="addComboToCart('Starter Snack Combo', 290)" style="margin-top:6px; padding:5px 12px; background:linear-gradient(135deg,#F59E0B,#D97706); border:none; border-radius:8px; color:#fff; font-size:11.5px; font-weight:700; cursor:pointer;">+ Add Combo</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -3333,6 +3438,27 @@
     } catch (err) {
       showToast('Failed to resolve waiter call', 'error');
     }
+  }
+
+  function addComboToCart(name, price) {
+    const existing = MENU.find(m => m.name === name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      MENU.push({
+        id: Date.now(),
+        name: name,
+        cat: 'Mains',
+        price: price,
+        is_veg: true,
+        badge: 'BEST',
+        qty: 1
+      });
+    }
+    renderMenu();
+    renderCart();
+    showToast(`✅ ${name} added to cart!`, 'success');
+    closeModal('combosModal');
   }
 
   // Poll for waiter calls every 45 seconds to save server threads and eliminate system lag
