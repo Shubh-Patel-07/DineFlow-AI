@@ -2378,13 +2378,16 @@
     setTimeout(() => closeModal('tableModal'), 600);
   }
 
-  /* ─── ORDERS HISTORY ──────────────────────── */
+  let allOrdersData = [];
+
   async function loadOrdersData() {
     try {
       const response = await fetch('/api/orders/restaurant/1');
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
+        allOrdersData = data.data;
         const tbody = document.getElementById('ordersModalTableBody');
+        if (!tbody) return;
         if (data.data.length === 0) {
           tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-secondary);">No orders found.</td></tr>`;
           return;
@@ -2718,6 +2721,8 @@
         lastPlacedOrderId = data.data.id;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
+        if (typeof loadOrdersData === 'function') loadOrdersData();
+        if (typeof loadTablesData === 'function') loadTablesData();
         
         // If GPay / UPI was active payment method, open QR modal for payment collection!
         const activePayMethod = document.querySelector('.pay-method.active')?.textContent || '';
@@ -3176,6 +3181,11 @@
       console.log('Error checking new payments:', err);
     }
   }
+
+  // Initial startup load
+  if (typeof syncPosMenuWithDatabase === 'function') syncPosMenuWithDatabase();
+  if (typeof loadTablesData === 'function') loadTablesData();
+  if (typeof loadOrdersData === 'function') loadOrdersData();
 
   // Poll for payments every 6 seconds (fast and responsive!)
   setInterval(checkNewPayments, 6000);
