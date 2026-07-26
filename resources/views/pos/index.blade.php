@@ -1259,7 +1259,7 @@
             Order Cart
             <span class="cart-count" id="cartCount">0</span>
           </div>
-          <div class="cart-order-no">#ORD-20260313-0001 &nbsp;·&nbsp; T-04</div>
+          <div class="cart-order-no">#ORD-20260313-0001 &nbsp;·&nbsp; <span id="cartTableNo">T-01</span></div>
         </div>
         <div style="display:flex;gap:6px;">
           <div class="topbar-btn" title="Hold Order" onclick="holdOrder()"><i class="fa-solid fa-pause"></i></div>
@@ -2347,6 +2347,8 @@
     if (noEl) noEl.textContent = tno;
     const labelEl = document.getElementById('selectedTableLabel');
     if (labelEl) labelEl.textContent = tno;
+    const cartTableEl = document.getElementById('cartTableNo');
+    if (cartTableEl) cartTableEl.textContent = tno;
 
     document.querySelectorAll('.table-cell').forEach(c => c.classList.remove('selected'));
     el.className = 'table-cell selected';
