@@ -2418,7 +2418,7 @@
           return;
         }
         
-        const sortedOrders = [...data.data].reverse();
+        const sortedOrders = data.data;
         
         tbody.innerHTML = sortedOrders.map(order => {
           const itemsSummary = order.items ? order.items.map(item => `${item.name} (x${item.quantity})`).join(', ') : 'Order Items';
@@ -3234,9 +3234,6 @@
 
   // Initial immediate menu render
   if (typeof renderMenu === 'function') renderMenu();
-
-  // Sync POS menu items dynamically from Database API (Menu Manager)
-  syncPosMenuWithDatabase();
 
   // Open modal automatically if query parameter is set
   const urlParams = new URLSearchParams(window.location.search);
