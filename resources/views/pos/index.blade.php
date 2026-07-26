@@ -2917,6 +2917,8 @@
     } catch (err) {
       alert("WhatsApp Open Error: " + err.message);
     }
+  }
+
   function openPrintHub(orderId = null) {
     if (orderId) {
       lastPlacedOrderId = orderId;
