@@ -2783,6 +2783,7 @@
     })
     .then(res => res.json())
     .then(data => {
+      if (data.success) {
         const orderIdVal = (typeof data.data === 'object' && data.data?.id) ? data.data.id : (data.data || lastPlacedOrderId);
         lastPlacedOrderId = orderIdVal;
         const apiOrderTotal = data.data?.total_amount ? Math.round(parseFloat(data.data.total_amount) * 1.239) : calculatedOrderTotal;
