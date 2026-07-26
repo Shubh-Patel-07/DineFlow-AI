@@ -330,7 +330,6 @@
     <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer;">
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
-    <div class="topbar-btn topbar-desktop-only" title="Search" onclick="openModal('dashSearchModal')" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
       <span class="notif-dot"></span>
