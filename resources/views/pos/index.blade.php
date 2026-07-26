@@ -1047,7 +1047,7 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Operations</div>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('deliveryOrdersModal')" style="cursor:pointer;" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
       <a class="nav-item" href="/admin/customers" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
       <a class="nav-item" href="/admin/customers" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
       <a class="nav-item" href="/admin/coupons" data-tip="Coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
@@ -1612,9 +1612,85 @@
         </thead>
         <tbody id="ordersModalTableBody">
           <!-- Loaded dynamically from API -->
+    </div>
+  </div>
+</div>
+
+<!-- Delivery & Online Orders Modal -->
+<div class="modal-overlay" id="deliveryOrdersModal">
+  <div class="modal selection-popup-modal" style="width:860px; max-width:95%;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#064E3B,#047857); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#34D399; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-motorcycle" style="color:#6EE7B7; font-size:18px;"></i>
+        <span>Delivery &amp; Takeaway Dispatch Terminal</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('deliveryOrdersModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:18px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:16px;">
+        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px; text-align:center;">
+          <div style="font-size:11px; font-weight:700; color:#34D399; text-transform:uppercase;">Active Deliveries</div>
+          <div style="font-size:22px; font-weight:800; color:#F8FAFC; margin-top:2px;">3 Orders</div>
+        </div>
+        <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:12px; padding:12px; text-align:center;">
+          <div style="font-size:11px; font-weight:700; color:#A5B4FC; text-transform:uppercase;">Riders En-Route</div>
+          <div style="font-size:22px; font-weight:800; color:#F8FAFC; margin-top:2px;">2 Partners</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:12px; padding:12px; text-align:center;">
+          <div style="font-size:11px; font-weight:700; color:#FCD34D; text-transform:uppercase;">Avg Delivery Time</div>
+          <div style="font-size:22px; font-weight:800; color:#F8FAFC; margin-top:2px;">24 Mins</div>
+        </div>
+      </div>
+
+      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12.5px; color:var(--text-primary);">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border); color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
+            <th style="padding:10px;">Dispatch ID</th>
+            <th style="padding:10px;">Customer &amp; Address</th>
+            <th style="padding:10px;">Partner / Mode</th>
+            <th style="padding:10px;">Total</th>
+            <th style="padding:10px;">Dispatch Status</th>
+            <th style="padding:10px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 10px; font-weight:700; color:#6EE7B7;">#DEL-1092</td>
+            <td style="padding:12px 10px;">
+              <div style="font-weight:700; color:#F8FAFC;">Rahul Kumar</div>
+              <div style="font-size:11px; color:#94A3B8;">Sector 4, Block B, Patan • +91 98765 43210</div>
+            </td>
+            <td style="padding:12px 10px;"><span style="background:rgba(16,185,129,0.15); color:#34D399; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Direct Rider</span></td>
+            <td style="padding:12px 10px; font-weight:700; color:#818CF8;">₹ 660</td>
+            <td style="padding:12px 10px;"><span style="background:rgba(59,130,246,0.15); color:#60A5FA; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Out for Delivery</span></td>
+            <td style="padding:12px 10px;"><button onclick="showToast('Rider tracked live on map', 'info')" style="padding:4px 10px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#A5B4FC; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">Track Rider</button></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 10px; font-weight:700; color:#6EE7B7;">#DEL-1091</td>
+            <td style="padding:12px 10px;">
+              <div style="font-weight:700; color:#F8FAFC;">Priya Sharma</div>
+              <div style="font-size:11px; color:#94A3B8;">College Road, Near Circle, Patan • +91 87654 32109</div>
+            </td>
+            <td style="padding:12px 10px;"><span style="background:rgba(245,158,11,0.15); color:#FCD34D; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Swiggy Express</span></td>
+            <td style="padding:12px 10px; font-weight:700; color:#818CF8;">₹ 480</td>
+            <td style="padding:12px 10px;"><span style="background:rgba(16,185,129,0.15); color:#34D399; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Delivered</span></td>
+            <td style="padding:12px 10px;"><button onclick="showToast('Delivery completed &amp; feedback recorded', 'success')" style="padding:4px 10px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">Completed</button></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 10px; font-weight:700; color:#6EE7B7;">#DEL-1090</td>
+            <td style="padding:12px 10px;">
+              <div style="font-weight:700; color:#F8FAFC;">Virendra Singh</div>
+              <div style="font-size:11px; color:#94A3B8;">High Street Plaza, Shop 12 • +91 95456 78901</div>
+            </td>
+            <td style="padding:12px 10px;"><span style="background:rgba(239,68,68,0.15); color:#FCA5A5; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Zomato Delivery</span></td>
+            <td style="padding:12px 10px; font-weight:700; color:#818CF8;">₹ 890</td>
+            <td style="padding:12px 10px;"><span style="background:rgba(245,158,11,0.15); color:#FCD34D; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Packing Food</span></td>
+            <td style="padding:12px 10px;"><button onclick="showToast('Kitchen notified to expedite packing', 'info')" style="padding:4px 10px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FCD34D; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">Assign Rider</button></td>
+          </tr>
         </tbody>
       </table>
     </div>
+  </div>
 </div>
 
 <!-- Admin Module Iframe Modal -->
