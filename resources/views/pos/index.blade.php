@@ -1966,8 +1966,17 @@
     }
   }
 
+  let lastVoiceAnnounceTime = 0;
+
   function announcePaymentVoice(tableNumber, amount, method = 'online') {
     if (isPosVoiceMuted) return;
+
+    const now = Date.now();
+    if (tableNumber !== 'Test' && (now - lastVoiceAnnounceTime < 3500)) {
+      console.log('Voice announcement debounced to prevent duplicate speech');
+      return;
+    }
+    lastVoiceAnnounceTime = now;
 
     if (!('speechSynthesis' in window)) {
       console.log('Text-to-speech not supported in this browser.');
@@ -2787,6 +2796,12 @@
           },
           body: JSON.stringify({ payment_method: 'upi' })
         });
+
+        const targetIdStr = String(targetOrderId);
+        if (!announcedOrderIds.includes(targetIdStr)) {
+          announcedOrderIds.push(targetIdStr);
+          localStorage.setItem('dineflow_announced_orders', JSON.stringify(announcedOrderIds));
+        }
       }
 
       // Live Refresh Orders History List & Table Status!
