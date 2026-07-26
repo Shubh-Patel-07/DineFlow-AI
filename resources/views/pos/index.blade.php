@@ -2279,8 +2279,10 @@
       if (data.success && Array.isArray(data.data)) {
         allTablesData = data.data;
         // Reset filters
-        document.getElementById('tableFloorSelect').value = 'all';
-        document.getElementById('tableSectionSelect').value = 'all';
+        const floorSel = document.getElementById('tableFloorSelect');
+        if (floorSel) floorSel.value = 'all';
+        const sectionSel = document.getElementById('tableSectionSelect');
+        if (sectionSel) sectionSel.value = 'all';
         renderTablesGrid(allTablesData);
       }
     } catch (err) {
