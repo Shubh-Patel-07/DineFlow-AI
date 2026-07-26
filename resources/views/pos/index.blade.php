@@ -2926,7 +2926,15 @@
   function openPrintHub(orderId = null) {
     if (orderId) {
       lastPlacedOrderId = orderId;
+    } else if (!lastPlacedOrderId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData) && allOrdersData.length > 0) {
+      lastPlacedOrderId = allOrdersData[0].id;
     }
+    
+    if (!lastPlacedOrderId) {
+      showToast('No order available to print. Please place an order first!', 'warning');
+      return;
+    }
+
     const orderIdLabel = document.getElementById('printHubOrderId');
     if (orderIdLabel) {
       orderIdLabel.textContent = 'Order ID: #' + (lastPlacedOrderId || '--');
