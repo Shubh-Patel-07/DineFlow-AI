@@ -53,17 +53,21 @@ class OrderController extends Controller
                     'price' => $price,
                 ];
 
-                $inventory = Inventory::where('restaurant_id', $request->restaurant_id)
-                    ->where('name', 'LIKE', $menuItem->name)
-                    ->first();
+                try {
+                    $inventory = Inventory::where('restaurant_id', $request->restaurant_id)
+                        ->where('item_name', 'LIKE', '%' . $menuItem->name . '%')
+                        ->first();
 
-                if ($inventory) {
-                    if ($inventory->quantity >= $quantity) {
-                        $inventory->quantity -= $quantity;
-                        $inventory->save();
-                    } else {
-                        \Illuminate\Support\Facades\Log::warning("Not enough stock for {$menuItem->name}. Available: {$inventory->quantity}, Required: {$quantity}");
+                    if ($inventory) {
+                        if ($inventory->quantity >= $quantity) {
+                            $inventory->quantity -= $quantity;
+                            $inventory->save();
+                        } else {
+                            \Illuminate\Support\Facades\Log::warning("Not enough stock for {$menuItem->name}. Available: {$inventory->quantity}, Required: {$quantity}");
+                        }
                     }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning("Inventory update skipped: " . $e->getMessage());
                 }
             }
 
