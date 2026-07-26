@@ -238,7 +238,7 @@
                         <div class="pay-method" onclick="selectPay(this)">
                             <i class="fa-solid fa-credit-card"></i><span>Card</span>
                         </div>
-                        <div class="pay-method" onclick="selectPay(this); openUpiQrModal();">
+                        <div class="pay-method" onclick="selectPay(this)">
                             <i class="fa-solid fa-qrcode" style="pointer-events:none;"></i><span style="pointer-events:none;">UPI</span>
                         </div>
                     </div>
