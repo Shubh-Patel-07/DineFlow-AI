@@ -1955,16 +1955,31 @@
         if (rawItems.length > 0) {
           MENU = rawItems.map(item => {
             const catLower = (item.category || 'mains').toLowerCase();
-            let catKey = 'mains';
-            let emoji = item.is_veg !== false ? '🟢' : '🔴';
+            const nameLower = (item.name || '').toLowerCase();
+            const isVeg = (item.is_veg === true || item.is_veg === 1 || item.is_veg === '1' || item.is_veg === 'true');
             
-            if (catLower.includes('starter') || catLower.includes('appetizer')) { catKey = 'starters'; emoji = '🥢'; }
-            else if (catLower.includes('bread') || catLower.includes('roti') || catLower.includes('naan')) { catKey = 'breads'; emoji = '🫓'; }
-            else if (catLower.includes('rice') || catLower.includes('biryani')) { catKey = 'rice'; emoji = '🍚'; }
-            else if (catLower.includes('dessert') || catLower.includes('sweet')) { catKey = 'desserts'; emoji = '🍮'; }
-            else if (catLower.includes('drink') || catLower.includes('beverage')) { catKey = 'beverages'; emoji = '🍹'; }
-            else if (catLower.includes('pizza')) { catKey = 'mains'; emoji = '🍕'; }
-            else if (catLower.includes('burger')) { catKey = 'starters'; emoji = '🍔'; }
+            let catKey = 'mains';
+            if (catLower.includes('starter') || catLower.includes('appetizer')) catKey = 'starters';
+            else if (catLower.includes('bread') || catLower.includes('roti') || catLower.includes('naan')) catKey = 'breads';
+            else if (catLower.includes('rice') || catLower.includes('biryani')) catKey = 'rice';
+            else if (catLower.includes('dessert') || catLower.includes('sweet')) catKey = 'desserts';
+            else if (catLower.includes('drink') || catLower.includes('beverage')) catKey = 'beverages';
+            else if (catLower.includes('pizza')) catKey = 'mains';
+            else if (catLower.includes('burger')) catKey = 'starters';
+
+            let emoji = isVeg ? '🍛' : '🍗';
+            if (nameLower.includes('naan') || nameLower.includes('roti') || nameLower.includes('paratha')) emoji = '🫓';
+            else if (nameLower.includes('spring roll') || nameLower.includes('starter')) emoji = '🥢';
+            else if (nameLower.includes('biryani') || nameLower.includes('rice')) emoji = '🍚';
+            else if (nameLower.includes('lassi') || nameLower.includes('drink')) emoji = '🥭';
+            else if (nameLower.includes('gulab') || nameLower.includes('jamun') || nameLower.includes('sweet')) emoji = '🍮';
+            else if (nameLower.includes('dal')) emoji = '🫕';
+            else if (nameLower.includes('fish')) emoji = '🐟';
+            else if (nameLower.includes('coffee')) emoji = '☕';
+
+            let badgeKey = isVeg ? 'veg' : 'nonveg';
+            if (nameLower.includes('gulab')) badgeKey = 'new';
+            if (nameLower.includes('veg biryani')) badgeKey = 'best';
 
             return {
               id: item.id,
@@ -1972,7 +1987,7 @@
               cat: catKey,
               price: parseFloat(item.price || 0),
               emoji: emoji,
-              badge: item.is_veg !== false ? 'veg' : 'nonveg',
+              badge: badgeKey,
               desc: item.description || '',
               qty: 0,
               is_available: item.is_available !== false
