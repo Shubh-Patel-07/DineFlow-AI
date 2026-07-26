@@ -330,12 +330,12 @@
     <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer;">
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
-    <div class="topbar-btn topbar-desktop-only" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <div class="topbar-btn topbar-desktop-only" title="Notifications">
+    <div class="topbar-btn topbar-desktop-only" title="Search" onclick="openModal('notifModal')" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
       <span class="notif-dot"></span>
     </div>
-    <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
+    <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()" style="cursor:pointer;"><i class="fa-solid fa-expand"></i></div>
     <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
     <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
       <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
@@ -621,7 +621,74 @@ function announcePaymentVoice(tableNumber, amount, method = 'online') {
 document.addEventListener('DOMContentLoaded', () => {
   updatePosMuteUI();
 });
+
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.style.display = 'flex';
+    setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  }
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.style.opacity = '0';
+    setTimeout(() => { modal.style.display = 'none'; }, 200);
+  }
+}
 </script>
+
+<!-- Notifications Modal -->
+<div class="modal-overlay" id="notifModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.2s;">
+  <div class="modal" style="width:450px; background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
+        Notifications &amp; Live Alerts
+      </div>
+      <button class="modal-close" onclick="closeModal('notifModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px 20px; max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:12px; padding:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:rgba(239,68,68,0.2); color:#F87171; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid fa-bell-concierge"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Waiter Called — Table 4</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Customer requested waiter service at Table 4</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">2 mins ago</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:12px; padding:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:rgba(16,185,129,0.2); color:#34D399; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">KOT Ready — Table 2</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Paneer Butter Masala &amp; Garlic Naan prepared by Kitchen</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">8 mins ago</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:rgba(245,158,11,0.2); color:#FCD34D; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Low Stock Alert</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Milk inventory is below 2 Litres threshold</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">15 mins ago</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer;">Mark All as Read</button>
+      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
