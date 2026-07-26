@@ -2606,26 +2606,45 @@
         upiPayBtn.classList.add('active');
       }
 
-      if (selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
-        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && o.payment_status === 'pending');
-        if (activeOrder) {
-          await fetch(`/api/orders/${activeOrder.id}/pay`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-            },
-            body: JSON.stringify({ payment_method: 'upi' })
-          });
-        }
+      let targetOrderId = lastPlacedOrderId;
+      if (!targetOrderId && selectedTableId && typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData)) {
+        const activeOrder = allOrdersData.find(o => String(o.table_id) === String(selectedTableId) && String(o.payment_status).toLowerCase() === 'pending');
+        if (activeOrder) targetOrderId = activeOrder.id;
       }
+
+      if (!targetOrderId) {
+        try {
+          const res = await fetch('/api/orders/restaurant/1');
+          const ordersRes = await res.json();
+          if (ordersRes.success && Array.isArray(ordersRes.data)) {
+            const unpaidOrder = ordersRes.data.find(o => String(o.payment_status).toLowerCase() === 'pending');
+            if (unpaidOrder) targetOrderId = unpaidOrder.id;
+          }
+        } catch(e) {}
+      }
+
+      if (targetOrderId) {
+        await fetch(`/api/orders/${targetOrderId}/pay`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+          },
+          body: JSON.stringify({ payment_method: 'upi' })
+        });
+      }
+
+      // Live Refresh Orders History List & Table Status!
+      if (typeof loadOrdersData === 'function') await loadOrdersData();
+      if (typeof loadTablesData === 'function') loadTablesData();
 
       announcePaymentVoice(tableNumber, currentUpiPayAmount, 'online');
       showToast(`✅ UPI Payment of ₹${currentUpiPayAmount} Verified & Marked PAID for ${tableNumber}!`, 'success');
       closeModal('upiQrModal');
     } catch (err) {
       console.error('Error confirming UPI payment:', err);
+      if (typeof loadOrdersData === 'function') await loadOrdersData();
       showToast('Payment verified!', 'success');
       closeModal('upiQrModal');
     }
