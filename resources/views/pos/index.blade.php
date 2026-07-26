@@ -2502,15 +2502,30 @@
   }
 
   function updateUpiQrCodeFromInput() {
-    const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
-    localStorage.setItem('dineflow_merchant_vpa', inputVal);
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
-    const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${currentUpiPayAmount}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-    document.getElementById('upiQrImg').src = qrUrl;
+    try {
+      const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
+      localStorage.setItem('dineflow_merchant_vpa', inputVal);
+      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${currentUpiPayAmount}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+      const imgEl = document.getElementById('upiQrImg');
+      if (imgEl) imgEl.src = qrUrl;
+    } catch (e) {
+      console.warn('QR update error:', e);
+    }
   }
 
   function openUpiQrModal() {
+    // 1. Force Modal Open IMMEDIATELY
+    const modal = document.getElementById('upiQrModal');
+    if (modal) {
+      modal.style.zIndex = '99999';
+      modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      modal.style.pointerEvents = 'all';
+      modal.classList.add('show');
+    }
+
     try {
       showToast('Opening Live UPI QR Terminal...', 'info');
 
@@ -2573,20 +2588,8 @@
       }
 
       updateUpiQrCodeFromInput();
-
-      const modal = document.getElementById('upiQrModal');
-      if (modal) {
-        modal.style.zIndex = '99999';
-        modal.style.display = 'flex';
-        modal.style.opacity = '1';
-        modal.style.pointerEvents = 'all';
-        modal.classList.add('show');
-      } else {
-        openModal('upiQrModal');
-      }
     } catch (err) {
       console.error('Error opening UPI QR Modal:', err);
-      openModal('upiQrModal');
     }
   }
 
