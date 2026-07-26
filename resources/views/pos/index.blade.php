@@ -1983,7 +1983,6 @@
     } catch (err) {
       console.warn('POS dynamic menu sync warning, keeping fallback', err);
     } finally {
-      renderCategories();
       renderMenu();
     }
   }
@@ -3211,7 +3210,6 @@
   updateLiveClock();
 
   // Initial immediate menu render
-  if (typeof renderCategories === 'function') renderCategories();
   if (typeof renderMenu === 'function') renderMenu();
 
   // Sync POS menu items dynamically from Database API (Menu Manager)
