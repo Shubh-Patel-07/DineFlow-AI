@@ -2792,12 +2792,7 @@
           const tableLabel = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
           openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
         } else {
-          document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
-          const kBtn = document.getElementById('printHubKitchenBtn');
-          if (kBtn) kBtn.style.display = 'flex';
-          const bBtn = document.getElementById('printHubBarBtn');
-          if (bBtn) bBtn.style.display = 'flex';
-          openModal('printHubModal');
+          openPrintHub(lastPlacedOrderId);
         }
       } else {
         showToast(data.message || 'Failed to place order', 'error');
