@@ -2697,6 +2697,8 @@
       special_instructions: document.querySelector('.bottom-meta textarea')?.value || '',
       items: cartItems.map(item => ({
         menu_item_id: item.id,
+        name: item.name,
+        price: item.price,
         quantity: item.qty
       }))
     };
