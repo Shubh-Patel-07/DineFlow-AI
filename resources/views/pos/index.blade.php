@@ -2423,11 +2423,8 @@
           
           let payBadge = `<span style="background:rgba(239,68,68,0.1); color:#FCA5A5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Unpaid</span>`;
           let actionBtns = `
-            <button onclick="openUpiQrModal(${grandTotal}, ${order.id}, '${tableNum}')" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#34D399; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.1); margin-right:4px; cursor:pointer;" title="Pay via UPI QR">
-              <i class="fa-solid fa-qrcode"></i>&nbsp;Pay UPI
-            </button>
-            <button onclick="payOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#38BDF8; border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.1); margin-right:4px; cursor:pointer;" title="Mark Cash Paid">
-              <i class="fa-solid fa-money-bill-wave"></i>&nbsp;Cash
+            <button onclick="payOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#38BDF8; border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.1); margin-right:4px; cursor:pointer;" title="Mark Paid">
+              <i class="fa-solid fa-money-bill-wave"></i>&nbsp;Pay
             </button>
           `;
           
