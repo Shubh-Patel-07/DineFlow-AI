@@ -2682,10 +2682,6 @@
       if (splitRow) {
         splitRow.style.display = labelText.toLowerCase().includes('split') ? 'flex' : 'none';
       }
-
-      if (labelText.toLowerCase().includes('upi') || labelText.toLowerCase().includes('gpay') || labelText.toLowerCase().includes('qr')) {
-        openUpiQrModal();
-      }
     } catch (err) {
       console.error('Error in selectPay:', err);
     }
@@ -3124,8 +3120,8 @@
     }
   }
 
-  // Poll for waiter calls every 12 seconds to save server threads and DB resources
-  setInterval(checkWaiterCalls, 12000);
+  // Poll for waiter calls every 45 seconds to save server threads and eliminate system lag
+  setInterval(checkWaiterCalls, 45000);
   // Initial check on load
   checkWaiterCalls();
   loadTablesData(); // Populate allTablesData array immediately on page load!
@@ -3224,8 +3220,8 @@
   if (typeof loadTablesData === 'function') loadTablesData();
   if (typeof loadOrdersData === 'function') loadOrdersData();
 
-  // Poll for payments every 6 seconds (fast and responsive!)
-  setInterval(checkNewPayments, 6000);
+  // Background polling for payment soundbox announcements (optimized to 45s to eliminate server lag)
+  setInterval(checkNewPayments, 45000);
 
   // Customer Modal Selection & Filter Logic
   let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 420, avatar: 'RK' };
