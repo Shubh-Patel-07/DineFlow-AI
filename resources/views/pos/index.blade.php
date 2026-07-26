@@ -1612,6 +1612,8 @@
         </thead>
         <tbody id="ordersModalTableBody">
           <!-- Loaded dynamically from API -->
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
