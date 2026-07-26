@@ -2045,7 +2045,7 @@
       <div class="item-card ${item.qty > 0 ? 'in-cart' : ''}" onclick="addQuickItem('${item.id}')">
         <div class="item-img">
           ${item.emoji}
-          <span class="item-badge ${item.badge || 'veg'}">${(item.badge || 'veg').toUpperCase()}</span>
+          ${item.badge ? `<span class="item-badge ${item.badge}">${item.badge.toUpperCase()}</span>` : ''}
         </div>
         <div class="item-body">
           <div class="item-name">${item.name}</div>
