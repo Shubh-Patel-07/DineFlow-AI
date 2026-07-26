@@ -12,14 +12,35 @@ class RoleMiddleware
     {
         $user = auth()->user();
 
-        if (!$user || !in_array($user->role, $roles)) {
+        if (!$user) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+            }
+            return redirect()->route('login');
+        }
+
+        // Admin role gets full access to all endpoints
+        $userRole = strtolower(trim($user->role ?? ''));
+        if ($userRole === 'admin') {
+            return $next($request);
+        }
+
+        // Expand any comma-separated role definitions
+        $expandedRoles = [];
+        foreach ($roles as $r) {
+            foreach (explode(',', $r) as $sub) {
+                $expandedRoles[] = strtolower(trim($sub));
+            }
+        }
+
+        if (!in_array($userRole, $expandedRoles)) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Forbidden: User role is not authorized to access this route."
+                    'message' => "Forbidden: Role '{$userRole}' is not authorized to access this route."
                 ], 403);
             }
-            abort(403, 'Unauthorized role access.');
+            abort(403, "Forbidden: Role '{$userRole}' is not authorized.");
         }
 
         return $next($request);
