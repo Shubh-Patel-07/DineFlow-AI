@@ -1359,25 +1359,20 @@
           <span>Place Order &nbsp;·&nbsp; <span id="checkoutAmount">₹ 0.00</span></span>
         </button>
 
-        <!-- Secondary 4-Button Utility Toolbar -->
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px;">
-          <!-- Print -->
-          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="Print Receipt">
-            <i class="fa-solid fa-print" style="color:#FCD34D;"></i> Print
+        <!-- Secondary 3-Button Utility Toolbar -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; width:100%;">
+          <!-- Print & KOT Hub -->
+          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:40px; border-radius:10px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#A5B4FC; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'" title="Print Bill or KOT">
+            <i class="fa-solid fa-print" style="color:#FCD34D;"></i> Print &amp; KOT
           </button>
           
-          <!-- WhatsApp -->
-          <button onclick="sendWhatsAppInvoice()" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="WhatsApp Bill">
-            <i class="fa-brands fa-whatsapp" style="color:#4ADE80;"></i> WhatsApp
+          <!-- WhatsApp Invoice -->
+          <button onclick="sendWhatsAppInvoice()" style="height:40px; border-radius:10px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.3); color:#4ADE80; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(37,211,102,0.2)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Send WhatsApp Bill">
+            <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp
           </button>
           
-          <!-- KOT -->
-          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:38px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" title="Send / Print KOT">
-            <i class="fa-solid fa-fire" style="color:#FB923C;"></i> KOT
-          </button>
-          
-          <!-- Clear -->
-          <button onclick="clearCart()" style="height:38px; border-radius:10px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#FCA5A5; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'" title="Clear Cart">
+          <!-- Clear Cart -->
+          <button onclick="clearCart()" style="height:40px; border-radius:10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#FCA5A5; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'" title="Clear Cart">
             <i class="fa-solid fa-trash"></i> Clear
           </button>
         </div>
