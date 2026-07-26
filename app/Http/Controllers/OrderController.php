@@ -28,16 +28,26 @@ class OrderController extends Controller
                 $quantity = $item['quantity'];
 
                 $menuItem = MenuItem::find($menuItemId);
+                if (!$menuItem && !empty($item['name'])) {
+                    $menuItem = MenuItem::where('name', $item['name'])->first();
+                }
 
                 if (!$menuItem) {
-                    return response()->json(['success' => false, 'message' => "Menu item {$menuItemId} not found"], 404);
+                    $menuItem = MenuItem::create([
+                        'restaurant_id' => $request->restaurant_id,
+                        'name' => $item['name'] ?? ('Item #' . $menuItemId),
+                        'price' => isset($item['price']) ? floatval($item['price']) : 100.00,
+                        'category' => 'Mains',
+                        'is_available' => true,
+                        'is_veg' => true
+                    ]);
                 }
 
                 $price = $menuItem->price;
                 $totalAmount += $price * $quantity;
 
                 $itemsData[] = [
-                    'menu_item_id' => $menuItemId,
+                    'menu_item_id' => $menuItem->id,
                     'name' => $menuItem->name,
                     'quantity' => $quantity,
                     'price' => $price,
