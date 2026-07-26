@@ -213,6 +213,7 @@ Route::prefix('api')->group(function () {
     Route::get('/tables/restaurant/{restaurantId}', [TableController::class, 'getRestaurantTables']);
     Route::get('/tables/{id}', [TableController::class, 'show']);
     Route::get('/menu', [MenuItemController::class, 'index']);
+    Route::get('/menu/restaurant/{restaurantId}', [MenuItemController::class, 'index']);
     
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
