@@ -1755,7 +1755,12 @@
 
         <!-- Receipt -->
         <button onclick="triggerPrintHubAction('receipt')" class="ph-btn" style="width:100%; height:40px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#FFFFFF; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(99,102,241,0.25); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.25)';">
-          <i class="fa-solid fa-file-invoice-dollar" style="font-size:13px;"></i> Print Customer Receipt
+          <i class="fa-solid fa-file-invoice-dollar" style="font-size:13px;"></i> Print Thermal Receipt
+        </button>
+
+        <!-- Designed A4 Tax Bill -->
+        <button onclick="printA4Invoice()" class="ph-btn" style="width:100%; height:42px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:12px; background:linear-gradient(135deg, #8B5CF6, #6366F1); color:#FFFFFF; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(139,92,246,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(139,92,246,0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(139,92,246,0.35)';">
+          <i class="fa-solid fa-file-pdf" style="font-size:14px; color:#FCD34D;"></i> Print Designed A4 Tax Bill
         </button>
         
         <!-- Kitchen KOT -->
@@ -2935,6 +2940,11 @@
   }
 
   function printA4Invoice() {
+    if (lastPlacedOrderId) {
+      window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
+      return;
+    }
+
     const activeCartItems = MENU.filter(i => i.qty > 0);
     const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
 
@@ -2942,10 +2952,10 @@
       const itemsPayload = activeCartItems.map(i => ({ name: i.name, qty: i.qty, price: i.price }));
       const itemsJson = encodeURIComponent(JSON.stringify(itemsPayload));
       window.open('/orders/live/invoice-a4?table=' + encodeURIComponent(tableNumber) + '&items=' + itemsJson, '_blank');
-    } else if (lastPlacedOrderId) {
-      window.open('/orders/' + lastPlacedOrderId + '/invoice-a4', '_blank');
+    } else if (typeof allOrdersData !== 'undefined' && Array.isArray(allOrdersData) && allOrdersData.length > 0) {
+      window.open('/orders/' + allOrdersData[0].id + '/invoice-a4', '_blank');
     } else {
-      showToast('Please add items to cart first to generate real-time A4 bill!', 'error');
+      showToast('Please place an order or select items to print Designed A4 Tax Bill!', 'error');
     }
   }
 
