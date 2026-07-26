@@ -330,7 +330,7 @@
     <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer;">
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
-    <div class="topbar-btn topbar-desktop-only" title="Search" onclick="openModal('notifModal')" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div class="topbar-btn topbar-desktop-only" title="Search" onclick="openModal('dashSearchModal')" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
       <span class="notif-dot"></span>
@@ -577,6 +577,46 @@ function updatePosMuteUI() {
   }
 }
 
+function toggleFull() {
+  const doc = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+    if (doc.requestFullscreen) {
+      doc.requestFullscreen();
+    } else if (doc.webkitRequestFullscreen) {
+      doc.webkitRequestFullscreen();
+    } else if (doc.msRequestFullscreen) {
+      doc.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
+
+function playTestChimeSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.35);
+  } catch (e) {
+    console.log('AudioContext error:', e);
+  }
+}
+
 function togglePosVoiceMute() {
   isPosVoiceMuted = !isPosVoiceMuted;
   localStorage.setItem('dineflow_voice_muted', isPosVoiceMuted ? 'true' : 'false');
@@ -587,6 +627,8 @@ function togglePosVoiceMute() {
 }
 
 function announcePaymentVoice(tableNumber, amount, method = 'online') {
+  playTestChimeSound();
+
   if (isPosVoiceMuted) return;
 
   if (!('speechSynthesis' in window)) {
