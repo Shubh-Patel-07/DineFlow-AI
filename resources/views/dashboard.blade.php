@@ -677,7 +677,30 @@ function closeModal(id) {
     modal.style.opacity = '0';
     setTimeout(() => { modal.style.display = 'none'; }, 200);
   }
-}
+  function markAllNotificationsAsRead() {
+    const body = document.querySelector('#notifModal .modal-body');
+    if (body) {
+      body.innerHTML = `
+        <div style="text-align:center; padding:36px 20px; color:#64748B;">
+          <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+          <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Caught Up!</div>
+          <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
+        </div>
+      `;
+    }
+
+    document.querySelectorAll('.notif-dot').forEach(dot => {
+      dot.style.display = 'none';
+    });
+
+    if (typeof showToast === 'function') {
+      showToast('✅ All notifications cleared & marked as read!', 'success');
+    }
+
+    setTimeout(() => {
+      closeModal('notifModal');
+    }, 400);
+  }
 </script>
 
 <!-- Notifications Modal -->
@@ -725,7 +748,7 @@ function closeModal(id) {
       </div>
     </div>
     <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
-      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer;">Mark All as Read</button>
+      <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer;">Mark All as Read</button>
       <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">Close</button>
     </div>
   </div>
