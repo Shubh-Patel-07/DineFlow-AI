@@ -267,11 +267,11 @@ Route::prefix('api')->group(function () {
 
         // Sales Analytics
         Route::get('/analytics/restaurant/{restaurantId}', [AnalyticsController::class, 'getSalesAnalytics'])
-            ->middleware(['role:admin', 'tenant']);
+            ->middleware(['role:admin,manager,cashier', 'tenant']);
 
         // Customer Reviews & Waiter Alerts
         Route::get('/feedback/restaurant/{restaurantId}', [CustomerController::class, 'getFeedbacks'])
-            ->middleware(['role:admin,manager', 'tenant']);
+            ->middleware(['role:admin,manager,cashier', 'tenant']);
         Route::get('/waiter-calls/restaurant/{restaurantId}', [CustomerController::class, 'getWaiterCalls'])
             ->middleware(['role:admin,manager,cashier,waiter', 'tenant']);
         Route::put('/waiter-calls/{id}/resolve', [CustomerController::class, 'resolveWaiterCall'])
