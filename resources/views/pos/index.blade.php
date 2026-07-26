@@ -2777,8 +2777,11 @@
     })
     .then(res => res.json())
     .then(data => {
-      if (data.success) {
-        lastPlacedOrderId = data.data.id || data.data;
+        const orderIdVal = (typeof data.data === 'object' && data.data?.id) ? data.data.id : (data.data || lastPlacedOrderId);
+        lastPlacedOrderId = orderIdVal;
+        const apiOrderTotal = data.data?.total_amount ? Math.round(parseFloat(data.data.total_amount) * 1.239) : calculatedOrderTotal;
+        const finalPayTotal = (apiOrderTotal && apiOrderTotal > 0) ? apiOrderTotal : calculatedOrderTotal;
+
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         clearCart();
         if (typeof loadOrdersData === 'function') loadOrdersData();
@@ -2788,7 +2791,7 @@
         const activePayMethod = document.querySelector('.pay-method.active')?.textContent || '';
         if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('qr') || activePayMethod.toLowerCase().includes('gpay')) {
           const tableLabel = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
-          openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
+          openUpiQrModal(finalPayTotal, lastPlacedOrderId, tableLabel);
         } else {
           document.getElementById('printHubOrderId').textContent = 'Order ID: #' + lastPlacedOrderId;
           document.getElementById('printHubKitchenBtn').style.display = activeOrderHasKitchen ? 'flex' : 'none';
