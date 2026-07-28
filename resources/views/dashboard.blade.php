@@ -717,64 +717,272 @@ function markAllNotificationsAsRead() {
     dot.style.display = 'none';
   });
 
+  const badge = document.getElementById('notifCountBadge');
+  if (badge) badge.style.display = 'none';
+
+  dashNotifDismissedIds = [...dashNotifAllIds];
+  localStorage.setItem('dineflow_dismissed_notifs', JSON.stringify(dashNotifDismissedIds));
+
   showToast('✅ All notifications cleared & marked as read!', 'success');
 
   setTimeout(() => {
     closeModal('notifModal');
   }, 400);
 }
+
+/* ─── LIVE NOTIFICATION POLLING SYSTEM ─── */
+let dashNotifDismissedIds = [];
+let dashNotifAllIds = [];
+
+try {
+  dashNotifDismissedIds = JSON.parse(localStorage.getItem('dineflow_dismissed_notifs') || '[]');
+} catch(e) { dashNotifDismissedIds = []; }
+
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff / 60) + ' mins ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' hrs ago';
+  return Math.floor(diff / 86400) + ' days ago';
+}
+
+function buildNotifCard(icon, iconBg, iconColor, borderColor, title, desc, timeStr, id) {
+  return `
+    <div class="live-notif-item" data-notif-id="${id}" style="display:flex; align-items:flex-start; gap:12px; background:${iconBg}; border:1px solid ${borderColor}; border-radius:12px; padding:12px; animation: notifSlideIn 0.3s ease;">
+      <div style="width:34px; height:34px; border-radius:10px; background:${iconBg}; color:${iconColor}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <i class="fa-solid ${icon}"></i>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13px; font-weight:700; color:#F8FAFC;">${title}</div>
+        <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${desc}</div>
+        <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeStr}</div>
+      </div>
+    </div>
+  `;
+}
+
+async function fetchLiveNotifications() {
+  const notifications = [];
+
+  try {
+    // 1. Waiter Calls (unresolved)
+    const wcRes = await fetch('/api/waiter-calls/restaurant/1');
+    const wcData = await wcRes.json();
+    if (wcData.success && wcData.data) {
+      wcData.data.forEach(call => {
+        if (call.status !== 'resolved') {
+          notifications.push({
+            id: 'wc-' + call.id,
+            icon: 'fa-bell-concierge',
+            iconBg: 'rgba(239,68,68,0.1)',
+            iconColor: '#F87171',
+            borderColor: 'rgba(239,68,68,0.25)',
+            title: '🔔 Waiter Called — Table ' + (call.table_id || '?'),
+            desc: 'Customer is requesting waiter service',
+            time: call.created_at,
+            priority: 1
+          });
+        }
+      });
+    }
+  } catch(e) { console.log('Waiter calls fetch skipped:', e.message); }
+
+  try {
+    // 2. Recent Orders (last 30 min, pending/preparing)
+    const orRes = await fetch('/api/orders/restaurant/1');
+    const orData = await orRes.json();
+    if (orData.success && orData.data) {
+      const now = Date.now();
+      const thirtyMinsAgo = now - (30 * 60 * 1000);
+      orData.data.forEach(order => {
+        const orderTime = new Date(order.created_at).getTime();
+        if (orderTime > thirtyMinsAgo) {
+          if (order.status === 'pending') {
+            notifications.push({
+              id: 'order-new-' + order.id,
+              icon: 'fa-receipt',
+              iconBg: 'rgba(99,102,241,0.1)',
+              iconColor: '#818CF8',
+              borderColor: 'rgba(99,102,241,0.25)',
+              title: '🆕 New Order #' + order.id + (order.table_id ? ' — Table ' + order.table_id : ''),
+              desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' • Waiting for kitchen confirmation',
+              time: order.created_at,
+              priority: 2
+            });
+          }
+          if (order.status === 'ready') {
+            notifications.push({
+              id: 'order-ready-' + order.id,
+              icon: 'fa-utensils',
+              iconBg: 'rgba(16,185,129,0.1)',
+              iconColor: '#34D399',
+              borderColor: 'rgba(16,185,129,0.25)',
+              title: '✅ Order #' + order.id + ' Ready' + (order.table_id ? ' — Table ' + order.table_id : ''),
+              desc: 'Kitchen has prepared this order. Ready to serve!',
+              time: order.updated_at || order.created_at,
+              priority: 2
+            });
+          }
+          if (order.payment_status === 'paid' && order.status === 'completed') {
+            notifications.push({
+              id: 'order-paid-' + order.id,
+              icon: 'fa-indian-rupee-sign',
+              iconBg: 'rgba(16,185,129,0.1)',
+              iconColor: '#34D399',
+              borderColor: 'rgba(16,185,129,0.25)',
+              title: '💰 Payment Received — Order #' + order.id,
+              desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' via ' + (order.payment_method || 'Online'),
+              time: order.updated_at || order.created_at,
+              priority: 3
+            });
+          }
+        }
+      });
+    }
+  } catch(e) { console.log('Orders fetch skipped:', e.message); }
+
+  try {
+    // 3. Low Stock Alerts
+    const invRes = await fetch('/api/inventory?restaurantId=1');
+    const invData = await invRes.json();
+    if (invData.success && invData.data) {
+      invData.data.forEach(item => {
+        if (item.quantity <= (item.low_stock_alert || 10)) {
+          notifications.push({
+            id: 'inv-' + item.id,
+            icon: 'fa-triangle-exclamation',
+            iconBg: 'rgba(245,158,11,0.1)',
+            iconColor: '#FCD34D',
+            borderColor: 'rgba(245,158,11,0.25)',
+            title: '⚠️ Low Stock — ' + item.item_name,
+            desc: 'Only ' + item.quantity + ' ' + (item.unit || 'units') + ' remaining (threshold: ' + (item.low_stock_alert || 10) + ')',
+            time: item.updated_at || item.created_at,
+            priority: 2
+          });
+        }
+      });
+    }
+  } catch(e) { console.log('Inventory fetch skipped:', e.message); }
+
+  // Sort by priority then time
+  notifications.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return new Date(b.time) - new Date(a.time);
+  });
+
+  return notifications;
+}
+
+function renderNotifications(notifications) {
+  const body = document.querySelector('#notifModal .modal-body');
+  if (!body) return;
+
+  dashNotifAllIds = notifications.map(n => n.id);
+  const unreadNotifs = notifications.filter(n => !dashNotifDismissedIds.includes(n.id));
+
+  // Update badge count
+  const badge = document.getElementById('notifCountBadge');
+  const dots = document.querySelectorAll('.notif-dot');
+
+  if (unreadNotifs.length > 0) {
+    dots.forEach(dot => { dot.style.display = 'block'; });
+    if (badge) {
+      badge.textContent = unreadNotifs.length > 9 ? '9+' : unreadNotifs.length;
+      badge.style.display = 'flex';
+    }
+  } else {
+    dots.forEach(dot => { dot.style.display = 'none'; });
+    if (badge) badge.style.display = 'none';
+  }
+
+  if (notifications.length === 0) {
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+        <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Quiet!</div>
+        <div style="font-size:12px; color:#94A3B8;">No active alerts right now. Everything is running smoothly.</div>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  notifications.forEach(n => {
+    const opacity = dashNotifDismissedIds.includes(n.id) ? 'opacity:0.45;' : '';
+    html += `
+      <div class="live-notif-item" data-notif-id="${n.id}" style="display:flex; align-items:flex-start; gap:12px; background:${n.iconBg}; border:1px solid ${n.borderColor}; border-radius:12px; padding:12px; transition:all 0.2s; ${opacity}">
+        <div style="width:34px; height:34px; border-radius:10px; background:${n.iconBg}; color:${n.iconColor}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid ${n.icon}"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">${n.title}</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${n.desc}</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeAgo(n.time)}</div>
+        </div>
+      </div>
+    `;
+  });
+  body.innerHTML = html;
+}
+
+async function refreshDashNotifications() {
+  try {
+    const notifs = await fetchLiveNotifications();
+    renderNotifications(notifs);
+  } catch(e) {
+    console.log('Notification refresh error:', e);
+  }
+}
+
+// Initial fetch + poll every 15 seconds
+document.addEventListener('DOMContentLoaded', () => {
+  refreshDashNotifications();
+  setInterval(refreshDashNotifications, 15000);
+});
+
+// Also refresh when bell icon is clicked
+const origOpenModal = openModal;
+openModal = function(id) {
+  origOpenModal(id);
+  if (id === 'notifModal') {
+    refreshDashNotifications();
+  }
+};
 </script>
 
 <!-- Notifications Modal -->
 <div class="modal-overlay" id="notifModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.2s;">
-  <div class="modal" style="width:450px; background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+  <div class="modal" style="width:480px; background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
     <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
       <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
-        Notifications &amp; Live Alerts
+        Live Notifications
+        <span id="notifCountBadge" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; display:none; align-items:center; justify-content:center; min-width:20px; animation: pulse 2s infinite;"></span>
       </div>
-      <button class="modal-close" onclick="closeModal('notifModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="refreshDashNotifications()" title="Refresh" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.3)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeModal('notifModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
     </div>
-    <div class="modal-body" style="padding:16px 20px; max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
-      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:12px; padding:12px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:rgba(239,68,68,0.2); color:#F87171; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fa-solid fa-bell-concierge"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Waiter Called — Table 4</div>
-          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Customer requested waiter service at Table 4</div>
-          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">2 mins ago</div>
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:12px; padding:12px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:rgba(16,185,129,0.2); color:#34D399; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fa-solid fa-utensils"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">KOT Ready — Table 2</div>
-          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Paneer Butter Masala &amp; Garlic Naan prepared by Kitchen</div>
-          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">8 mins ago</div>
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:rgba(245,158,11,0.2); color:#FCD34D; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Low Stock Alert</div>
-          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Milk inventory is below 2 Litres threshold</div>
-          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">15 mins ago</div>
-        </div>
+    <div class="modal-body" style="padding:16px 20px; max-height:400px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+      <div style="text-align:center; padding:30px 20px; color:#64748B;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:#818CF8; display:block; margin-bottom:10px;"></i>
+        <div style="font-size:12px; color:#94A3B8;">Loading live notifications...</div>
       </div>
     </div>
     <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
-      <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer;">Mark All as Read</button>
-      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">Close</button>
+      <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">Mark All as Read</button>
+      <div style="display:flex; align-items:center; gap:4px; color:#475569; font-size:10.5px;"><i class="fa-solid fa-circle" style="font-size:6px; color:#10B981; animation:pulse 2s infinite;"></i> Auto-refresh every 15s</div>
+      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Close</button>
     </div>
   </div>
 </div>
+
+<style>
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+  @keyframes notifSlideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .live-notif-item:hover { transform:translateX(3px); filter:brightness(1.1); }
+</style>
 
 </body>
 </html>
