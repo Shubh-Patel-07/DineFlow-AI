@@ -816,17 +816,13 @@ async function loadMenu() {
     if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
       const apiItems = menuResult.value.map(normalizeItem);
       const staticFoodItems = getStaticFoodItemsList().map(normalizeItem);
-      if (staticFoodItems.length > 0) {
-        menuItems = staticFoodItems.map(staticItem => {
-          const match = apiItems.find(api => api.name.toLowerCase() === staticItem.name.toLowerCase() || String(api.id) === String(staticItem.id));
-          if (match) {
-            return { ...staticItem, id: match.id, baseId: match.id, price: match.price || staticItem.price };
-          }
-          return staticItem;
-        });
-      } else {
-        menuItems = apiItems;
-      }
+      menuItems = apiItems.map(apiItem => {
+        const match = staticFoodItems.find(s => s.name.toLowerCase() === apiItem.name.toLowerCase() || String(s.id) === String(apiItem.id));
+        if (match) {
+          return { ...match, ...apiItem, image: apiItem.image || match.image };
+        }
+        return apiItem;
+      });
       renderCategories();
       renderMenu();
     }

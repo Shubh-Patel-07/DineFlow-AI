@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class MenuItemController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $restaurantId = null)
     {
-        $restaurantId = $request->query('restaurantId', '1');
+        $restaurantId = (string)($restaurantId ?? $request->query('restaurantId', '1'));
 
         $items = MenuItem::where('restaurant_id', $restaurantId)->get();
 
@@ -46,25 +46,23 @@ class MenuItemController extends Controller
         return response()->json(['success' => true, 'data' => $items]);
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
-            'restaurant_id' => 'required|string',
             'name' => 'required|string',
             'price' => 'required|numeric',
             'category' => 'required|string',
         ]);
 
         $item = MenuItem::create([
-            'restaurant_id' => $request->restaurant_id,
+            'restaurant_id' => (string)($request->restaurant_id ?? 1),
             'name' => $request->name,
             'description' => $request->description ?? '',
             'price' => $request->price,
             'category' => $request->category,
             'image' => $request->image ?? '',
-            'is_available' => $request->is_available ?? true,
-            'is_veg' => $request->is_veg ?? true,
+            'is_available' => $request->has('is_available') ? filter_var($request->is_available, FILTER_VALIDATE_BOOLEAN) : true,
+            'is_veg' => $request->has('is_veg') ? filter_var($request->is_veg, FILTER_VALIDATE_BOOLEAN) : true,
         ]);
 
         return response()->json(['success' => true, 'data' => $item], 201);
@@ -78,9 +76,18 @@ class MenuItemController extends Controller
             return response()->json(['success' => false, 'message' => 'Menu item not found'], 404);
         }
 
-        $item->update($request->only([
+        $data = $request->only([
             'name', 'description', 'price', 'category', 'image', 'is_available', 'is_veg'
-        ]));
+        ]);
+
+        if (array_key_exists('is_available', $data)) {
+            $data['is_available'] = filter_var($data['is_available'], FILTER_VALIDATE_BOOLEAN);
+        }
+        if (array_key_exists('is_veg', $data)) {
+            $data['is_veg'] = filter_var($data['is_veg'], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        $item->update($data);
 
         return response()->json(['success' => true, 'data' => $item]);
     }
@@ -98,3 +105,4 @@ class MenuItemController extends Controller
         return response()->json(['success' => true, 'message' => 'Menu item deleted']);
     }
 }
+
