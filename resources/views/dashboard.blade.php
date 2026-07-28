@@ -677,30 +677,52 @@ function closeModal(id) {
     modal.style.opacity = '0';
     setTimeout(() => { modal.style.display = 'none'; }, 200);
   }
-  function markAllNotificationsAsRead() {
-    const body = document.querySelector('#notifModal .modal-body');
-    if (body) {
-      body.innerHTML = `
-        <div style="text-align:center; padding:36px 20px; color:#64748B;">
-          <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
-          <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Caught Up!</div>
-          <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
-        </div>
-      `;
-    }
+}
 
-    document.querySelectorAll('.notif-dot').forEach(dot => {
-      dot.style.display = 'none';
-    });
+function showToast(msg, type = 'success') {
+  const existing = document.getElementById('dineflow-toast');
+  if (existing) existing.remove();
 
-    if (typeof showToast === 'function') {
-      showToast('✅ All notifications cleared & marked as read!', 'success');
-    }
+  const toast = document.createElement('div');
+  toast.id = 'dineflow-toast';
+  const bgMap = { success: 'linear-gradient(135deg,#059669,#10B981)', error: 'linear-gradient(135deg,#DC2626,#EF4444)', info: 'linear-gradient(135deg,#2563EB,#3B82F6)', warning: 'linear-gradient(135deg,#D97706,#F59E0B)' };
+  const bg = bgMap[type] || bgMap.success;
+  toast.style.cssText = `position:fixed; top:20px; right:20px; z-index:99999; background:${bg}; color:#fff; padding:14px 22px; border-radius:14px; font-family:'Outfit',sans-serif; font-size:13.5px; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,0.35); display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-12px) scale(0.95); transition:all 0.35s cubic-bezier(0.4,0,0.2,1); max-width:420px;`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0) scale(1)';
+  });
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-12px) scale(0.95)';
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
+}
 
-    setTimeout(() => {
-      closeModal('notifModal');
-    }, 400);
+function markAllNotificationsAsRead() {
+  const body = document.querySelector('#notifModal .modal-body');
+  if (body) {
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+        <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Caught Up!</div>
+        <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
+      </div>
+    `;
   }
+
+  document.querySelectorAll('.notif-dot').forEach(dot => {
+    dot.style.display = 'none';
+  });
+
+  showToast('✅ All notifications cleared & marked as read!', 'success');
+
+  setTimeout(() => {
+    closeModal('notifModal');
+  }, 400);
+}
 </script>
 
 <!-- Notifications Modal -->
