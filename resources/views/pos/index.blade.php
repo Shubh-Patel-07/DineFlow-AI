@@ -2204,7 +2204,7 @@
 
   async function syncPosMenuWithDatabase() {
     try {
-      const res = await fetch('/api/menu/restaurant/1');
+      const res = await fetch('/api/menu?restaurantId=1');
       const data = await res.json();
       if (res.ok && data && (data.success || Array.isArray(data.data))) {
         const rawItems = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
@@ -2222,20 +2222,21 @@
             else if (catLower.includes('drink') || catLower.includes('beverage')) catKey = 'beverages';
             else if (catLower.includes('pizza')) catKey = 'mains';
             else if (catLower.includes('burger')) catKey = 'starters';
+            else catKey = catLower;
 
             let emoji = isVeg ? '🍛' : '🍗';
             if (nameLower.includes('naan') || nameLower.includes('roti') || nameLower.includes('paratha')) emoji = '🫓';
-            else if (nameLower.includes('spring roll') || nameLower.includes('starter')) emoji = '🥢';
+            else if (nameLower.includes('spring roll') || nameLower.includes('starter') || nameLower.includes('roll')) emoji = '🥢';
             else if (nameLower.includes('biryani') || nameLower.includes('rice')) emoji = '🍚';
-            else if (nameLower.includes('lassi') || nameLower.includes('drink')) emoji = '🥭';
-            else if (nameLower.includes('gulab') || nameLower.includes('jamun') || nameLower.includes('sweet')) emoji = '🍮';
+            else if (nameLower.includes('lassi') || nameLower.includes('drink') || nameLower.includes('coffee') || nameLower.includes('shake')) emoji = '🥤';
+            else if (nameLower.includes('pizza')) emoji = '🍕';
+            else if (nameLower.includes('burger')) emoji = '🍔';
+            else if (nameLower.includes('gulab') || nameLower.includes('jamun') || nameLower.includes('sweet') || nameLower.includes('ice')) emoji = '🍮';
             else if (nameLower.includes('dal')) emoji = '🫕';
             else if (nameLower.includes('fish')) emoji = '🐟';
-            else if (nameLower.includes('coffee')) emoji = '☕';
 
             let badgeKey = isVeg ? 'veg' : 'nonveg';
-            if (nameLower.includes('gulab')) badgeKey = 'new';
-            if (nameLower.includes('veg biryani')) badgeKey = 'best';
+            if (item.is_available === false) badgeKey = 'out';
 
             return {
               id: item.id,
