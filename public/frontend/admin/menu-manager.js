@@ -238,6 +238,7 @@ async function toggleItemAvailability(id, isAvailable) {
       Toast.success(isAvailable ? 'Item marked Available!' : 'Item marked Out of Stock!');
       const item = allMenuItems.find(i => String(i.id) === String(id));
       if (item) item.is_available = isAvailable;
+      renderMenuItems();
     }
   } catch (_) {}
 }
