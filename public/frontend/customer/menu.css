@@ -1051,3 +1051,126 @@ body.light-theme .favorite-chip { background: rgba(99,102,241,0.08); color: #4F4
 body.light-theme .favorites-section__header h3 { color: #0F172A; }
 body.light-theme .empty-state h3 { color: #0F172A; }
 
+/* ===== ULTRA-PREMIUM DESIGN ENHANCEMENTS ===== */
+
+/* Ambient Glowing Background Elements */
+body::before {
+  content: '';
+  position: fixed;
+  top: -10vw;
+  right: -10vw;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -10vw;
+  left: -10vw;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Enhanced Food Card Animations & Shadows */
+.menu-card, .dish-card, .food-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.menu-card:hover, .dish-card:hover, .food-card:hover {
+  transform: translateY(-5px) scale(1.01) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Image Zoom Effect on Hover */
+.card-img-wrapper, .dish-img-box, .item-img-container {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.card-img-wrapper img, .dish-img-box img, .item-img-container img {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-card:hover img, .dish-card:hover img, .food-card:hover img {
+  transform: scale(1.08);
+}
+
+/* Category Filter Chips Glow */
+.category-btn, .cat-chip, .cat-tab {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.category-btn.active, .cat-chip.active, .cat-tab.active {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.5), 0 0 15px rgba(99, 102, 241, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Modern Price Tag Badge */
+.price-badge, .dish-price, .item-price-tag {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(129, 140, 248, 0.2)) !important;
+  border: 1px solid rgba(129, 140, 248, 0.35) !important;
+  color: #818CF8 !important;
+  font-weight: 800 !important;
+  padding: 4px 10px !important;
+  border-radius: 10px !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* Fast Add Button Pulse Animation */
+.add-btn, .btn-add-item {
+  background: linear-gradient(135deg, #10B981, #059669) !important;
+  color: #FFFFFF !important;
+  border: 0 !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+.add-btn:hover, .btn-add-item:hover {
+  transform: scale(1.06) !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5) !important;
+}
+
+.add-btn:active, .btn-add-item:active {
+  transform: scale(0.95) !important;
+}
+
+/* Sticky Floating Cart Bar Upgrade */
+.cart-floating-bar, .mobile-cart-bar {
+  background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(99, 102, 241, 0.25) !important;
+  border-radius: 24px !important;
+}
+
+/* Search Bar Glow */
+.search-box {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  transition: all 0.3s ease !important;
+}
+
+.search-box:focus-within {
+  border-color: #818CF8 !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3) !important;
+}
+
+
