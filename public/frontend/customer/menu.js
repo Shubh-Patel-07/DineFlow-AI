@@ -811,12 +811,19 @@ async function handleCheckout() {
     });
     const data = await res.json();
     if (data.success && data.data) {
+      const orderId = data.data.id;
+      const amount = data.data.total_amount || 0;
       saveCart([]);
       renderCart();
       closeCart();
-      localStorage.setItem(`dineflow_session_order_${tableId}`, data.data.id);
-      showToast(`✅ Order #${data.data.id} placed successfully! Sent to Kitchen KDS.`, false);
-      startLiveOrderTracking(data.data.id);
+      localStorage.setItem(`dineflow_session_order_${tableId}`, orderId);
+
+      if (selectedCartPayMethod === 'upi') {
+        openCustomerUpiModal(orderId, amount);
+      } else {
+        showToast(`✅ Order #${orderId} placed successfully! Sent to Kitchen KDS.`, false);
+        startLiveOrderTracking(orderId);
+      }
     } else {
       showToast(data.message || 'Failed to place order', true);
     }
@@ -826,9 +833,55 @@ async function handleCheckout() {
   } finally {
     if (checkoutBtn) {
       checkoutBtn.disabled = false;
-      checkoutBtn.textContent = 'Checkout';
+      checkoutBtn.textContent = '🚀 Confirm & Place Order';
     }
   }
+}
+
+let currentCustomerUpiOrderId = null;
+
+function openCustomerUpiModal(orderId, amount) {
+  currentCustomerUpiOrderId = orderId;
+  const modal = $('#customerUpiModal');
+  const amountEl = $('#customerUpiAmount');
+  const qrImg = $('#customerUpiQrImg');
+
+  const formattedAmount = Number(amount || 0).toFixed(2);
+  if (amountEl) amountEl.textContent = `₹${formattedAmount}`;
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=dineflow@upi%26pn=DineFlow%20AI%26am=${formattedAmount}%26cu=INR`;
+  }
+
+  if (modal) modal.hidden = false;
+}
+
+function closeCustomerUpiModal() {
+  const modal = $('#customerUpiModal');
+  if (modal) modal.hidden = true;
+  if (currentCustomerUpiOrderId) {
+    startLiveOrderTracking(currentCustomerUpiOrderId);
+  }
+}
+
+async function confirmCustomerUpiPaid() {
+  if (!currentCustomerUpiOrderId) {
+    closeCustomerUpiModal();
+    return;
+  }
+
+  try {
+    await fetch(`${API_BASE}/orders/${currentCustomerUpiOrderId}/pay`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ payment_method: 'upi' })
+    });
+    showToast(`🎉 Order #${currentCustomerUpiOrderId} Paid! Voice alert sent to POS Soundbox.`, false);
+  } catch(e) {
+    console.error('UPI pay error:', e);
+    showToast(`Order #${currentCustomerUpiOrderId} submitted!`, false);
+  }
+
+  closeCustomerUpiModal();
 }
 
 let liveOrderPollInterval = null;
