@@ -748,6 +748,28 @@ function changeCartQty(idx, newQty) {
   renderCart();
 }
 
+let selectedCartPayMethod = 'cash';
+
+function selectCartPayMethod(method) {
+  selectedCartPayMethod = method;
+  const cashLabel = $('#payMethodCashLabel');
+  const upiLabel = $('#payMethodUpiLabel');
+  
+  if (cashLabel && upiLabel) {
+    if (method === 'upi') {
+      upiLabel.style.background = 'rgba(16,185,129,0.15)';
+      upiLabel.style.borderColor = '#10B981';
+      cashLabel.style.background = 'rgba(255,255,255,0.03)';
+      cashLabel.style.borderColor = 'rgba(255,255,255,0.1)';
+    } else {
+      cashLabel.style.background = 'rgba(99,102,241,0.15)';
+      cashLabel.style.borderColor = '#6366F1';
+      upiLabel.style.background = 'rgba(255,255,255,0.03)';
+      upiLabel.style.borderColor = 'rgba(255,255,255,0.1)';
+    }
+  }
+}
+
 function openCart() { const p = $('#cartPanel'); if (p) { p.hidden = false; renderCart(); } }
 function closeCart() { const p = $('#cartPanel'); if (p) p.hidden = true; }
 
@@ -770,6 +792,7 @@ async function handleCheckout() {
   const payload = {
     restaurant_id: String(restaurantId),
     table_id: String(tableId),
+    payment_method: selectedCartPayMethod || 'cash',
     special_instructions: combinedInstructions,
     items: cart.map(item => ({
       menu_item_id: item.baseId || item.id,
