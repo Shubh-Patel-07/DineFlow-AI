@@ -664,43 +664,88 @@ if (document.getElementById('buildPlateModal')) {
 // --- Cart UI and interactions ---
 function formatCurrency(amount) { return `₹${Number(amount || 0).toFixed(2)}`; }
 
+function addCookingChip(chipText) {
+  const input = $('#cartSpecialInstructions');
+  if (!input) return;
+  if (input.value && !input.value.includes(chipText)) {
+    input.value += ', ' + chipText;
+  } else if (!input.value) {
+    input.value = chipText;
+  }
+}
+
 function renderCart() {
   const cart = getCart();
   const badge = $('#cartBadge');
   const list = $('#cartList');
   const subtotalEl = $('#cartSubtotal');
+  const taxEl = $('#cartTax');
+  const grandTotalEl = $('#cartGrandTotal');
+
   if (!badge || !list || !subtotalEl) return;
-  badge.textContent = cart.length;
+  
+  const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  badge.textContent = totalCount;
+
   if (!cart.length) {
-    list.innerHTML = `<div style="text-align:center; opacity:0.7; padding:18px;">Your cart is empty</div>`;
+    list.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <span style="font-size:36px; display:block; margin-bottom:8px;">🛒</span>
+        <div style="font-size:14px; font-weight:700; color:#F8FAFC;">Your basket is empty</div>
+        <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Add delicious items from menu to start ordering!</div>
+      </div>
+    `;
     subtotalEl.textContent = formatCurrency(0);
+    if (taxEl) taxEl.textContent = formatCurrency(0);
+    if (grandTotalEl) grandTotalEl.textContent = formatCurrency(0);
     return;
   }
+
   let subtotal = 0;
   list.innerHTML = cart.map((item, idx) => {
     const name = escapeHtml(item.name);
-    const desc = escapeHtml(item.description || '');
     const price = Number(item.price || 0);
-    subtotal += price * (item.quantity || 1);
+    const qty = item.quantity || 1;
+    const itemTotal = price * qty;
+    subtotal += itemTotal;
+
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background: rgba(255,255,255,0.03); padding:8px; border-radius:8px;">
-        <div style="flex:1">
-          <div style="font-weight:700;">${name}</div>
-          <div style="font-size:12px; opacity:0.8;">${desc}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 14px; border-radius:14px; transition:all 0.2s;">
+        <div style="flex:1;">
+          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px;">${name}</div>
+          <div style="font-size:12px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
         </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-          <div style="font-weight:800;">${formatCurrency(price)}</div>
-          <div style="display:flex; gap:6px; align-items:center;">
-            <select data-cart-idx="${idx}" class="cart-qty" style="background:transparent; color:inherit; border-radius:6px; padding:4px;">
-              ${[1,2,3,4,5].map(q => `<option value="${q}" ${q === (item.quantity||1) ? 'selected' : ''}>${q}</option>`).join('')}
-            </select>
-            <button data-remove-idx="${idx}" class="cart-remove" style="background:transparent; border:none; color:#ff6b6b; font-weight:800;">Remove</button>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:2px 4px;">
+            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:26px; height:26px; cursor:pointer; font-size:14px;">-</button>
+            <span style="font-size:12.5px; font-weight:700; color:#F8FAFC; min-width:20px; text-align:center;">${qty}</span>
+            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:26px; height:26px; cursor:pointer; font-size:14px;">+</button>
           </div>
+          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:28px; height:28px; border-radius:8px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
       </div>
     `;
   }).join('');
+
+  const tax = subtotal * 0.18;
+  const grandTotal = subtotal + tax;
+
   subtotalEl.textContent = formatCurrency(subtotal);
+  if (taxEl) taxEl.textContent = formatCurrency(tax);
+  if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grandTotal);
+}
+
+function changeCartQty(idx, newQty) {
+  const cart = getCart();
+  if (!cart[idx]) return;
+  if (newQty <= 0) {
+    cart.splice(idx, 1);
+    showToast('Removed from cart');
+  } else {
+    cart[idx].quantity = newQty;
+  }
+  saveCart(cart);
+  renderCart();
 }
 
 function openCart() { const p = $('#cartPanel'); if (p) { p.hidden = false; renderCart(); } }
@@ -718,10 +763,14 @@ async function handleCheckout() {
     checkoutBtn.textContent = 'Placing Order...';
   }
 
+  const customNotes = $('#cartSpecialInstructions') ? $('#cartSpecialInstructions').value.trim() : '';
+  const itemNotes = cart.map(i => i.specialInstruction).filter(Boolean).join('; ');
+  const combinedInstructions = [customNotes, itemNotes].filter(Boolean).join(' | ');
+
   const payload = {
     restaurant_id: String(restaurantId),
     table_id: String(tableId),
-    special_instructions: cart.map(i => i.specialInstruction).filter(Boolean).join('; ') || '',
+    special_instructions: combinedInstructions,
     items: cart.map(item => ({
       menu_item_id: item.baseId || item.id,
       quantity: item.quantity || 1
