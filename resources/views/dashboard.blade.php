@@ -986,11 +986,11 @@ openModal = function(id) {
 
 <!-- Dashboard Recent Orders Modal -->
 <div class="modal-overlay" id="dashOrdersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
-  <div class="modal" style="width:840px; max-width:92vw; max-height:85vh; background:#0F172A; border:1px solid rgba(99,102,241,0.25); border-radius:24px; box-shadow:0 25px 60px rgba(0,0,0,0.7); overflow:hidden; display:flex; flex-direction:column;">
+  <div class="modal" style="width:880px; max-width:94vw; max-height:85vh; background:#0F172A; border:1px solid rgba(99,102,241,0.25); border-radius:24px; box-shadow:0 25px 60px rgba(0,0,0,0.7); overflow:hidden; display:flex; flex-direction:column;">
     <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
-      <div class="modal-title" style="color:#A5B4FC; font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+      <div class="modal-title" id="dashOrdersModalTitle" style="color:#A5B4FC; font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
         <i class="fa-solid fa-receipt" style="color:#818CF8;"></i>
-        Recent Restaurant Orders
+        <span>Recent Restaurant Orders</span>
         <span id="dashOrdersCountBadge" style="background:rgba(99,102,241,0.25); color:#818CF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(99,102,241,0.4);">Loading...</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px;">
@@ -1012,8 +1012,29 @@ openModal = function(id) {
 </div>
 
 <script>
-function openDashOrdersModal() {
+let currentDashOrderFilter = 'all';
+
+function openDashOrdersModal(filterType = 'all') {
+  currentDashOrderFilter = filterType;
   const modal = document.getElementById('dashOrdersModal');
+  const titleEl = document.getElementById('dashOrdersModalTitle');
+  
+  if (titleEl) {
+    if (filterType === 'delivery') {
+      titleEl.innerHTML = `
+        <i class="fa-solid fa-motorcycle" style="color:#38BDF8;"></i>
+        <span>Delivery & Takeaway Orders</span>
+        <span id="dashOrdersCountBadge" style="background:rgba(56,189,248,0.25); color:#38BDF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(56,189,248,0.4);">Loading...</span>
+      `;
+    } else {
+      titleEl.innerHTML = `
+        <i class="fa-solid fa-receipt" style="color:#818CF8;"></i>
+        <span>Recent Restaurant Orders</span>
+        <span id="dashOrdersCountBadge" style="background:rgba(99,102,241,0.25); color:#818CF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(99,102,241,0.4);">Loading...</span>
+      `;
+    }
+  }
+
   if (!modal) return;
   modal.style.display = 'flex';
   setTimeout(() => { modal.style.opacity = '1'; }, 10);
@@ -1035,35 +1056,49 @@ async function loadDashOrdersModalData() {
   body.innerHTML = `
     <div style="text-align:center; padding:40px 20px; color:#64748B;">
       <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:#818CF8; display:block; margin-bottom:12px;"></i>
-      <div style="font-size:13px; color:#94A3B8;">Loading recent orders...</div>
+      <div style="font-size:13px; color:#94A3B8;">Loading orders...</div>
     </div>
   `;
 
   try {
     const res = await fetch('/api/orders/restaurant/1');
     if (!res.ok) throw new Error('API request failed');
-    const orders = await res.json();
+    const rawData = await res.json();
     
-    if (!Array.isArray(orders) || orders.length === 0) {
+    // Support both direct array or Laravel object { success: true, data: [...] }
+    let orders = Array.isArray(rawData) ? rawData : (rawData.data || []);
+    
+    if (currentDashOrderFilter === 'delivery') {
+      orders = orders.filter(o => {
+        const isDeliveryType = (o.order_type === 'delivery' || o.order_type === 'takeaway');
+        const isNoTable = !o.table_id || o.table_id == '0';
+        const tableStr = o.table ? (o.table.table_number || '').toLowerCase() : '';
+        const isDeliveryTable = tableStr.includes('del') || tableStr.includes('take') || tableStr.includes('online');
+        return isDeliveryType || isNoTable || isDeliveryTable;
+      });
+    }
+
+    if (orders.length === 0) {
       if (badge) badge.innerText = '0 Orders';
       body.innerHTML = `
         <div style="text-align:center; padding:48px 20px; color:#64748B;">
-          <i class="fa-solid fa-receipt" style="font-size:42px; margin-bottom:14px; color:#475569; display:block;"></i>
-          <div style="font-size:15px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">No Orders Found</div>
-          <div style="font-size:12.5px; color:#94A3B8;">No recent orders recorded for this restaurant today.</div>
+          <i class="fa-solid ${currentDashOrderFilter === 'delivery' ? 'fa-motorcycle' : 'fa-receipt'}" style="font-size:42px; margin-bottom:14px; color:#475569; display:block;"></i>
+          <div style="font-size:15px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">No ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders Found</div>
+          <div style="font-size:12.5px; color:#94A3B8; margin-bottom:16px;">There are no ${currentDashOrderFilter === 'delivery' ? 'delivery or takeaway' : 'recent'} orders recorded today.</div>
+          ${currentDashOrderFilter === 'delivery' ? `<button onclick="openDashOrdersModal('all')" style="padding:8px 16px; font-size:12px; font-weight:700; border-radius:8px; background:rgba(99,102,241,0.15); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer;">View All Orders</button>` : ''}
         </div>
       `;
       return;
     }
 
-    if (badge) badge.innerText = `${orders.length} Total Orders`;
+    if (badge) badge.innerText = `${orders.length} ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders`;
 
     let html = `
       <table style="width:100%; border-collapse:collapse; font-size:13px;">
         <thead>
           <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#818CF8; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
             <th style="padding:10px 12px;">Order ID</th>
-            <th style="padding:10px 12px;">Table / Loc</th>
+            <th style="padding:10px 12px;">Type / Table</th>
             <th style="padding:10px 12px;">Amount</th>
             <th style="padding:10px 12px;">Payment</th>
             <th style="padding:10px 12px;">Status</th>
@@ -1082,7 +1117,7 @@ async function loadDashOrdersModalData() {
 
       const statusColor = (o.status === 'completed') ? '#34D399' : ((o.status === 'cooking' || o.status === 'preparing') ? '#FBBF24' : '#818CF8');
 
-      const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id ? `Table ${o.table_id}` : 'Takeaway');
+      const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id && o.table_id != '0' ? `Table ${o.table_id}` : '🛵 Takeaway / Delivery');
 
       html += `
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
