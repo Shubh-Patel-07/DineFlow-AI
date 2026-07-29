@@ -946,10 +946,33 @@ function updateLiveOrderTrackerUI(order) {
     if (stepIcon3) { stepIcon3.style.background = '#10B981'; stepIcon3.style.color = '#fff'; }
     if (statusMsg) statusMsg.textContent = '🟢 Food is ready & served at your table! Enjoy your meal!';
 
-    // Stop tracking after served/completed
+    if (liveOrderPollInterval) {
+      clearInterval(liveOrderPollInterval);
+      liveOrderPollInterval = null;
+    }
+
+    // Auto-dismiss/hide tracker banner after 6 seconds when served/completed
     setTimeout(() => {
+      hideLiveOrderTracker();
       localStorage.removeItem(`dineflow_session_order_${tableId}`);
-    }, 8000);
+    }, 6000);
+  }
+}
+
+function hideLiveOrderTracker() {
+  const tracker = $('#liveOrderTracker');
+  if (tracker) {
+    tracker.style.opacity = '0';
+    tracker.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => {
+      tracker.style.setProperty('display', 'none', 'important');
+      tracker.hidden = true;
+      tracker.style.opacity = '1';
+    }, 400);
+  }
+  if (liveOrderPollInterval) {
+    clearInterval(liveOrderPollInterval);
+    liveOrderPollInterval = null;
   }
 }
 

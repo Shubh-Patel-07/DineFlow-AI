@@ -65,13 +65,16 @@
 
     <!-- Live Order Status Tracker (Domino's/Zomato Style) -->
     <section id="liveOrderTracker" class="live-tracker-panel" style="display: none !important;" hidden>
-      <div class="tracker-header">
+      <div class="tracker-header" style="display:flex; justify-content:space-between; align-items:center;">
         <div class="tracker-title-box">
           <span class="tracker-icon">🛵</span>
           <span class="tracker-title">Live Order Status</span>
           <span id="trackerOrderBadge" class="tracker-badge">#--</span>
         </div>
-        <span id="trackerTimeEst" class="tracker-time">~12 Mins</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span id="trackerTimeEst" class="tracker-time">~12 Mins</span>
+          <button type="button" onclick="hideLiveOrderTracker()" style="background:rgba(255,255,255,0.1); border:none; color:#94A3B8; width:26px; height:26px; border-radius:8px; font-size:16px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;" title="Dismiss tracker">✕</button>
+        </div>
       </div>
 
       <!-- Step Progress Bar -->
