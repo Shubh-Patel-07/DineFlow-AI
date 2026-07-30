@@ -1173,4 +1173,168 @@ body::after {
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.3) !important;
 }
 
+/* ===== COMPLETE MOBILE & TABLET RESPONSIVE ENGINE ===== */
+
+/* Tablets & Small Laptops (769px - 1024px) */
+@media (max-width: 1024px) {
+  .menu-wrapper { padding: 18px 16px 120px; }
+  .food-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+}
+
+/* Mobile & Small Tablets (<= 768px) */
+@media (max-width: 768px) {
+  .menu-wrapper { padding: 12px 10px 140px !important; }
+
+  /* Hero Header Mobile Alignment */
+  .menu-hero-header { padding: 16px 14px !important; border-radius: 20px !important; gap: 14px !important; }
+  .hero-top-bar { flex-wrap: wrap !important; gap: 10px !important; justify-content: space-between !important; }
+  .brand-badge { gap: 10px !important; }
+  .brand-logo { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
+  .logo { font-size: 1.4rem !important; }
+  
+  .header-controls { flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; justify-content: flex-start !important; }
+  .review-btn, .language-picker, .theme-toggle { padding: 6px 10px !important; font-size: 12px !important; border-radius: 10px !important; }
+
+  .hero-restaurant-info { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
+  .table-card-wrapper { width: 100% !important; display: flex !important; justify-content: center !important; }
+  .table-card { width: 100% !important; max-width: 100% !important; justify-content: center !important; }
+
+  /* Filter & Search Bar Mobile Responsive */
+  .menu-tools-bar { gap: 12px !important; }
+  .search-wrapper { width: 100% !important; }
+  .search-box { padding: 8px 12px !important; border-radius: 14px !important; }
+  .search-box input { font-size: 13.5px !important; }
+
+  .filter-controls-group { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 10px !important; }
+  
+  /* Horizontal Smooth Scroll for Diet & Category Chips */
+  .diet-filter, .category-scroll-container, .categories-bar, .category-bar {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+    gap: 8px !important;
+  }
+  .diet-filter::-webkit-scrollbar, .categories-bar::-webkit-scrollbar, .category-bar::-webkit-scrollbar { display: none !important; }
+  .diet-btn, .category-btn { flex-shrink: 0 !important; font-size: 12.5px !important; padding: 7px 14px !important; border-radius: 12px !important; }
+
+  /* Mobile Food Cards Layout */
+  .food-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  
+  .food-card, .menu-card {
+    display: flex !important;
+    flex-direction: row !important;
+    min-height: 125px !important;
+    max-height: 145px !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    padding: 8px !important;
+    gap: 12px !important;
+    align-items: center !important;
+  }
+
+  .food-image, .card-img-wrapper, .item-img-container {
+    width: 105px !important;
+    height: 105px !important;
+    min-width: 105px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
+  .food-image img, .card-img-wrapper img, .item-img-container img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .food-content, .card-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+    padding: 2px 0 !important;
+    overflow: hidden !important;
+  }
+
+  .food-content h3, .card-title {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    margin: 0 0 2px 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .food-content p, .card-desc {
+    font-size: 11.5px !important;
+    color: #94A3B8 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  .food-footer, .card-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-top: auto !important;
+  }
+
+  .price-badge, .dish-price { font-size: 13.5px !important; padding: 3px 8px !important; }
+  .add-btn, .btn-add-item { padding: 6px 12px !important; font-size: 12px !important; border-radius: 10px !important; }
+
+  /* Mobile Bottom Dock & Floating Cart Badge */
+  .bottom-floating-actions {
+    width: calc(100% - 20px) !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 10px !important;
+    padding: 6px 8px !important;
+    border-radius: 18px !important;
+  }
+  .dock-btn { font-size: 11px !important; padding: 0 8px !important; height: 38px !important; }
+
+  .floating-cart-badge {
+    bottom: 72px !important;
+    right: 14px !important;
+    padding: 9px 15px !important;
+    font-size: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Mobile Bottom-Sheet Drawers for Modals */
+  .item-modal, #cartPanel, #customerReviewModal, #customerUpiModal {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  .item-modal__content, .cart-modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 24px 24px 0 0 !important;
+    max-height: 90vh !important;
+    padding: 20px 16px 24px !important;
+    animation: slideUpBottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+}
+
+@keyframes slideUpBottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Extra Small Phones (<= 380px) */
+@media (max-width: 380px) {
+  .food-image, .card-img-wrapper { width: 90px !important; height: 90px !important; min-width: 90px !important; }
+  .food-content h3 { font-size: 13px !important; }
+  .food-content p { font-size: 11px !important; }
+}
+
 
