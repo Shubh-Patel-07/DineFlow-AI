@@ -129,6 +129,15 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
+        /* Responsive Breakpoints */
+        @media (max-width: 480px) {
+            .login-container { padding: 12px; }
+            .login-card { padding: 28px 18px; border-radius: 20px; }
+            .pin-digit { width: 42px; height: 50px; font-size: 22px; border-radius: 10px; }
+            .pin-input-group { gap: 6px; }
+            .keypad-btn { height: 50px; font-size: 18px; }
+        }
+
         .pin-input-container {
             position: relative;
             margin-bottom: 24px;

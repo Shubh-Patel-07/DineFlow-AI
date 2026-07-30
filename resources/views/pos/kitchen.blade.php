@@ -76,6 +76,14 @@
       gap: 16px;
     }
 
+    /* ─── KDS RESPONSIVE RULES ─── */
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      header { flex-direction: column; align-items: stretch; gap: 10px; text-align: center; }
+      header h1 { justify-content: center; }
+      .kds-grid { grid-template-columns: 1fr; gap: 12px; }
+    }
+
     .kds-card {
       background: var(--card);
       border: 1px solid var(--border);
