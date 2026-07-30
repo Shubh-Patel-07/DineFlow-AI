@@ -1211,25 +1211,50 @@ const itemModalEl = $('#itemModal');
 if (itemModalEl) itemModalEl.addEventListener('click', event => { if (event.target.hasAttribute('data-close-modal')) closeItemModal(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closeItemModal(); });
 
+function openWaiterModal() {
+  const modal = $('#waiterModal');
+  if (modal) modal.hidden = false;
+}
+
+function closeWaiterModal() {
+  const modal = $('#waiterModal');
+  if (modal) modal.hidden = true;
+}
+
+async function sendWaiterRequest(reason) {
+  closeWaiterModal();
+  try {
+    await request('/waiter-calls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        restaurant_id: String(restaurantId),
+        table_id: String(tableId),
+        reason: reason || 'General Assistance'
+      })
+    });
+    showToast(`🔔 Waiter notified for "${reason}"!`, false);
+  } catch (err) {
+    showToast(getText('waiterError'), true);
+  }
+}
+
 const callWaiterButton = $('#callWaiterBtn');
 if (callWaiterButton) {
-  callWaiterButton.addEventListener('click', async () => {
-    callWaiterButton.disabled = true;
-    const labelSpan = callWaiterButton.querySelector('span:last-child');
-    if (labelSpan) labelSpan.textContent = getText('calling');
-    try {
-      await request('/waiter-calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restaurant_id: String(restaurantId), table_id: String(tableId) }) });
-      showToast(getText('waiterSent'));
-    } catch (_) {
-      showToast(getText('waiterError'), true);
-    } finally {
-      callWaiterButton.disabled = false;
-      if (labelSpan) labelSpan.textContent = getText('callWaiter');
-    }
+  callWaiterButton.addEventListener('click', () => {
+    openWaiterModal();
   });
 }
 
 let tableUnpaidItems = [];
+let currentSplitPeopleCount = 2;
+
+function changeSplitPeople(delta) {
+  currentSplitPeopleCount = Math.max(2, Math.min(10, currentSplitPeopleCount + delta));
+  const el = $('#splitPeopleCount');
+  if (el) el.textContent = currentSplitPeopleCount;
+  recalculateSplit();
+}
 
 async function openSplitBillModal() {
   const setEl = (id, val) => { const el = $(id); if (el) el.textContent = val; };
