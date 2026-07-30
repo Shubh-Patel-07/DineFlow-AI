@@ -211,13 +211,39 @@
       .topbar {
         padding: 0 12px;
       }
-      .topbar-title-group { display: none; }
+      .topbar-title-group { display: flex !important; }
+      .topbar-sub { display: none !important; }
       .topbar-mobile-menu { display: flex !important; }
+      .topbar-desktop-only { display: none !important; }
+      .main { margin-left: 0 !important; width: 100% !important; }
+      .dashboard-content { padding: 14px !important; gap: 16px !important; }
+      .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
     }
     .topbar-mobile-menu { display: none; }
+
+    /* ─── FULL MULTI-DEVICE RESPONSIVE ENGINE STYLES ─── */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,23,42,0.75);
+      backdrop-filter: blur(4px);
+      z-index: 305;
+    }
+    .sidebar-backdrop.active { display: block; }
+
+    @media (max-width: 1024px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+      .charts-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    }
+
+    @media (max-width: 480px) {
+      .card-value { font-size: 26px !important; }
+    }
   </style>
 </head>
 <body>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
@@ -542,10 +568,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <script>
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
   const isMobile = window.innerWidth <= 768;
   
   if (isMobile) {
     sidebar.classList.toggle('mobile-open');
+    if (backdrop) backdrop.classList.toggle('active');
   } else {
     sidebar.classList.toggle('collapsed');
   }
