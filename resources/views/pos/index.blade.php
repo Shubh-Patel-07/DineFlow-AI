@@ -1006,6 +1006,198 @@
       .topbar-mobile-cart   { display: flex !important; }
       .topbar-mobile-menu   { display: flex !important; }
     }
+
+    /* ═════════════════════════════════════════════════════════════
+       POS MOBILE RESPONSIVE ENGINE (320px to 480px)
+       ═════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      /* Main Container & Layout */
+      body {
+        overflow-x: hidden !important;
+        width: 100vw !important;
+      }
+      .pos-wrapper {
+        flex-direction: column !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+      }
+      .pos-left {
+        width: 100% !important;
+        flex: 1 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 80px !important;
+      }
+
+      /* Search Bar Full Width */
+      .search-box, .search-wrapper, .menu-search-input {
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .search-box input {
+        font-size: 14px !important;
+        padding: 10px 14px !important;
+      }
+
+      /* Category Bar Touch Horizontal Scroll */
+      .cat-bar, .category-bar-scroll, .categories-container {
+        display: flex !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        gap: 8px !important;
+        padding: 6px 4px !important;
+        width: 100% !important;
+      }
+      .cat-bar::-webkit-scrollbar, .category-bar-scroll::-webkit-scrollbar {
+        display: none !important;
+      }
+      .cat-btn, .category-tab-btn {
+        flex-shrink: 0 !important;
+        min-height: 44px !important;
+        padding: 0 16px !important;
+        border-radius: 12px !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* Menu Grid - 2 Columns on Most Phones (360px - 480px) */
+      .menu-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        padding: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Card equal height & image scaling */
+      .item-card {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: 100% !important;
+        min-height: 200px !important;
+        border-radius: 16px !important;
+        overflow: hidden !important;
+        background: var(--card) !important;
+        border: 1px solid var(--border) !important;
+      }
+      .item-img {
+        width: 100% !important;
+        height: 105px !important;
+        min-height: 105px !important;
+        object-fit: cover !important;
+        border-radius: 14px 14px 0 0 !important;
+      }
+      .item-body {
+        padding: 8px 10px !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+      }
+      .item-name {
+        font-size: 12.5px !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        word-break: break-word !important;
+        margin-bottom: 4px !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+      }
+      .item-footer {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        margin-top: 6px !important;
+      }
+      .item-price {
+        font-size: 13px !important;
+        font-weight: 800 !important;
+      }
+
+      /* Touch-Friendly Action Buttons (>= 44px) */
+      .topbar-btn, .btn-touch-action, .item-add-btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 12px !important;
+      }
+
+      /* Mobile Slide-In Cart Drawer */
+      .pos-right {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 88vw !important;
+        max-width: 380px !important;
+        z-index: 400 !important;
+        transform: translateX(100%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: -10px 0 35px rgba(0, 0, 0, 0.6) !important;
+        background: var(--card) !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .pos-right.cart-open {
+        transform: translateX(0) !important;
+      }
+      .cart-backdrop {
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(15, 23, 42, 0.8) !important;
+        backdrop-filter: blur(4px) !important;
+        z-index: 395 !important;
+      }
+
+      /* Mobile Sticky Checkout Button */
+      .cart-footer, .cart-actions, .checkout-btn-container {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: var(--card) !important;
+        padding: 12px !important;
+        border-top: 1px solid var(--border) !important;
+        z-index: 10 !important;
+      }
+      .checkout-btn, .btn-place-order {
+        min-height: 48px !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+        border-radius: 14px !important;
+        width: 100% !important;
+      }
+
+      /* All Popups & Modals Fit Responsive Viewport */
+      .modal-dialog, .modal-content, .qr-modal-card, .payment-modal, .kot-modal {
+        max-width: 94vw !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+        border-radius: 20px !important;
+        margin: auto !important;
+        padding: 18px 14px !important;
+      }
+    }
+
+    /* 1 Column on Very Small Phones (<= 359px) */
+    @media (max-width: 359px) {
+      .menu-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .item-img {
+        height: 120px !important;
+      }
+    }
   </style>
 </head>
 <body>
