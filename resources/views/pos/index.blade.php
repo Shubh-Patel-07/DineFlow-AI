@@ -61,8 +61,17 @@
     body.light-theme .sidebar-brand {
       border-bottom-color: #E2E8F0 !important;
     }
-    body.light-theme .sidebar-brand-name {
+    body.light-theme .brand-text h2 {
       color: #0F172A !important;
+    }
+    body.light-theme .brand-text span {
+      color: #64748B !important;
+    }
+    body.light-theme .sidebar-toggle {
+      background: #F1F5F9 !important;
+    }
+    body.light-theme .sidebar-toggle i {
+      color: #475569 !important;
     }
     body.light-theme .sidebar-section-label {
       color: #94A3B8 !important;
