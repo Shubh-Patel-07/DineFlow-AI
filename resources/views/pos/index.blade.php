@@ -2045,6 +2045,31 @@
         </div>
       </div>
 
+      <!-- ⭐ Customer Loyalty Points Redemption Section -->
+      <div style="background:linear-gradient(135deg, rgba(236,72,153,0.12), rgba(168,85,247,0.12)); border:1px solid rgba(236,72,153,0.3); border-radius:16px; padding:14px; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-star" style="color:#F59E0B; font-size:16px;"></i>
+            <span style="font-size:13px; font-weight:800; color:var(--text-primary);">Loyalty Points Redemption</span>
+          </div>
+          <span style="font-size:11.5px; font-weight:700; color:#EC4899; background:rgba(236,72,153,0.15); padding:2px 8px; border-radius:8px;" id="modalLoyaltyPointsBadge">
+            Available: <span id="modalCustPointsCount">0</span> pts
+          </span>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <button onclick="redeemCustomerLoyaltyPoints(50, 50)" style="background:var(--card); border:1px solid var(--border); color:var(--text-primary); border-radius:10px; padding:8px 10px; font-size:11.5px; font-weight:700; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px; transition:all 0.2s;">
+            <span>⭐ Redeem 50 Pts</span>
+            <small style="color:#10B981; font-weight:800;">Get ₹50 Instant OFF</small>
+          </button>
+          
+          <button onclick="redeemCustomerLoyaltyPoints(100, 100)" style="background:var(--card); border:1px solid var(--border); color:var(--text-primary); border-radius:10px; padding:8px 10px; font-size:11.5px; font-weight:700; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px; transition:all 0.2s;">
+            <span>⭐ Redeem 100 Pts</span>
+            <small style="color:#10B981; font-weight:800;">Get ₹100 Instant OFF</small>
+          </button>
+        </div>
+      </div>
+
       <!-- Active Offer Indicator Banner (If Applied) -->
       <div id="activeOfferBanner" style="display:none; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:14px; padding:12px 16px; margin-bottom:18px; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -2670,6 +2695,10 @@
       if (id === 'tableModal' && typeof loadTablesData === 'function') loadTablesData();
       if (id === 'ordersModal' && typeof loadOrdersData === 'function') loadOrdersData();
       if (id === 'catPopupModal') { const btn = document.getElementById('catPopupBtn'); if (btn) btn.classList.add('open'); }
+      if (id === 'posOffersModal') {
+        const ptsEl = document.getElementById('modalCustPointsCount');
+        if (ptsEl) ptsEl.textContent = (typeof selectedCustomerData !== 'undefined' && selectedCustomerData && selectedCustomerData.points) ? selectedCustomerData.points : 0;
+      }
     }
   }
 
@@ -3119,6 +3148,23 @@
     updateTotals();
     closeModal('posOffersModal');
     showToast('Offer removed from cart.', 'info');
+  }
+
+  function redeemCustomerLoyaltyPoints(pts, discountAmt) {
+    if (typeof selectedCustomerData === 'undefined' || !selectedCustomerData || !selectedCustomerData.name) {
+      showToast('Please select a customer first to redeem Loyalty Points!', 'warning');
+      openModal('customerModal');
+      return;
+    }
+
+    const currentPts = selectedCustomerData.points || 0;
+    if (currentPts < pts) {
+      showToast(`Customer has only ${currentPts} points. Requires ${pts} points to redeem!`, 'error');
+      return;
+    }
+
+    applySmartOffer(`PTS-${pts}`, `Redeemed ${pts} Loyalty Points`, discountAmt, 0, 0);
+    showToast(`⭐ Redeemed ${pts} Loyalty Points for ₹${discountAmt} Discount!`, 'success');
   }
 
   function applyCoupon() {
