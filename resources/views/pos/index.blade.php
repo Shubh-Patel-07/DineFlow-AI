@@ -1950,27 +1950,27 @@
     <div class="modal-body">
       <input class="cust-search" id="custSearchInput" placeholder="Search by name, phone, or email…" onkeyup="filterCustomerModalList()" />
       <div class="cust-list" id="custModalList">
-        <div class="cust-row selected" onclick="selectCustomerItem(this, 'Rahul Kumar', '+91 98765 43210', 420, 'RK')">
+        <div class="cust-row selected" onclick="selectCustomerItem(this, 'Rahul Kumar', '+91 98765 43210', 420, 'RK', false, 18)">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">RK</div>
           <div class="cr-info"><h5>Rahul Kumar</h5><p>+91 98765 43210 &nbsp;·&nbsp; rahul@gmail.com</p></div>
           <span class="cr-tag loyal">Loyal</span>
         </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Priya Sharma', '+91 87654 32109', 290, 'PS')">
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Priya Sharma', '+91 87654 32109', 290, 'PS', false, 12)">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#7C3AED,#EC4899);">PS</div>
           <div class="cr-info"><h5>Priya Sharma</h5><p>+91 87654 32109 &nbsp;·&nbsp; priya@gmail.com</p></div>
           <span class="cr-tag vip">VIP</span>
         </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Anil Mehta', '+91 76543 21098', 120, 'AM')">
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Anil Mehta', '+91 76543 21098', 0, 'AM', true, 0)">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#0891B2,#06B6D4);">AM</div>
           <div class="cr-info"><h5>Anil Mehta</h5><p>+91 76543 21098 &nbsp;·&nbsp; anil@gmail.com</p></div>
           <span class="cr-tag new">New</span>
         </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Neha Gupta', '+91 96345 67890', 145, 'NG')">
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Neha Gupta', '+91 96345 67890', 145, 'NG', false, 7)">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">NG</div>
           <div class="cr-info"><h5>Neha Gupta</h5><p>+91 96345 67890 &nbsp;·&nbsp; neha@yahoo.com</p></div>
           <span class="cr-tag loyal">Loyal</span>
         </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Virendra Singh', '+91 95456 78901', 410, 'VS')">
+        <div class="cust-row" onclick="selectCustomerItem(this, 'Virendra Singh', '+91 95456 78901', 410, 'VS', false, 24)">
           <div class="cr-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">VS</div>
           <div class="cr-info"><h5>Virendra Singh</h5><p>+91 95456 78901 &nbsp;·&nbsp; vsingh@gmail.com</p></div>
           <span class="cr-tag vip">VIP Gold</span>
@@ -4502,10 +4502,10 @@
   // Customer Modal Selection & Filter Logic
   let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 420, avatar: 'RK' };
 
-  function selectCustomerItem(el, name, phone, points, avatar) {
+  function selectCustomerItem(el, name, phone, points, avatar, isNew = false, ordersCount = null) {
     document.querySelectorAll('#custModalList .cust-row').forEach(r => r.classList.remove('selected'));
     el.classList.add('selected');
-    selectedCustomerData = { name, phone, points, avatar };
+    selectedCustomerData = { name, phone, points, avatar, isNew, ordersCount };
   }
 
   function confirmCustomerSelection() {
@@ -4519,8 +4519,88 @@
       if (nameEl) nameEl.textContent = selectedCustomerData.name;
       if (subEl) subEl.innerHTML = `${selectedCustomerData.phone} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points} pts</span>`;
     }
-    showToast(`Selected Customer: ${selectedCustomerData.name}`, 'success');
+    showToast(`✅ Customer selected: ${selectedCustomerData.name}`, 'success');
     closeModal('customerModal');
+    // Auto detect new vs returning and apply offer
+    autoDetectCustomerDiscount(selectedCustomerData);
+  }
+
+  function saveNewCustomer() {
+    const nameInput = document.getElementById('newCustNameInput');
+    const phoneInput = document.getElementById('newCustPhoneInput');
+    const emailInput = document.getElementById('newCustEmailInput');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    if (!name || !phone) {
+      showToast('Name and Mobile Number are required!', 'error');
+      return;
+    }
+    const avatar = name.charAt(0).toUpperCase();
+    selectedCustomerData = { name, phone, email: emailInput ? emailInput.value.trim() : '', points: 0, avatar, isNew: true, ordersCount: 0 };
+    const strip = document.querySelector('.customer-strip');
+    if (strip) {
+      const avatarEl = strip.querySelector('.cust-avatar');
+      const nameEl = strip.querySelector('.cust-info h5');
+      const subEl = strip.querySelector('.cust-info p');
+      if (avatarEl) avatarEl.textContent = avatar;
+      if (nameEl) nameEl.textContent = name;
+      if (subEl) subEl.innerHTML = `${phone} &nbsp;·&nbsp; <span style="color:#6366F1;">🆕 New Customer</span>`;
+    }
+    if (nameInput) nameInput.value = '';
+    if (phoneInput) phoneInput.value = '';
+    if (emailInput) emailInput.value = '';
+    closeModal('newCustomerModal');
+    closeModal('customerModal');
+    showToast(`🎉 New customer ${name} added!`, 'success');
+    autoDetectCustomerDiscount(selectedCustomerData);
+  }
+
+  function autoDetectCustomerDiscount(customer) {
+    if (!customer) return;
+    const isNew = customer.isNew === true || customer.ordersCount === 0;
+    const pts = customer.points || 0;
+    const cartItems = MENU.filter(i => i.qty > 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+    if (isNew) {
+      // New Customer → Auto apply 15% Welcome Discount
+      setTimeout(() => {
+        applySmartOffer('WELCOME15', '15% Welcome Discount (First-Time Customer)', 0, 15, 0);
+        showToast(`🎉 Welcome ${customer.name}! 15% First-Order Discount automatically applied!`, 'success');
+        addPosNotification({
+          id: `welcome-${Date.now()}`,
+          title: `🆕 New Customer: ${customer.name}`,
+          message: 'First-time visitor! 15% Welcome Discount auto-applied to cart.',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          type: 'info',
+          icon: 'fa-solid fa-user-plus'
+        });
+      }, 500);
+      return;
+    }
+
+    // Returning Customer → Suggest loyalty points or min-order deals
+    if (pts >= 100) {
+      setTimeout(() => {
+        showToast(`⭐ ${customer.name} has ${pts} loyalty points! Open Offers to redeem them.`, 'info');
+        addPosNotification({
+          id: `loyalty-${customer.phone}-${Date.now()}`,
+          title: `⭐ Loyalty Points Available: ${pts} pts`,
+          message: `${customer.name} can redeem ${pts} points for up to ₹${Math.floor(pts/50)*50} OFF.`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          type: 'warning',
+          icon: 'fa-solid fa-star'
+        });
+      }, 500);
+    } else if (subtotal >= 500) {
+      setTimeout(() => {
+        showToast(`🎁 ${customer.name} qualifies for Spend & Save! Open Offers section.`, 'info');
+      }, 500);
+    } else {
+      setTimeout(() => {
+        showToast(`👋 Welcome back, ${customer.name}! (${pts} loyalty pts)`, 'success');
+      }, 300);
+    }
   }
 
   function filterCustomerModalList() {
