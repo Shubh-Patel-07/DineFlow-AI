@@ -561,10 +561,10 @@
     }
 
     .item-img {
-      height: 96px;
+      height: 84px;
       background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, rgba(15, 23, 42, 0.95) 100%);
       display: flex; align-items: center; justify-content: center;
-      font-size: 38px; position: relative; overflow: hidden;
+      font-size: 34px; position: relative; overflow: hidden;
       transition: transform 0.3s ease;
       flex-shrink: 0;
     }
@@ -573,8 +573,8 @@
     }
 
     .item-badge {
-      position: absolute; top: 8px; right: 8px;
-      font-size: 9px; font-weight: 800; padding: 3px 8px;
+      position: absolute; top: 6px; right: 6px;
+      font-size: 8.5px; font-weight: 800; padding: 2px 7px;
       border-radius: 20px; letter-spacing: .5px;
       text-transform: uppercase;
       backdrop-filter: blur(8px);
@@ -584,32 +584,32 @@
     .item-badge.new   { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.45); box-shadow: 0 0 12px rgba(245, 158, 11, 0.25); }
     .item-badge.best  { background: rgba(99, 102, 241, 0.2); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.45); box-shadow: 0 0 12px rgba(99, 102, 241, 0.25); }
 
-    .item-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
+    .item-body { padding: 10px 12px 14px; display: flex; flex-direction: column; flex: 1; }
     .item-name {
-      font-size: 13px; font-weight: 700; color: #F8FAFC; line-height: 1.3; margin-bottom: 6px;
+      font-size: 12.5px; font-weight: 700; color: #F8FAFC; line-height: 1.3; margin-bottom: 6px;
       word-break: break-word; overflow-wrap: break-word;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
       overflow: hidden; height: 2.6em;
     }
     .item-footer {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: auto; padding-top: 2px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: auto; padding-top: 4px; padding-bottom: 2px;
     }
-    .item-price { font-size: 14px; font-weight: 800; color: #818CF8; white-space: nowrap; }
-    .item-price small { font-size: 9.5px; font-weight: 500; color: var(--text-muted); }
+    .item-price { font-size: 13.5px; font-weight: 800; color: #818CF8; white-space: nowrap; }
+    .item-price small { font-size: 9px; font-weight: 500; color: var(--text-muted); }
     .item-footer-actions { display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; }
     .item-add-btn {
-      width: 30px; height: 30px; border-radius: 9px; border: none;
-      background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; font-size: 16px; font-weight: 700;
+      width: 28px; height: 28px; border-radius: 8px; border: none;
+      background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; font-size: 15px; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.35);
     }
-    .item-add-btn:hover { background: linear-gradient(135deg, #4F46E5, #4338CA); transform: scale(1.12); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5); }
+    .item-add-btn:hover { background: linear-gradient(135deg, #4F46E5, #4338CA); transform: scale(1.1); box-shadow: 0 5px 14px rgba(99, 102, 241, 0.45); }
     .item-in-cart-badge {
-      width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
-      background: linear-gradient(135deg, #10B981, #059669); color: #fff; font-size: 12px; font-weight: 800;
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg, #10B981, #059669); color: #fff; font-size: 11.5px; font-weight: 800;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
     }
 
     /* ─── RIGHT PANEL (CART) ──────────────────── */
