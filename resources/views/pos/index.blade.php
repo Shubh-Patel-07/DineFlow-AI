@@ -179,10 +179,116 @@
       border-top-color: #E2E8F0 !important;
     }
     body.light-theme .modal-dialog,
-    body.light-theme .modal-content {
+    body.light-theme .modal-content,
+    body.light-theme .modal,
+    body.light-theme .modal-overlay .modal {
       background: #FFFFFF !important;
       color: #0F172A !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05) !important;
+    }
+    body.light-theme .modal-header {
+      background: #FFFFFF !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    body.light-theme .modal-title {
+      color: #0F172A !important;
+    }
+    body.light-theme .modal-body {
+      background: #FFFFFF !important;
+      color: #0F172A !important;
+    }
+    body.light-theme .modal-footer {
+      background: #F8FAFC !important;
+      border-top-color: #E2E8F0 !important;
+    }
+    body.light-theme .modal-close {
+      background: #F1F5F9 !important;
+      color: #475569 !important;
       border-color: #CBD5E1 !important;
+    }
+    body.light-theme .modal-close:hover {
+      background: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+
+    /* Customer Modal & Search Inputs Light Mode */
+    body.light-theme .cust-search,
+    body.light-theme input[type="text"],
+    body.light-theme input[type="search"],
+    body.light-theme input[type="number"],
+    body.light-theme input[type="email"],
+    body.light-theme input[type="password"],
+    body.light-theme input[type="tel"],
+    body.light-theme textarea,
+    body.light-theme select,
+    body.light-theme .form-control {
+      background: #F1F5F9 !important;
+      color: #0F172A !important;
+      border-color: #CBD5E1 !important;
+    }
+    body.light-theme .cust-search::placeholder,
+    body.light-theme input::placeholder,
+    body.light-theme textarea::placeholder {
+      color: #94A3B8 !important;
+    }
+    body.light-theme .cust-row {
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
+    body.light-theme .cust-row:hover {
+      background: #EEF2FF !important;
+      border-color: #C7D2FE !important;
+    }
+    body.light-theme .cust-row.selected {
+      background: #E0E7FF !important;
+      border-color: #818CF8 !important;
+    }
+    body.light-theme .cr-info h5 {
+      color: #0F172A !important;
+    }
+    body.light-theme .cr-info p {
+      color: #64748B !important;
+    }
+
+    /* Form Labels, Buttons & Table Picker Cards Light Mode */
+    body.light-theme label,
+    body.light-theme .form-label {
+      color: #334155 !important;
+    }
+    body.light-theme .btn-outline {
+      background: #FFFFFF !important;
+      color: #475569 !important;
+      border-color: #CBD5E1 !important;
+    }
+    body.light-theme .btn-outline:hover {
+      background: #F1F5F9 !important;
+      color: #0F172A !important;
+    }
+    body.light-theme .tbl-card,
+    body.light-theme .t-card {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+    body.light-theme .tbl-no {
+      color: #0F172A !important;
+    }
+    body.light-theme .tbl-seats {
+      color: #64748B !important;
+    }
+    body.light-theme table,
+    body.light-theme th,
+    body.light-theme td {
+      color: #0F172A !important;
+      border-color: #E2E8F0 !important;
+    }
+    body.light-theme th {
+      background: #F1F5F9 !important;
+      color: #475569 !important;
+    }
+    body.light-theme tr:hover {
+      background: #F8FAFC !important;
     }
 
     .tag-chip-btn {
@@ -1826,9 +1932,9 @@
 
 <!-- Register New Customer Modal -->
 <div class="modal-overlay" id="newCustomerModal">
-  <div class="modal" style="width:440px; max-width:94%; background:rgba(30,41,59,0.95); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); border-radius:20px; overflow:hidden;">
-    <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.06); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
-      <div class="modal-title" style="color:#A5B4FC; font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px;">
+  <div class="modal" style="width:440px; max-width:94%; border-radius:20px; overflow:hidden;">
+    <div class="modal-header" style="padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-user-plus" style="color:#6366F1;"></i>
         <span>Register New Customer</span>
       </div>
@@ -1837,12 +1943,12 @@
     <div class="modal-body" style="padding:20px;">
       <div style="display:flex; flex-direction:column; gap:14px;">
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Full Name *</label>
-          <input type="text" id="newCustNameInput" placeholder="e.g. Ramesh Bhai" style="width:100%; height:40px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 12px; font-size:13px;" required />
+          <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px;">Full Name *</label>
+          <input type="text" id="newCustNameInput" placeholder="e.g. Ramesh Bhai" style="width:100%; height:40px; border-radius:10px; padding:0 12px; font-size:13px;" required />
         </div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Mobile / WhatsApp Number *</label>
-          <input type="tel" id="newCustPhoneInput" placeholder="e.g. 9898012345" style="width:100%; height:40px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 12px; font-size:13px;" required />
+          <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px;">Mobile / WhatsApp Number *</label>
+          <input type="tel" id="newCustPhoneInput" placeholder="e.g. 9898012345" style="width:100%; height:40px; border-radius:10px; padding:0 12px; font-size:13px;" required />
         </div>
         <div>
           <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Email Address (Optional)</label>
