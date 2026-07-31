@@ -4113,9 +4113,8 @@
     showToast(`✅ Applied "${modName}" to ${lastItem.name}!`, 'success');
   }
 
-  // Poll for waiter calls every 45 seconds to save server threads and eliminate system lag
-  setInterval(checkWaiterCalls, 45000);
-  // Initial check on load
+  // Poll for waiter calls and live notifications every 3 seconds for 100% instant real-time updates!
+  setInterval(checkWaiterCalls, 3000);
   checkWaiterCalls();
   loadTablesData(); // Populate allTablesData array immediately on page load!
 
@@ -4341,8 +4340,45 @@
     showToast('✅ All notifications marked as read!', 'success');
   }
 
+  let knownOrdersSet = new Set();
+  let isFirstNotificationSync = true;
+
+  async function syncRealTimeLiveAlerts() {
+    try {
+      const oRes = await fetch('/api/orders/restaurant/1');
+      const oData = await oRes.json();
+      if (oData.success && Array.isArray(oData.data)) {
+        oData.data.slice(0, 12).forEach(order => {
+          if (!knownOrdersSet.has(order.id)) {
+            knownOrdersSet.add(order.id);
+
+            if (!isFirstNotificationSync) {
+              if (typeof showToast === 'function') {
+                showToast(`🛍️ New Order #${order.id} Placed!`, 'info');
+              }
+            }
+
+            addPosNotification({
+              id: `order-alert-${order.id}`,
+              title: `🛍️ New Order #${order.id}`,
+              message: `Table #${order.table_id || 'Takeaway'} • Total: ₹${order.total_amount || 0}`,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              type: order.payment_status === 'paid' ? 'success' : 'warning',
+              icon: 'fa-solid fa-receipt'
+            });
+          }
+        });
+      }
+      isFirstNotificationSync = false;
+    } catch (err) {
+      console.log('Error syncing live order alerts:', err);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     renderPosNotifications();
+    syncRealTimeLiveAlerts();
+    setInterval(syncRealTimeLiveAlerts, 3000);
   });
 </script>
 </body>
