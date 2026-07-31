@@ -994,20 +994,45 @@
 
     .cat-popup-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
     }
     .cat-popup-item {
-      padding: 10px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-      text-align: center; cursor: pointer; transition: all .15s;
+      display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+      border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer; transition: all 0.2s;
     }
-    .cat-popup-item:hover { border-color: var(--primary); background: var(--primary-light); }
-    .cat-popup-item.active { border-color: var(--primary); background: var(--primary); }
-    .cat-popup-item .cpi-emoji { font-size: 22px; display: block; margin-bottom: 4px; }
-    .cat-popup-item .cpi-name  { font-size: 11px; font-weight: 600; color: var(--text-secondary); display: block; }
-    .cat-popup-item.active .cpi-name { color: #fff; }
-    .cat-popup-item .cpi-count { font-size: 10px; color: var(--text-muted); margin-top: 2px; display: block; }
-    .cat-popup-item.active .cpi-count { color: rgba(255,255,255,.7); }
+    .cat-popup-item:hover {
+      border-color: var(--primary); background: var(--primary-light);
+    }
+    .cat-popup-item.active {
+      background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.4);
+    }
+    .cpi-name {
+      font-size: 13.5px; font-weight: 700; color: var(--text-primary);
+    }
+    .cpi-count {
+      font-size: 11px; color: var(--text-muted); margin-top: 2px;
+    }
+
+    body.light-theme .cat-popup-item {
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
+    body.light-theme .cat-popup-item:hover {
+      background: #EEF2FF !important;
+      border-color: #C7D2FE !important;
+    }
+    body.light-theme .cat-popup-item.active {
+      background: #E0E7FF !important;
+      border-color: #818CF8 !important;
+    }
+    body.light-theme .cpi-name {
+      color: #0F172A !important;
+    }
+    body.light-theme .cpi-count {
+      color: #64748B !important;
+    }
 
     /* ─── RESPONSIVE ─────────────────────────── */
     @media (max-width: 1100px) {
@@ -3031,13 +3056,13 @@
     if (!grid) return;
 
     grid.innerHTML = categories.map(c => `
-      <div class="cat-popup-item ${currentCat === c.key ? 'active' : ''}" onclick="selectCat('${c.key}','${c.label}')" style="display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; background:${currentCat === c.key ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${currentCat === c.key ? 'rgba(99,102,241,0.4)' : 'rgba(255,255,255,0.06)'}; cursor:pointer; transition:all 0.2s;">
+      <div class="cat-popup-item ${currentCat === c.key ? 'active' : ''}" onclick="selectCat('${c.key}','${c.label}')">
         <span class="cpi-emoji" style="font-size:22px;">${c.emoji}</span>
         <div style="flex:1;">
-          <div class="cpi-name" style="font-size:13.5px; font-weight:700; color:#F8FAFC;">${c.label}</div>
-          <div class="cpi-count" style="font-size:11px; color:#94A3B8;">${c.count} items</div>
+          <div class="cpi-name">${c.label}</div>
+          <div class="cpi-count">${c.count} items</div>
         </div>
-        ${currentCat === c.key ? '<i class="fa-solid fa-check-circle" style="color:var(--primary); font-size:16px;"></i>' : ''}
+        ${currentCat === c.key ? '<i class="fa-solid fa-circle-check" style="color:var(--primary); font-size:16px;"></i>' : ''}
       </div>
     `).join('');
   }
