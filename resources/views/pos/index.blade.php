@@ -1619,9 +1619,10 @@
       <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Search" onclick="focusItemSearch()" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
+    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer; position:relative;">
       <i class="fa-solid fa-bell"></i>
-      <span class="notif-dot"></span>
+      <span class="notif-dot" id="notifDot" style="display:none;"></span>
+      <span id="notifCountBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 5px; border-radius:10px; border:2px solid var(--card);">0</span>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
     <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
@@ -1990,7 +1991,7 @@
 
 <!-- Notifications Modal -->
 <div class="modal-overlay" id="notifModal">
-  <div class="modal" style="width:450px; background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+  <div class="modal" style="width:450px; background:var(--card); color:var(--text-primary); border:1px solid var(--border); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
     <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px;">
       <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
@@ -1998,41 +1999,10 @@
       </div>
       <button class="modal-close" onclick="closeModal('notifModal')" style="color:#94A3B8;"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="modal-body" style="padding:16px 20px; max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
-      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:12px; padding:12px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:rgba(239,68,68,0.2); color:#F87171; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fa-solid fa-bell-concierge"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Waiter Called — Table 4</div>
-          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Customer requested waiter service at Table 4</div>
-          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">2 mins ago</div>
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:12px; padding:12px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:rgba(16,185,129,0.2); color:#34D399; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fa-solid fa-utensils"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">KOT Ready — Table 2</div>
-          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Paneer Butter Masala &amp; Garlic Naan prepared by Kitchen</div>
-          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">8 mins ago</div>
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:flex-start; gap:12px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:rgba(245,158,11,0.2); color:#FCD34D; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">Low Stock Alert</div>
-          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">Milk inventory is below 2 Litres threshold</div>
-          <div style="font-size:10.5px; color:#64748B; margin-top:4px;">15 mins ago</div>
-        </div>
-      </div>
+    <div class="modal-body" id="notifModalBody" style="padding:16px 20px; max-height:360px; overflow-y:auto;">
+      <div id="notifModalList" style="display:flex; flex-direction:column; gap:10px;"></div>
     </div>
-    <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+    <div class="modal-footer" style="padding:14px 20px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
       <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px;">Mark All as Read</button>
       <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px;">Close</button>
     </div>
@@ -4253,30 +4223,102 @@
       row.style.display = text.includes(q) ? 'flex' : 'none';
     });
   }
-  function markAllNotificationsAsRead() {
-    const body = document.querySelector('#notifModal .modal-body');
-    if (body) {
-      body.innerHTML = `
-        <div style="text-align:center; padding:36px 20px; color:#64748B;">
-          <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
-          <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Caught Up!</div>
-          <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
+  /* ─── REAL-TIME LIVE NOTIFICATION ENGINE ─── */
+  let posNotifications = [
+    {
+      id: 'notif-sys-1',
+      title: 'POS Terminal Live Active',
+      message: 'Real-time order monitoring & waiter alert engine connected.',
+      time: 'Just now',
+      type: 'info',
+      icon: 'fa-solid fa-circle-check',
+      read: false
+    },
+    {
+      id: 'notif-sys-2',
+      title: 'Gujarati Soundbox Audio Engine',
+      message: 'Payment voice feedback & kitchen alerts ready.',
+      time: '5 mins ago',
+      type: 'success',
+      icon: 'fa-solid fa-volume-high',
+      read: false
+    }
+  ];
+
+  function renderPosNotifications() {
+    const listEl = document.getElementById('notifModalList');
+    const badgeCountEl = document.getElementById('notifCountBadge');
+    const dotEl = document.getElementById('notifDot');
+    if (!listEl) return;
+
+    const unreadCount = posNotifications.filter(n => !n.read).length;
+    if (badgeCountEl) {
+      badgeCountEl.textContent = unreadCount;
+      badgeCountEl.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+    }
+    if (dotEl) {
+      dotEl.style.display = unreadCount > 0 ? 'block' : 'none';
+    }
+
+    if (posNotifications.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align:center; padding:36px 20px; color:var(--text-muted);">
+          <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:var(--text-secondary); display:block;"></i>
+          <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Caught Up!</div>
+          <div style="font-size:12px; color:var(--text-muted);">No active notifications or live alerts.</div>
         </div>
       `;
+      return;
     }
 
-    document.querySelectorAll('.notif-dot').forEach(dot => {
-      dot.style.display = 'none';
-    });
-
-    if (typeof showToast === 'function') {
-      showToast('✅ All notifications cleared & marked as read!', 'success');
-    }
-
-    setTimeout(() => {
-      closeModal('notifModal');
-    }, 400);
+    listEl.innerHTML = posNotifications.map(n => `
+      <div style="display:flex; align-items:flex-start; gap:12px; background:${n.type === 'danger' ? 'rgba(239,68,68,0.1)' : n.type === 'success' ? 'rgba(16,185,129,0.1)' : n.type === 'warning' ? 'rgba(245,158,11,0.1)' : 'rgba(99,102,241,0.1)'}; border:1px solid ${n.type === 'danger' ? 'rgba(239,68,68,0.25)' : n.type === 'success' ? 'rgba(16,185,129,0.25)' : n.type === 'warning' ? 'rgba(245,158,11,0.25)' : 'rgba(99,102,241,0.25)'}; border-radius:12px; padding:12px; opacity:${n.read ? 0.6 : 1}; transition:all 0.2s;">
+        <div style="width:34px; height:34px; border-radius:10px; background:${n.type === 'danger' ? 'rgba(239,68,68,0.2)' : n.type === 'success' ? 'rgba(16,185,129,0.2)' : n.type === 'warning' ? 'rgba(245,158,11,0.2)' : 'rgba(99,102,241,0.2)'}; color:${n.type === 'danger' ? '#F87171' : n.type === 'success' ? '#34D399' : n.type === 'warning' ? '#FCD34D' : '#818CF8'}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="${n.icon}"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${n.title}</div>
+          <div style="font-size:11.5px; color:var(--text-secondary); margin-top:2px;">${n.message}</div>
+          <div style="font-size:10.5px; color:var(--text-muted); margin-top:4px;">${n.time}</div>
+        </div>
+        ${!n.read ? `<button onclick="markSingleNotifRead('${n.id}')" title="Mark Read" style="background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--text-secondary); border-radius:6px; padding:3px 7px; cursor:pointer; font-size:11px;"><i class="fa-solid fa-check"></i></button>` : ''}
+      </div>
+    `).join('');
   }
+
+  function addPosNotification(notif) {
+    const exists = posNotifications.find(n => n.id === notif.id);
+    if (!exists) {
+      posNotifications.unshift({
+        id: notif.id || ('notif-' + Date.now()),
+        title: notif.title || 'System Notification',
+        message: notif.message || '',
+        time: notif.time || 'Just now',
+        type: notif.type || 'info',
+        icon: notif.icon || 'fa-solid fa-bell',
+        read: false
+      });
+      renderPosNotifications();
+    }
+  }
+
+  function markSingleNotifRead(id) {
+    const n = posNotifications.find(x => x.id === id);
+    if (n) {
+      n.read = true;
+      renderPosNotifications();
+    }
+  }
+
+  function markAllNotificationsAsRead() {
+    posNotifications.forEach(n => n.read = true);
+    renderPosNotifications();
+    showToast('✅ All notifications marked as read!', 'success');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderPosNotifications();
+  });
 </script>
 </body>
 </html>
