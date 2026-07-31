@@ -546,6 +546,8 @@
       overflow: hidden;
       box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
     .item-card:hover {
       border-color: rgba(99, 102, 241, 0.7);
@@ -564,6 +566,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 38px; position: relative; overflow: hidden;
       transition: transform 0.3s ease;
+      flex-shrink: 0;
     }
     .item-card:hover .item-img {
       transform: scale(1.1);
@@ -581,15 +584,15 @@
     .item-badge.new   { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.45); box-shadow: 0 0 12px rgba(245, 158, 11, 0.25); }
     .item-badge.best  { background: rgba(99, 102, 241, 0.2); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.45); box-shadow: 0 0 12px rgba(99, 102, 241, 0.25); }
 
-    .item-body { padding: 10px 11px; }
+    .item-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
     .item-name {
-      font-size: 13px; font-weight: 700; color: #F8FAFC; line-height: 1.3; margin-bottom: 8px;
+      font-size: 13px; font-weight: 700; color: #F8FAFC; line-height: 1.3; margin-bottom: 6px;
       word-break: break-word; overflow-wrap: break-word;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
       overflow: hidden; height: 2.6em;
     }
     .item-footer {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: auto; padding-top: 2px;
     }
     .item-price { font-size: 14px; font-weight: 800; color: #818CF8; white-space: nowrap; }
     .item-price small { font-size: 9.5px; font-weight: 500; color: var(--text-muted); }
