@@ -4506,17 +4506,16 @@
   }
 
   function markSingleNotifRead(id) {
-    const n = posNotifications.find(x => x.id === id);
-    if (n) {
-      n.read = true;
-      renderPosNotifications();
-    }
+    posNotifications = posNotifications.filter(x => x.id !== id);
+    renderPosNotifications();
   }
 
   function markAllNotificationsAsRead() {
-    posNotifications.forEach(n => n.read = true);
+    posNotifications = [];
     renderPosNotifications();
-    showToast('✅ All notifications marked as read!', 'success');
+    if (typeof showToast === 'function') {
+      showToast('✅ All notifications cleared & marked as read!', 'success');
+    }
   }
 
   let knownOrdersSet = new Set();
