@@ -134,6 +134,21 @@
       border-color: #E2E8F0 !important;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
     }
+    body.light-theme .item-name {
+      color: #0F172A !important;
+    }
+    body.light-theme .item-price {
+      color: #4338CA !important;
+    }
+    body.light-theme .item-price small {
+      color: #64748B !important;
+    }
+    body.light-theme .topbar-title {
+      color: #0F172A !important;
+    }
+    body.light-theme .topbar-sub {
+      color: #64748B !important;
+    }
     body.light-theme .pos-right {
       background: #FFFFFF !important;
       border-left-color: #E2E8F0 !important;
@@ -278,8 +293,8 @@
 
     .topbar {
       background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px;
-      flex-shrink: 0; box-shadow: var(--shadow-sm);
+      padding: 0 18px; height: 64px; min-height: 64px; display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0; box-shadow: var(--shadow-sm); overflow: visible !important;
     }
     .topbar-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
     .topbar-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
@@ -1470,18 +1485,18 @@
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
     <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
-    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
-      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ substr(auth()->user()->name, 0, 1) }}</div>
-      <div style="display:flex;flex-direction:column;">
-        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ auth()->user()->name }}</span>
-        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ auth()->user()->role ?? 'staff' }}</span>
+    <div class="topbar-desktop-only" style="display:flex; align-items:center; gap:8px; background:var(--primary-light); border:1px solid rgba(99,102,241,0.25); padding:4px 10px 4px 6px; border-radius:30px; margin-left:4px;">
+      <div class="user-avatar" style="width:30px; height:30px; font-size:12px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0; box-shadow:0 2px 6px rgba(99,102,241,0.3);">{{ substr(auth()->user()->name, 0, 1) }}</div>
+      <div style="display:flex; flex-direction:column; line-height:1.2; white-space:nowrap;">
+        <span style="font-size:12px; font-weight:700; color:var(--text-primary);">{{ auth()->user()->name }}</span>
+        <span style="font-size:9.5px; font-weight:600; color:var(--text-muted); text-transform:capitalize;">{{ auth()->user()->role ?? 'staff' }}</span>
       </div>
       <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
         @csrf
         <button type="submit" title="Logout"
           style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
-                 width:30px; height:30px; border-radius:8px; cursor:pointer;
-                 display:flex; align-items:center; justify-content:center; font-size:13px;"
+                 width:26px; height:26px; border-radius:50%; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:11px; transition:all 0.18s;"
           onmouseover="this.style.background='rgba(239,68,68,0.35)'"
           onmouseout="this.style.background='rgba(239,68,68,0.15)'">
           <i class="fa-solid fa-right-from-bracket"></i>
