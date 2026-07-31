@@ -39,6 +39,71 @@
       --radius-lg:      20px;
     }
 
+    /* ─── LIGHT THEME ENGINE OVERRIDES ─── */
+    body.light-theme {
+      --sidebar-bg:     #1E293B;
+      --sidebar-hover:  #334155;
+      --bg:             #F8FAFC;
+      --card:           #FFFFFF;
+      --border:         #CBD5E1;
+      --text-primary:   #0F172A;
+      --text-secondary: #475569;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.08);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.1);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.12);
+    }
+    body.light-theme .topbar {
+      background: #FFFFFF !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    body.light-theme .search-box input {
+      background: #F1F5F9 !important;
+      color: #0F172A !important;
+      border-color: #CBD5E1 !important;
+    }
+    body.light-theme .cat-btn {
+      background: #FFFFFF !important;
+      color: #475569 !important;
+      border-color: #E2E8F0 !important;
+    }
+    body.light-theme .cat-btn.active {
+      background: var(--primary) !important;
+      color: #FFFFFF !important;
+    }
+    body.light-theme .item-card {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    }
+    body.light-theme .cart-item {
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
+    body.light-theme .modal-dialog,
+    body.light-theme .modal-content {
+      background: #FFFFFF !important;
+      color: #0F172A !important;
+      border-color: #CBD5E1 !important;
+    }
+
+    .tag-chip-btn {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-light);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .tag-chip-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
@@ -1308,6 +1373,12 @@
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
+    <!-- Light/Dark Mode Theme Switcher -->
+    <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="togglePosTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 6px; cursor:pointer;">
+      <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+      <span id="posThemeText" style="font-size:11px; font-weight:700;">Light Mode ☀️</span>
+    </div>
+
     <!-- Gujarati Soundbox Voice Mute Toggle -->
     <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Gujarati Soundbox Toggle" onclick="togglePosVoiceMute()" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px;">
       <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
@@ -2185,6 +2256,40 @@
   </div>
 </div>
 
+<!-- Item Preference & Cooking Note Customizer Modal -->
+<div id="posItemNoteModal" class="modal-backdrop" style="display:none; align-items:center; justify-content:center; z-index:999999; backdrop-filter:blur(6px);">
+  <div class="modal-dialog" style="background:var(--card); color:var(--text-primary); width:420px; max-width:92vw; border-radius:20px; border:1px solid var(--border); padding:22px; box-shadow:var(--shadow-lg);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+      <div>
+        <h3 id="noteModalItemName" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; color:var(--text-primary);">Customize Item</h3>
+        <p style="font-size:11.5px; color:var(--text-secondary); margin-top:2px;">Select cooking preference tags or add specific instructions</p>
+      </div>
+      <button onclick="closeModal('posItemNoteModal')" style="background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; padding:0 4px;">&times;</button>
+    </div>
+    <input type="hidden" id="noteModalItemId" value="">
+    
+    <!-- Quick Preference Tag Chips -->
+    <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:8px;">Quick Cooking Preference Tags:</label>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+      <button type="button" class="tag-chip-btn" onclick="addNoteTag('🌶️ Extra Spicy')">🌶️ Extra Spicy</button>
+      <button type="button" class="tag-chip-btn" onclick="addNoteTag('🧅 No Onion/Garlic')">🧅 No Onion/Garlic</button>
+      <button type="button" class="tag-chip-btn" onclick="addNoteTag('🧀 Extra Cheese')">🧀 Extra Cheese</button>
+      <button type="button" class="tag-chip-btn" onclick="addNoteTag('🌾 Less Oil / Jain')">🌾 Less Oil / Jain</button>
+      <button type="button" class="tag-chip-btn" onclick="addNoteTag('🧊 Extra Ice')">🧊 Extra Ice</button>
+      <button type="button" class="tag-chip-btn" onclick="addNoteTag('📦 Pack Separately')">📦 Pack Separately</button>
+    </div>
+
+    <!-- Custom Note Input Textarea -->
+    <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Custom Instructions / Specific Note:</label>
+    <textarea id="noteModalInput" rows="3" placeholder="e.g. Make it extra spicy, sauce on the side..." style="width:100%; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:10px; font-size:13px; font-family:inherit; outline:none; resize:none; margin-bottom:18px;"></textarea>
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="clearItemNote()" style="flex:1; height:42px; border-radius:12px; border:1px solid var(--border); background:none; color:var(--text-secondary); font-weight:700; cursor:pointer; font-size:12.5px;">Clear Note</button>
+      <button onclick="saveItemNote()" style="flex:2; height:42px; border-radius:12px; border:none; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); font-size:13px;">Save Preference</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -2530,6 +2635,7 @@
   }
 
   /* ─── RENDER CART ────────────────────────── */
+  /* ─── RENDER CART WITH ITEM COOKING PREFERENCES ─── */
   function renderCart() {
     const cartItems = MENU.filter(i => i.qty > 0);
     const el = document.getElementById('cartItems');
@@ -2541,6 +2647,11 @@
             <div class="ci-main">
               <div class="ci-name">${item.name}</div>
               <div class="ci-variant">Regular</div>
+              ${item.cookingNote ? `
+                <div style="font-size: 11px; font-weight:700; color: #F59E0B; background: rgba(245,158,11,0.12); padding: 3px 8px; border-radius: 6px; margin-top: 5px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(245,158,11,0.3);">
+                  <i class="fa-solid fa-pen-nib"></i> ${item.cookingNote}
+                </div>
+              ` : ''}
             </div>
             <div class="ci-price">₹ ${item.price * item.qty}</div>
           </div>
@@ -2550,7 +2661,10 @@
               <div class="ci-qty">${item.qty}</div>
               <div class="ci-btn" onclick="updateQty('${item.id}',1)">+</div>
             </div>
-            <button class="ci-del" onclick="removeItem('${item.id}')"><i class="fa-solid fa-trash-can"></i></button>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button class="ci-note-btn" onclick="openItemCustomizerModal('${item.id}')" title="Custom Cooking Preference" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; border-radius:8px; padding:4px 8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;"><i class="fa-solid fa-pen-to-square"></i> Preference</button>
+              <button class="ci-del" onclick="removeItem('${item.id}')"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
           </div>
         </div>
       </div>
@@ -2558,6 +2672,67 @@
 
     updateTotals();
   }
+
+  /* ─── POS LIGHT/DARK THEME SWITCHER ─── */
+  function initPosTheme() {
+    const savedTheme = localStorage.getItem('posTheme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+      updateThemeBtnUI(true);
+    } else {
+      document.body.classList.remove('light-theme');
+      updateThemeBtnUI(false);
+    }
+  }
+  function togglePosTheme() {
+    const isLight = document.body.classList.toggle('light-theme');
+    localStorage.setItem('posTheme', isLight ? 'light' : 'dark');
+    updateThemeBtnUI(isLight);
+    showToast(isLight ? 'Switched to Light Mode ☀️' : 'Switched to Dark Mode 🌙', 'info');
+  }
+  function updateThemeBtnUI(isLight) {
+    const icon = document.getElementById('posThemeIcon');
+    const text = document.getElementById('posThemeText');
+    if (icon && text) {
+      icon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      text.textContent = isLight ? 'Dark Mode 🌙' : 'Light Mode ☀️';
+    }
+  }
+
+  /* ─── ITEM PREFERENCE & COOKING NOTE FUNCTIONS ─── */
+  function openItemCustomizerModal(id) {
+    const item = MENU.find(i => String(i.id) === String(id));
+    if (!item) return;
+    document.getElementById('noteModalItemId').value = item.id;
+    document.getElementById('noteModalItemName').textContent = 'Customize: ' + item.name;
+    document.getElementById('noteModalInput').value = item.cookingNote || '';
+    openModal('posItemNoteModal');
+  }
+  function addNoteTag(tag) {
+    const input = document.getElementById('noteModalInput');
+    if (!input.value.includes(tag)) {
+      input.value = input.value ? (input.value + ', ' + tag) : tag;
+    }
+  }
+  function clearItemNote() {
+    document.getElementById('noteModalInput').value = '';
+    saveItemNote();
+  }
+  function saveItemNote() {
+    const id = document.getElementById('noteModalItemId').value;
+    const note = document.getElementById('noteModalInput').value.trim();
+    const item = MENU.find(i => String(i.id) === String(id));
+    if (item) {
+      item.cookingNote = note;
+      renderCart();
+      closeModal('posItemNoteModal');
+      showToast('Preference saved for ' + item.name, 'success');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initPosTheme();
+  });
 
   function updateTotals() {
     const cartItems = MENU.filter(i => i.qty > 0);
