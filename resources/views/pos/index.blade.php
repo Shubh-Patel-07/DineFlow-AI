@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1830,11 +1830,13 @@
       </div>
 
       <!-- Coupon & Smart Offers Button -->
-      <div class="coupon-row" style="display:flex; gap:6px;">
-        <input class="coupon-input" placeholder="Have a coupon code?" id="couponInput" style="flex:1;" />
-        <button class="coupon-btn" onclick="applyCoupon()" style="flex:none;"><i class="fa-solid fa-check"></i> Apply</button>
-        <button type="button" onclick="openModal('posOffersModal')" title="View Smart Offers & Discounts" style="background:linear-gradient(135deg,#F59E0B,#D97706); border:none; color:#fff; border-radius:10px; padding:0 12px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; box-shadow:0 4px 12px rgba(245,158,11,0.3); flex-shrink:0;">
-          <i class="fa-solid fa-gift"></i> Offers
+      <div class="coupon-row" style="display:flex; flex-direction:column; gap:6px; padding:6px 14px;">
+        <div style="display:flex; gap:6px;">
+          <input class="coupon-input" placeholder="Have a coupon code?" id="couponInput" style="flex:1; height:34px;" />
+          <button class="coupon-btn" onclick="applyCoupon()" style="height:34px; padding:0 14px; flex-shrink:0; white-space:nowrap;"><i class="fa-solid fa-check"></i> Apply</button>
+        </div>
+        <button type="button" onclick="openModal('posOffersModal')" style="width:100%; height:36px; background:linear-gradient(135deg,#F59E0B,#D97706); border:none; color:#fff; border-radius:10px; font-size:12.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; box-shadow:0 4px 14px rgba(245,158,11,0.35);">
+          <i class="fa-solid fa-gift"></i> &#127873; Offers &mdash; Coupons, Loyalty &amp; Deals
         </button>
       </div>
 
