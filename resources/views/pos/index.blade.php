@@ -1561,7 +1561,7 @@
       <a class="nav-item" href="javascript:void(0)" onclick="openModal('deliveryOrdersModal')" style="cursor:pointer;" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
       <a class="nav-item" href="/admin/customers" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
       <a class="nav-item" href="/admin/customers" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('posOffersModal')" style="cursor:pointer;" data-tip="Offers &amp; Coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Coupons</span> <span class="nav-badge gold">Deals</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('posOffersModal')" style="cursor:pointer;" data-tip="Offers"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge gold">Deals</span></a>
     </div>
 
     <div class="sidebar-section">
@@ -2025,7 +2025,7 @@
     <div class="modal-header" style="background:linear-gradient(135deg,#D97706,#B45309); padding:18px 22px; color:#fff;">
       <div class="modal-title" style="color:#fff; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px;">
         <i class="fa-solid fa-gift" style="font-size:20px;"></i>
-        <span>Offers, Coupons &amp; Promo Deals</span>
+        <span>Offers</span>
       </div>
       <button class="modal-close" onclick="closeModal('posOffersModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
     </div>
