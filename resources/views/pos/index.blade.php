@@ -1627,6 +1627,22 @@
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
+    <!-- Multi-Currency Selector Dropdown -->
+    <div class="topbar-btn topbar-desktop-only" id="posCurrencyBtn" title="Change Store Currency" style="color:#F59E0B; border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.08); width:auto; padding: 0 8px; border-radius: 20px; gap: 4px; margin-right: 6px;">
+      <i class="fa-solid fa-coins" style="font-size:12px;"></i>
+      <select id="posCurrencySelect" onchange="changePosCurrency(this.value)" style="background:transparent; border:none; color:#F59E0B; font-size:11.5px; font-weight:800; cursor:pointer; outline:none; font-family:inherit;">
+        <option value="INR" style="background:#1E293B; color:#fff;">₹ INR (India)</option>
+        <option value="USD" style="background:#1E293B; color:#fff;">$ USD (US Dollar)</option>
+        <option value="AUD" style="background:#1E293B; color:#fff;">$ AUD (Australia)</option>
+        <option value="EUR" style="background:#1E293B; color:#fff;">€ EUR (Europe)</option>
+        <option value="GBP" style="background:#1E293B; color:#fff;">£ GBP (UK)</option>
+        <option value="AED" style="background:#1E293B; color:#fff;">د.إ AED (Dubai/UAE)</option>
+        <option value="CAD" style="background:#1E293B; color:#fff;">$ CAD (Canada)</option>
+        <option value="SAR" style="background:#1E293B; color:#fff;">﷼ SAR (Saudi)</option>
+        <option value="SGD" style="background:#1E293B; color:#fff;">$ SGD (Singapore)</option>
+      </select>
+    </div>
+
     <!-- Light/Dark Mode Theme Switcher -->
     <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="togglePosTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 6px; cursor:pointer;">
       <i id="posThemeIcon" class="fa-solid fa-sun"></i>
@@ -2762,6 +2778,46 @@
   }
 
 
+  // ─── MULTI-CURRENCY GLOBAL ENGINE ───
+  const CURRENCY_MAP = {
+    'INR': { symbol: '₹', code: 'INR', rate: 1.0 },
+    'USD': { symbol: '$', code: 'USD', rate: 1.0 },
+    'AUD': { symbol: '$', code: 'AUD', rate: 1.0 },
+    'EUR': { symbol: '€', code: 'EUR', rate: 1.0 },
+    'GBP': { symbol: '£', code: 'GBP', rate: 1.0 },
+    'AED': { symbol: 'د.إ', code: 'AED', rate: 1.0 },
+    'CAD': { symbol: '$', code: 'CAD', rate: 1.0 },
+    'SAR': { symbol: '﷼', code: 'SAR', rate: 1.0 },
+    'SGD': { symbol: '$', code: 'SGD', rate: 1.0 }
+  };
+  let currentPosCurrency = localStorage.getItem('dineflow_currency') || 'INR';
+
+  function getCurrencySymbol() {
+    return (CURRENCY_MAP[currentPosCurrency] || CURRENCY_MAP['INR']).symbol;
+  }
+
+  function formatCurrency(amount, decimals = 2) {
+    const sym = getCurrencySymbol();
+    const val = parseFloat(amount || 0);
+    return `${sym} ${val.toFixed(decimals)}`;
+  }
+
+  function changePosCurrency(newCurr) {
+    if (!CURRENCY_MAP[newCurr]) return;
+    currentPosCurrency = newCurr;
+    localStorage.setItem('dineflow_currency', newCurr);
+    
+    // Sync dropdown if exists
+    const sel = document.getElementById('posCurrencySelect');
+    if (sel) sel.value = newCurr;
+
+    // Refresh UI
+    renderMenu();
+    renderCart();
+    if (typeof renderCombos === 'function') renderCombos();
+    showToast(`Currency changed to ${newCurr} (${getCurrencySymbol()})`, 'success');
+  }
+
   // ─── VOCAL SOUNDBOX STATE & HELPER ───
   let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
 
@@ -3012,7 +3068,7 @@
         <div class="item-body">
           <div class="item-name">${item.name}</div>
           <div class="item-footer">
-            <div class="item-price">₹ ${item.price}<small>/plate</small></div>
+            <div class="item-price">${getCurrencySymbol()} ${item.price}<small>/plate</small></div>
             <div class="item-footer-actions">
               ${item.qty > 0
                 ? `<div class="item-in-cart-badge">${item.qty}</div>`
@@ -3254,11 +3310,11 @@
     document.getElementById('topbarCartBadge').textContent = total;
     document.getElementById('topbarCartBadge').style.display = total > 0 ? '' : 'none';
     document.getElementById('subItemCount').textContent = total;
-    document.getElementById('subtotal').textContent = `₹ ${subtotal.toFixed(2)}`;
-    document.getElementById('serviceCharge').textContent = `₹ ${serviceCharge.toFixed(2)}`;
-    document.getElementById('gstAmount').textContent = `₹ ${gst.toFixed(2)}`;
-    document.getElementById('grandTotal').textContent = `₹ ${grandTotal.toFixed(0)}`;
-    document.getElementById('checkoutAmount').textContent = `₹ ${grandTotal.toFixed(0)}`;
+    document.getElementById('subtotal').textContent = `${getCurrencySymbol()} ${subtotal.toFixed(2)}`;
+    document.getElementById('serviceCharge').textContent = `${getCurrencySymbol()} ${serviceCharge.toFixed(2)}`;
+    document.getElementById('gstAmount').textContent = `${getCurrencySymbol()} ${gst.toFixed(2)}`;
+    document.getElementById('grandTotal').textContent = `${getCurrencySymbol()} ${grandTotal.toFixed(0)}`;
+    document.getElementById('checkoutAmount').textContent = `${getCurrencySymbol()} ${grandTotal.toFixed(0)}`;
   }
 
   function addQuickItem(id) {
