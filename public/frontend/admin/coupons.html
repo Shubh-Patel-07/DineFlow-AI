@@ -50,33 +50,36 @@
   <div class="admin-mobile-header">
     <div style="display:flex; align-items:center; gap:10px;">
       <button class="mobile-menu-btn" onclick="toggleAdminSidebar()"><i class="fa-solid fa-bars"></i></button>
-      <h2 style="font-size:15px; font-weight:700; margin:0; color:#fff; font-family:'Outfit',sans-serif;">DineFlow AI</h2>
+      <h2 style="font-size:15px; font-weight:700; margin:0; color:var(--text-primary); font-family:'Outfit',sans-serif;">DineFlow AI</h2>
     </div>
-    <span style="font-size:11px; color:#64748B; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px;">Coupons</span>
+    <span style="font-size:11px; color:var(--text-muted); background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px;">Coupons</span>
   </div>
 
   <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar" style="background: #0B0F19; border-right: 1px solid rgba(255,255,255,0.08); padding: 16px;">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);">
-        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width:36px; height:36px; border-radius:10px; box-shadow:0 4px 14px rgba(99,102,241,0.3);">
-        <div>
-          <h2 style="font-size:14px; font-weight:700; margin:0; color:#fff; font-family:'Outfit',sans-serif;">DineFlow AI</h2>
-          <span style="font-size:11px; color:#64748B;">Admin Suite</span>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
+        <div class="brand-text">
+          <h2>DineFlow AI</h2>
+          <span>Admin Suite</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
       </div>
       <nav style="display:flex; flex-direction:column; gap:4px;">
-        <a href="/dashboard" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="/pos" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-cash-register"></i> POS Terminal</a>
-        <a href="/admin/menu-manager" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
-        <a href="/z-report" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
-        <a href="/admin/inventory" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
-        <a href="/admin/coupons" class="nav-item active" style="padding:10px 12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; text-decoration:none; border-radius:10px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:10px; box-shadow:0 4px 12px rgba(99,102,241,0.3);"><i class="fa-solid fa-ticket"></i> Coupons</a>
-        <a href="/admin/customers" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-users"></i> Customers</a>
-        <a href="/admin/tables" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-table-cells-large"></i> Table Manager</a>
-        <a href="/admin/staff" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-shield"></i> Staff & Roles</a>
-        <a href="/admin/settings" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> System Settings</a>
-        <a href="/admin/feedback" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-star"></i> Reviews & Feedback</a>
+        <a href="/dashboard" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+        <a href="/pos" class="nav-item"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
+        <a href="/admin/menu-manager" class="nav-item"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+        <a href="/z-report" class="nav-item"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+        <a href="/admin/inventory" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+        <a href="/admin/coupons" class="nav-item active"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
+        <a href="/admin/customers" class="nav-item"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+        <a href="/admin/tables" class="nav-item"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+        <a href="/admin/staff" class="nav-item"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff & Roles</span></a>
+        <a href="/admin/settings" class="nav-item"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+        <a href="/admin/feedback" class="nav-item"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews & Feedback</span></a>
       </nav>
     </aside>
 
@@ -106,37 +109,38 @@
       <div class="coupon-grid" id="couponGridContainer">
         <!-- Rendered via JS -->
       </div>
-    </main>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->
   <div id="couponModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:999; backdrop-filter:blur(8px); align-items:center; justify-content:center;">
-    <div style="background:#131A35; border:1px solid rgba(255,255,255,0.1); border-radius:20px; width:100%; max-width:440px; padding:24px;">
-      <h3 style="font-family:'Outfit',sans-serif; margin:0 0 16px; font-size:18px; color:#F8FAFC;">Create Promo Coupon</h3>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:20px; width:100%; max-width:440px; padding:24px;">
+      <h3 style="font-family:'Outfit',sans-serif; margin:0 0 16px; font-size:18px; color:var(--text-primary);">Create Promo Coupon</h3>
       <form onsubmit="handleSaveCoupon(event)">
         <div style="margin-bottom:12px;">
-          <label style="display:block; font-size:12px; color:#94A3B8; margin-bottom:4px;">Coupon Code</label>
-          <input type="text" id="cpCode" required style="width:100%; padding:10px; background:#090D1A; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-size:13px; text-transform:uppercase;" placeholder="e.g. WELCOME10">
+          <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px;">Coupon Code</label>
+          <input type="text" id="cpCode" required style="width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); font-size:13px; text-transform:uppercase;" placeholder="e.g. WELCOME10">
         </div>
         <div style="display:flex; gap:12px; margin-bottom:12px;">
           <div style="flex:1;">
-            <label style="display:block; font-size:12px; color:#94A3B8; margin-bottom:4px;">Discount Type</label>
-            <select id="cpType" style="width:100%; padding:10px; background:#090D1A; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-size:13px;">
+            <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px;">Discount Type</label>
+            <select id="cpType" style="width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); font-size:13px;">
               <option value="percent">Percentage (%)</option>
               <option value="flat">Flat Amount (₹)</option>
             </select>
           </div>
           <div style="flex:1;">
-            <label style="display:block; font-size:12px; color:#94A3B8; margin-bottom:4px;">Value</label>
-            <input type="number" id="cpValue" required style="width:100%; padding:10px; background:#090D1A; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-size:13px;" placeholder="10">
+            <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px;">Value</label>
+            <input type="number" id="cpValue" required style="width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); font-size:13px;" placeholder="10">
           </div>
         </div>
         <div style="margin-bottom:16px;">
-          <label style="display:block; font-size:12px; color:#94A3B8; margin-bottom:4px;">Minimum Order Amount (₹)</label>
-          <input type="number" id="cpMinAmount" value="200" style="width:100%; padding:10px; background:#090D1A; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-size:13px;">
+          <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px;">Minimum Order Amount (₹)</label>
+          <input type="number" id="cpMinAmount" value="200" style="width:100%; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); font-size:13px;">
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
-          <button type="button" onclick="closeCouponModal()" style="padding:10px 16px; background:rgba(255,255,255,0.08); border:none; border-radius:8px; color:#94A3B8; font-weight:600; cursor:pointer;">Cancel</button>
+          <button type="button" onclick="closeCouponModal()" style="padding:10px 16px; background:var(--bg); border:none; border-radius:8px; color:var(--text-muted); font-weight:600; cursor:pointer;">Cancel</button>
           <button type="submit" style="padding:10px 20px; background:#6366F1; border:none; border-radius:8px; color:#fff; font-weight:700; cursor:pointer;">Create Coupon</button>
         </div>
       </form>

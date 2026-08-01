@@ -1273,3 +1273,37 @@ body.light-theme .feedback-date,
 html.light-theme .feedback-date {
   color: #64748B !important;
 }
+
+/* Mobile Menu Button Light Theme */
+body.light-theme .mobile-menu-btn,
+html.light-theme .mobile-menu-btn {
+  background: rgba(0,0,0,0.05) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  color: #0F172A !important;
+}
+
+/* Admin Nav Light Theme */
+body.light-theme .admin-nav,
+html.light-theme .admin-nav {
+  background: rgba(255,255,255,0.85) !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+
+/* Nav Links Hover Light Theme */
+body.light-theme .nav-links a:hover,
+html.light-theme .nav-links a:hover {
+  background: rgba(0,0,0,0.04) !important;
+}
+
+/* Secondary Button Light Theme */
+body.light-theme .btn-secondary,
+html.light-theme .btn-secondary {
+  background: #F1F5F9 !important;
+  border-color: #CBD5E1 !important;
+  color: #334155 !important;
+}
+body.light-theme .btn-secondary:hover,
+html.light-theme .btn-secondary:hover {
+  background: #E2E8F0 !important;
+  color: #0F172A !important;
+}
