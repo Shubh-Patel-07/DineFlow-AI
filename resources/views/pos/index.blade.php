@@ -1567,8 +1567,6 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Reports</div>
       <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('posTableFloorModal'); renderVisualFloorGrid();" style="cursor:pointer;" data-tip="Table Floor Plan"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Visual Floor Map</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('posRecipeModal')" style="cursor:pointer;" data-tip="Recipe Engine"><i class="fa-solid fa-flask"></i><span class="nav-label"> Recipe Engine</span></a>
       <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
       <a class="nav-item" href="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
@@ -1640,8 +1638,6 @@
         <option value="GBP" style="background:#1E293B; color:#fff;">£ GBP (UK)</option>
         <option value="AED" style="background:#1E293B; color:#fff;">د.إ AED (Dubai/UAE)</option>
         <option value="CAD" style="background:#1E293B; color:#fff;">$ CAD (Canada)</option>
-        <option value="SAR" style="background:#1E293B; color:#fff;">﷼ SAR (Saudi)</option>
-                <option value="SGD" style="background:#1E293B; color:#fff;">$ SGD (Singapore)</option>
         <option value="CUSTOM" style="background:#4F46E5; color:#fff; font-weight:800;">✏️ Custom Currency...</option>
       </select>
     </div>
@@ -2504,95 +2500,31 @@
   </div>
 </div>
 
-<!-- 🪑 Visual Interactive Table Floor & Reservation Modal -->
-<div class="modal-overlay" id="posTableFloorModal">
-  <div class="modal" style="width:920px; max-width:96%; border-radius:24px; overflow:hidden; background:var(--card); border:1px solid var(--border);">
-    <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); padding:16px 22px; color:#fff; display:flex; justify-content:space-between; align-items:center;">
-      <div class="modal-title" style="color:#fff; font-size:16px; font-weight:800; display:flex; align-items:center; gap:10px;">
-        <i class="fa-solid fa-table-cells-large" style="color:#818CF8; font-size:18px;"></i>
-        <span>Visual Table Floor Plan &amp; Reservation Terminal</span>
+<!-- ✏️ Custom Currency Setter Modal -->
+<div class="modal-overlay" id="posCustomCurrencyModal">
+  <div class="modal" style="width:420px; max-width:94%; border-radius:20px; overflow:hidden;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#6366F1,#4F46E5); padding:16px 20px; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#fff; font-size:15px; font-weight:800; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-coins"></i>
+        <span>Set Custom Currency</span>
       </div>
-      <button class="modal-close" onclick="closeModal('posTableFloorModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+      <button class="modal-close" onclick="closeModal('posCustomCurrencyModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body" style="padding:20px;">
-      <!-- Legend & Section Switcher -->
-      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px; background:var(--bg); padding:12px 16px; border-radius:14px; border:1px solid var(--border);">
-        <div style="display:flex; gap:8px;">
-          <button onclick="filterFloorSection('all')" class="btn-floor-sec active" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--primary); background:var(--primary); color:#fff; cursor:pointer;">All Areas</button>
-          <button onclick="filterFloorSection('main')" class="btn-floor-sec" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--border); background:transparent; color:var(--text-primary); cursor:pointer;">Main Dining</button>
-          <button onclick="filterFloorSection('ac')" class="btn-floor-sec" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--border); background:transparent; color:var(--text-primary); cursor:pointer;">AC Hall</button>
-          <button onclick="filterFloorSection('garden')" class="btn-floor-sec" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--border); background:transparent; color:var(--text-primary); cursor:pointer;">Garden Lawn</button>
-        </div>
-        <!-- Status Colors Legend -->
-        <div style="display:flex; align-items:center; gap:14px; font-size:11.5px; font-weight:600; color:var(--text-secondary);">
-          <span><i class="fa-solid fa-circle" style="color:#10B981;"></i> Available</span>
-          <span><i class="fa-solid fa-circle" style="color:#EF4444;"></i> Booked / Occupied</span>
-          <span><i class="fa-solid fa-circle" style="color:#F59E0B;"></i> KOT Cooking</span>
-          <span><i class="fa-solid fa-circle" style="color:#6366F1;"></i> Reserved</span>
-        </div>
-      </div>
-
-      <!-- Live Floor Grid -->
-      <div id="visualFloorGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:14px; max-height:420px; overflow-y:auto; padding:4px;">
-        <!-- Dynamically generated visual table cards -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 🧪 Recipe & Ingredient Consumption Engine Modal -->
-<div class="modal-overlay" id="posRecipeModal">
-  <div class="modal" style="width:780px; max-width:96%; border-radius:24px; overflow:hidden; background:var(--card); border:1px solid var(--border);">
-    <div class="modal-header" style="background:linear-gradient(135deg,#064E3B,#047857); padding:16px 22px; color:#fff; display:flex; justify-content:space-between; align-items:center;">
-      <div class="modal-title" style="color:#fff; font-size:16px; font-weight:800; display:flex; align-items:center; gap:10px;">
-        <i class="fa-solid fa-flask" style="color:#34D399; font-size:18px;"></i>
-        <span>Recipe &amp; Ingredient Consumption Engine</span>
-      </div>
-      <button class="modal-close" onclick="closeModal('posRecipeModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="modal-body" style="padding:20px; max-height:460px; overflow-y:auto;">
-      <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:14px; padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:14px;">
         <div>
-          <div style="font-size:13px; font-weight:800; color:var(--text-primary);">🧪 Auto-Deduction Engine Status: Active</div>
-          <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Raw materials are automatically deducted from inventory when kitchen accepts orders.</div>
+          <label style="display:block; font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:6px;">Currency Name / Code (e.g. AUD, CAD, BDT, OMR)</label>
+          <input type="text" id="customCurrencyCodeInput" placeholder="e.g. AUD" style="width:100%; height:40px; border-radius:10px; padding:0 12px; font-size:13px; text-transform:uppercase; font-weight:700;" />
         </div>
-        <span style="background:#10B981; color:#fff; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800;">AUTO-DEDUCT ON</span>
+        <div>
+          <label style="display:block; font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:6px;">Currency Symbol / Sign (e.g. $, ৳, QR, د.ع)</label>
+          <input type="text" id="customCurrencySymbolInput" placeholder="e.g. $" style="width:100%; height:40px; border-radius:10px; padding:0 12px; font-size:14px; font-weight:700;" />
+        </div>
       </div>
-
-      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12.5px; color:var(--text-primary);">
-        <thead>
-          <tr style="border-bottom:2px solid var(--border); color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
-            <th style="padding:10px;">Ingredient / Raw Material</th>
-            <th style="padding:10px;">Current Stock</th>
-            <th style="padding:10px;">Min Safety Threshold</th>
-            <th style="padding:10px;">Consumption Rate</th>
-            <th style="padding:10px;">Stock Alert Status</th>
-          </tr>
-        </thead>
-        <tbody id="recipeIngredientsTableBody">
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px 10px; font-weight:700;">Paneer (Fresh Cottage Cheese)</td>
-            <td style="padding:12px 10px; font-weight:700; color:#10B981;">14.5 kg</td>
-            <td style="padding:12px 10px; color:var(--text-muted);">3.0 kg</td>
-            <td style="padding:12px 10px;">200g / thali</td>
-            <td style="padding:12px 10px;"><span style="background:rgba(16,185,129,0.15); color:#34D399; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Healthy Stock</span></td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px 10px; font-weight:700;">Amul Butter (Unsalted)</td>
-            <td style="padding:12px 10px; font-weight:700; color:#EF4444;">1.2 kg</td>
-            <td style="padding:12px 10px; color:var(--text-muted);">2.5 kg</td>
-            <td style="padding:12px 10px;">50g / dish</td>
-            <td style="padding:12px 10px;"><span style="background:rgba(239,68,68,0.15); color:#F87171; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">⚠️ LOW STOCK ALERT</span></td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px 10px; font-weight:700;">Basmati Rice (Extra Long)</td>
-            <td style="padding:12px 10px; font-weight:700; color:#10B981;">28.0 kg</td>
-            <td style="padding:12px 10px; color:var(--text-muted);">5.0 kg</td>
-            <td style="padding:12px 10px;">150g / plate</td>
-            <td style="padding:12px 10px;"><span style="background:rgba(16,185,129,0.15); color:#34D399; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Healthy Stock</span></td>
-          </tr>
-        </tbody>
-      </table>
+    </div>
+    <div class="modal-footer" style="padding:14px 20px; display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-outline" style="height:36px; padding:0 16px; font-size:12.5px;" onclick="closeModal('posCustomCurrencyModal')">Cancel</button>
+      <button class="btn-checkout" style="height:36px; padding:0 20px; font-size:12.5px; background:linear-gradient(135deg,#6366F1,#4F46E5);" onclick="saveCustomCurrency()"><i class="fa-solid fa-check"></i>&nbsp; Save &amp; Apply</button>
     </div>
   </div>
 </div>
@@ -2874,89 +2806,23 @@
   }
 
 
-  // ─── VISUAL TABLE FLOOR PLAN ENGINE ───
-  let floorTablesList = [
-    { id: 1, name: 'T-01', area: 'main', capacity: 4, status: 'occupied', billPaid: false, currentOrder: '#ORD-20260313-0001', amount: 480 },
-    { id: 2, name: 'T-02', area: 'main', capacity: 2, status: 'available', billPaid: true },
-    { id: 3, name: 'T-03', area: 'main', capacity: 6, status: 'kot_cooking', billPaid: false, currentOrder: '#ORD-20260313-0004', amount: 920 },
-    { id: 4, name: 'T-04', area: 'ac', capacity: 4, status: 'occupied', billPaid: false, currentOrder: '#ORD-20260313-0002', amount: 650 },
-    { id: 5, name: 'T-05', area: 'ac', capacity: 8, status: 'reserved', guest: 'Sharma Family (8 pax)' },
-    { id: 6, name: 'T-06', area: 'garden', capacity: 4, status: 'available', billPaid: true },
-    { id: 7, name: 'T-07', area: 'garden', capacity: 2, status: 'available', billPaid: true },
-    { id: 8, name: 'T-08', area: 'garden', capacity: 6, status: 'occupied', billPaid: false, currentOrder: '#ORD-20260313-0009', amount: 1140 }
-  ];
-
-  function renderVisualFloorGrid(filterArea = 'all') {
-    const grid = document.getElementById('visualFloorGrid');
-    if (!grid) return;
-
-    const list = floorTablesList.filter(t => filterArea === 'all' || t.area === filterArea);
-
-    grid.innerHTML = list.map(t => {
-      let bg, border, statusLabel, badgeColor;
-      if (t.status === 'occupied') {
-        bg = 'rgba(239,68,68,0.12)'; border = 'rgba(239,68,68,0.35)'; statusLabel = 'Booked / Unpaid'; badgeColor = '#EF4444';
-      } else if (t.status === 'kot_cooking') {
-        bg = 'rgba(245,158,11,0.12)'; border = 'rgba(245,158,11,0.35)'; statusLabel = 'KOT Cooking'; badgeColor = '#F59E0B';
-      } else if (t.status === 'reserved') {
-        bg = 'rgba(99,102,241,0.12)'; border = 'rgba(99,102,241,0.35)'; statusLabel = 'Reserved'; badgeColor = '#6366F1';
-      } else {
-        bg = 'rgba(16,185,129,0.12)'; border = 'rgba(16,185,129,0.35)'; statusLabel = 'Available'; badgeColor = '#10B981';
-      }
-
-      return `
-        <div onclick="selectFloorTable('${t.name}')" style="background:${bg}; border:1px solid ${border}; border-radius:16px; padding:14px; text-align:center; cursor:pointer; transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-          <div style="font-size:18px; font-weight:800; color:var(--text-primary); font-family:'Outfit',sans-serif;">${t.name}</div>
-          <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${t.capacity} Seats • ${t.area.toUpperCase()}</div>
-          <div style="margin-top:8px;">
-            <span style="background:${badgeColor}; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; display:inline-block;">
-              ${statusLabel}
-            </span>
-          </div>
-          ${t.amount ? `<div style="font-size:12px; font-weight:700; color:var(--primary); margin-top:6px;">${getCurrencySymbol()} ${t.amount}</div>` : ''}
-        </div>
-      `;
-    }).join('');
-  }
-
-  function selectFloorTable(tableName) {
-    selectTable(tableName);
-    closeModal('posTableFloorModal');
-    showToast(`Table ${tableName} selected for active order`, 'success');
-  }
-
-  function filterFloorSection(area) {
-    document.querySelectorAll('.btn-floor-sec').forEach(b => {
-      b.style.background = 'transparent'; b.style.color = 'var(--text-primary)'; b.style.borderColor = 'var(--border)';
-    });
-    if (event && event.target) {
-      event.target.style.background = 'var(--primary)'; event.target.style.color = '#fff'; event.target.style.borderColor = 'var(--primary)';
-    }
-    renderVisualFloorGrid(area);
-  }
-
   // ─── MULTI-CURRENCY GLOBAL ENGINE ───
   const CURRENCY_MAP = {
-    'INR': { symbol: '₹', code: 'INR', rate: 1.0 },
-    'USD': { symbol: '$', code: 'USD', rate: 1.0 },
-    'AUD': { symbol: '$', code: 'AUD', rate: 1.0 },
-    'EUR': { symbol: '€', code: 'EUR', rate: 1.0 },
-    'GBP': { symbol: '£', code: 'GBP', rate: 1.0 },
-    'AED': { symbol: 'د.إ', code: 'AED', rate: 1.0 },
-    'CAD': { symbol: '$', code: 'CAD', rate: 1.0 },
-    'SAR': { symbol: '﷼', code: 'SAR', rate: 1.0 },
-    'SGD': { symbol: '$', code: 'SGD', rate: 1.0 }
+    'INR': { symbol: '₹', code: 'INR' },
+    'USD': { symbol: '$', code: 'USD' },
+    'AUD': { symbol: '$', code: 'AUD' },
+    'EUR': { symbol: '€', code: 'EUR' },
+    'GBP': { symbol: '£', code: 'GBP' },
+    'AED': { symbol: 'د.إ', code: 'AED' },
+    'CAD': { symbol: '$', code: 'CAD' }
   };
   let currentPosCurrency = localStorage.getItem('dineflow_currency') || 'INR';
 
   function getCurrencySymbol() {
+    if (currentPosCurrency === 'CUSTOM') {
+      return localStorage.getItem('dineflow_custom_currency_symbol') || '$';
+    }
     return (CURRENCY_MAP[currentPosCurrency] || CURRENCY_MAP['INR']).symbol;
-  }
-
-  function formatCurrency(amount, decimals = 2) {
-    const sym = getCurrencySymbol();
-    const val = parseFloat(amount || 0);
-    return `${sym} ${val.toFixed(decimals)}`;
   }
 
   function saveCustomCurrency() {
@@ -2966,7 +2832,6 @@
       showToast('Please enter a currency symbol!', 'error');
       return;
     }
-    CURRENCY_MAP['CUSTOM'] = { symbol: symbol, code: code, rate: 1.0 };
     currentPosCurrency = 'CUSTOM';
     localStorage.setItem('dineflow_currency', 'CUSTOM');
     localStorage.setItem('dineflow_custom_currency_symbol', symbol);
@@ -2995,21 +2860,6 @@
 
     renderMenu();
     renderCart();
-    if (typeof renderCombos === 'function') renderCombos();
-    showToast(`Currency changed to ${newCurr} (${getCurrencySymbol()})`, 'success');
-  }
-    if (!CURRENCY_MAP[newCurr]) return;
-    currentPosCurrency = newCurr;
-    localStorage.setItem('dineflow_currency', newCurr);
-    
-    // Sync dropdown if exists
-    const sel = document.getElementById('posCurrencySelect');
-    if (sel) sel.value = newCurr;
-
-    // Refresh UI
-    renderMenu();
-    renderCart();
-    if (typeof renderCombos === 'function') renderCombos();
     showToast(`Currency changed to ${newCurr} (${getCurrencySymbol()})`, 'success');
   }
 
@@ -3263,7 +3113,7 @@
         <div class="item-body">
           <div class="item-name">${item.name}</div>
           <div class="item-footer">
-            <div class="item-price">${getCurrencySymbol()} ${item.price}<small>/plate</small></div>
+            <div class="item-price">₹ ${item.price}<small>/plate</small></div>
             <div class="item-footer-actions">
               ${item.qty > 0
                 ? `<div class="item-in-cart-badge">${item.qty}</div>`
@@ -3505,11 +3355,11 @@
     document.getElementById('topbarCartBadge').textContent = total;
     document.getElementById('topbarCartBadge').style.display = total > 0 ? '' : 'none';
     document.getElementById('subItemCount').textContent = total;
-    document.getElementById('subtotal').textContent = `${getCurrencySymbol()} ${subtotal.toFixed(2)}`;
-    document.getElementById('serviceCharge').textContent = `${getCurrencySymbol()} ${serviceCharge.toFixed(2)}`;
-    document.getElementById('gstAmount').textContent = `${getCurrencySymbol()} ${gst.toFixed(2)}`;
-    document.getElementById('grandTotal').textContent = `${getCurrencySymbol()} ${grandTotal.toFixed(0)}`;
-    document.getElementById('checkoutAmount').textContent = `${getCurrencySymbol()} ${grandTotal.toFixed(0)}`;
+    document.getElementById('subtotal').textContent = `₹ ${subtotal.toFixed(2)}`;
+    document.getElementById('serviceCharge').textContent = `₹ ${serviceCharge.toFixed(2)}`;
+    document.getElementById('gstAmount').textContent = `₹ ${gst.toFixed(2)}`;
+    document.getElementById('grandTotal').textContent = `₹ ${grandTotal.toFixed(0)}`;
+    document.getElementById('checkoutAmount').textContent = `₹ ${grandTotal.toFixed(0)}`;
   }
 
   function addQuickItem(id) {
