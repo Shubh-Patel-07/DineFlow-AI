@@ -323,17 +323,17 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Menu</div>
       <a class="nav-item" href="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/menu-manager', '📂 Categories Manager')" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/menu-manager', '🧩 Modifiers & Add-ons')" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/menu-manager', '🏷️ Combos & Deals')" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Operations</div>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashOrdersModal()" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
-      <a class="nav-item" href="/admin/customers" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
-      <a class="nav-item" href="/admin/customers" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
-      <a class="nav-item" href="/admin/coupons" data-tip="Offers"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashDeliveryModal()" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/customers', '👥 Customer Directory')" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/customers', '⭐ Loyalty Program')" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashOffersModal()" data-tip="Offers"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
     </div>
 
     <div class="sidebar-section">
@@ -347,7 +347,7 @@
       <div class="sidebar-section-label">Settings & Admin</div>
       <a class="nav-item" href="/admin/staff" data-tip="Staff & Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
       <a class="nav-item" href="/admin/settings" data-tip="Settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> Settings</span></a>
-      <a class="nav-item" href="/admin/settings" data-tip="Printers"><i class="fa-solid fa-print"></i><span class="nav-label"> Printers</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/settings', '🖨️ Printers & Print Hub')" data-tip="Printers"><i class="fa-solid fa-print"></i><span class="nav-label"> Printers</span></a>
       <a class="nav-item" href="/admin/feedback" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
     </div>
   </div>
@@ -1250,9 +1250,233 @@ async function loadDashOrdersModalData() {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeDashOrdersModal();
+    closeDashAdminModule();
+    closeDashOffersModal();
+    closeDashDeliveryModal();
   }
 });
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN MODULE IFRAME MODAL — Load any admin page inside Dashboard
+// ═══════════════════════════════════════════════════════════════
+function openDashAdminModule(url, titleHtml) {
+  const modal = document.getElementById('dashAdminModuleModal');
+  const titleEl = document.getElementById('dashAdminModuleTitle');
+  const iframe = document.getElementById('dashAdminModuleIframe');
+  if (!modal || !iframe) return;
+  titleEl.innerHTML = titleHtml || 'Admin Module';
+  iframe.src = url;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+}
+function closeDashAdminModule() {
+  const modal = document.getElementById('dashAdminModuleModal');
+  const iframe = document.getElementById('dashAdminModuleIframe');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; if (iframe) iframe.src = 'about:blank'; }, 250);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OFFERS & DEALS MODAL — Same promos as POS posOffersModal
+// ═══════════════════════════════════════════════════════════════
+function openDashOffersModal() {
+  const modal = document.getElementById('dashOffersModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+}
+function closeDashOffersModal() {
+  const modal = document.getElementById('dashOffersModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DELIVERY ORDERS MODAL — Shows delivery/takeaway orders from API
+// ═══════════════════════════════════════════════════════════════
+function openDashDeliveryModal() {
+  const modal = document.getElementById('dashDeliveryModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  loadDashDeliveryData();
+}
+function closeDashDeliveryModal() {
+  const modal = document.getElementById('dashDeliveryModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
+}
+async function loadDashDeliveryData() {
+  const body = document.getElementById('dashDeliveryModalBody');
+  if (!body) return;
+  body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...</div>';
+  try {
+    const resp = await fetch('/api/orders/restaurant/1');
+    const data = await resp.json();
+    const deliveryOrders = (data.orders || data || []).filter(o => o.order_type === 'delivery' || o.order_type === 'takeaway');
+    if (!deliveryOrders.length) {
+      body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-motorcycle" style="font-size:36px; display:block; margin-bottom:12px; opacity:0.4;"></i><div style="font-weight:700; font-size:14px;">No Active Delivery Orders</div><div style="font-size:12px; margin-top:4px;">Delivery and takeaway orders will appear here in real-time</div></div>';
+      return;
+    }
+    let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
+    deliveryOrders.forEach(o => {
+      const statusColor = o.status === 'completed' ? '#10B981' : o.status === 'preparing' ? '#F59E0B' : o.status === 'ready' ? '#06B6D4' : '#6366F1';
+      const payBadge = o.payment_status === 'paid' ? '<span style="background:rgba(16,185,129,0.15); color:#10B981; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700;">PAID</span>' : '<span style="background:rgba(245,158,11,0.15); color:#F59E0B; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700;">UNPAID</span>';
+      html += `
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:${statusColor}20; display:flex; align-items:center; justify-content:center;"><i class="fa-solid ${o.order_type === 'delivery' ? 'fa-motorcycle' : 'fa-bag-shopping'}" style="color:${statusColor}; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:700; font-size:14px; color:var(--text-primary);">#${o.id} — ${(o.order_type || 'delivery').toUpperCase()}</div>
+              <div style="font-size:11px; color:var(--text-muted);">Table: ${o.table_number || 'N/A'} • ₹${parseFloat(o.total_amount || 0).toFixed(2)}</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${payBadge}
+            <span style="background:${statusColor}20; color:${statusColor}; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700; text-transform:uppercase;">${o.status}</span>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+    body.innerHTML = html;
+  } catch(err) {
+    body.innerHTML = '<div style="text-align:center; padding:36px; color:#F87171;"><i class="fa-solid fa-circle-exclamation" style="font-size:28px; display:block; margin-bottom:10px;"></i><div style="font-weight:700;">Failed to load delivery orders</div></div>';
+  }
+}
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ADMIN MODULE IFRAME MODAL — Loads admin pages inside Dashboard -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashAdminModuleModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:1100px; max-width:96vw; height:88vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+      <div class="modal-title" id="dashAdminModuleTitle" style="color:var(--primary); font-size:16px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">Admin Module</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="const f=document.getElementById('dashAdminModuleIframe'); if(f) f.contentWindow.location.reload();" title="Reload" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:32px; height:32px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button onclick="closeDashAdminModule()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:32px; height:32px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <iframe id="dashAdminModuleIframe" src="about:blank" style="flex:1; width:100%; border:none; background:var(--bg);"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- OFFERS & DEALS MODAL — Identical to POS posOffersModal -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashOffersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:700px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-gift" style="color:var(--primary);"></i>
+        <span>Smart Offers & Discount Deals</span>
+        <span style="background:linear-gradient(135deg,#EF4444,#DC2626); color:#fff; font-size:10px; font-weight:800; padding:3px 10px; border-radius:20px;">DEALS</span>
+      </div>
+      <button onclick="closeDashOffersModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:14px;">
+        <!-- Offer Cards -->
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-percentage" style="color:#10B981; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">WELCOME15</div>
+              <div style="font-size:11px; color:var(--text-muted);">15% off for new customers</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--success); font-weight:700;">Flat 15% Discount • No Minimum</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(99,102,241,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-indian-rupee-sign" style="color:#6366F1; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">SAVE50</div>
+              <div style="font-size:11px; color:var(--text-muted);">₹50 off on orders above ₹300</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--primary); font-weight:700;">₹50 Flat Off • Min ₹300</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(245,158,11,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-fire" style="color:#F59E0B; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">SAVE120</div>
+              <div style="font-size:11px; color:var(--text-muted);">₹120 off on orders above ₹600</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#F59E0B; font-weight:700;">₹120 Flat Off • Min ₹600</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(239,68,68,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-crown" style="color:#EF4444; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">VIP10</div>
+              <div style="font-size:11px; color:var(--text-muted);">10% off for VIP loyalty members</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#EF4444; font-weight:700;">10% VIP Discount • Loyalty Only</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(6,182,212,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-clock" style="color:#06B6D4; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">HAPPY10</div>
+              <div style="font-size:11px; color:var(--text-muted);">10% off during Happy Hours</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#06B6D4; font-weight:700;">10% Happy Hour Discount</div>
+        </div>
+      </div>
+      <!-- Custom Coupon Input -->
+      <div style="margin-top:20px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px;">
+        <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:10px;"><i class="fa-solid fa-ticket" style="color:var(--primary); margin-right:6px;"></i> Enter Custom Coupon Code</div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" placeholder="Enter promo code..." style="flex:1; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:600; outline:none;">
+          <button style="padding:10px 20px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer;">Apply</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">🎁 Apply offers from the POS Terminal during billing</div>
+      <button onclick="closeDashOffersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- DELIVERY ORDERS MODAL — Shows delivery/takeaway orders -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashDeliveryModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:780px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-motorcycle" style="color:var(--primary);"></i>
+        <span>Delivery & Takeaway Dispatch Terminal</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="loadDashDeliveryData()" title="Refresh" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button onclick="closeDashDeliveryModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="dashDeliveryModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="text-align:center; padding:40px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:14px; align-items:center;">
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#10B981;"></span> Completed</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#F59E0B;"></span> Preparing</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#06B6D4;"></span> Ready</span>
+      </div>
+      <button onclick="closeDashDeliveryModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
