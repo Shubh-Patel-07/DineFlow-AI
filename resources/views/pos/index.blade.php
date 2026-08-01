@@ -1641,7 +1641,8 @@
         <option value="AED" style="background:#1E293B; color:#fff;">د.إ AED (Dubai/UAE)</option>
         <option value="CAD" style="background:#1E293B; color:#fff;">$ CAD (Canada)</option>
         <option value="SAR" style="background:#1E293B; color:#fff;">﷼ SAR (Saudi)</option>
-        <option value="SGD" style="background:#1E293B; color:#fff;">$ SGD (Singapore)</option>
+                <option value="SGD" style="background:#1E293B; color:#fff;">$ SGD (Singapore)</option>
+        <option value="CUSTOM" style="background:#4F46E5; color:#fff; font-weight:800;">✏️ Custom Currency...</option>
       </select>
     </div>
 
@@ -2958,7 +2959,45 @@
     return `${sym} ${val.toFixed(decimals)}`;
   }
 
+  function saveCustomCurrency() {
+    const code = (document.getElementById('customCurrencyCodeInput')?.value || 'CUSTOM').trim().toUpperCase();
+    const symbol = (document.getElementById('customCurrencySymbolInput')?.value || '$').trim();
+    if (!symbol) {
+      showToast('Please enter a currency symbol!', 'error');
+      return;
+    }
+    CURRENCY_MAP['CUSTOM'] = { symbol: symbol, code: code, rate: 1.0 };
+    currentPosCurrency = 'CUSTOM';
+    localStorage.setItem('dineflow_currency', 'CUSTOM');
+    localStorage.setItem('dineflow_custom_currency_symbol', symbol);
+    localStorage.setItem('dineflow_custom_currency_code', code);
+
+    const sel = document.getElementById('posCurrencySelect');
+    if (sel) sel.value = 'CUSTOM';
+
+    closeModal('posCustomCurrencyModal');
+    renderMenu();
+    renderCart();
+    showToast(`Custom currency set: ${code} (${symbol})`, 'success');
+  }
+
   function changePosCurrency(newCurr) {
+    if (newCurr === 'CUSTOM') {
+      openModal('posCustomCurrencyModal');
+      return;
+    }
+    if (!CURRENCY_MAP[newCurr]) return;
+    currentPosCurrency = newCurr;
+    localStorage.setItem('dineflow_currency', newCurr);
+    
+    const sel = document.getElementById('posCurrencySelect');
+    if (sel) sel.value = newCurr;
+
+    renderMenu();
+    renderCart();
+    if (typeof renderCombos === 'function') renderCombos();
+    showToast(`Currency changed to ${newCurr} (${getCurrencySymbol()})`, 'success');
+  }
     if (!CURRENCY_MAP[newCurr]) return;
     currentPosCurrency = newCurr;
     localStorage.setItem('dineflow_currency', newCurr);
