@@ -342,15 +342,15 @@
 
             <div class="form-group">
               <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Soundbox Language</label>
-              <select class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+              <select id="soundboxLangSelect" onchange="saveSoundboxLanguage(this.value)" class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
                 <option value="gu" selected>Gujarati (ગુજરાતી)</option>
-                <option value="en">English (India)</option>
                 <option value="hi">Hindi (हिन्दी)</option>
+                <option value="en">English (India)</option>
               </select>
             </div>
 
-            <button type="button" onclick="const sp=new SpeechSynthesisUtterance('ડાઇનફ્લો એઆઈ સાઉન્ડબોક્સ કન્ફિગરેશન ટેસ્ટ સફળ રહી'); sp.lang='gu-IN'; window.speechSynthesis.speak(sp);" style="margin-top:auto; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:12px; color:#10B981; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
-              <i class="fa-solid fa-volume-high"></i> Test Soundbox Gujarati Voice
+            <button type="button" onclick="playTestSoundboxVoice()" style="margin-top:auto; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:12px; color:#10B981; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i class="fa-solid fa-volume-high"></i> Test Soundbox Voice
             </button>
           </div>
 
@@ -437,6 +437,44 @@
   </div>
 
   <script>
+    function saveSoundboxLanguage(lang) {
+      localStorage.setItem('dineflow_soundbox_lang', lang);
+      console.log('Saved Soundbox Language:', lang);
+    }
+
+    function playTestSoundboxVoice() {
+      const lang = localStorage.getItem('dineflow_soundbox_lang') || document.getElementById('soundboxLangSelect')?.value || 'gu';
+      let testMsg = "";
+      let langTag = "gu-IN";
+
+      if (lang === 'hi') {
+        testMsg = "डाइनफ्लो एआई साउंडबॉक्स कॉन्फ़िगरेशन टेस्ट सफल रहा.";
+        langTag = "hi-IN";
+      } else if (lang === 'en') {
+        testMsg = "DineFlow AI soundbox configuration test successful.";
+        langTag = "en-IN";
+      } else {
+        testMsg = "ડાઇનફ્લો એઆઈ સાઉન્ડબોક્સ કન્ફિગરેશન ટેસ્ટ સફળ રહી.";
+        langTag = "gu-IN";
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(testMsg);
+      utterance.lang = langTag;
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const langCode = lang.toLowerCase();
+        const targetVoice = voices.find(v => v.lang.toLowerCase().includes(langCode)) ||
+                             voices.find(v => v.lang.toLowerCase().includes('hi')) ||
+                             voices[0];
+        if (targetVoice) utterance.voice = targetVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+
     function toggleCustomCurrencyInput(val) {
       const box = document.getElementById('customCurrencyFields');
       if (box) box.style.display = val === 'CUSTOM' ? 'flex' : 'none';
@@ -462,6 +500,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('dineflow_soundbox_lang') || 'gu';
+      const sLangSel = document.getElementById('soundboxLangSelect');
+      if (sLangSel) sLangSel.value = savedLang;
+
       const savedCurr = localStorage.getItem('dineflow_currency') || 'INR';
       const sel = document.getElementById('settingCurrencySelect');
       if (sel) {
