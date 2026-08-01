@@ -3231,7 +3231,56 @@
     showToast(`⭐ Redeemed ${pts} Loyalty Points for ₹${discountAmt} Discount!`, 'success');
   }
 
-  function applyCoupon() {
+  let userManuallySelectedOffer = false;
+
+  function getSubtotal() {
+    const cartItems = MENU.filter(i => i.qty > 0);
+    return cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+  }
+
+  async function checkAndAutoApplyCoupon(subtotal) {
+    if (userManuallySelectedOffer || subtotal <= 0) return;
+
+    const custSel = document.getElementById('customerSelect');
+    const isNewCust = custSel && (custSel.value === 'NEW' || custSel.value === '');
+    const ordType = typeof currentOrderType !== 'undefined' ? currentOrderType : 'all';
+
+    try {
+      const res = await fetch('/api/coupons/auto-apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_amount: subtotal,
+          is_new_customer: isNewCust,
+          order_type: ordType
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.data && data.data.coupon) {
+        const c = data.data.coupon;
+        if (!activeOffer || activeOffer.code !== c.code) {
+          activeOffer = {
+            code: c.code,
+            label: c.name || (c.code + ' Auto-Apply Offer'),
+            flatAmount: c.discount_type === 'fixed' ? c.discount_value : 0,
+            pctAmount: c.discount_type === 'percentage' ? c.discount_value : 0,
+            maxDiscount: c.max_discount || 0,
+            minSubtotal: c.min_order_amount || 0,
+            isAuto: true
+          };
+          showToast(`⚡ Auto-Applied Offer: ${c.code} (Saved ₹${data.data.discount})`, 'success');
+          updateTotals();
+        }
+      }
+    } catch (_) {
+      // Local fallback auto-apply for new customer
+      if (isNewCust && (!activeOffer || activeOffer.code !== 'WELCOME100')) {
+        applySmartOffer('WELCOME100', '15% New Customer Welcome Offer', 0, 15, 100);
+      }
+    }
+  }
+
+  async function applyCoupon() {
     const input = document.getElementById('couponInput');
     const code = (input ? input.value : '').trim().toUpperCase();
     if (!code) {
@@ -3239,7 +3288,46 @@
       return;
     }
 
-    if (code === 'WELCOME15' || code === 'FIRSTORDER') {
+    try {
+      const custSel = document.getElementById('customerSelect');
+      const isNewCust = custSel && (custSel.value === 'NEW' || custSel.value === '');
+      const ordType = typeof currentOrderType !== 'undefined' ? currentOrderType : 'all';
+
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: code,
+          order_amount: getSubtotal(),
+          is_new_customer: isNewCust,
+          order_type: ordType
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        const c = data.data.coupon;
+        userManuallySelectedOffer = true;
+        activeOffer = {
+          code: c.code,
+          label: c.name || (c.code + ' Offer'),
+          flatAmount: c.discount_type === 'fixed' ? c.discount_value : 0,
+          pctAmount: c.discount_type === 'percentage' ? c.discount_value : 0,
+          maxDiscount: c.max_discount || 0,
+          minSubtotal: c.min_order_amount || 0,
+          isAuto: false
+        };
+        showToast(`✅ Coupon "${c.code}" applied! Saved ₹${data.data.discount}`, 'success');
+        updateTotals();
+        return;
+      } else {
+        showToast(data.message || 'Invalid coupon code', 'error');
+        return;
+      }
+    } catch (_) {}
+
+    // Fallback static codes
+    userManuallySelectedOffer = true;
+    if (code === 'WELCOME15' || code === 'FIRSTORDER' || code === 'WELCOME100') {
       applySmartOffer('WELCOME15', '15% Welcome Discount (First-Time Customer)', 0, 15, 0);
     } else if (code === 'SAVE50') {
       applySmartOffer('SAVE50', '₹50 OFF (Min Order ₹500)', 50, 0, 500);
@@ -3250,7 +3338,6 @@
     } else if (code === 'HAPPY10') {
       applySmartOffer('HAPPY10', '10% Off-Peak Happy Hour Discount', 0, 10, 0);
     } else {
-      // Default Promo Coupon: 10% Flat Discount
       applySmartOffer(code, `Promo Coupon (${code})`, 0, 10, 0);
     }
   }
@@ -3271,13 +3358,22 @@
     const total = cartItems.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
 
+    // Auto-apply check if no manual offer selected
+    if ((!activeOffer || activeOffer.isAuto) && subtotal > 0) {
+      checkAndAutoApplyCoupon(subtotal);
+    }
+
     let discountVal = 0;
     if (activeOffer) {
       if (activeOffer.minSubtotal > 0 && subtotal < activeOffer.minSubtotal) {
         activeOffer = null;
+        userManuallySelectedOffer = false;
         showToast('Offer removed because subtotal fell below minimum threshold', 'warning');
       } else if (activeOffer.pctAmount > 0) {
         discountVal = (subtotal * activeOffer.pctAmount) / 100;
+        if (activeOffer.maxDiscount && activeOffer.maxDiscount > 0) {
+          discountVal = Math.min(discountVal, activeOffer.maxDiscount);
+        }
       } else if (activeOffer.flatAmount > 0) {
         discountVal = activeOffer.flatAmount;
       }

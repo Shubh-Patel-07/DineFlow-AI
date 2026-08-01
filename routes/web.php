@@ -257,6 +257,7 @@ Route::prefix('api')->group(function () {
         // Coupons Management
         Route::get('/coupons', [CouponController::class, 'index'])->middleware('role:admin,manager,cashier');
         Route::post('/coupons', [CouponController::class, 'store'])->middleware('role:admin,manager');
+        Route::post('/coupons/auto-apply', [CouponController::class, 'getBestAutoApply'])->middleware('role:admin,manager,cashier');
         Route::put('/coupons/{id}', [CouponController::class, 'update'])->middleware('role:admin,manager');
         Route::delete('/coupons/{id}', [CouponController::class, 'destroy'])->middleware('role:admin');
 
