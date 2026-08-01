@@ -12,6 +12,9 @@ window.initGlobalSystemTheme = function() {
   }
 };
 
+// Execute immediately upon script load
+window.initGlobalSystemTheme();
+
 window.toggleGlobalSystemTheme = function() {
   const isLight = document.body ? document.body.classList.toggle('light-theme') : document.documentElement.classList.toggle('light-theme');
   const themeStr = isLight ? 'light' : 'dark';
