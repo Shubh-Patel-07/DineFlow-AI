@@ -327,15 +327,15 @@
                 <i class="fa-solid fa-volume-high"></i>
               </div>
               <div>
-                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Gujarati Soundbox & Voice</h3>
+                <h3 id="soundboxCardTitle" style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Gujarati Soundbox & Voice</h3>
                 <span style="font-size:11.5px; color:var(--text-muted);">Real-time payment audio notifications</span>
               </div>
             </div>
 
             <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
               <div>
-                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Gujarati Soundbox Voice</div>
-                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">"રૂપિયા પ્રાપ્ત થયા" Audio Announcement</div>
+                <div id="soundboxToggleLabel" style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Gujarati Soundbox Voice</div>
+                <div id="soundboxToggleSubtext" style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">"રૂપિયા પ્રાપ્ત થયા" Audio Announcement</div>
               </div>
               <input type="checkbox" checked style="accent-color:#10B981; width:20px; height:20px; cursor:pointer;">
             </div>
@@ -349,7 +349,7 @@
               </select>
             </div>
 
-            <button type="button" onclick="playTestSoundboxVoice()" style="margin-top:auto; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:12px; color:#10B981; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <button type="button" id="soundboxTestBtn" onclick="playTestSoundboxVoice()" style="margin-top:auto; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:12px; color:#10B981; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
               <i class="fa-solid fa-volume-high"></i> Test Soundbox Voice
             </button>
           </div>
@@ -500,7 +500,31 @@
   <script>
     function saveSoundboxLanguage(lang) {
       localStorage.setItem('dineflow_soundbox_lang', lang);
-      console.log('Saved Soundbox Language:', lang);
+      updateSoundboxUI(lang);
+    }
+
+    function updateSoundboxUI(lang) {
+      const cardTitle = document.getElementById('soundboxCardTitle');
+      const toggleLabel = document.getElementById('soundboxToggleLabel');
+      const toggleSubtext = document.getElementById('soundboxToggleSubtext');
+      const testBtn = document.getElementById('soundboxTestBtn');
+
+      if (lang === 'hi') {
+        if (cardTitle) cardTitle.innerText = "Hindi Soundbox & Voice";
+        if (toggleLabel) toggleLabel.innerText = "Hindi Voice Announcement";
+        if (toggleSubtext) toggleSubtext.innerText = '"रुपये प्राप्त हुए" Audio Announcement';
+        if (testBtn) testBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Test Hindi Soundbox Voice';
+      } else if (lang === 'en') {
+        if (cardTitle) cardTitle.innerText = "English Soundbox & Voice";
+        if (toggleLabel) toggleLabel.innerText = "English Voice Announcement";
+        if (toggleSubtext) toggleSubtext.innerText = '"Payment Received" Audio Announcement';
+        if (testBtn) testBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Test English Soundbox Voice';
+      } else {
+        if (cardTitle) cardTitle.innerText = "Gujarati Soundbox & Voice";
+        if (toggleLabel) toggleLabel.innerText = "Gujarati Voice Announcement";
+        if (toggleSubtext) toggleSubtext.innerText = '"રૂપિયા પ્રાપ્ત થયા" Audio Announcement';
+        if (testBtn) testBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Test Gujarati Soundbox Voice';
+      }
     }
 
     function playTestSoundboxVoice() {
@@ -564,6 +588,7 @@
       const savedLang = localStorage.getItem('dineflow_soundbox_lang') || 'gu';
       const sLangSel = document.getElementById('soundboxLangSelect');
       if (sLangSel) sLangSel.value = savedLang;
+      updateSoundboxUI(savedLang);
 
       const savedCurr = localStorage.getItem('dineflow_currency') || 'INR';
       const sel = document.getElementById('settingCurrencySelect');
