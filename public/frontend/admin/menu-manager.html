@@ -474,18 +474,29 @@
     </aside>
 
     <!-- Main Content -->
-    <main style="flex: 1; padding: 28px; overflow-y: auto;">
-      <div class="menu-manager-header">
-        <div>
-          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
-            <i class="fa-solid fa-utensils" style="color:var(--primary);"></i> Menu Items Management
-          </h1>
-          <p style="margin:0; color:#94A3B8; font-size:13px;">Manage restaurant dishes, pricing, veg/non-veg tags, and live availability</p>
+    <div class="main">
+      <header class="topbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="topbar-title-group">
+            <h2 class="topbar-title">Menu Items Management</h2>
+            <p class="topbar-sub">Manage restaurant dishes, pricing, veg/non-veg tags, and live availability</p>
+          </div>
         </div>
-        <button onclick="openAddItemModal()" style="padding:11px 22px; background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; border-radius:12px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 18px rgba(99,102,241,0.4); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-          <i class="fa-solid fa-plus"></i> Add New Menu Item
-        </button>
-      </div>
+        <div class="topbar-spacer"></div>
+      </header>
+
+      <div style="flex: 1; padding: 28px; overflow-y: auto;">
+        <div class="menu-manager-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+          <div>
+            <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary); display:flex; align-items:center; gap:10px;">
+              <i class="fa-solid fa-utensils" style="color:var(--primary);"></i> Menu Items Management
+            </h1>
+            <p style="margin:0; color:var(--text-muted); font-size:13px;">Manage restaurant dishes, pricing, veg/non-veg tags, and live availability</p>
+          </div>
+          <button onclick="openAddItemModal()" style="padding:11px 22px; background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; border-radius:12px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 18px rgba(99,102,241,0.4); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <i class="fa-solid fa-plus"></i> Add New Menu Item
+          </button>
+        </div>
 
       <!-- Stats Bar -->
       <div class="stats-bar">

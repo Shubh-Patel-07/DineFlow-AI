@@ -105,16 +105,27 @@
     </aside>
 
     <!-- Main Content -->
-    <main style="flex: 1; padding: 28px; overflow-y: auto;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <div>
-          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:#F8FAFC;">📦 Raw Ingredient Inventory</h1>
-          <p style="margin:0; color:#94A3B8; font-size:13px;">Track stock quantities and low-supply alerts</p>
+    <div class="main">
+      <header class="topbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="topbar-title-group">
+            <h2 class="topbar-title">Inventory Management</h2>
+            <p class="topbar-sub">Track ingredient stock, threshold alerts and raw material updates</p>
+          </div>
         </div>
-        <button onclick="openAddStockModal()" style="padding:10px 20px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-plus"></i> Add Stock Ingredient
-        </button>
-      </div>
+        <div class="topbar-spacer"></div>
+      </header>
+
+      <div style="flex: 1; padding: 28px; overflow-y: auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+          <div>
+            <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary);">📦 Raw Ingredient Inventory</h1>
+            <p style="margin:0; color:var(--text-muted); font-size:13px;">Track ingredient stock, threshold alerts and raw material updates</p>
+          </div>
+          <button onclick="openAddStockModal()" style="padding:10px 20px; background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-plus"></i> Add Stock Ingredient
+          </button>
+        </div>
 
       <div class="stock-table-card">
         <table class="stock-table">
