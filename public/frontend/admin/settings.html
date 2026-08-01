@@ -216,8 +216,82 @@
             <input type="checkbox" checked style="accent-color:#10B981; width:18px; height:18px;">
           </div>
         </div>
+
+        <!-- Restaurant & System Currency Configuration -->
+        <div class="settings-card">
+          <h3 class="settings-card-title"><i class="fa-solid fa-coins" style="color:#F59E0B;"></i> Restaurant & System Currency Configuration</h3>
+          <div class="form-group">
+            <label>Default Store Currency</label>
+            <select class="form-input" id="settingCurrencySelect" onchange="toggleCustomCurrencyInput(this.value)" style="font-weight:600;">
+              <option value="INR" selected>₹ INR (Indian Rupee)</option>
+              <option value="USD">$ USD (US Dollar)</option>
+              <option value="AUD">$ AUD (Australian Dollar)</option>
+              <option value="EUR">€ EUR (Euro)</option>
+              <option value="GBP">£ GBP (British Pound)</option>
+              <option value="AED">د.إ AED (UAE Dirham)</option>
+              <option value="CAD">$ CAD (Canadian Dollar)</option>
+              <option value="SAR">﷼ SAR (Saudi Riyal)</option>
+              <option value="SGD">$ SGD (Singapore Dollar)</option>
+              <option value="CUSTOM">✏️ Custom Currency (AUD, CAD, BDT, OMR, etc.)</option>
+            </select>
+          </div>
+          <div id="customCurrencyFields" style="display:none; flex-direction:column; gap:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:10px; margin-top:10px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Custom Currency Name / Code</label>
+              <input type="text" id="settingCustomCode" class="form-input" placeholder="e.g. AUD, BDT, CAD" style="text-transform:uppercase; font-weight:700;">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Custom Currency Symbol / Sign</label>
+              <input type="text" id="settingCustomSymbol" class="form-input" placeholder="e.g. $, ৳, QR, د.ع" style="font-weight:700;">
+            </div>
+          </div>
+          <button type="button" onclick="saveStoreCurrencySetting()" style="margin-top:14px; padding:10px; background:linear-gradient(135deg,#F59E0B,#D97706); border:none; border-radius:10px; color:#fff; font-weight:800; font-size:12.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <i class="fa-solid fa-check"></i> Save Store Currency Configuration
+          </button>
+        </div>
       </div>
     </main>
   </div>
+
+  <script>
+    function toggleCustomCurrencyInput(val) {
+      const box = document.getElementById('customCurrencyFields');
+      if (box) box.style.display = val === 'CUSTOM' ? 'flex' : 'none';
+    }
+
+    function saveStoreCurrencySetting() {
+      const sel = document.getElementById('settingCurrencySelect').value;
+      if (sel === 'CUSTOM') {
+        const code = (document.getElementById('settingCustomCode').value || 'CUSTOM').trim().toUpperCase();
+        const symbol = (document.getElementById('settingCustomSymbol').value || '$').trim();
+        if (!symbol) {
+          alert('Please enter custom currency symbol!');
+          return;
+        }
+        localStorage.setItem('dineflow_currency', 'CUSTOM');
+        localStorage.setItem('dineflow_custom_currency_code', code);
+        localStorage.setItem('dineflow_custom_currency_symbol', symbol);
+        alert(`✅ System Currency saved: ${code} (${symbol})`);
+      } else {
+        localStorage.setItem('dineflow_currency', sel);
+        alert(`✅ System Currency saved: ${sel}`);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedCurr = localStorage.getItem('dineflow_currency') || 'INR';
+      const sel = document.getElementById('settingCurrencySelect');
+      if (sel) {
+        sel.value = savedCurr;
+        toggleCustomCurrencyInput(savedCurr);
+      }
+      if (savedCurr === 'CUSTOM') {
+        const cCode = document.getElementById('settingCustomCode');
+        const cSym = document.getElementById('settingCustomSymbol');
+        if (cCode) cCode.value = localStorage.getItem('dineflow_custom_currency_code') || 'CUSTOM';
+        if (cSym) cSym.value = localStorage.getItem('dineflow_custom_currency_symbol') || '$';
+      }
+    });
+  </script>
 </body>
 </html>
