@@ -86,12 +86,12 @@ function renderMenuItems() {
 
   if (!filtered.length) {
     container.innerHTML = `
-      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; background:rgba(30,41,59,0.4); border-radius:20px; border:1px dashed var(--border); color:#94A3B8;">
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; background:var(--card); border-radius:20px; border:1px dashed var(--border); color:var(--text-muted);">
         <div style="width:64px; height:64px; margin:0 auto 16px; border-radius:18px; background:rgba(99,102,241,0.1); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px;">
           <i class="fa-solid fa-utensils"></i>
         </div>
-        <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#F8FAFC; margin:0 0 6px;">No Menu Items Found</h3>
-        <p style="font-size:13px; margin:0; color:#94A3B8;">No dishes match your selected filter. Click "Add New Menu Item" to create one.</p>
+        <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:var(--text-primary); margin:0 0 6px;">No Menu Items Found</h3>
+        <p style="font-size:13px; margin:0; color:var(--text-muted);">No dishes match your selected filter. Click "Add New Menu Item" to create one.</p>
       </div>`;
     return;
   }
