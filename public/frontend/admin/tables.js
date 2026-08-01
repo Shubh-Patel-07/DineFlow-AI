@@ -87,7 +87,7 @@ function renderTables() {
     }
 
     return `
-      <div class="table-card" data-status="${normStatus}" style="background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 20px; text-align: center; position: relative; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: space-between; min-height: 190px;">
+      <div class="table-card" data-status="${normStatus}" style="background: var(--card); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 20px; text-align: center; position: relative; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: space-between; min-height: 190px;">
         
         <!-- Header status bar -->
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;">
@@ -100,7 +100,7 @@ function renderTables() {
           <div style="position: relative; width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%); border: 2px dashed ${statusColor}; box-shadow: 0 0 15px ${statusGlow}; display: flex; align-items: center; justify-content: center; transition: all 0.25s;">
             <i class="fa-solid fa-utensils" style="font-size: 16px; color: ${statusColor}; opacity: 0.8;"></i>
           </div>
-          <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #FFFFFF; margin: 0; letter-spacing: 0.3px;">${table.table_number}</h3>
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: 0.3px;">${table.table_number}</h3>
         </div>
 
         <!-- Action Button -->

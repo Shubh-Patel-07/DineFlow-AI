@@ -160,6 +160,7 @@ Route::middleware('auth')->group(function () {
     // Admin Page Routes (With RBAC Role Injection)
     Route::get('/frontend/admin/menu-manager.html', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
     Route::get('/admin/menu-manager', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
+    Route::get('/admin/menu', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
 
     Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('frontend/admin/inventory.html'));
     Route::get('/admin/inventory', fn() => $serveAdminPage('frontend/admin/inventory.html'));

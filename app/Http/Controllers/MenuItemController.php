@@ -76,6 +76,10 @@ class MenuItemController extends Controller
             return response()->json(['success' => false, 'message' => 'Menu item not found'], 404);
         }
 
+        $request->validate([
+            'price' => 'sometimes|numeric|min:0',
+        ]);
+
         $data = $request->only([
             'name', 'description', 'price', 'category', 'image', 'is_available', 'is_veg'
         ]);
