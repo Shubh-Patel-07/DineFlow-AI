@@ -5,7 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>DineFlow AI POS — POS Terminal</title>
-  <script>window.AUTH_USER_ROLE = "{{ Auth::user()->role ?? Auth::user()->username ?? session('active_role') ?? '' }}";</script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366F1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DineFlow AI">
+  <link rel="apple-touch-icon" href="/images/dineflow_logo.jpg">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
   <script src="/frontend/admin/utils.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
