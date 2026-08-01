@@ -455,7 +455,7 @@
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <a href="/pos" style="padding: 10px 18px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
         <button type="button" onclick="openDashOrdersModal('all')" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-receipt"></i> Orders</button>
-        <a href="/admin/coupons" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-tags"></i> Offers</a>
+        <button type="button" onclick="openDashOffersModal()" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-tags"></i> Offers</button>
         <a href="/admin/tables" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
         <a href="/admin/menu-manager" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
         <a href="/z-report" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-chart-line"></i> Z-Report</a>
@@ -1315,8 +1315,9 @@ async function loadDashDeliveryData() {
   body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...</div>';
   try {
     const resp = await fetch('/api/orders/restaurant/1');
-    const data = await resp.json();
-    const deliveryOrders = (data.orders || data || []).filter(o => o.order_type === 'delivery' || o.order_type === 'takeaway');
+    const rawData = await resp.json();
+    const allOrders = Array.isArray(rawData) ? rawData : (rawData.data || []);
+    const deliveryOrders = allOrders.filter(o => o.order_type === 'delivery' || o.order_type === 'takeaway');
     if (!deliveryOrders.length) {
       body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-motorcycle" style="font-size:36px; display:block; margin-bottom:12px; opacity:0.4;"></i><div style="font-weight:700; font-size:14px;">No Active Delivery Orders</div><div style="font-size:12px; margin-top:4px;">Delivery and takeaway orders will appear here in real-time</div></div>';
       return;

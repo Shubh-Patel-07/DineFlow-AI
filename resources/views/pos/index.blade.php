@@ -3957,7 +3957,7 @@
   }
 
   /* ─── COUPON ─────────────────────────────── */
-  function applyCoupon() { showToast('Coupon applied! 20% off', 'success'); }
+  // Real applyCoupon() is defined above with backend API validation
 
   /* ─── KOT ────────────────────────────────── */
   function sendKOT() {
