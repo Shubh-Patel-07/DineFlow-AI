@@ -35,13 +35,6 @@ window.injectAdminTopbarControls = function() {
       <i id="posThemeIcon" class="fa-solid fa-sun"></i>
       <span id="posThemeText">Light Mode</span>
     </div>
-    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Toggle Soundbox Audio" onclick="if(typeof togglePosVoiceMute==='function') togglePosVoiceMute()" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding:0 12px; height:34px; border-radius:20px; gap:6px; margin-right:4px; cursor:pointer; display:flex; align-items:center; font-size:11.5px; font-weight:700;">
-      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
-      <span id="posMuteText">Soundbox: ON 🔊</span>
-    </div>
-    <div class="topbar-btn topbar-desktop-only" title="Test Audio Soundbox" onclick="if(typeof announcePaymentVoice==='function') announcePaymentVoice('Test', 99, 'test mode')" style="color:#818CF8; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:34px; height:34px; border-radius:10px; margin-right:6px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-      <i class="fa-solid fa-headphones"></i>
-    </div>
   `;
 
   const spacer = topbar.querySelector('.topbar-spacer');
