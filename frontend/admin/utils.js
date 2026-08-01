@@ -1,14 +1,8 @@
 /**
- * Global System Theme Manager (Scope: POS Terminal Only)
+ * Global System Theme Manager
  */
 window.initGlobalSystemTheme = function() {
-  const isPosPage = window.location.pathname.includes('/pos');
-  if (!isPosPage) {
-    if (document.body) document.body.classList.remove('light-theme');
-    document.documentElement.classList.remove('light-theme');
-    return;
-  }
-  const savedTheme = localStorage.getItem('posTheme');
+  const savedTheme = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
   if (savedTheme === 'light') {
     document.documentElement.classList.add('light-theme');
     if (document.body) document.body.classList.add('light-theme');
@@ -16,6 +10,14 @@ window.initGlobalSystemTheme = function() {
     document.documentElement.classList.remove('light-theme');
     if (document.body) document.body.classList.remove('light-theme');
   }
+};
+
+window.toggleGlobalSystemTheme = function() {
+  const isLight = document.body ? document.body.classList.toggle('light-theme') : document.documentElement.classList.toggle('light-theme');
+  const themeStr = isLight ? 'light' : 'dark';
+  localStorage.setItem('dineflow_theme', themeStr);
+  localStorage.setItem('posTheme', themeStr);
+  window.initGlobalSystemTheme();
 };
 
 if (document.readyState === 'loading') {
