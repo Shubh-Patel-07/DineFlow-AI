@@ -2514,7 +2514,7 @@
 <!-- Admin Module Iframe Modal -->
 <div class="modal-overlay" id="adminModuleModal">
   <div class="modal" style="width:96vw; max-width:1240px; height:92vh; max-height:860px; display:flex; flex-direction:column; padding:0; border-radius:20px; overflow:hidden; background:var(--card); border:1px solid var(--border); box-shadow:0 24px 60px rgba(0,0,0,0.6);">
-    <div class="modal-header" style="padding:14px 22px; background:#0B0F19; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
+    <div class="modal-header" style="padding:14px 22px; background:var(--card); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
       <div class="modal-title" id="adminModuleModalTitle" style="font-size:16px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-layer-group" style="color:var(--primary);"></i> Module View
       </div>
@@ -2598,7 +2598,7 @@
 
 <!-- Live UPI Payment QR Code Modal (Ultra-Premium Redesign) -->
 <div class="modal-overlay" id="upiQrModal">
-  <div class="modal" style="width:440px; max-width:95%; max-height:92vh; display:flex; flex-direction:column; background:linear-gradient(145deg, #0F172A, #0B0F19); color:#F8FAFC; border-radius:24px; border:1px solid rgba(16,185,129,0.3); box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(16,185,129,0.15); overflow:hidden;">
+  <div class="modal" style="width:440px; max-width:95%; max-height:92vh; display:flex; flex-direction:column; background:var(--card); color:var(--text-primary); border-radius:24px; border:1px solid rgba(16,185,129,0.3); box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(16,185,129,0.15); overflow:hidden;">
     <div class="modal-header" style="background:linear-gradient(135deg, #064E3B, #022C22); border-bottom:1px solid rgba(16,185,129,0.3); padding:14px 20px; flex-shrink:0;">
       <div class="modal-title" style="color:#A7F3D0; font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-qrcode" style="font-size:22px; color:#34D399;"></i>
@@ -2635,7 +2635,7 @@
       <div style="margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:6px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
         <i class="fa-solid fa-building-columns" style="color:#34D399;"></i>
         <span style="font-weight:600;">UPI ID:</span>
-        <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:#1E293B; color:#34D399; border:1px solid #334155; padding:4px 8px; border-radius:8px; font-weight:800; font-size:12px; width:170px; text-align:center; outline:none;" placeholder="7777938338@omni" />
+        <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:var(--bg); color:#34D399; border:1px solid var(--border); padding:4px 8px; border-radius:8px; font-weight:800; font-size:12px; width:170px; text-align:center; outline:none;" placeholder="7777938338@omni" />
         <button onclick="copyUpiVpa()" style="background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.3); color:#34D399; padding:3px 7px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;" title="Copy UPI ID"><i class="fa-regular fa-copy"></i></button>
       </div>
 
@@ -2660,7 +2660,7 @@
       </div>
     </div>
 
-    <div class="modal-footer" style="padding:12px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; gap:10px; align-items:center; flex-shrink:0;">
+    <div class="modal-footer" style="padding:12px 20px; background:var(--card); border-top:1px solid var(--border); display:flex; gap:10px; align-items:center; flex-shrink:0;">
       <button class="btn-outline" onclick="closeModal('upiQrModal')" style="flex:1; padding:8px; font-weight:700; border-radius:10px; height:40px; font-size:12.5px;">Cancel</button>
       <button onclick="confirmUpiPaymentCompleted()" class="btn-checkout" style="flex:2; padding:8px 14px; font-size:12.5px; font-weight:800; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; border:none; cursor:pointer; height:40px; box-shadow:0 4px 16px rgba(16,185,129,0.4);">
         <i class="fa-solid fa-volume-high" style="font-size:14px;"></i> Verify &amp; Announce Voice 🔊
@@ -2850,38 +2850,6 @@
 
   let announcedOrderIds = JSON.parse(localStorage.getItem('dineflow_announced_orders') || '[]').map(String);
 
-  function updatePosMuteUI() {
-    const icon = document.getElementById('posMuteIcon');
-    const text = document.getElementById('posMuteText');
-    const btn = document.getElementById('posVoiceMuteBtn');
-    if (!icon || !text || !btn) return;
-
-    if (isPosVoiceMuted) {
-      icon.className = 'fa-solid fa-volume-xmark';
-      icon.style.color = '#EF4444';
-      text.textContent = 'Soundbox: Muted 🔇';
-      btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-      btn.style.background = 'rgba(239, 68, 68, 0.08)';
-      btn.style.color = '#EF4444';
-    } else {
-      icon.className = 'fa-solid fa-volume-high';
-      icon.style.color = '#10B981';
-      text.textContent = 'Soundbox: ON 🔊';
-      btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-      btn.style.background = 'rgba(16, 185, 129, 0.08)';
-      btn.style.color = '#10B981';
-    }
-  }
-
-  function togglePosVoiceMute() {
-    isPosVoiceMuted = !isPosVoiceMuted;
-    localStorage.setItem('dineflow_voice_muted', isPosVoiceMuted ? 'true' : 'false');
-    updatePosMuteUI();
-    if (!isPosVoiceMuted) {
-      announcePaymentVoice('Test', 0, 'test mode');
-    }
-  }
-
   let lastVoiceAnnounceTime = 0;
 
   function announcePaymentVoice(tableNumber, amount, method = 'online') {
@@ -2967,8 +2935,6 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', updatePosMuteUI);
-  updatePosMuteUI();
 
   /* ─── DATA ─────────────────────────────────── */
   /* ─── DATA & API SYNC ────────────────────────── */

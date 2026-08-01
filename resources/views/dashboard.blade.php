@@ -629,28 +629,6 @@ function toggleSidebar() {
 
 let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
 
-function updatePosMuteUI() {
-  const icon = document.getElementById('posMuteIcon');
-  const text = document.getElementById('posMuteText');
-  const btn = document.getElementById('posVoiceMuteBtn');
-  if (!icon || !text || !btn) return;
-
-  if (isPosVoiceMuted) {
-    icon.className = 'fa-solid fa-volume-xmark';
-    icon.style.color = '#EF4444';
-    text.textContent = 'Soundbox: MUTED 🔇';
-    btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-    btn.style.background = 'rgba(239, 68, 68, 0.08)';
-    btn.style.color = '#EF4444';
-  } else {
-    icon.className = 'fa-solid fa-volume-high';
-    icon.style.color = '#10B981';
-    text.textContent = 'Soundbox: ON 🔊';
-    btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-    btn.style.background = 'rgba(16, 185, 129, 0.08)';
-    btn.style.color = '#10B981';
-  }
-}
 
 function toggleFull() {
   const doc = document.documentElement;
@@ -673,36 +651,9 @@ function toggleFull() {
   }
 }
 
-function playTestChimeSound() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.35);
-  } catch (e) {
-    console.log('AudioContext error:', e);
-  }
-}
 
-function togglePosVoiceMute() {
-  isPosVoiceMuted = !isPosVoiceMuted;
-  localStorage.setItem('dineflow_voice_muted', isPosVoiceMuted ? 'true' : 'false');
-  updatePosMuteUI();
-  if (!isPosVoiceMuted) {
-    announcePaymentVoice('Test', 0, 'test mode');
-  }
-}
 
 function announcePaymentVoice(tableNumber, amount, method = 'online') {
-  playTestChimeSound();
 
   if (isPosVoiceMuted) return;
 
@@ -735,9 +686,7 @@ function announcePaymentVoice(tableNumber, amount, method = 'online') {
   window.speechSynthesis.speak(utterance);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  updatePosMuteUI();
-});
+
 
 function openModal(id) {
   const modal = document.getElementById(id);
@@ -783,7 +732,7 @@ function markAllNotificationsAsRead() {
     body.innerHTML = `
       <div style="text-align:center; padding:36px 20px; color:#64748B;">
         <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
-        <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Caught Up!</div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Caught Up!</div>
         <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
       </div>
     `;
@@ -829,7 +778,7 @@ function buildNotifCard(icon, iconBg, iconColor, borderColor, title, desc, timeS
         <i class="fa-solid ${icon}"></i>
       </div>
       <div style="flex:1;">
-        <div style="font-size:13px; font-weight:700; color:#F8FAFC;">${title}</div>
+        <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${title}</div>
         <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${desc}</div>
         <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeStr}</div>
       </div>
@@ -975,7 +924,7 @@ function renderNotifications(notifications) {
     body.innerHTML = `
       <div style="text-align:center; padding:36px 20px; color:#64748B;">
         <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
-        <div style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">All Quiet!</div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Quiet!</div>
         <div style="font-size:12px; color:#94A3B8;">No active alerts right now. Everything is running smoothly.</div>
       </div>
     `;
@@ -991,7 +940,7 @@ function renderNotifications(notifications) {
           <i class="fa-solid ${n.icon}"></i>
         </div>
         <div style="flex:1;">
-          <div style="font-size:13px; font-weight:700; color:#F8FAFC;">${n.title}</div>
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${n.title}</div>
           <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${n.desc}</div>
           <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeAgo(n.time)}</div>
         </div>
@@ -1028,8 +977,8 @@ openModal = function(id) {
 
 <!-- Notifications Modal -->
 <div class="modal-overlay" id="notifModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.2s;">
-  <div class="modal" style="width:480px; background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
-    <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+  <div class="modal" style="width:480px; background:var(--card); border:1px solid var(--border); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
       <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
         Live Notifications
@@ -1046,7 +995,7 @@ openModal = function(id) {
         <div style="font-size:12px; color:#94A3B8;">Loading live notifications...</div>
       </div>
     </div>
-    <div class="modal-footer" style="padding:14px 20px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+    <div class="modal-footer" style="padding:14px 20px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
       <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">Mark All as Read</button>
       <div style="display:flex; align-items:center; gap:4px; color:#475569; font-size:10.5px;"><i class="fa-solid fa-circle" style="font-size:6px; color:#10B981; animation:pulse 2s infinite;"></i> Auto-refresh every 15s</div>
       <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Close</button>

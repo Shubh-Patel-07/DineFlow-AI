@@ -315,9 +315,56 @@
     .cat-marketing{background:rgba(167,139,250,0.12);color:#C4B5FD;border:1px solid rgba(167,139,250,0.2);}
     .cat-equipment{background:rgba(99,102,241,0.12);color:#A5B4FC;border:1px solid rgba(99,102,241,0.2);}
     .cat-other    {background:rgba(148,163,184,0.1);color:#94A3B8;border:1px solid rgba(148,163,184,0.15);}
+
+    /* ── LIGHT THEME OVERRIDES ── */
+    .light-theme {
+      --bg:#F8FAFC; --bg2:#F1F5F9; --card:#FFFFFF; --card2:#F8FAFC;
+      --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.12);
+      --text:#0F172A; --text2:#475569; --text3:#64748B;
+    }
+    .light-theme .header{background:linear-gradient(135deg,#FFFFFF,#F8FAFC);border-bottom:1px solid rgba(0,0,0,0.08);}
+    .light-theme .header-title{color:#0F172A;}
+    .light-theme .header-sub{color:#64748B;}
+    .light-theme .header-badge{background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(245,158,11,0.06));border-color:rgba(239,68,68,0.2);color:#DC2626;}
+    .light-theme .btn-ghost{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.1);color:#475569;}
+    .light-theme .btn-ghost:hover{background:rgba(0,0,0,0.08);color:#0F172A;}
+    .light-theme .record-count{background:rgba(0,0,0,0.04);color:#64748B;}
+    .light-theme tbody tr:hover{background:rgba(0,0,0,0.02);}
+    .light-theme tbody tr{border-bottom-color:rgba(0,0,0,0.04);}
+    .light-theme thead th{background:rgba(0,0,0,0.02);border-bottom-color:rgba(0,0,0,0.06);}
+    .light-theme .amount-cell{color:#DC2626;}
+    .light-theme .modal{background:linear-gradient(145deg,#FFFFFF,#F8FAFC);border-color:rgba(0,0,0,0.1);}
+    .light-theme .modal-close{background:rgba(0,0,0,0.05);color:#64748B;}
+    .light-theme .modal-close:hover{background:rgba(0,0,0,0.1);color:#0F172A;}
+    .light-theme .form-input,.light-theme .form-select,.light-theme .form-textarea{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.1);color:#0F172A;}
+    .light-theme .form-input:focus,.light-theme .form-select:focus,.light-theme .form-textarea:focus{border-color:rgba(99,102,241,0.5);background:rgba(99,102,241,0.04);}
+    .light-theme .form-input::placeholder{color:#94A3B8;}
+    .light-theme .search-wrap input{background:#F1F5F9;border-color:rgba(0,0,0,0.08);color:#0F172A;}
+    .light-theme .filter-select{background:#F1F5F9;border-color:rgba(0,0,0,0.08);color:#475569;}
+    .light-theme .empty-icon{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.06);}
+    .light-theme .toast{background:#FFFFFF;border-color:rgba(0,0,0,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.1);}
+    .light-theme .cat-bar-bg{background:rgba(0,0,0,0.06);}
+    .light-theme .mini-bar{background:linear-gradient(180deg,var(--primary),rgba(99,102,241,0.15));}
+    .light-theme ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);}
+    .light-theme .btn-danger-soft{color:#DC2626;}
+    .light-theme .btn-success-soft{color:#059669;}
+
+    /* ── TOPBAR (for light/dark toggle) ── */
+    .expenses-topbar{
+      display:flex;align-items:center;justify-content:flex-end;
+      padding:8px 32px;background:transparent;position:relative;z-index:50;
+    }
   </style>
 </head>
 <body>
+
+<!-- TOPBAR for Light/Dark Toggle -->
+<div class="expenses-topbar">
+  <button id="expensesThemeToggle" onclick="toggleExpensesTheme()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;transition:all .2s;">
+    <i class="fa-solid fa-sun" id="expensesThemeIcon"></i>
+    <span id="expensesThemeText">Light Mode</span>
+  </button>
+</div>
 
 <!-- HEADER -->
 <header class="header">
@@ -804,5 +851,29 @@
   renderTable();
 </script>
   <script src="/frontend/admin/utils.js"></script>
+  <script>
+    function toggleExpensesTheme() {
+      const isLight = document.body.classList.toggle('light-theme');
+      document.documentElement.classList.toggle('light-theme', isLight);
+      localStorage.setItem('posTheme', isLight ? 'light' : 'dark');
+      localStorage.setItem('dineflow_theme', isLight ? 'light' : 'dark');
+      updateExpensesThemeBtn(isLight);
+    }
+    function updateExpensesThemeBtn(isLight) {
+      const icon = document.getElementById('expensesThemeIcon');
+      const text = document.getElementById('expensesThemeText');
+      const btn = document.getElementById('expensesThemeToggle');
+      if (icon) icon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      if (text) text.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+      if (btn) {
+        btn.style.background = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+        btn.style.borderColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const t = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
+      updateExpensesThemeBtn(t === 'light');
+    });
+  </script>
 </body>
 </html>
