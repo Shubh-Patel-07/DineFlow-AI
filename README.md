@@ -76,13 +76,13 @@ graph TD
 
 ---
 
-## 👥 Team Members & Module Contributions
+## 👥 Team Members & Detailed Module Contributions
 
-| Member Name | Role & Branch | Module Responsibilities |
+| Member Name | Role & Git Branch | Technical Contributions & Features Developed |
 | :--- | :--- | :--- |
-| **Shubh Patel (SMP)** | **Team Lead** (`feature-teamlead`) | Full-Stack Architecture, POS Billing Engine, Soundbox Engine, Thermal Printing, A4 Invoices, Offers Auto-Apply & WhatsApp Integration |
-| **Krushank Dave** | **Member 2** (`feature-krushank`) | Customer Menu UI, Responsive Card Layout & Frontend Data Rendering |
-| **Fiyans** | **Member** (`feature-fiyans`) | Table Management UI & Admin Styling Modules |
+| 👑 **Shubh Patel (SMP)** | **Team Lead**<br>`feature-teamlead` | • **Full-Stack Architecture**: Framework configuration (Laravel 11 + PHP 8.3), REST API routes, Portable dual DB (SQLite/MySQL), and RBAC Middleware.<br>• **Touchscreen POS Terminal (`/pos`)**: Fast billing UI, tax engine (5% Service + 18% GST), table selector, and checkout logic.<br>• **⚡ Auto-Apply Offers Engine (`/admin/coupons`)**: Built 10+ offer features (Max Discount Cap, Expiry, Category & Order Type filters) + POS 1-click & auto-apply coupon logic.<br>• **🔊 Vocal Soundbox Engine**: Multi-language real-time speech announcements (Gujarati, Hindi, English) for paid orders.<br>• **📄 Executive A4 Invoice & Thermal Printer**: A4 Tax Invoice PDF generation with dynamic QR verification, authorized SMP seal signature, and 80mm thermal receipt printing.<br>• **📱 WhatsApp Invoice Sender**: Direct modal integration to share digital invoice links via WhatsApp without browser popups.<br>• **🛢️ Automated Stock Auto-Deduction**: Real-time database triggers deducting raw inventory items upon order checkout. |
+| 🧑‍💻 **Krushank Dave** | **Team Member 2**<br>`feature-krushank` | • **Customer QR Digital Menu (`/menu`)**: Contactless mobile ordering UI, responsive dish card layouts, and category filtering.<br>• **🛵 Live Order Status Tracker**: Progress bar tracking order lifecycle (`🟡 Received` ➔ `🟠 Cooking` ➔ `🟢 Ready & Serving`).<br>• **🍳 Kitchen Display System (KDS) UI (`/pos/kitchen`)**: Real-time kitchen order queue cards, audio chime alerts, and status toggles (`Pending` → `Preparing` → `Completed`).<br>• **🛒 Customer Cart & Badge Component**: Interactive floating cart summary, item quantity controls, and cart badge counters. |
+| 🧑‍💻 **Fiyans** | **Team Member**<br>`feature-fiyans` | • **Table Manager System (`/admin/tables`)**: Table registry UI, occupied status tracking, and dynamic QR Code generation.<br>• **⭐ Reviews & Customer Feedback (`/admin/feedback`)**: Customer ratings storage, review comments list, and star rating analytics.<br>• **🎨 System CSS Design System (`admin.css`)**: Glassmorphism dark/light theme CSS tokens, custom scrollbars, and card shadow system.<br>• **⚙️ System Settings Grid (`/admin/settings`)**: Ultra-modern 6-card preference grid layout for POS & soundbox settings. |
 
 ---
 
