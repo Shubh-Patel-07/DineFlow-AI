@@ -38,6 +38,56 @@
       --radius-lg:      20px;
     }
 
+    /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES FOR DASHBOARD ─── */
+    body.light-theme {
+      --sidebar-bg:     #FFFFFF;
+      --sidebar-hover:  #F1F5F9;
+      --sidebar-active: #6366F1;
+      --bg:             #F8FAFC;
+      --card:           #FFFFFF;
+      --border:         #E2E8F0;
+      --text-primary:   #0F172A;
+      --text-secondary: #475569;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.06);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.08);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.1);
+    }
+    body.light-theme .sidebar { background: #FFFFFF !important; border-right: 1px solid #E2E8F0 !important; }
+    body.light-theme .sidebar-brand { border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .brand-text h2 { color: #0F172A !important; }
+    body.light-theme .brand-text span { color: #64748B !important; }
+    body.light-theme .sidebar-toggle { background: #F1F5F9 !important; }
+    body.light-theme .sidebar-toggle i { color: #475569 !important; }
+    body.light-theme .sidebar-section-label { color: #94A3B8 !important; }
+    body.light-theme .nav-item { color: #475569 !important; }
+    body.light-theme .nav-item:hover { background: #F1F5F9 !important; color: #0F172A !important; }
+    body.light-theme .nav-item.active { background: var(--primary) !important; color: #FFFFFF !important; }
+    body.light-theme .sidebar-footer { border-top-color: #E2E8F0 !important; }
+    body.light-theme .user-card:hover { background: #F1F5F9 !important; }
+    body.light-theme .user-info h4 { color: #0F172A !important; }
+    body.light-theme .user-info p { color: #64748B !important; }
+    body.light-theme .topbar { background: #FFFFFF !important; border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .topbar-title { color: #0F172A !important; }
+    body.light-theme .topbar-sub { color: #64748B !important; }
+
+    /* Override inline hardcoded white colors & dark backgrounds for light mode */
+    body.light-theme [style*="color: #F8FAFC"],
+    body.light-theme [style*="color:#F8FAFC"] {
+      color: #0F172A !important;
+    }
+    body.light-theme [style*="background: rgba(30,41,59"],
+    body.light-theme [style*="background: linear-gradient(135deg, rgba(30,41,59"] {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
+    }
+    body.light-theme [style*="background: rgba(255,255,255,0.06)"] {
+      background: #F1F5F9 !important;
+      color: #475569 !important;
+      border-color: #CBD5E1 !important;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Outfit', 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
@@ -346,15 +396,21 @@
     </div>
     <div class="topbar-spacer"></div>
     
-    <!-- Gujarati Soundbox Voice Mute Toggle -->
-    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" onclick="togglePosVoiceMute()" title="Gujarati Soundbox Toggle" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
-      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
-      <span id="posMuteText" style="font-size:11px; font-weight:700;">ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊</span>
+    <!-- Light/Dark Mode Theme Switcher -->
+    <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+      <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
     </div>
 
-    <!-- Test Voice Sound Button -->
-    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer;">
-      <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
+    <!-- Gujarati Soundbox Voice Toggle -->
+    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Toggle Soundbox Audio" onclick="togglePosVoiceMute()" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
+      <span id="posMuteText" style="font-size:11.5px; font-weight:700;">Soundbox: ON 🔊</span>
+    </div>
+
+    <!-- Test Audio Sound Button -->
+    <div class="topbar-btn topbar-desktop-only" title="Test Audio Soundbox" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#818CF8; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:36px; height:36px; border-radius:10px; margin-right: 6px; cursor:pointer;">
+      <i class="fa-solid fa-headphones"></i>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
