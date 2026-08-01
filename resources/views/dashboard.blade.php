@@ -452,11 +452,13 @@
           <p style="margin:0; color:var(--text-muted); font-size:13px; font-weight:500;">DineFlow AI POS Operations Center • Live Real-Time Analytics & Soundbox Enabled</p>
         </div>
       </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="/pos" style="padding: 11px 20px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
-        <a href="/admin/tables" style="padding: 11px 18px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
-        <a href="/admin/menu-manager" style="padding: 11px 18px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
-        <a href="/z-report" style="padding: 11px 18px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-line"></i> Z-Report</a>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="/pos" style="padding: 10px 18px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
+        <button type="button" onclick="openDashOrdersModal('all')" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-receipt"></i> Orders</button>
+        <a href="/admin/coupons" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-tags"></i> Offers</a>
+        <a href="/admin/tables" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
+        <a href="/admin/menu-manager" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
+        <a href="/z-report" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-chart-line"></i> Z-Report</a>
       </div>
     </div>
 
