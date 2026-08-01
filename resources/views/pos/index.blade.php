@@ -2902,27 +2902,41 @@
     // Clear any stuck/queued audio speech synthesis
     window.speechSynthesis.cancel();
     
-    // Extract clean numeric/name table number (e.g. "Table #1" -> "1", "Table 5" -> "5")
     let cleanTableNum = String(tableNumber).replace(/table/gi, '').replace(/#/g, '').replace(/T-/gi, '').trim();
     if (!cleanTableNum || cleanTableNum === 'Walk-In') cleanTableNum = '1';
 
-    // Construct ultra-professional announcement in Gujarati!
+    const lang = localStorage.getItem('dineflow_soundbox_lang') || 'gu';
     let msgText = "";
-    if (tableNumber === 'Test') {
-      msgText = "ડાઇનફ્લો એઆઇ સ્માર્ટ સાઉન્ડબોક્સ સફળતાપૂર્વક સક્રિય છે.";
+    let langTag = "gu-IN";
+
+    if (lang === 'hi') {
+      langTag = "hi-IN";
+      const cashOrOnline = (method === 'cash') ? 'नकद' : 'ऑनलाइन';
+      msgText = (tableNumber === 'Test') 
+        ? "डाइनफ्लो एआई स्मार्ट साउंडबॉक्स सफलतापूर्वक सक्रिय है." 
+        : `डाइनफ्लो एआई पर टेबल नंबर ${cleanTableNum} के ${amount} रुपये ${cashOrOnline} सफलतापूर्वक प्राप्त हुए हैं.`;
+    } else if (lang === 'en') {
+      langTag = "en-IN";
+      const cashOrOnline = (method === 'cash') ? 'Cash' : 'Online';
+      msgText = (tableNumber === 'Test') 
+        ? "DineFlow AI smart soundbox active successfully." 
+        : `DineFlow AI soundbox received ${amount} rupees via ${cashOrOnline} for table ${cleanTableNum}.`;
     } else {
+      langTag = "gu-IN";
       const cashOrOnline = (method === 'cash') ? 'રોકડા' : 'ઓનલાઇન';
-      msgText = `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${cleanTableNum} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
+      msgText = (tableNumber === 'Test') 
+        ? "ડાઇનફ્લો એઆઇ સ્માર્ટ સાઉન્ડબોક્સ સફળતાપૂર્વક સક્રિય છે." 
+        : `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${cleanTableNum} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
     }
     
     const utterance = new SpeechSynthesisUtterance(msgText);
-    utterance.lang = 'gu-IN';
+    utterance.lang = langTag;
     utterance.rate = 0.95;
     utterance.pitch = 1.0;
     
     const voices = window.speechSynthesis.getVoices();
     if (voices && voices.length > 0) {
-      const targetVoice = voices.find(v => v.lang.toLowerCase().includes('gu')) || 
+      const targetVoice = voices.find(v => v.lang.toLowerCase().includes(lang.toLowerCase())) || 
                            voices.find(v => v.lang.toLowerCase().includes('hi')) ||
                            voices[0];
       if (targetVoice) {
