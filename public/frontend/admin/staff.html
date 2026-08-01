@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staff & Roles | DineFlow AI</title>
+  <script>
+    (function() {
+      var t = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
+      if (t === 'light') {
+        document.documentElement.classList.add('light-theme');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if (t === 'light' && document.body) {
+          document.body.classList.add('light-theme');
+        }
+      });
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,9 +32,9 @@
       margin-top: 20px;
     }
     .staff-card {
-      background: rgba(30, 41, 59, 0.7);
+      background: var(--card);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
       border-radius: 20px;
       padding: 22px;
       display: flex;
@@ -31,7 +44,7 @@
     }
     .staff-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.15);
       border-color: rgba(99, 102, 241, 0.4);
     }
     .staff-header {
@@ -68,20 +81,138 @@
     .role-badge.waiter  { background: rgba(6, 182, 212, 0.2); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.3); }
 
     .pin-box {
-      background: rgba(15, 23, 42, 0.6);
+      background: var(--bg);
       padding: 10px 14px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
     }
     .pin-code {
       font-family: 'Outfit', monospace;
       font-size: 16px;
       font-weight: 800;
       letter-spacing: 4px;
-      color: #F8FAFC;
+      color: var(--text-primary);
+    }
+
+    /* ===== LIGHT THEME OVERRIDES FOR STAFF PAGE ===== */
+    html.light-theme body,
+    body.light-theme {
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+    html.light-theme .staff-card,
+    body.light-theme .staff-card {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
+    }
+    html.light-theme .staff-card:hover,
+    body.light-theme .staff-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1) !important;
+    }
+    html.light-theme .staff-card h3,
+    body.light-theme .staff-card h3 {
+      color: #0F172A !important;
+    }
+    html.light-theme .staff-card p,
+    body.light-theme .staff-card p {
+      color: #475569 !important;
+    }
+    html.light-theme .pin-box,
+    body.light-theme .pin-box {
+      background: #F1F5F9 !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light-theme .pin-code,
+    body.light-theme .pin-code {
+      color: #0F172A !important;
+    }
+    html.light-theme .role-badge.admin,
+    body.light-theme .role-badge.admin {
+      background: rgba(99,102,241,0.12) !important;
+      color: #4F46E5 !important;
+      border-color: rgba(99,102,241,0.25) !important;
+    }
+    html.light-theme .role-badge.manager,
+    body.light-theme .role-badge.manager {
+      background: rgba(16,185,129,0.12) !important;
+      color: #059669 !important;
+      border-color: rgba(16,185,129,0.25) !important;
+    }
+    html.light-theme .role-badge.cashier,
+    body.light-theme .role-badge.cashier {
+      background: rgba(245,158,11,0.12) !important;
+      color: #D97706 !important;
+      border-color: rgba(245,158,11,0.25) !important;
+    }
+    html.light-theme .role-badge.kitchen,
+    body.light-theme .role-badge.kitchen {
+      background: rgba(239,68,68,0.12) !important;
+      color: #DC2626 !important;
+      border-color: rgba(239,68,68,0.25) !important;
+    }
+    html.light-theme .role-badge.waiter,
+    body.light-theme .role-badge.waiter {
+      background: rgba(6,182,212,0.12) !important;
+      color: #0891B2 !important;
+      border-color: rgba(6,182,212,0.25) !important;
+    }
+    /* Permission toggles & access section */
+    html.light-theme [style*="color:#F8FAFC"],
+    html.light-theme [style*="color: #F8FAFC"],
+    body.light-theme [style*="color:#F8FAFC"],
+    body.light-theme [style*="color: #F8FAFC"] {
+      color: #0F172A !important;
+    }
+    html.light-theme [style*="color:#94A3B8"],
+    html.light-theme [style*="color: #94A3B8"],
+    body.light-theme [style*="color:#94A3B8"],
+    body.light-theme [style*="color: #94A3B8"] {
+      color: #64748B !important;
+    }
+    html.light-theme [style*="color:#CBD5E1"],
+    html.light-theme [style*="color: #CBD5E1"],
+    body.light-theme [style*="color:#CBD5E1"],
+    body.light-theme [style*="color: #CBD5E1"] {
+      color: #475569 !important;
+    }
+    /* Role switcher bar */
+    html.light-theme [style*="background:rgba(15,23,42"],
+    html.light-theme [style*="background: rgba(15,23,42"],
+    body.light-theme [style*="background:rgba(15,23,42"],
+    body.light-theme [style*="background: rgba(15,23,42"] {
+      background: #F1F5F9 !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light-theme [style*="background:rgba(30,41,59"],
+    html.light-theme [style*="background: rgba(30,41,59"],
+    body.light-theme [style*="background:rgba(30,41,59"],
+    body.light-theme [style*="background: rgba(30,41,59"] {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+    }
+    /* Modal overlay */
+    html.light-theme .modal-overlay,
+    body.light-theme .modal-overlay {
+      background: rgba(0,0,0,0.3) !important;
+    }
+    html.light-theme .modal-content,
+    body.light-theme .modal-content {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+    html.light-theme .admin-mobile-header,
+    body.light-theme .admin-mobile-header {
+      background: #FFFFFF !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    html.light-theme .admin-mobile-header h2,
+    body.light-theme .admin-mobile-header h2 {
+      color: #0F172A !important;
     }
   </style>
 </head>
