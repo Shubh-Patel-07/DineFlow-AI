@@ -96,13 +96,24 @@
     </aside>
 
     <!-- Main Content -->
-    <main style="flex: 1; padding: 28px; overflow-y: auto;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <div>
-          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary);">👥 Customer Directory & Loyalty Rewards</h1>
-          <p style="margin:0; color:var(--text-muted); font-size:13px;">View customer visit frequency, total spending, and reward points</p>
+    <div class="main">
+      <header class="topbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="topbar-title-group">
+            <h2 class="topbar-title">Customer Directory</h2>
+            <p class="topbar-sub">View customer visit frequency, total spending, and reward points</p>
+          </div>
         </div>
-      </div>
+        <div class="topbar-spacer"></div>
+      </header>
+
+      <div style="flex: 1; padding: 28px; overflow-y: auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+          <div>
+            <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary);">👥 Customer Directory & Loyalty Rewards</h1>
+            <p style="margin:0; color:var(--text-muted); font-size:13px;">View customer visit frequency, total spending, and reward points</p>
+          </div>
+        </div>
 
       <table class="cust-table">
         <thead>
