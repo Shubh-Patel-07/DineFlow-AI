@@ -105,127 +105,187 @@
 
   <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar" style="background: #0B0F19; border-right: 1px solid rgba(255,255,255,0.08); padding: 16px;">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);">
-        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width:36px; height:36px; border-radius:10px; box-shadow:0 4px 14px rgba(99,102,241,0.3);">
-        <div>
-          <h2 style="font-size:14px; font-weight:700; margin:0; color:#fff; font-family:'Outfit',sans-serif;">DineFlow AI</h2>
-          <span style="font-size:11px; color:#64748B;">Admin Suite</span>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="brand-text">
+          <h2>DineFlow AI</h2>
+          <span>Admin Suite</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Main</div>
+          <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
+          <a class="nav-item" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item" href="/z-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-ticket"></i><span class="nav-label"> Coupons</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+          <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item active" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+          <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
         </div>
       </div>
-      <nav style="display:flex; flex-direction:column; gap:4px;">
-        <a href="/dashboard" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="/pos" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-cash-register"></i> POS Terminal</a>
-        <a href="/admin/menu-manager" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
-        <a href="/z-report" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
-        <a href="/admin/inventory" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
-        <a href="/admin/coupons" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-ticket"></i> Coupons</a>
-        <a href="/admin/customers" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-users"></i> Customers</a>
-        <a href="/admin/tables" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-table-cells-large"></i> Table Manager</a>
-        <a href="/admin/staff" class="nav-item active" style="padding:10px 12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; text-decoration:none; border-radius:10px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:10px; box-shadow:0 4px 12px rgba(99,102,241,0.3);"><i class="fa-solid fa-user-shield"></i> Staff & Roles</a>
-        <a href="/admin/settings" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> System Settings</a>
-        <a href="/admin/feedback" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-star"></i> Reviews & Feedback</a>
-      </nav>
     </aside>
 
     <!-- Main View -->
-    <main style="flex: 1; padding: 28px; overflow-y: auto;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
-        <div>
-          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
-            <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Staff & Access Roles Management
-          </h1>
-          <p style="margin:0; color:#94A3B8; font-size:13px;">Manage staff PIN authentication, access privileges, and quick login credentials</p>
+    <main class="main" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="sidebar-toggle topbar-mobile-menu" onclick="toggleAdminSidebar()" style="display: none; border: none; background: transparent; color: inherit; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+          <div class="topbar-title-group">
+            <h2 class="topbar-title">Staff & Access Roles Management</h2>
+            <p class="topbar-sub">Manage staff PIN authentication, access privileges, and quick login credentials</p>
+          </div>
         </div>
-        <button onclick="alert('Staff account added successfully!')" style="padding:11px 22px; background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; border-radius:12px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 18px rgba(99,102,241,0.4);">
-          <i class="fa-solid fa-user-plus"></i> Add Staff Member
-        </button>
-      </div>
+        <div class="topbar-spacer"></div>
+      </header>
 
-      <div id="roleSwitcherBarContainer"></div>
-
-      <div class="staff-grid">
-        <!-- Admin Card -->
-        <div class="staff-card" data-role-card="admin">
-          <div class="staff-header">
-            <div class="staff-avatar" style="background:linear-gradient(135deg, #6366F1, #4F46E5);"><i class="fa-solid fa-crown"></i></div>
-            <div>
-              <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:#F8FAFC; margin:0 0 4px;">System Administrator</h3>
-              <span class="role-badge admin">Full Control • Owner</span>
-            </div>
+      <div style="padding: 28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+          <div>
+            <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary); display:flex; align-items:center; gap:10px;">
+              <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Staff & Access Roles Management
+            </h1>
+            <p style="margin:0; color:var(--text-muted); font-size:13px;">Manage staff PIN authentication, access privileges, and quick login credentials</p>
           </div>
-          <div class="pin-box">
-            <span style="font-size:11.5px; color:#94A3B8; font-weight:600;">QUICK LOGIN PIN</span>
-            <span class="pin-code">1234</span>
-          </div>
-          <p style="font-size:12px; color:#64748B; margin:0;">Full access to financial analytics, inventory, staff PIN resets, and POS terminals.</p>
+          <button onclick="openAddStaffModal()" style="padding:11px 22px; background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; border-radius:12px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 18px rgba(99,102,241,0.4);">
+            <i class="fa-solid fa-user-plus"></i> Add Staff Member
+          </button>
         </div>
 
-        <!-- Manager Card -->
-        <div class="staff-card" data-role-card="manager">
-          <div class="staff-header">
-            <div class="staff-avatar" style="background:linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-user-tie"></i></div>
-            <div>
-              <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:#F8FAFC; margin:0 0 4px;">Store Manager</h3>
-              <span class="role-badge manager">Managerial Access</span>
-            </div>
-          </div>
-          <div class="pin-box">
-            <span style="font-size:11.5px; color:#94A3B8; font-weight:600;">QUICK LOGIN PIN</span>
-            <span class="pin-code">5678</span>
-          </div>
-          <p style="font-size:12px; color:#64748B; margin:0;">Access to menu manager, stock inventory, discount approvals, and Z-Reports.</p>
-        </div>
+        <div id="roleSwitcherBarContainer"></div>
 
-        <!-- Cashier Card -->
-        <div class="staff-card" data-role-card="cashier">
-          <div class="staff-header">
-            <div class="staff-avatar" style="background:linear-gradient(135deg, #F59E0B, #D97706);"><i class="fa-solid fa-calculator"></i></div>
-            <div>
-              <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:#F8FAFC; margin:0 0 4px;">Head Cashier</h3>
-              <span class="role-badge cashier">POS & Billing</span>
+        <div class="staff-grid" id="staffGrid">
+          <!-- Admin Card -->
+          <div class="staff-card" data-role-card="admin">
+            <div class="staff-header">
+              <div class="staff-avatar" style="background:linear-gradient(135deg, #6366F1, #4F46E5);"><i class="fa-solid fa-crown"></i></div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">System Administrator</h3>
+                <span class="role-badge admin">Full Control • Owner</span>
+              </div>
             </div>
+            <div class="pin-box">
+              <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
+              <span class="pin-code">1234</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Full access to financial analytics, inventory, staff PIN resets, and POS terminals.</p>
           </div>
-          <div class="pin-box">
-            <span style="font-size:11.5px; color:#94A3B8; font-weight:600;">QUICK LOGIN PIN</span>
-            <span class="pin-code">9999</span>
-          </div>
-          <p style="font-size:12px; color:#64748B; margin:0;">Access to real-time billing, thermal receipt printing, and WhatsApp invoice dispatch.</p>
-        </div>
 
-        <!-- Kitchen Card -->
-        <div class="staff-card" data-role-card="kitchen">
-          <div class="staff-header">
-            <div class="staff-avatar" style="background:linear-gradient(135deg, #EF4444, #DC2626);"><i class="fa-solid fa-fire-burner"></i></div>
-            <div>
-              <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:#F8FAFC; margin:0 0 4px;">Kitchen Master Chef</h3>
-              <span class="role-badge kitchen">KOT & Kitchen Display</span>
+          <!-- Manager Card -->
+          <div class="staff-card" data-role-card="manager">
+            <div class="staff-header">
+              <div class="staff-avatar" style="background:linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-user-tie"></i></div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">Store Manager</h3>
+                <span class="role-badge manager">Managerial Access</span>
+              </div>
             </div>
+            <div class="pin-box">
+              <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
+              <span class="pin-code">5678</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Access to menu manager, stock inventory, discount approvals, and Z-Reports.</p>
           </div>
-          <div class="pin-box">
-            <span style="font-size:11.5px; color:#94A3B8; font-weight:600;">QUICK LOGIN PIN</span>
-            <span class="pin-code">2580</span>
-          </div>
-          <p style="font-size:12px; color:#64748B; margin:0;">Access to live Kitchen Display System (KDS), KOT order tickets, and dish prep status.</p>
-        </div>
 
-        <!-- Waiter Card -->
-        <div class="staff-card" data-role-card="waiter">
-          <div class="staff-header">
-            <div class="staff-avatar" style="background:linear-gradient(135deg, #06B6D4, #0891B2);"><i class="fa-solid fa-person-walking"></i></div>
-            <div>
-              <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:#F8FAFC; margin:0 0 4px;">Table Captain / Waiter</h3>
-              <span class="role-badge waiter">Floor & Table Orders</span>
+          <!-- Cashier Card -->
+          <div class="staff-card" data-role-card="cashier">
+            <div class="staff-header">
+              <div class="staff-avatar" style="background:linear-gradient(135deg, #F59E0B, #D97706);"><i class="fa-solid fa-calculator"></i></div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">Head Cashier</h3>
+                <span class="role-badge cashier">POS & Billing</span>
+              </div>
             </div>
+            <div class="pin-box">
+              <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
+              <span class="pin-code">9999</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Access to real-time billing, thermal receipt printing, and WhatsApp invoice dispatch.</p>
           </div>
-          <div class="pin-box">
-            <span style="font-size:11.5px; color:#94A3B8; font-weight:600;">QUICK LOGIN PIN</span>
-            <span class="pin-code">3690</span>
+
+          <!-- Kitchen Card -->
+          <div class="staff-card" data-role-card="kitchen">
+            <div class="staff-header">
+              <div class="staff-avatar" style="background:linear-gradient(135deg, #EF4444, #DC2626);"><i class="fa-solid fa-fire-burner"></i></div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">Kitchen Master Chef</h3>
+                <span class="role-badge kitchen">KOT & Kitchen Display</span>
+              </div>
+            </div>
+            <div class="pin-box">
+              <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
+              <span class="pin-code">2580</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Access to live Kitchen Display System (KDS), KOT order tickets, and dish prep status.</p>
           </div>
-          <p style="font-size:12px; color:#64748B; margin:0;">Access to table ordering, waiter call response, and table status updates.</p>
+
+          <!-- Waiter Card -->
+          <div class="staff-card" data-role-card="waiter">
+            <div class="staff-header">
+              <div class="staff-avatar" style="background:linear-gradient(135deg, #06B6D4, #0891B2);"><i class="fa-solid fa-person-walking"></i></div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">Table Captain / Waiter</h3>
+                <span class="role-badge waiter">Floor & Table Orders</span>
+              </div>
+            </div>
+            <div class="pin-box">
+              <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
+              <span class="pin-code">3690</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Access to table ordering, waiter call response, and table status updates.</p>
+          </div>
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- Add Staff Member Modal -->
+  <div class="modal-overlay" id="addStaffModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+    <div class="modal" style="width:520px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+      <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+        <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-user-plus" style="color:var(--primary);"></i>
+          <span>Add New Staff Member</span>
+        </div>
+        <button class="modal-close" onclick="closeAddStaffModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="addStaffForm" onsubmit="saveNewStaffMember(event)" style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Full Name</label>
+          <input type="text" id="staffNameInput" class="form-input" placeholder="e.g. Rahul Sharma" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
+        </div>
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Role & Access Privilege</label>
+          <select id="staffRoleSelect" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:600;">
+            <option value="admin">System Administrator (Full Control)</option>
+            <option value="manager">Store Manager (Managerial Access)</option>
+            <option value="cashier" selected>Head Cashier (POS & Billing)</option>
+            <option value="kitchen">Kitchen Chef (KDS & Preparation)</option>
+            <option value="waiter">Table Captain / Waiter (Orders & Tables)</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <div class="form-group" style="flex:1;">
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">4-Digit Quick PIN</label>
+            <input type="text" id="staffPinInput" class="form-input" maxlength="6" placeholder="e.g. 7788" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:700; letter-spacing:2px;">
+          </div>
+        </div>
+        <div class="modal-footer" style="padding-top:12px; display:flex; justify-content:end; gap:10px;">
+          <button type="button" onclick="closeAddStaffModal()" style="padding:10px 20px; font-size:13px; font-weight:700; border-radius:10px; background:var(--primary-light); color:var(--text-muted); border:1px solid var(--border); cursor:pointer;">Cancel</button>
+          <button type="submit" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35);">Save Staff Member</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="/frontend/admin/utils.js"></script>
