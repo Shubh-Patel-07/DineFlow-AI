@@ -1050,27 +1050,34 @@ html.light-theme {
 }
 
 /* Sidebar Light Theme */
-body.light-theme .sidebar {
+body.light-theme .sidebar,
+html.light-theme .sidebar {
   background: #FFFFFF !important;
   border-right-color: #E2E8F0 !important;
 }
-body.light-theme .sidebar-brand {
+body.light-theme .sidebar-brand,
+html.light-theme .sidebar-brand {
   border-bottom-color: #E2E8F0 !important;
 }
-body.light-theme .brand-text h2 {
+body.light-theme .brand-text h2,
+html.light-theme .brand-text h2 {
   color: #0F172A !important;
 }
-body.light-theme .brand-text span {
+body.light-theme .brand-text span,
+html.light-theme .brand-text span {
   color: #64748B !important;
 }
-body.light-theme .nav-item {
+body.light-theme .nav-item,
+html.light-theme .nav-item {
   color: #475569 !important;
 }
-body.light-theme .nav-item:hover {
+body.light-theme .nav-item:hover,
+html.light-theme .nav-item:hover {
   background: #F1F5F9 !important;
   color: #0F172A !important;
 }
-body.light-theme .nav-item.active {
+body.light-theme .nav-item.active,
+html.light-theme .nav-item.active {
   background: var(--primary) !important;
   color: #FFFFFF !important;
 }
@@ -1078,14 +1085,19 @@ body.light-theme .nav-item.active {
 /* Topbar & Headers Light Theme */
 body.light-theme .admin-header,
 body.light-theme .admin-nav,
-body.light-theme .topbar {
+body.light-theme .topbar,
+html.light-theme .admin-header,
+html.light-theme .admin-nav,
+html.light-theme .topbar {
   background: #FFFFFF !important;
   border-bottom-color: #E2E8F0 !important;
 }
-body.light-theme .topbar-title {
+body.light-theme .topbar-title,
+html.light-theme .topbar-title {
   color: #0F172A !important;
 }
-body.light-theme .topbar-sub {
+body.light-theme .topbar-sub,
+html.light-theme .topbar-sub {
   color: #64748B !important;
 }
 
@@ -1103,7 +1115,21 @@ body.light-theme .modal-header,
 body.light-theme .modal-body,
 body.light-theme .modal-footer,
 body.light-theme .stat-card,
-body.light-theme .metric-card {
+body.light-theme .metric-card,
+html.light-theme .card,
+html.light-theme .settings-card,
+html.light-theme .feedback-card,
+html.light-theme .table-card,
+html.light-theme .inventory-card,
+html.light-theme .coupon-card,
+html.light-theme .customer-card,
+html.light-theme .staff-card,
+html.light-theme .modal,
+html.light-theme .modal-header,
+html.light-theme .modal-body,
+html.light-theme .modal-footer,
+html.light-theme .stat-card,
+html.light-theme .metric-card {
   background: #FFFFFF !important;
   color: #0F172A !important;
   border-color: #E2E8F0 !important;
@@ -1117,40 +1143,59 @@ body.light-theme textarea,
 body.light-theme .form-control,
 body.light-theme .form-select,
 body.light-theme .form-input,
-body.light-theme .input-field {
+body.light-theme .input-field,
+html.light-theme input,
+html.light-theme select,
+html.light-theme textarea,
+html.light-theme .form-control,
+html.light-theme .form-select,
+html.light-theme .form-input,
+html.light-theme .input-field {
   background-color: #F8FAFC !important;
   color: #0F172A !important;
   border-color: #CBD5E1 !important;
 }
 
 body.light-theme input::placeholder,
-body.light-theme textarea::placeholder {
+body.light-theme textarea::placeholder,
+html.light-theme input::placeholder,
+html.light-theme textarea::placeholder {
   color: #94A3B8 !important;
 }
 
 body.light-theme label,
 body.light-theme .form-label,
 body.light-theme .settings-label,
-body.light-theme .input-label {
+body.light-theme .input-label,
+html.light-theme label,
+html.light-theme .form-label,
+html.light-theme .settings-label,
+html.light-theme .input-label {
   color: #334155 !important;
 }
 
 /* Tables Light Theme */
 body.light-theme table th,
-body.light-theme .table th {
+body.light-theme .table th,
+html.light-theme table th,
+html.light-theme .table th {
   background-color: #F1F5F9 !important;
   color: #334155 !important;
   border-color: #E2E8F0 !important;
 }
 
 body.light-theme table td,
-body.light-theme .table td {
+body.light-theme .table td,
+html.light-theme table td,
+html.light-theme .table td {
   color: #0F172A !important;
   border-color: #E2E8F0 !important;
 }
 
 body.light-theme table tr:hover,
-body.light-theme .table tr:hover {
+body.light-theme .table tr:hover,
+html.light-theme table tr:hover,
+html.light-theme .table tr:hover {
   background-color: #F8FAFC !important;
 }
 
@@ -1163,8 +1208,38 @@ body.light-theme h5,
 body.light-theme h6,
 body.light-theme .card-title,
 body.light-theme .settings-title,
-body.light-theme .modal-title {
+body.light-theme .modal-title,
+html.light-theme h1,
+html.light-theme h2,
+html.light-theme h3,
+html.light-theme h4,
+html.light-theme h5,
+html.light-theme h6,
+html.light-theme .card-title,
+html.light-theme .settings-title,
+html.light-theme .modal-title {
   color: #0F172A !important;
 }
 
+/* Body background when html has light-theme */
+html.light-theme body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
 
+/* Mobile header light theme */
+body.light-theme .admin-mobile-header,
+html.light-theme .admin-mobile-header {
+  background: #FFFFFF !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+body.light-theme .admin-mobile-header h2,
+html.light-theme .admin-mobile-header h2 {
+  color: #0F172A !important;
+}
+
+/* Sidebar section labels */
+body.light-theme .sidebar-section-label,
+html.light-theme .sidebar-section-label {
+  color: #94A3B8 !important;
+}
