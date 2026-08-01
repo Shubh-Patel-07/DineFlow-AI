@@ -87,48 +87,6 @@ graph TD
 
 ---
 
-## 📅 Project Presentation Roadmap & Milestones
-
-This section summarizes our backend & full-stack development progress across all key presentation deliverables.
-
-```mermaid
-gantt
-    title DineFlow AI Project Presentation Timeline
-    dateFormat  YYYY-MM-DD
-    section Presentation 1 (30%)
-    Architecture Setup & Auth PIN Login       :done, p1, 2026-07-01, 2026-08-01
-    section Presentation 2 (55%)
-    Tenancy, Table Registry & Menu CRUD      :done, p2, 2026-08-02, 2026-08-24
-    section Presentation 3 (80%)
-    Order Flow, Stock Auto-Deduction & Auth  :done, p3, 2026-08-25, 2026-09-15
-    section Presentation 4 (100%)
-    Vocal Soundbox, A4 PDF Invoice & KDS     :done, p4, 2026-09-16, 2026-10-17
-```
-
-### 🏁 Presentation 1 (Target: 30%) - **[COMPLETED ✅]**
-- **Architecture Setup**: Configured Laravel 11 framework compatible with PHP 8.3.
-- **Multi-Auth Engine**: Developed traditional username/password authentication & 4-6 digit touchscreen PIN login.
-- **Portable Database**: Configured SQLite & MySQL dual database support for zero-config presentation portability.
-
-### 🏁 Presentation 2 (Target: 55%) - **[COMPLETED ✅]**
-- **Tenancy & Table Registry**: Built multi-tenant Restaurant profiles and Table registry database configurations.
-- **Dynamic QR Code Engine**: Implemented TableController to generate live QR URLs linking physical tables to digital menus.
-- **Menu Items CRUD**: Created MenuItem models, database schema, and REST API controllers for menu management.
-
-### 🏁 Presentation 3 (Target: 80%) - **[COMPLETED ✅]**
-- **Cart & Order Checkout Flow**: Implemented `POST /api/orders` endpoint supporting complex multi-item cart payloads.
-- **Automated Stock Deduction**: Programmed real-time database hooks deducting raw ingredients from `inventories` on checkout.
-- **Role-Based Access Control (RBAC)**: Developed `RoleMiddleware` for strict role isolation (`admin`, `manager`, `waiter`, `kitchen`, `customer`).
-
-### 🏁 Presentation 4 (Target: 100% Final Launch) - **[COMPLETED ✅]**
-- **Vocal Soundbox Integration**: Added Gujarati/Hindi/English vocal announcements for completed payments.
-- **Executive A4 PDF Invoice**: Built printable A4 Tax Invoice template with verified SMP signature and QR codes.
-- **WhatsApp Billing**: Integrated modal-driven WhatsApp invoice link delivery.
-- **KDS Audio Notifications**: Implemented kitchen pop chime alerts for incoming orders.
-- **Automated Test Suite**: Passed PHPUnit feature test suite (`RestoPOSTest.php`) with 26 successful assertions.
-
----
-
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
