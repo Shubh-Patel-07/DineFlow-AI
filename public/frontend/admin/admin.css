@@ -1243,3 +1243,21 @@ body.light-theme .sidebar-section-label,
 html.light-theme .sidebar-section-label {
   color: #94A3B8 !important;
 }
+
+/* Feedback Cards Light Theme */
+body.light-theme .feedback-card,
+html.light-theme .feedback-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05) !important;
+}
+body.light-theme .feedback-card h4,
+html.light-theme .feedback-card h4,
+body.light-theme .feedback-comment,
+html.light-theme .feedback-comment {
+  color: #0F172A !important;
+}
+body.light-theme .feedback-date,
+html.light-theme .feedback-date {
+  color: #64748B !important;
+}
