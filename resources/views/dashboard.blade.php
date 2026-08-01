@@ -32,9 +32,11 @@
       --text-muted:     #64748B;
       --shadow-sm:      0 1px 3px rgba(0,0,0,.3);
       --shadow-md:      0 4px 6px rgba(0,0,0,.4);
-      --shadow-lg:      0 10px 15px rgba(0,0,0,.5);
       --radius-sm:      8px;
       --radius-md:      12px;
+      --radius-lg:      20px;
+    }
+
     /* Select Option Visibility Fix */
     select option {
       background-color: #1E293B !important;
@@ -391,15 +393,21 @@
     </div>
     <div class="topbar-spacer"></div>
     
-    <!-- Gujarati Soundbox Voice Mute Toggle -->
-    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" onclick="togglePosVoiceMute()" title="Gujarati Soundbox Toggle" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
-      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
-      <span id="posMuteText" style="font-size:11px; font-weight:700;">ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊</span>
+    <!-- Light/Dark Mode Theme Switcher -->
+    <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+      <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
     </div>
 
-    <!-- Test Voice Sound Button -->
-    <div class="topbar-btn topbar-desktop-only" title="Test Soundbox Voice" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#6366F1; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer;">
-      <i class="fa-solid fa-comment-dots"></i>&nbsp;<span style="font-size:11px;font-weight:700;">ટેસ્ટ સાઉન્ડ</span>
+    <!-- Gujarati Soundbox Voice Toggle -->
+    <div class="topbar-btn topbar-desktop-only" id="posVoiceMuteBtn" title="Toggle Soundbox Audio" onclick="togglePosVoiceMute()" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posMuteIcon" class="fa-solid fa-volume-high"></i>
+      <span id="posMuteText" style="font-size:11.5px; font-weight:700;">Soundbox: ON 🔊</span>
+    </div>
+
+    <!-- Test Audio Sound Button -->
+    <div class="topbar-btn topbar-desktop-only" title="Test Audio Soundbox" onclick="announcePaymentVoice('Test', 99, 'test mode')" style="color:#818CF8; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); width:36px; height:36px; border-radius:10px; margin-right: 6px; cursor:pointer;">
+      <i class="fa-solid fa-headphones"></i>
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
       <i class="fa-solid fa-bell"></i>
