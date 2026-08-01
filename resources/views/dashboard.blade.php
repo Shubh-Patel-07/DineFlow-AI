@@ -646,14 +646,14 @@ function updatePosMuteUI() {
   if (isPosVoiceMuted) {
     icon.className = 'fa-solid fa-volume-xmark';
     icon.style.color = '#EF4444';
-    text.textContent = 'સાઉન્ડબોક્સ મ્યૂટ 🔇';
+    text.textContent = 'Soundbox: MUTED 🔇';
     btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
     btn.style.background = 'rgba(239, 68, 68, 0.08)';
     btn.style.color = '#EF4444';
   } else {
     icon.className = 'fa-solid fa-volume-high';
     icon.style.color = '#10B981';
-    text.textContent = 'ગુજરાતી સાઉન્ડબોક્સ: ઓન 🔊';
+    text.textContent = 'Soundbox: ON 🔊';
     btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
     btn.style.background = 'rgba(16, 185, 129, 0.08)';
     btn.style.color = '#10B981';
@@ -1070,26 +1070,26 @@ openModal = function(id) {
 
 <!-- Dashboard Recent Orders Modal -->
 <div class="modal-overlay" id="dashOrdersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
-  <div class="modal" style="width:880px; max-width:94vw; max-height:85vh; background:#0F172A; border:1px solid rgba(99,102,241,0.25); border-radius:24px; box-shadow:0 25px 60px rgba(0,0,0,0.7); overflow:hidden; display:flex; flex-direction:column;">
-    <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
-      <div class="modal-title" id="dashOrdersModalTitle" style="color:#A5B4FC; font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
-        <i class="fa-solid fa-receipt" style="color:#818CF8;"></i>
+  <div class="modal" style="width:880px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" id="dashOrdersModalTitle" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
         <span>Recent Restaurant Orders</span>
-        <span id="dashOrdersCountBadge" style="background:rgba(99,102,241,0.25); color:#818CF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(99,102,241,0.4);">Loading...</span>
+        <span id="dashOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px;">
-        <button onclick="loadDashOrdersModalData()" title="Refresh Orders" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.3)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'"><i class="fa-solid fa-arrows-rotate"></i></button>
-        <button class="modal-close" onclick="closeDashOrdersModal()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#94A3B8; width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='rgba(255,255,255,0.06)'; this.style.color='#94A3B8'"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="loadDashOrdersModalData()" title="Refresh Orders" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.2s;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeDashOrdersModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
     <div class="modal-body" id="dashOrdersModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
-      <div style="text-align:center; padding:40px 20px; color:#64748B;">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:#818CF8; display:block; margin-bottom:12px;"></i>
-        <div style="font-size:13px; color:#94A3B8;">Fetching recent orders...</div>
+      <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary); display:block; margin-bottom:12px;"></i>
+        <div style="font-size:13px; color:var(--text-muted);">Fetching recent orders...</div>
       </div>
     </div>
-    <div class="modal-footer" style="padding:16px 24px; background:#0B0F19; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
-      <div style="color:#64748B; font-size:12px;">💡 Click any action button to open Receipts or Tax Invoices</div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">💡 Click any action button to open Receipts or Tax Invoices</div>
       <button onclick="closeDashOrdersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">Close</button>
     </div>
   </div>
@@ -1112,9 +1112,9 @@ function openDashOrdersModal(filterType = 'all') {
       `;
     } else {
       titleEl.innerHTML = `
-        <i class="fa-solid fa-receipt" style="color:#818CF8;"></i>
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
         <span>Recent Restaurant Orders</span>
-        <span id="dashOrdersCountBadge" style="background:rgba(99,102,241,0.25); color:#818CF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(99,102,241,0.4);">Loading...</span>
+        <span id="dashOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
       `;
     }
   }
@@ -1138,9 +1138,9 @@ async function loadDashOrdersModalData() {
   if (!body) return;
 
   body.innerHTML = `
-    <div style="text-align:center; padding:40px 20px; color:#64748B;">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:#818CF8; display:block; margin-bottom:12px;"></i>
-      <div style="font-size:13px; color:#94A3B8;">Loading orders...</div>
+    <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary); display:block; margin-bottom:12px;"></i>
+      <div style="font-size:13px; color:var(--text-muted);">Loading orders...</div>
     </div>
   `;
 
@@ -1165,11 +1165,11 @@ async function loadDashOrdersModalData() {
     if (orders.length === 0) {
       if (badge) badge.innerText = '0 Orders';
       body.innerHTML = `
-        <div style="text-align:center; padding:48px 20px; color:#64748B;">
-          <i class="fa-solid ${currentDashOrderFilter === 'delivery' ? 'fa-motorcycle' : 'fa-receipt'}" style="font-size:42px; margin-bottom:14px; color:#475569; display:block;"></i>
-          <div style="font-size:15px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">No ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders Found</div>
-          <div style="font-size:12.5px; color:#94A3B8; margin-bottom:16px;">There are no ${currentDashOrderFilter === 'delivery' ? 'delivery or takeaway' : 'recent'} orders recorded today.</div>
-          ${currentDashOrderFilter === 'delivery' ? `<button onclick="openDashOrdersModal('all')" style="padding:8px 16px; font-size:12px; font-weight:700; border-radius:8px; background:rgba(99,102,241,0.15); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer;">View All Orders</button>` : ''}
+        <div style="text-align:center; padding:48px 20px; color:var(--text-muted);">
+          <i class="fa-solid ${currentDashOrderFilter === 'delivery' ? 'fa-motorcycle' : 'fa-receipt'}" style="font-size:42px; margin-bottom:14px; color:var(--text-muted); display:block;"></i>
+          <div style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">No ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders Found</div>
+          <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">There are no ${currentDashOrderFilter === 'delivery' ? 'delivery or takeaway' : 'recent'} orders recorded today.</div>
+          ${currentDashOrderFilter === 'delivery' ? `<button onclick="openDashOrdersModal('all')" style="padding:8px 16px; font-size:12px; font-weight:700; border-radius:8px; background:var(--primary-light); color:var(--primary); border:1px solid var(--border); cursor:pointer;">View All Orders</button>` : ''}
         </div>
       `;
       return;
@@ -1180,7 +1180,7 @@ async function loadDashOrdersModalData() {
     let html = `
       <table style="width:100%; border-collapse:collapse; font-size:13px;">
         <thead>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#818CF8; text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+          <tr style="border-bottom:1px solid var(--border); color:var(--primary); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
             <th style="padding:10px 12px;">Order ID</th>
             <th style="padding:10px 12px;">Type / Table</th>
             <th style="padding:10px 12px;">Amount</th>
@@ -1204,20 +1204,20 @@ async function loadDashOrdersModalData() {
       const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id && o.table_id != '0' ? `Table ${o.table_id}` : '🛵 Takeaway / Delivery');
 
       html += `
-        <tr style="border-bottom:1px solid rgba(255,255,255,0.06); transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-          <td style="padding:12px; font-weight:700; color:#F8FAFC;">
+        <tr style="border-bottom:1px solid var(--border); transition:background 0.2s;" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background='transparent'">
+          <td style="padding:12px; font-weight:700; color:var(--text-primary);">
             #${o.id}
-            <div style="font-size:10.5px; color:#64748B; font-weight:400; margin-top:2px;">${new Date(o.created_at || Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+            <div style="font-size:10.5px; color:var(--text-muted); font-weight:400; margin-top:2px;">${new Date(o.created_at || Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
           </td>
-          <td style="padding:12px; color:#E2E8F0; font-weight:600;">${tableName}</td>
-          <td style="padding:12px; font-weight:800; color:#F8FAFC;">₹${parseFloat(o.total_amount || 0).toFixed(2)}</td>
+          <td style="padding:12px; color:var(--text-secondary); font-weight:600;">${tableName}</td>
+          <td style="padding:12px; font-weight:800; color:var(--text-primary);">₹${parseFloat(o.total_amount || 0).toFixed(2)}</td>
           <td style="padding:12px;">
             <span style="background:${payBg}; color:${payColor}; border:1px solid ${payBorder}; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px;">${payText}</span>
           </td>
           <td style="padding:12px; font-weight:700; color:${statusColor}; text-transform:capitalize;">${o.status || 'Received'}</td>
           <td style="padding:12px; text-align:right;">
             <div style="display:inline-flex; gap:6px;">
-              <a href="/orders/${o.id}/receipt" target="_blank" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
+              <a href="/orders/${o.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
               <a href="/orders/${o.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
               <a href="/orders/${o.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
             </div>
