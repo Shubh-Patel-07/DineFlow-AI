@@ -278,7 +278,7 @@
               </div>
             </div>
           </div>
-          <button onclick="alert('✅ Settings saved successfully!')" style="padding:12px 26px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:14px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:10px; box-shadow:0 6px 20px rgba(16,185,129,0.35); transition:all 0.2s;">
+          <button onclick="saveAllSettings()" style="padding:12px 26px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:14px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:10px; box-shadow:0 6px 20px rgba(16,185,129,0.35); transition:all 0.2s;">
             <i class="fa-solid fa-check" style="font-size:15px;"></i> Save All Settings
           </button>
         </div>
@@ -577,10 +577,27 @@
         localStorage.setItem('dineflow_currency', 'CUSTOM');
         localStorage.setItem('dineflow_custom_currency_code', code);
         localStorage.setItem('dineflow_custom_currency_symbol', symbol);
-        alert(`✅ System Currency saved: ${code} (${symbol})`);
+        if (typeof Toast !== 'undefined' && Toast.success) {
+          Toast.success(`System Currency saved: ${code} (${symbol})`);
+        } else {
+          alert(`✅ System Currency saved: ${code} (${symbol})`);
+        }
       } else {
         localStorage.setItem('dineflow_currency', sel);
-        alert(`✅ System Currency saved: ${sel}`);
+        if (typeof Toast !== 'undefined' && Toast.success) {
+          Toast.success(`System Currency saved: ${sel}`);
+        } else {
+          alert(`✅ System Currency saved: ${sel}`);
+        }
+      }
+    }
+
+    function saveAllSettings() {
+      saveStoreCurrencySetting();
+      if (typeof Toast !== 'undefined' && Toast.success) {
+        Toast.success('All system settings saved successfully!');
+      } else {
+        alert('✅ All System Settings saved successfully!');
       }
     }
 
