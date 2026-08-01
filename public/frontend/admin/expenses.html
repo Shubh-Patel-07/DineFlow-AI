@@ -4,6 +4,19 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Expenses — DineFlow AI</title>
+  <script>
+    (function() {
+      var t = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
+      if (t === 'light') {
+        document.documentElement.classList.add('light-theme');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if (t === 'light' && document.body) {
+          document.body.classList.add('light-theme');
+        }
+      });
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -790,5 +803,6 @@
   updateStats();
   renderTable();
 </script>
+  <script src="/frontend/admin/utils.js"></script>
 </body>
 </html>
