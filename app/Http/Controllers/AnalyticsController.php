@@ -12,13 +12,16 @@ class AnalyticsController extends Controller
     public function getSalesAnalytics($restaurantId)
     {
         $totalOrders = Order::where('restaurant_id', $restaurantId)->count();
-        $totalSales = Order::where('restaurant_id', $restaurantId)->where('payment_status', 'paid')->sum('total_amount');
+        $paidOrders = Order::where('restaurant_id', $restaurantId)->where('payment_status', 'paid');
+        $totalSales = $paidOrders->sum('total_amount');
+        $paidOrdersCount = $paidOrders->count();
         
-        $averageOrderValue = $totalOrders > 0 ? round($totalSales / $totalOrders, 2) : 0;
+        $averageOrderValue = $paidOrdersCount > 0 ? round($totalSales / $paidOrdersCount, 2) : 0;
 
         $popularItems = DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.restaurant_id', $restaurantId)
+            ->where('orders.payment_status', 'paid')
             ->select('order_items.name', DB::raw('SUM(order_items.quantity) as salesCount'))
             ->groupBy('order_items.name')
             ->orderBy('salesCount', 'desc')

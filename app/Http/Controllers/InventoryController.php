@@ -49,6 +49,11 @@ class InventoryController extends Controller
             return response()->json(['success' => false, 'message' => 'Inventory item not found'], 404);
         }
 
+        $request->validate([
+            'quantity' => 'sometimes|numeric|min:0',
+            'cost_per_unit' => 'sometimes|numeric|min:0',
+        ]);
+
         $item->fill($request->only([
             'item_name', 'category', 'quantity', 'unit', 'low_stock_alert', 'cost_per_unit', 'notes'
         ]));
