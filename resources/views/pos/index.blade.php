@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1627,21 +1627,6 @@
       <i class="fa-solid fa-bars"></i>
     </div>
     <div class="topbar-spacer"></div>
-    <!-- Multi-Currency Selector Dropdown -->
-    <div class="topbar-btn topbar-desktop-only" id="posCurrencyBtn" title="Change Store Currency" style="color:#F59E0B; border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.08); width:auto; padding: 0 8px; border-radius: 20px; gap: 4px; margin-right: 6px;">
-      <i class="fa-solid fa-coins" style="font-size:12px;"></i>
-      <select id="posCurrencySelect" onchange="changePosCurrency(this.value)" style="background:transparent; border:none; color:#F59E0B; font-size:11.5px; font-weight:800; cursor:pointer; outline:none; font-family:inherit;">
-        <option value="INR" style="background:#1E293B; color:#fff;">₹ INR (India)</option>
-        <option value="USD" style="background:#1E293B; color:#fff;">$ USD (US Dollar)</option>
-        <option value="AUD" style="background:#1E293B; color:#fff;">$ AUD (Australia)</option>
-        <option value="EUR" style="background:#1E293B; color:#fff;">€ EUR (Europe)</option>
-        <option value="GBP" style="background:#1E293B; color:#fff;">£ GBP (UK)</option>
-        <option value="AED" style="background:#1E293B; color:#fff;">د.إ AED (Dubai/UAE)</option>
-        <option value="CAD" style="background:#1E293B; color:#fff;">$ CAD (Canada)</option>
-        <option value="CUSTOM" style="background:#4F46E5; color:#fff; font-weight:800;">✏️ Custom Currency...</option>
-      </select>
-    </div>
-
     <!-- Light/Dark Mode Theme Switcher -->
     <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="togglePosTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 10px; border-radius: 20px; gap: 6px; margin-right: 6px; cursor:pointer;">
       <i id="posThemeIcon" class="fa-solid fa-sun"></i>
