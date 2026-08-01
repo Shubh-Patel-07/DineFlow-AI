@@ -1024,4 +1024,54 @@ body {
   font-weight: 600;
 }
 
+/* Global Select Option Visibility Fix */
+select option {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+}
+
+body.light-theme select option,
+html.light-theme select option {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+/* Global Light Theme Override for Admin Panels */
+body.light-theme,
+html.light-theme {
+  --bg: #F8FAFC !important;
+  --card: #FFFFFF !important;
+  --border: #E2E8F0 !important;
+  --text-primary: #0F172A !important;
+  --text-secondary: #475569 !important;
+  --text-muted: #64748B !important;
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+body.light-theme .admin-nav,
+body.light-theme .settings-card,
+body.light-theme .feedback-card,
+body.light-theme .table-card,
+body.light-theme .modal,
+body.light-theme .modal-header,
+body.light-theme .modal-body,
+body.light-theme .modal-footer {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+}
+
+body.light-theme h1, body.light-theme h2, body.light-theme h3, 
+body.light-theme h4, body.light-theme h5, body.light-theme h6,
+body.light-theme .settings-card-title, body.light-theme .feedback-header h4 {
+  color: #0F172A !important;
+}
+
+body.light-theme input, body.light-theme select, body.light-theme textarea, body.light-theme .form-input {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
 

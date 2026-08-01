@@ -39,6 +39,16 @@
       --radius-lg:      20px;
     }
 
+    /* Global Select Dropdown Option Visibility Fix */
+    select option {
+      background-color: #1E293B !important;
+      color: #F8FAFC !important;
+    }
+    body.light-theme select option {
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+    }
+
     /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES ─── */
     body.light-theme {
       --sidebar-bg:     #FFFFFF;

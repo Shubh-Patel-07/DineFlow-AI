@@ -1,7 +1,30 @@
 /**
- * DineFlow AI - Admin Utilities
- * Helper functions for admin modules
+ * Global System Theme Manager
  */
+window.initGlobalSystemTheme = function() {
+  const savedTheme = localStorage.getItem('dineflow_theme') || localStorage.getItem('posTheme');
+  if (savedTheme === 'light') {
+    document.documentElement.classList.add('light-theme');
+    if (document.body) document.body.classList.add('light-theme');
+  } else {
+    document.documentElement.classList.remove('light-theme');
+    if (document.body) document.body.classList.remove('light-theme');
+  }
+};
+
+window.toggleGlobalSystemTheme = function() {
+  const isLight = document.body ? document.body.classList.toggle('light-theme') : document.documentElement.classList.toggle('light-theme');
+  const themeStr = isLight ? 'light' : 'dark';
+  localStorage.setItem('dineflow_theme', themeStr);
+  localStorage.setItem('posTheme', themeStr);
+  window.initGlobalSystemTheme();
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', window.initGlobalSystemTheme);
+} else {
+  window.initGlobalSystemTheme();
+}
 
 window.toggleAdminSidebar = function() {
   const sidebar = document.getElementById('sidebar');

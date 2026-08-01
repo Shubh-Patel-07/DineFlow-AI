@@ -35,11 +35,56 @@
       --shadow-lg:      0 10px 15px rgba(0,0,0,.5);
       --radius-sm:      8px;
       --radius-md:      12px;
-      --radius-lg:      20px;
+    /* Select Option Visibility Fix */
+    select option {
+      background-color: #1E293B !important;
+      color: #F8FAFC !important;
+    }
+    body.light-theme select option {
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
+    /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES ─── */
+    body.light-theme {
+      --sidebar-bg:     #FFFFFF;
+      --sidebar-hover:  #F1F5F9;
+      --sidebar-active: #6366F1;
+      --bg:             #F8FAFC;
+      --card:           #FFFFFF;
+      --border:         #E2E8F0;
+      --text-primary:   #0F172A;
+      --text-secondary: #475569;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.06);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.08);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.1);
+    }
+    body.light-theme .sidebar { background: #FFFFFF !important; border-right: 1px solid #E2E8F0 !important; }
+    body.light-theme .brand-text h2 { color: #0F172A !important; }
+    body.light-theme .brand-text span { color: #64748B !important; }
+    body.light-theme .sidebar-toggle { background: #F1F5F9 !important; }
+    body.light-theme .sidebar-toggle i { color: #475569 !important; }
+    body.light-theme .sidebar-section-label { color: #94A3B8 !important; }
+    body.light-theme .nav-item { color: #475569 !important; }
+    body.light-theme .nav-item:hover { background: #F1F5F9 !important; color: #0F172A !important; }
+    body.light-theme .nav-item.active { background: var(--primary) !important; color: #FFFFFF !important; }
+    body.light-theme .sidebar-footer { border-top-color: #E2E8F0 !important; }
+    body.light-theme .user-card:hover { background: #F1F5F9 !important; }
+    body.light-theme .user-info h4 { color: #0F172A !important; }
+    body.light-theme .user-info p { color: #64748B !important; }
+    body.light-theme .topbar { background: #FFFFFF !important; border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .topbar-title { color: #0F172A !important; }
+    body.light-theme .topbar-sub { color: #64748B !important; }
+    body.light-theme .stat-card { background: #FFFFFF !important; border-color: #E2E8F0 !important; box-shadow: 0 4px 14px rgba(0,0,0,0.05) !important; }
+    body.light-theme .stat-value { color: #0F172A !important; }
+    body.light-theme .stat-label { color: #64748B !important; }
+    body.light-theme .chart-card { background: #FFFFFF !important; border-color: #E2E8F0 !important; }
+    body.light-theme .card-header h3 { color: #0F172A !important; }
+    body.light-theme .table-card { background: #FFFFFF !important; border-color: #E2E8F0 !important; }
+    body.light-theme table th { background: #F1F5F9 !important; color: #475569 !important; border-color: #E2E8F0 !important; }
+    body.light-theme table td { color: #0F172A !important; border-color: #E2E8F0 !important; }
+    body.light-theme table tr:hover { background: #F8FAFC !important; }
 
     /* ─── SIDEBAR ─────────────────────────────── */
     .sidebar {
