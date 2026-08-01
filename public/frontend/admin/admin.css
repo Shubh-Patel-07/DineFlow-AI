@@ -1036,7 +1036,7 @@ html.light-theme select option {
   color: #0F172A !important;
 }
 
-/* 100% Full System-Wide Light Theme Engine Overrides for Admin Subpages */
+/* 100% Full System-Wide Light Theme Engine Overrides for All Admin Pages & Settings */
 body.light-theme,
 html.light-theme {
   --bg: #F8FAFC !important;
@@ -1049,6 +1049,7 @@ html.light-theme {
   color: #0F172A !important;
 }
 
+/* Sidebar Light Theme */
 body.light-theme .sidebar {
   background: #FFFFFF !important;
   border-right-color: #E2E8F0 !important;
@@ -1073,23 +1074,97 @@ body.light-theme .nav-item.active {
   background: var(--primary) !important;
   color: #FFFFFF !important;
 }
+
+/* Topbar & Headers Light Theme */
 body.light-theme .admin-header,
 body.light-theme .admin-nav,
 body.light-theme .topbar {
   background: #FFFFFF !important;
   border-bottom-color: #E2E8F0 !important;
 }
+body.light-theme .topbar-title {
+  color: #0F172A !important;
+}
+body.light-theme .topbar-sub {
+  color: #64748B !important;
+}
+
+/* Cards & Modals Light Theme */
+body.light-theme .card,
 body.light-theme .settings-card,
 body.light-theme .feedback-card,
 body.light-theme .table-card,
 body.light-theme .inventory-card,
+body.light-theme .coupon-card,
+body.light-theme .customer-card,
+body.light-theme .staff-card,
 body.light-theme .modal,
 body.light-theme .modal-header,
 body.light-theme .modal-body,
-body.light-theme .modal-footer {
+body.light-theme .modal-footer,
+body.light-theme .stat-card,
+body.light-theme .metric-card {
   background: #FFFFFF !important;
   color: #0F172A !important;
   border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
+}
+
+/* Form Controls & Inputs Light Theme */
+body.light-theme input,
+body.light-theme select,
+body.light-theme textarea,
+body.light-theme .form-control,
+body.light-theme .form-select,
+body.light-theme .form-input,
+body.light-theme .input-field {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+body.light-theme input::placeholder,
+body.light-theme textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+body.light-theme label,
+body.light-theme .form-label,
+body.light-theme .settings-label,
+body.light-theme .input-label {
+  color: #334155 !important;
+}
+
+/* Tables Light Theme */
+body.light-theme table th,
+body.light-theme .table th {
+  background-color: #F1F5F9 !important;
+  color: #334155 !important;
+  border-color: #E2E8F0 !important;
+}
+
+body.light-theme table td,
+body.light-theme .table td {
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+}
+
+body.light-theme table tr:hover,
+body.light-theme .table tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+/* Headings Light Theme */
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4,
+body.light-theme h5,
+body.light-theme h6,
+body.light-theme .card-title,
+body.light-theme .settings-title,
+body.light-theme .modal-title {
+  color: #0F172A !important;
 }
 
 
