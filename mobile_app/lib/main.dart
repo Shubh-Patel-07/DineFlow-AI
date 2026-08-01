@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'screens/pos_screen.dart';
+import 'screens/kds_screen.dart';
+import 'screens/analytics_screen.dart';
 
 void main() {
   runApp(const DineFlowMobileApp());
@@ -40,9 +43,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const WaiterPosTab(),
-    const KitchenKdsTab(),
-    const OwnerAnalyticsTab(),
+    const WaiterPosScreen(),
+    const KitchenKdsScreen(),
+    const OwnerAnalyticsScreen(),
   ];
 
   @override
