@@ -35,10 +35,10 @@ async function loadCustomers() {
 }
 
 function getTier(spent) {
-  if (spent >= 5000)  return { label: 'Platinum', color: '#E2E8F0' };
-  if (spent >= 2000)  return { label: 'VIP Gold', color: '#F59E0B' };
-  if (spent >= 500)   return { label: 'Silver',   color: '#94A3B8' };
-  return { label: 'New',       color: '#6366F1' };
+  if (spent >= 5000)  return { label: 'Platinum', color: '#7C3AED', bg: 'rgba(124,58,237,0.15)' };
+  if (spent >= 2000)  return { label: 'VIP Gold', color: '#D97706', bg: 'rgba(245,158,11,0.15)' };
+  if (spent >= 500)   return { label: 'Silver',   color: '#475569', bg: 'rgba(100,116,139,0.15)' };
+  return { label: 'New',       color: '#6366F1', bg: 'rgba(99,102,241,0.15)' };
 }
 
 function renderCustomers() {
@@ -46,7 +46,7 @@ function renderCustomers() {
   if (!tbody) return;
 
   if (!customerList.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:#94A3B8;">
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">
       <i class="fa-solid fa-users" style="font-size:32px; opacity:.3; display:block; margin-bottom:12px;"></i>
       No customers yet.
     </td></tr>`;
@@ -66,22 +66,22 @@ function renderCustomers() {
     <tr>
       <td>
         <div style="display:flex; align-items:center; gap:10px;">
-          <div style="width:34px; height:34px; border-radius:50%; background:rgba(99,102,241,0.2); color:#A5B4FC; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">
+          <div style="width:34px; height:34px; border-radius:50%; background:rgba(99,102,241,0.15); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">
             ${escapeHtml((c.name || '?')[0].toUpperCase())}
           </div>
           <div>
-            <div style="font-weight:700; color:#F8FAFC;">${escapeHtml(c.name)}</div>
-            <div style="font-size:11px; color:#64748B;">${escapeHtml(c.email || '')}</div>
+            <div style="font-weight:700; color:var(--text-primary);">${escapeHtml(c.name)}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(c.email || '')}</div>
           </div>
         </div>
       </td>
-      <td style="color:#94A3B8;">${escapeHtml(c.phone || '—')}</td>
+      <td style="color:var(--text-primary); font-weight:600;">${escapeHtml(c.phone || '—')}</td>
       <td style="font-weight:600; color:#6366F1;">${visits} visits</td>
       <td style="font-weight:800; color:#10B981;">₹${spent.toLocaleString('en-IN', {minimumFractionDigits:0})}</td>
       <td style="font-weight:700; color:#F59E0B;"><i class="fa-solid fa-star" style="margin-right:4px;"></i>${points} pts</td>
-      <td style="font-size:11px; color:#64748B;">${lastVisit}</td>
+      <td style="font-size:11px; color:var(--text-muted);">${lastVisit}</td>
       <td>
-        <span style="padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; background:rgba(99,102,241,0.15); color:${tier.color};">
+        <span style="padding:4px 10px; border-radius:12px; font-size:11px; font-weight:800; background:${tier.bg}; color:${tier.color};">
           ${tier.label}
         </span>
       </td>

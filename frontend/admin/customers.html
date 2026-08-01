@@ -25,8 +25,23 @@
 
   <style>
     .cust-table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
-    .cust-table th, .cust-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); }
-    .cust-table th { background: rgba(255,255,255,0.03); color: var(--text-secondary); font-size: 11px; text-transform: uppercase; }
+    .cust-table th, .cust-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text-primary); }
+    .cust-table th { background: var(--bg); color: var(--text-secondary); font-size: 11px; text-transform: uppercase; }
+    
+    html.light-theme .cust-table, body.light-theme .cust-table {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05) !important;
+    }
+    html.light-theme .cust-table th, body.light-theme .cust-table th {
+      background: #F1F5F9 !important;
+      color: #64748B !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    html.light-theme .cust-table td, body.light-theme .cust-table td {
+      border-bottom-color: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
   </style>
 </head>
 <body>
@@ -50,35 +65,42 @@
 
   <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar" style="background: #0B0F19; border-right: 1px solid rgba(255,255,255,0.08); padding: 16px;">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);">
-        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width:36px; height:36px; border-radius:10px; box-shadow:0 4px 14px rgba(99,102,241,0.3);">
-        <div>
-          <h2 style="font-size:14px; font-weight:700; margin:0; color:#fff; font-family:'Outfit',sans-serif;">DineFlow AI</h2>
-          <span style="font-size:11px; color:#64748B;">Admin Suite</span>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="brand-text">
+          <h2>DineFlow AI</h2>
+          <span>Admin Suite</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Main</div>
+          <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
+          <a class="nav-item" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item" href="/z-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+          <a class="nav-item active" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+          <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+          <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
         </div>
       </div>
-      <nav style="display:flex; flex-direction:column; gap:4px;">
-        <a href="/dashboard" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="/pos" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-cash-register"></i> POS Terminal</a>
-        <a href="/admin/menu-manager" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
-        <a href="/z-report" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
-        <a href="/admin/inventory" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
-        <a href="/admin/coupons" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-ticket"></i> Coupons</a>
-        <a href="/admin/customers" class="nav-item active" style="padding:10px 12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; text-decoration:none; border-radius:10px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:10px; box-shadow:0 4px 12px rgba(99,102,241,0.3);"><i class="fa-solid fa-users"></i> Customers</a>
-        <a href="/admin/tables" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-table-cells-large"></i> Table Manager</a>
-        <a href="/admin/staff" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-shield"></i> Staff & Roles</a>
-        <a href="/admin/settings" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> System Settings</a>
-        <a href="/admin/feedback" class="nav-item" style="padding:10px 12px; color:#94A3B8; text-decoration:none; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-star"></i> Reviews & Feedback</a>
-      </nav>
     </aside>
 
     <!-- Main Content -->
     <main style="flex: 1; padding: 28px; overflow-y: auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
         <div>
-          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:#F8FAFC;">👥 Customer Directory & Loyalty Rewards</h1>
-          <p style="margin:0; color:#94A3B8; font-size:13px;">View customer visit frequency, total spending, and reward points</p>
+          <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary);">👥 Customer Directory & Loyalty Rewards</h1>
+          <p style="margin:0; color:var(--text-muted); font-size:13px;">View customer visit frequency, total spending, and reward points</p>
         </div>
       </div>
 
