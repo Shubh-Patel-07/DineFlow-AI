@@ -87,21 +87,21 @@ function renderFeedback() {
       const dateStr = date ? new Date(date).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
 
       return `
-      <div class="feedback-card" style="background:var(--card,#1E293B); border:1px solid var(--border,#334155); border-radius:14px; padding:16px; margin-bottom:12px;">
+      <div class="feedback-card" style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:12px;">
         <div class="feedback-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <div style="width:36px; height:36px; border-radius:50%; background:rgba(99,102,241,0.2); color:#A5B4FC; display:flex; align-items:center; justify-content:center; font-weight:700;">
+            <div style="width:36px; height:36px; border-radius:50%; background:rgba(99,102,241,0.2); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:700;">
               ${(name[0] || '?').toUpperCase()}
             </div>
-            <h4 style="font-size:14px; font-weight:600; color:#F8FAFC;">${escapeHtml(name)}</h4>
+            <h4 style="font-size:14px; font-weight:700; color:var(--text-primary);">${escapeHtml(name)}</h4>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="stars" style="font-size:14px;">${getStars(rating)}</div>
             <span style="font-size:12px; font-weight:700; color:#F59E0B;">${rating}/5</span>
           </div>
         </div>
-        <p class="feedback-comment" style="font-size:13px; color:#CBD5E1; line-height:1.5; margin-bottom:8px;">${escapeHtml(comment)}</p>
-        <p class="feedback-date" style="font-size:11px; color:#64748B;"><i class="fa-regular fa-clock" style="margin-right:4px;"></i>${dateStr}</p>
+        <p class="feedback-comment" style="font-size:13.5px; color:var(--text-primary); line-height:1.5; margin-bottom:8px; font-weight:500;">${escapeHtml(comment)}</p>
+        <p class="feedback-date" style="font-size:11px; color:var(--text-muted);"><i class="fa-regular fa-clock" style="margin-right:4px;"></i>${dateStr}</p>
       </div>`;
     }).join('');
 }
