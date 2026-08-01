@@ -1343,7 +1343,7 @@ async function loadDashDeliveryData() {
 <!-- ADMIN MODULE IFRAME MODAL — Loads admin pages inside Dashboard -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="dashAdminModuleModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
-  <div class="modal" style="width:1100px; max-width:96vw; height:88vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+  <div class="modal" style="width:1320px; max-width:96vw; height:90vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
     <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
       <div class="modal-title" id="dashAdminModuleTitle" style="color:var(--primary); font-size:16px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">Admin Module</div>
       <div style="display:flex; align-items:center; gap:8px;">

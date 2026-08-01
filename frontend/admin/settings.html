@@ -431,6 +431,67 @@
             </button>
           </div>
 
+          <!-- 5. Table & Dining Area Preferences -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(14,165,233,0.2), rgba(2,132,199,0.1)); color:#0EA5E9; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-chair"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Table & Dining Area Preferences</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Auto-assign tables & reservation hold times</span>
+              </div>
+            </div>
+
+            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
+              <div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Quick Table Auto-Assign</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Auto select first available table for new walk-in orders</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:#0EA5E9; width:20px; height:20px; cursor:pointer;">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Table Reservation Hold Limit</label>
+              <select class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+                <option value="15">15 Minutes Hold</option>
+                <option value="30" selected>30 Minutes Standard Hold</option>
+                <option value="45">45 Minutes Hold</option>
+                <option value="60">60 Minutes Maximum Hold</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 6. POS Terminal & Checkout Controls -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(168,85,247,0.2), rgba(147,51,234,0.1)); color:#A855F7; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">POS Terminal & Quick Checkout</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">One-click payment & printer copy counts</span>
+              </div>
+            </div>
+
+            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
+              <div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Quick Cash One-Click Checkout</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Complete cash orders instantly without modal prompt</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:#A855F7; width:20px; height:20px; cursor:pointer;">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Receipt Print Copies</label>
+              <select class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+                <option value="1" selected>1 Customer Copy</option>
+                <option value="2">2 Copies (Customer + Merchant)</option>
+                <option value="3">3 Copies (Customer + Merchant + Kitchen)</option>
+              </select>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
