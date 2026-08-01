@@ -1,8 +1,8 @@
 /* DineFlow AI - Admin Stylesheet */
 :root {
-  --bg: #090D1A;
-  --card: #131A35;
-  --border: rgba(255, 255, 255, 0.08);
+  --bg: #0F172A;
+  --card: #1E293B;
+  --border: #334155;
   --primary: #6366F1;
   --primary-glow: rgba(99, 102, 241, 0.2);
   --success: #10B981;
@@ -14,7 +14,7 @@
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
-  --font-main: 'Inter', sans-serif;
+  --font-main: 'Outfit', 'Inter', sans-serif;
   --font-display: 'Outfit', sans-serif;
 }
 
@@ -1034,6 +1034,62 @@ body.light-theme select option,
 html.light-theme select option {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
+}
+
+/* 100% Full System-Wide Light Theme Engine Overrides for Admin Subpages */
+body.light-theme,
+html.light-theme {
+  --bg: #F8FAFC !important;
+  --card: #FFFFFF !important;
+  --border: #E2E8F0 !important;
+  --text-primary: #0F172A !important;
+  --text-secondary: #475569 !important;
+  --text-muted: #64748B !important;
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+body.light-theme .sidebar {
+  background: #FFFFFF !important;
+  border-right-color: #E2E8F0 !important;
+}
+body.light-theme .sidebar-brand {
+  border-bottom-color: #E2E8F0 !important;
+}
+body.light-theme .brand-text h2 {
+  color: #0F172A !important;
+}
+body.light-theme .brand-text span {
+  color: #64748B !important;
+}
+body.light-theme .nav-item {
+  color: #475569 !important;
+}
+body.light-theme .nav-item:hover {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+body.light-theme .nav-item.active {
+  background: var(--primary) !important;
+  color: #FFFFFF !important;
+}
+body.light-theme .admin-header,
+body.light-theme .admin-nav,
+body.light-theme .topbar {
+  background: #FFFFFF !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+body.light-theme .settings-card,
+body.light-theme .feedback-card,
+body.light-theme .table-card,
+body.light-theme .inventory-card,
+body.light-theme .modal,
+body.light-theme .modal-header,
+body.light-theme .modal-body,
+body.light-theme .modal-footer {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
 }
 
 
