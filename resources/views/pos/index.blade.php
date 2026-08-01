@@ -1567,6 +1567,8 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Reports</div>
       <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('posTableFloorModal'); renderVisualFloorGrid();" style="cursor:pointer;" data-tip="Table Floor Plan"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Visual Floor Map</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('posRecipeModal')" style="cursor:pointer;" data-tip="Recipe Engine"><i class="fa-solid fa-flask"></i><span class="nav-label"> Recipe Engine</span></a>
       <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
       <a class="nav-item" href="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
@@ -2501,6 +2503,99 @@
   </div>
 </div>
 
+<!-- 🪑 Visual Interactive Table Floor & Reservation Modal -->
+<div class="modal-overlay" id="posTableFloorModal">
+  <div class="modal" style="width:920px; max-width:96%; border-radius:24px; overflow:hidden; background:var(--card); border:1px solid var(--border);">
+    <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); padding:16px 22px; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#fff; font-size:16px; font-weight:800; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-table-cells-large" style="color:#818CF8; font-size:18px;"></i>
+        <span>Visual Table Floor Plan &amp; Reservation Terminal</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('posTableFloorModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <!-- Legend & Section Switcher -->
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px; background:var(--bg); padding:12px 16px; border-radius:14px; border:1px solid var(--border);">
+        <div style="display:flex; gap:8px;">
+          <button onclick="filterFloorSection('all')" class="btn-floor-sec active" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--primary); background:var(--primary); color:#fff; cursor:pointer;">All Areas</button>
+          <button onclick="filterFloorSection('main')" class="btn-floor-sec" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--border); background:transparent; color:var(--text-primary); cursor:pointer;">Main Dining</button>
+          <button onclick="filterFloorSection('ac')" class="btn-floor-sec" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--border); background:transparent; color:var(--text-primary); cursor:pointer;">AC Hall</button>
+          <button onclick="filterFloorSection('garden')" class="btn-floor-sec" style="padding:5px 14px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--border); background:transparent; color:var(--text-primary); cursor:pointer;">Garden Lawn</button>
+        </div>
+        <!-- Status Colors Legend -->
+        <div style="display:flex; align-items:center; gap:14px; font-size:11.5px; font-weight:600; color:var(--text-secondary);">
+          <span><i class="fa-solid fa-circle" style="color:#10B981;"></i> Available</span>
+          <span><i class="fa-solid fa-circle" style="color:#EF4444;"></i> Booked / Occupied</span>
+          <span><i class="fa-solid fa-circle" style="color:#F59E0B;"></i> KOT Cooking</span>
+          <span><i class="fa-solid fa-circle" style="color:#6366F1;"></i> Reserved</span>
+        </div>
+      </div>
+
+      <!-- Live Floor Grid -->
+      <div id="visualFloorGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:14px; max-height:420px; overflow-y:auto; padding:4px;">
+        <!-- Dynamically generated visual table cards -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🧪 Recipe & Ingredient Consumption Engine Modal -->
+<div class="modal-overlay" id="posRecipeModal">
+  <div class="modal" style="width:780px; max-width:96%; border-radius:24px; overflow:hidden; background:var(--card); border:1px solid var(--border);">
+    <div class="modal-header" style="background:linear-gradient(135deg,#064E3B,#047857); padding:16px 22px; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#fff; font-size:16px; font-weight:800; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-flask" style="color:#34D399; font-size:18px;"></i>
+        <span>Recipe &amp; Ingredient Consumption Engine</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('posRecipeModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px; max-height:460px; overflow-y:auto;">
+      <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:14px; padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between;">
+        <div>
+          <div style="font-size:13px; font-weight:800; color:var(--text-primary);">🧪 Auto-Deduction Engine Status: Active</div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Raw materials are automatically deducted from inventory when kitchen accepts orders.</div>
+        </div>
+        <span style="background:#10B981; color:#fff; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800;">AUTO-DEDUCT ON</span>
+      </div>
+
+      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12.5px; color:var(--text-primary);">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border); color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
+            <th style="padding:10px;">Ingredient / Raw Material</th>
+            <th style="padding:10px;">Current Stock</th>
+            <th style="padding:10px;">Min Safety Threshold</th>
+            <th style="padding:10px;">Consumption Rate</th>
+            <th style="padding:10px;">Stock Alert Status</th>
+          </tr>
+        </thead>
+        <tbody id="recipeIngredientsTableBody">
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 10px; font-weight:700;">Paneer (Fresh Cottage Cheese)</td>
+            <td style="padding:12px 10px; font-weight:700; color:#10B981;">14.5 kg</td>
+            <td style="padding:12px 10px; color:var(--text-muted);">3.0 kg</td>
+            <td style="padding:12px 10px;">200g / thali</td>
+            <td style="padding:12px 10px;"><span style="background:rgba(16,185,129,0.15); color:#34D399; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Healthy Stock</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 10px; font-weight:700;">Amul Butter (Unsalted)</td>
+            <td style="padding:12px 10px; font-weight:700; color:#EF4444;">1.2 kg</td>
+            <td style="padding:12px 10px; color:var(--text-muted);">2.5 kg</td>
+            <td style="padding:12px 10px;">50g / dish</td>
+            <td style="padding:12px 10px;"><span style="background:rgba(239,68,68,0.15); color:#F87171; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">⚠️ LOW STOCK ALERT</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 10px; font-weight:700;">Basmati Rice (Extra Long)</td>
+            <td style="padding:12px 10px; font-weight:700; color:#10B981;">28.0 kg</td>
+            <td style="padding:12px 10px; color:var(--text-muted);">5.0 kg</td>
+            <td style="padding:12px 10px;">150g / plate</td>
+            <td style="padding:12px 10px;"><span style="background:rgba(16,185,129,0.15); color:#34D399; padding:3px 8px; border-radius:10px; font-weight:700; font-size:11px;">Healthy Stock</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- Admin Module Iframe Modal -->
 <div class="modal-overlay" id="adminModuleModal">
   <div class="modal" style="width:96vw; max-width:1240px; height:92vh; max-height:860px; display:flex; flex-direction:column; padding:0; border-radius:20px; overflow:hidden; background:var(--card); border:1px solid var(--border); box-shadow:0 24px 60px rgba(0,0,0,0.6);">
@@ -2777,6 +2872,67 @@
     openAdminModule('/admin/tables', '<i class="fa-solid fa-table-cells-large" style="color:var(--primary);"></i> 🪑 Table Manager & QR Generator');
   }
 
+
+  // ─── VISUAL TABLE FLOOR PLAN ENGINE ───
+  let floorTablesList = [
+    { id: 1, name: 'T-01', area: 'main', capacity: 4, status: 'occupied', billPaid: false, currentOrder: '#ORD-20260313-0001', amount: 480 },
+    { id: 2, name: 'T-02', area: 'main', capacity: 2, status: 'available', billPaid: true },
+    { id: 3, name: 'T-03', area: 'main', capacity: 6, status: 'kot_cooking', billPaid: false, currentOrder: '#ORD-20260313-0004', amount: 920 },
+    { id: 4, name: 'T-04', area: 'ac', capacity: 4, status: 'occupied', billPaid: false, currentOrder: '#ORD-20260313-0002', amount: 650 },
+    { id: 5, name: 'T-05', area: 'ac', capacity: 8, status: 'reserved', guest: 'Sharma Family (8 pax)' },
+    { id: 6, name: 'T-06', area: 'garden', capacity: 4, status: 'available', billPaid: true },
+    { id: 7, name: 'T-07', area: 'garden', capacity: 2, status: 'available', billPaid: true },
+    { id: 8, name: 'T-08', area: 'garden', capacity: 6, status: 'occupied', billPaid: false, currentOrder: '#ORD-20260313-0009', amount: 1140 }
+  ];
+
+  function renderVisualFloorGrid(filterArea = 'all') {
+    const grid = document.getElementById('visualFloorGrid');
+    if (!grid) return;
+
+    const list = floorTablesList.filter(t => filterArea === 'all' || t.area === filterArea);
+
+    grid.innerHTML = list.map(t => {
+      let bg, border, statusLabel, badgeColor;
+      if (t.status === 'occupied') {
+        bg = 'rgba(239,68,68,0.12)'; border = 'rgba(239,68,68,0.35)'; statusLabel = 'Booked / Unpaid'; badgeColor = '#EF4444';
+      } else if (t.status === 'kot_cooking') {
+        bg = 'rgba(245,158,11,0.12)'; border = 'rgba(245,158,11,0.35)'; statusLabel = 'KOT Cooking'; badgeColor = '#F59E0B';
+      } else if (t.status === 'reserved') {
+        bg = 'rgba(99,102,241,0.12)'; border = 'rgba(99,102,241,0.35)'; statusLabel = 'Reserved'; badgeColor = '#6366F1';
+      } else {
+        bg = 'rgba(16,185,129,0.12)'; border = 'rgba(16,185,129,0.35)'; statusLabel = 'Available'; badgeColor = '#10B981';
+      }
+
+      return `
+        <div onclick="selectFloorTable('${t.name}')" style="background:${bg}; border:1px solid ${border}; border-radius:16px; padding:14px; text-align:center; cursor:pointer; transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="font-size:18px; font-weight:800; color:var(--text-primary); font-family:'Outfit',sans-serif;">${t.name}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${t.capacity} Seats • ${t.area.toUpperCase()}</div>
+          <div style="margin-top:8px;">
+            <span style="background:${badgeColor}; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; display:inline-block;">
+              ${statusLabel}
+            </span>
+          </div>
+          ${t.amount ? `<div style="font-size:12px; font-weight:700; color:var(--primary); margin-top:6px;">${getCurrencySymbol()} ${t.amount}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function selectFloorTable(tableName) {
+    selectTable(tableName);
+    closeModal('posTableFloorModal');
+    showToast(`Table ${tableName} selected for active order`, 'success');
+  }
+
+  function filterFloorSection(area) {
+    document.querySelectorAll('.btn-floor-sec').forEach(b => {
+      b.style.background = 'transparent'; b.style.color = 'var(--text-primary)'; b.style.borderColor = 'var(--border)';
+    });
+    if (event && event.target) {
+      event.target.style.background = 'var(--primary)'; event.target.style.color = '#fff'; event.target.style.borderColor = 'var(--primary)';
+    }
+    renderVisualFloorGrid(area);
+  }
 
   // ─── MULTI-CURRENCY GLOBAL ENGINE ───
   const CURRENCY_MAP = {
