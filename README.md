@@ -6,38 +6,73 @@
 [![Status](https://img.shields.io/badge/Production-Ready-10B981?style=for-the-badge)](#)
 [![Git Branches](https://img.shields.io/badge/Git-main%20%7C%20develop%20%7C%20feature--teamlead-6366F1?style=for-the-badge&logo=git)](#)
 
-DineFlow AI is a state-of-the-art, enterprise-grade Restaurant POS and Smart Operations Management Platform. Built with Laravel, PHP 8.3, and modern CSS/JS, it empowers restaurants with touchscreen POS billing, live Kitchen Display Systems (KDS), automated stock deduction, vocal soundbox payment announcements, WhatsApp invoices, and executive A4 PDF tax receipts.
+DineFlow AI is a state-of-the-art, enterprise-grade Restaurant POS and Smart Operations Management Platform. Built with Laravel 11, PHP 8.3, and modern CSS/JS, it empowers restaurants with touchscreen POS billing, live Kitchen Display Systems (KDS), automated stock deduction, vocal soundbox payment announcements, WhatsApp invoices, and executive A4 PDF tax receipts.
 
 ---
 
-## 🌟 Key Presentation Highlights & Features
+## 🎯 Master Presentation & Demo Guide (First Presentation Flow)
 
-### ⚡ 1. Touchscreen POS Billing Terminal (`/pos`)
-- **Quick Order Grid**: Category-filtered menu tiles with instant touch targets.
-- **Real-Time Tax Engine**: Auto-calculates Subtotal, 5% Service Charge, 9% CGST, and 9% SGST.
-- **Table Registry**: Visual table selection and live order status.
+For project demonstrations and evaluators, DineFlow AI is presented as a **100% Complete, Unified, Market-Ready Restaurant Ecosystem** rather than fragmented date-wise modules. Below is the step-by-step recommended presentation flow:
 
-### 📄 2. Executive A4 PDF Tax Invoice & Thermal Receipt Engine (`/orders/{id}/invoice-a4`)
-- **Corporate Executive Layout**: Features restaurant branding, GSTIN, table details, and itemized tax breakdowns.
-- **Verification QR Code**: Live dynamic QR code linking customers to their digital invoice.
-- **Executive Authorized Signatory (SMP)**: Digital verified seal badge with elegant cursive SMP signature.
-- **1-Click Printing**: Dual support for A4 PDF Tax Invoices and 80mm Thermal Receipt Printers.
+```mermaid
+graph TD
+    A["1. Executive Dashboard & Real-Time Analytics"] --> B["2. Touchscreen POS Billing & ⚡ Auto-Apply Offers"]
+    B --> C["3. 🔊 Smart Vocal Soundbox Audio Announcement"]
+    C --> D["4. Table QR Code & Customer Digital Menu"]
+    D --> E["5. Live Kitchen Display System (KDS) Queue"]
+    E --> F["6. Executive A4 PDF Tax Receipt & WhatsApp Billing"]
+    F --> G["7. Back-Office Admin (Coupons, Inventory & RBAC Roles)"]
+```
 
-### 📱 3. Smart WhatsApp Invoice Sender
-- **1-Click WhatsApp Sharing**: Directly opens WhatsApp with pre-formatted invoice text and digital A4 PDF URL.
-- **No Browser Prompts**: Integrated modal UI with live order preview and mobile number input.
+---
 
-### 🔊 4. Vocal Soundbox Payment Announcement Engine
-- **Voice Payment Alerts**: Real-time vocal announcements in Gujarati/English when an order payment is marked paid (e.g. *"Table 1, ₹350 Payment Received!"*).
-- **Duplicate Suppression**: `localStorage` persistent tracking prevents duplicate voice playback across polls.
+### 📊 Step 1: Executive Dashboard (`/dashboard`)
+- **Live Sales & Revenue Metrics**: Real-time sales graph, order counts, average order value, and table occupancy rate.
+- **Instant Light / Dark Mode Toggle**: 1-click theme switcher presenting ultra-premium visual aesthetics.
+- **Hero Quick Action Bar**: Fast navigation to POS, Kitchen KDS, Inventory, and Admin Settings.
 
-### 🍳 5. Kitchen Display System (KDS) & Audio Chimes (`/kitchen`)
-- **Live KOT Queue**: Real-time kitchen order monitor updating prep statuses (`Pending` → `Preparing` → `Completed`).
-- **Kitchen Pop Chime**: Audio chime notification whenever a new order is received in the kitchen.
+---
 
-### 🛵 6. Live Order Tracker Progress Bar (Domino's / Zomato Style)
-- **Customer Order Status**: Visual progress bar tracking order flow:  
-  `🟡 Order Received` ➔ `🟠 Cooking in Kitchen` ➔ `🟢 Ready & Serving`.
+### 💳 Step 2: Touchscreen POS Billing Terminal (`/pos`)
+- **Quick Touch Targets**: Category-filtered menu tiles (Pizza, Beverages, Starters, Main Course).
+- **⚡ Smart Auto-Apply Offer Engine**: Selecting a **New Customer** or eligible cart automatically applies the best promo discount (e.g. `⚡ Auto-Applied: WELCOME100 - Saved ₹150`).
+- **1-Click Offers Drawer**: Easily view, select, or swap active promotional codes right from the checkout panel.
+- **Real-Time Tax Engine**: Automatic calculation of Subtotal, 5% Service Charge, 9% CGST, and 9% SGST.
+
+---
+
+### 🔊 Step 3: Smart Vocal Soundbox Payment Announcement Engine
+- **Multi-Language Speech Announcements**: Instant audio payment alerts in **Gujarati**, **Hindi**, or **English** (e.g., *"ડાઇનફ્લો એઆઈ: ટેબલ 1 પરથી ₹500 રૂપિયા પ્રાપ્ત થયા"*).
+- **Dynamic Card Labels**: Settings card header title, subtext, and test buttons dynamically adjust to selected language.
+- **Duplicate Playback Prevention**: `localStorage` tracking prevents repeated voice alerts during background polling.
+
+---
+
+### 📱 Step 4: Table QR Code Engine & Customer Digital Menu (`/admin/tables` & `/menu`)
+- **Table QR Generator**: Instant generation of scannable table-specific QR codes.
+- **Customer Mobile Menu**: Contactless ordering directly from customer smartphone browsers.
+
+---
+
+### 🍳 Step 5: Kitchen Display System (KDS) & Order Tracker (`/pos/kitchen`)
+- **Live Kitchen Queue**: Real-time order cards updating prep states (`Pending` ➔ `Preparing` ➔ `Ready`).
+- **Kitchen Pop Chime**: Audio notification whenever a new order is sent from POS or Customer QR Menu.
+- **Progress Bar Order Status**: Visual progress bar tracking order flow (`🟡 Received` ➔ `🟠 Cooking` ➔ `🟢 Ready`).
+
+---
+
+### 📄 Step 6: Executive A4 PDF Tax Invoice & WhatsApp Billing (`/orders/{id}/invoice-a4`)
+- **Corporate A4 Layout**: Features restaurant branding, GSTIN, table details, and itemized tax breakdown.
+- **Verification QR Code & SMP Seal**: Dynamic QR linking to online invoice + authorized SMP signature badge.
+- **1-Click WhatsApp Sharing**: Instantly shares pre-formatted invoice text and PDF receipt link via WhatsApp.
+
+---
+
+### ⚙️ Step 7: Back-Office Admin Management Modules
+- **Coupons & Offers (`/admin/coupons`)**: Max discount cap, expiration date/time, usage limits, category restrictions, and auto-apply toggles.
+- **Menu Items Manager (`/admin/menu-manager`)**: Add/edit dishes, prices, availability, and category tags.
+- **Inventory & Stock Tracking (`/admin/inventory`)**: Stock ingredient management with auto-deduction on checkout.
+- **Staff & Role-Based Access (`/admin/staff`)**: Role isolation (`admin`, `manager`, `cashier`, `waiter`, `kitchen`).
 
 ---
 
@@ -45,7 +80,7 @@ DineFlow AI is a state-of-the-art, enterprise-grade Restaurant POS and Smart Ope
 
 | Member Name | Role & Branch | Module Responsibilities |
 | :--- | :--- | :--- |
-| **Shubh Patel (SMP)** | **Team Lead** (`feature-teamlead`) | Full-Stack Architecture, POS Billing Engine, Soundbox Engine, Thermal Printing, A4 Invoices & WhatsApp Integration |
+| **Shubh Patel (SMP)** | **Team Lead** (`feature-teamlead`) | Full-Stack Architecture, POS Billing Engine, Soundbox Engine, Thermal Printing, A4 Invoices, Offers Auto-Apply & WhatsApp Integration |
 | **Krushank Dave** | **Member 2** (`feature-krushank`) | Customer Menu UI, Responsive Card Layout & Frontend Data Rendering |
 | **Fiyans** | **Member** (`feature-fiyans`) | Table Management UI & Admin Styling Modules |
 
@@ -53,7 +88,7 @@ DineFlow AI is a state-of-the-art, enterprise-grade Restaurant POS and Smart Ope
 
 ## 📅 Project Presentation Roadmap & Milestones
 
-This section summarizes our backend & full-stack development progress across all 4 key presentation deliverables.
+This section summarizes our backend & full-stack development progress across all key presentation deliverables.
 
 ```mermaid
 gantt
@@ -69,23 +104,23 @@ gantt
     Vocal Soundbox, A4 PDF Invoice & KDS     :done, p4, 2026-09-16, 2026-10-17
 ```
 
-### 🏁 Presentation 1 (Deadline: 01 Aug 2026 | Target: 30%) - **[COMPLETED ✅]**
+### 🏁 Presentation 1 (Target: 30%) - **[COMPLETED ✅]**
 - **Architecture Setup**: Configured Laravel 11 framework compatible with PHP 8.3.
 - **Multi-Auth Engine**: Developed traditional username/password authentication & 4-6 digit touchscreen PIN login.
 - **Portable Database**: Configured SQLite & MySQL dual database support for zero-config presentation portability.
 
-### 🏁 Presentation 2 (Deadline: 24 Aug 2026 | Target: 55%) - **[COMPLETED ✅]**
+### 🏁 Presentation 2 (Target: 55%) - **[COMPLETED ✅]**
 - **Tenancy & Table Registry**: Built multi-tenant Restaurant profiles and Table registry database configurations.
 - **Dynamic QR Code Engine**: Implemented TableController to generate live QR URLs linking physical tables to digital menus.
 - **Menu Items CRUD**: Created MenuItem models, database schema, and REST API controllers for menu management.
 
-### 🏁 Presentation 3 (Deadline: 15 Sep 2026 | Target: 80%) - **[COMPLETED ✅]**
+### 🏁 Presentation 3 (Target: 80%) - **[COMPLETED ✅]**
 - **Cart & Order Checkout Flow**: Implemented `POST /api/orders` endpoint supporting complex multi-item cart payloads.
 - **Automated Stock Deduction**: Programmed real-time database hooks deducting raw ingredients from `inventories` on checkout.
 - **Role-Based Access Control (RBAC)**: Developed `RoleMiddleware` for strict role isolation (`admin`, `manager`, `waiter`, `kitchen`, `customer`).
 
-### 🏁 Presentation 4 (Deadline: 17 Oct 2026 | Target: 100% Final Launch) - **[COMPLETED ✅]**
-- **Vocal Soundbox Integration**: Added Gujarati/English vocal announcements for completed payments.
+### 🏁 Presentation 4 (Target: 100% Final Launch) - **[COMPLETED ✅]**
+- **Vocal Soundbox Integration**: Added Gujarati/Hindi/English vocal announcements for completed payments.
 - **Executive A4 PDF Invoice**: Built printable A4 Tax Invoice template with verified SMP signature and QR codes.
 - **WhatsApp Billing**: Integrated modal-driven WhatsApp invoice link delivery.
 - **KDS Audio Notifications**: Implemented kitchen pop chime alerts for incoming orders.
