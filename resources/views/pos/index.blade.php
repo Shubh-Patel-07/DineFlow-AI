@@ -1828,7 +1828,7 @@
         <div class="cust-avatar">RK</div>
         <div class="cust-info">
           <h5>Rahul Kumar</h5>
-          <p>+91 98765 43210 &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ 420 pts</span></p>
+          <p>+91 98765 43210 &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ 0 pts</span></p>
         </div>
         <span class="cust-change" onclick="openModal('customerModal')">Change</span>
       </div>
@@ -4708,7 +4708,7 @@
   setInterval(checkNewPayments, 45000);
 
   // Customer Modal Selection & Filter Logic
-  let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 420, avatar: 'RK' };
+  let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
 
   async function fetchAndRenderPosCustomers() {
     try {
