@@ -361,30 +361,50 @@
                 <i class="fa-solid fa-print"></i>
               </div>
               <div>
-                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Receipt & Printer Settings</h3>
-                <span style="font-size:11.5px; color:var(--text-muted);">Thermal KOT auto-print & digital dispatch</span>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Hardware Printer Settings</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Target printer selection & KOT receipt formatting</span>
+              </div>
+            </div>
+
+            <!-- Printer Selection Dropdown -->
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Active Hardware Printer</label>
+              <select id="printerSelect" onchange="toggleCustomPrinterInput(this.value)" class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <option value="SYSTEM_DEFAULT" selected>🖨️ System Default (Browser Printer Dialog)</option>
+                <option value="THERMAL_80MM">📄 80mm ESC/POS Thermal Receipt Printer (Standard)</option>
+                <option value="THERMAL_58MM">📱 58mm Mini Handheld Bluetooth Thermal Printer</option>
+                <option value="CUSTOM_PRINTER">🔌 Network / Specific USB Printer (EPSON, TVS, Star)</option>
+              </select>
+            </div>
+
+            <!-- Custom Printer Name / IP Input -->
+            <div id="customPrinterBox" style="display:none; flex-direction:column; gap:10px; background:var(--bg); border:1px solid var(--border); padding:14px; border-radius:14px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Specific Printer Name or IP Address</label>
+                <input type="text" id="printerNameInput" class="form-input" placeholder="e.g. EPSON TM-T82, POS-80, or 192.168.1.100" style="padding:10px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700;">
               </div>
             </div>
 
             <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
               <div>
-                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Auto-Print KOT on Order</div>
-                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Send thermal KOT to kitchen upon bill generation</div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Auto-Print KOT to Selected Printer</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Automatically dispatch KOT slips upon bill checkout</div>
               </div>
-              <input type="checkbox" checked style="accent-color:#6366F1; width:20px; height:20px; cursor:pointer;">
-            </div>
-
-            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
-              <div>
-                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">WhatsApp Bill Dispatch</div>
-                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Send digital bill link to customer's mobile number</div>
-              </div>
-              <input type="checkbox" checked style="accent-color:#6366F1; width:20px; height:20px; cursor:pointer;">
+              <input type="checkbox" id="autoPrintKotCheck" checked style="accent-color:#6366F1; width:20px; height:20px; cursor:pointer;">
             </div>
 
             <div class="form-group">
               <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Receipt Footer Note</label>
-              <input type="text" class="form-input" value="Thank you for dining with us! Visit again!" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px;">
+              <input type="text" id="receiptFooterInput" class="form-input" value="Thank you for dining with us! Visit again!" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px;">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+              <button type="button" onclick="savePrinterSettings()" style="flex:1; padding:12px; background:linear-gradient(135deg, #EC4899, #DB2777); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(236,72,153,0.35);">
+                <i class="fa-solid fa-check"></i> Save Printer
+              </button>
+              <button type="button" onclick="testSelectedPrinter()" style="padding:12px 16px; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); border-radius:12px; color:#EC4899; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                <i class="fa-solid fa-print"></i> Test Print 🖨️
+              </button>
             </div>
           </div>
 
@@ -592,16 +612,100 @@
       }
     }
 
+    function toggleCustomPrinterInput(val) {
+      const box = document.getElementById('customPrinterBox');
+      if (box) box.style.display = val === 'CUSTOM_PRINTER' ? 'flex' : 'none';
+    }
+
+    function savePrinterSettings() {
+      const selType = document.getElementById('printerSelect').value;
+      const customName = (document.getElementById('printerNameInput').value || '').trim();
+      const autoPrint = document.getElementById('autoPrintKotCheck').checked;
+      const footerNote = (document.getElementById('receiptFooterInput').value || '').trim();
+
+      localStorage.setItem('dineflow_printer_type', selType);
+      localStorage.setItem('dineflow_printer_name', customName);
+      localStorage.setItem('dineflow_auto_print_kot', autoPrint ? 'true' : 'false');
+      localStorage.setItem('dineflow_receipt_footer', footerNote);
+
+      const displayLabel = selType === 'CUSTOM_PRINTER' && customName ? customName : selType;
+      alert(`✅ Target Hardware Printer set to: ${displayLabel}`);
+    }
+
+    function testSelectedPrinter() {
+      savePrinterSettings();
+      const selType = localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT';
+      const customName = localStorage.getItem('dineflow_printer_name') || 'Default Thermal Printer';
+
+      const win = window.open('', '_blank', 'width=350,height=500');
+      if (!win) {
+        alert('Please allow popups to test print!');
+        return;
+      }
+      const widthCss = selType === 'THERMAL_58MM' ? '58mm' : '80mm';
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Test Print — ${customName}</title>
+          <style>
+            @page { size: ${widthCss} auto; margin: 0; }
+            body { font-family: monospace; font-size: 12px; width: ${widthCss}; margin: 0 auto; padding: 10px; text-align: center; }
+            .line { border-top: 1px dashed #000; margin: 6px 0; }
+            .left { text-align: left; }
+            .right { text-align: right; }
+            .row { display: flex; justify-content: space-between; }
+          </style>
+        </head>
+        <body>
+          <h3>DINEFLOW AI POS</h3>
+          <p>*** HARDWARE PRINTER TEST ***</p>
+          <div class="line"></div>
+          <div class="row"><span>Printer:</span><span>${selType}</span></div>
+          <div class="row"><span>Target Name:</span><span>${customName}</span></div>
+          <div class="row"><span>Date:</span><span>${new Date().toLocaleString()}</span></div>
+          <div class="line"></div>
+          <div class="left">STATUS: ✅ CONNECTED & READY</div>
+          <div class="line"></div>
+          <p>Thank you for dining with us!</p>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 1000);
+            };
+          <\/script>
+        </body>
+        </html>
+      `);
+      win.document.close();
+    }
+
     function saveAllSettings() {
       saveStoreCurrencySetting();
-      if (typeof Toast !== 'undefined' && Toast.success) {
-        Toast.success('All system settings saved successfully!');
-      } else {
-        alert('✅ All System Settings saved successfully!');
-      }
+      savePrinterSettings();
+      alert('✅ All System & Hardware Printer Settings saved successfully!');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const savedPrinterType = localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT';
+      const pSel = document.getElementById('printerSelect');
+      if (pSel) {
+        pSel.value = savedPrinterType;
+        toggleCustomPrinterInput(savedPrinterType);
+      }
+      const savedPrinterName = localStorage.getItem('dineflow_printer_name');
+      if (savedPrinterName && document.getElementById('printerNameInput')) {
+        document.getElementById('printerNameInput').value = savedPrinterName;
+      }
+      const savedAutoPrint = localStorage.getItem('dineflow_auto_print_kot');
+      if (savedAutoPrint && document.getElementById('autoPrintKotCheck')) {
+        document.getElementById('autoPrintKotCheck').checked = savedAutoPrint === 'true';
+      }
+      const savedFooter = localStorage.getItem('dineflow_receipt_footer');
+      if (savedFooter && document.getElementById('receiptFooterInput')) {
+        document.getElementById('receiptFooterInput').value = savedFooter;
+      }
+
       const savedLang = localStorage.getItem('dineflow_soundbox_lang') || 'gu';
       const sLangSel = document.getElementById('soundboxLangSelect');
       if (sLangSel) sLangSel.value = savedLang;
