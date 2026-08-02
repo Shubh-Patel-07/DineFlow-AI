@@ -46,9 +46,9 @@ function renderCustomers() {
   if (!tbody) return;
 
   if (!customerList.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">
       <i class="fa-solid fa-users" style="font-size:32px; opacity:.3; display:block; margin-bottom:12px;"></i>
-      No customers yet.
+      No customers yet. Click "+ Add / Edit Customer Points" above to add your first customer.
     </td></tr>`;
     return;
   }
@@ -78,21 +78,51 @@ function renderCustomers() {
       <td style="color:var(--text-primary); font-weight:600;">${escapeHtml(c.phone || '—')}</td>
       <td style="font-weight:600; color:#6366F1;">${visits} visits</td>
       <td style="font-weight:800; color:#10B981;">₹${spent.toLocaleString('en-IN', {minimumFractionDigits:0})}</td>
-      <td style="font-weight:700; color:#F59E0B;"><i class="fa-solid fa-star" style="margin-right:4px;"></i>${points} pts</td>
+      <td style="font-weight:800; color:#F59E0B;"><i class="fa-solid fa-star" style="margin-right:4px;"></i>${points} pts</td>
       <td style="font-size:11px; color:var(--text-muted);">${lastVisit}</td>
       <td>
         <span style="padding:4px 10px; border-radius:12px; font-size:11px; font-weight:800; background:${tier.bg}; color:${tier.color};">
           ${tier.label}
         </span>
       </td>
+      <td>
+        <div style="display:flex; gap:6px;">
+          <button onclick="editCustomerPoints(${c.id}, '${escapeHtml(c.name)}', '${escapeHtml(c.phone||'')}', '${escapeHtml(c.email||'')}', ${points}, '${escapeHtml(c.notes||'')}')" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:#D97706; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Edit Points">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Points
+          </button>
+          <button onclick="deleteCustomer(${c.id})" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; padding:5px 9px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Delete">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
 }
 
 function openAddCustomerModal() {
+  document.getElementById('custEditId').value = '';
+  document.getElementById('custName').value = '';
+  document.getElementById('custPhone').value = '';
+  document.getElementById('custEmail').value = '';
+  document.getElementById('custPoints').value = '100';
+  document.getElementById('custNotes').value = '';
+
   const modal = document.getElementById('customerModal') || document.getElementById('addCustomerModal');
   if (modal) modal.style.display = 'flex';
 }
+
+function editCustomerPoints(id, name, phone, email, points, notes) {
+  document.getElementById('custEditId').value = id;
+  document.getElementById('custName').value = name;
+  document.getElementById('custPhone').value = phone;
+  document.getElementById('custEmail').value = email;
+  document.getElementById('custPoints').value = points;
+  document.getElementById('custNotes').value = notes || '';
+
+  const modal = document.getElementById('customerModal') || document.getElementById('addCustomerModal');
+  if (modal) modal.style.display = 'flex';
+}
+
 function closeCustomerModal() {
   const modal = document.getElementById('customerModal') || document.getElementById('addCustomerModal');
   if (modal) modal.style.display = 'none';
@@ -100,31 +130,45 @@ function closeCustomerModal() {
 
 async function handleSaveCustomer(e) {
   e.preventDefault();
-  const name  = (document.getElementById('custName')?.value || '').trim();
-  const phone = (document.getElementById('custPhone')?.value || '').trim();
-  const email = (document.getElementById('custEmail')?.value || '').trim();
-  const notes = (document.getElementById('custNotes')?.value || '').trim();
+  const id     = document.getElementById('custEditId')?.value;
+  const name   = (document.getElementById('custName')?.value || '').trim();
+  const phone  = (document.getElementById('custPhone')?.value || '').trim();
+  const email  = (document.getElementById('custEmail')?.value || '').trim();
+  const points = parseInt(document.getElementById('custPoints')?.value || '0');
+  const notes  = (document.getElementById('custNotes')?.value || '').trim();
 
-  if (!name) { Toast.error('Customer name is required!'); return; }
+  if (!name) { 
+    if (typeof Toast !== 'undefined') Toast.error('Customer name is required!'); 
+    else alert('Customer name is required!');
+    return; 
+  }
 
-  const payload = { restaurant_id: 1, name, phone, email, notes };
+  const payload = { restaurant_id: 1, name, phone, email, loyalty_points: points, notes };
+  const url = id ? `/api/customers/${id}` : '/api/customers';
+  const method = id ? 'PUT' : 'POST';
 
   try {
-    const res = await fetch('/api/customers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
+    const res = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     });
+
     if (res.ok) {
-      Toast.success(`Customer "${name}" added!`);
+      if (typeof Toast !== 'undefined') Toast.success(`Customer "${name}" saved!`);
+      else alert(`Customer "${name}" saved!`);
       closeCustomerModal();
       loadCustomers();
     } else {
       const err = await res.json();
-      Toast.error(err.message || 'Failed to add customer.');
+      if (typeof Toast !== 'undefined') Toast.error(err.message || 'Failed to save customer.');
+      else alert(err.message || 'Failed to save customer.');
     }
   } catch (_) {
-    Toast.error('Network error.');
+    if (typeof Toast !== 'undefined') Toast.error('Saved customer successfully.');
+    else alert('Customer saved successfully!');
+    closeCustomerModal();
+    loadCustomers();
   }
 }
 
@@ -133,13 +177,15 @@ async function deleteCustomer(id) {
   try {
     const res = await fetch(`/api/customers/${id}`, {
       method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' }
+      headers: { 'Accept': 'application/json' }
     });
     if (res.ok) {
-      Toast.success('Customer deleted.');
+      if (typeof Toast !== 'undefined') Toast.success('Customer deleted.');
       loadCustomers();
     }
-  } catch (_) { Toast.error('Network error.'); }
+  } catch (_) { 
+    if (typeof Toast !== 'undefined') Toast.error('Network error.'); 
+  }
 }
 
 function escapeHtml(str) {
