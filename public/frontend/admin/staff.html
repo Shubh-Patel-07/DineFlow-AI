@@ -222,7 +222,7 @@
     <div class="spinner-ring"></div>
     <p>Loading Staff Directory...</p>
   </div>
-  <script>setTimeout(() => { const l = document.querySelector('[data-loader]'); if (l) l.style.display = 'none'; }, 300);</script>
+  <script>document.addEventListener('DOMContentLoaded', () => { const l = document.querySelector('[data-loader]'); if (l) l.style.display = 'none'; });</script>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleAdminSidebar()"></div>
 
