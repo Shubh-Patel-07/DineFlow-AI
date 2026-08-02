@@ -7,7 +7,7 @@ const MODULE_DEFINITIONS = [
   { key: 'menu',      name: 'Menu Items',         icon: 'fa-utensils' },
   { key: 'reports',   name: 'Sales Reports',      icon: 'fa-chart-line' },
   { key: 'inventory', name: 'Inventory',          icon: 'fa-boxes-stacked' },
-  { key: 'coupons',   name: 'Coupons',            icon: 'fa-ticket' },
+  { key: 'coupons',   name: 'Offers & Discounts', icon: 'fa-gift' },
   { key: 'customers', name: 'Customers',          icon: 'fa-users' },
   { key: 'tables',    name: 'Table Manager',      icon: 'fa-table-cells-large' },
   { key: 'staff',     name: 'Staff & Roles',      icon: 'fa-user-shield' },
