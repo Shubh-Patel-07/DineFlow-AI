@@ -4710,6 +4710,57 @@
   // Customer Modal Selection & Filter Logic
   let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 420, avatar: 'RK' };
 
+  async function fetchAndRenderPosCustomers() {
+    try {
+      const res = await fetch('/api/customers?restaurantId=1');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        const listEl = document.getElementById('custModalList');
+        if (!listEl) return;
+        
+        listEl.innerHTML = data.data.map((c, idx) => {
+          const initials = c.name ? c.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : '?';
+          const points = parseInt(c.loyalty_points || 0);
+          const visits = parseInt(c.total_visits || 0);
+          const isSelected = idx === 0 ? 'selected' : '';
+          
+          if (idx === 0) {
+            selectedCustomerData = { name: c.name, phone: c.phone || '', points: points, avatar: initials, isNew: visits === 0, ordersCount: visits };
+            const strip = document.querySelector('.customer-strip');
+            if (strip) {
+              const avatarEl = strip.querySelector('.cust-avatar');
+              const nameEl = strip.querySelector('.cust-info h5');
+              const subEl = strip.querySelector('.cust-info p');
+              if (avatarEl) avatarEl.textContent = initials;
+              if (nameEl) nameEl.textContent = c.name;
+              if (subEl) subEl.innerHTML = `${c.phone || ''} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${points} pts</span>`;
+            }
+          }
+
+          let tagClass = 'loyal';
+          let tagText = 'Loyal';
+          if (visits === 0) { tagClass = 'new'; tagText = 'New'; }
+          else if (points >= 300) { tagClass = 'vip'; tagText = 'VIP Gold'; }
+
+          const safeName = (c.name || '').replace(/'/g, "\\'");
+          const safePhone = (c.phone || '').replace(/'/g, "\\'");
+
+          return `
+            <div class="cust-row ${isSelected}" onclick="selectCustomerItem(this, '${safeName}', '${safePhone}', ${points}, '${initials}', ${visits === 0}, ${visits})">
+              <div class="cr-avatar" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">${initials}</div>
+              <div class="cr-info"><h5>${escapeHtml(c.name)}</h5><p>${escapeHtml(c.phone||'—')} &nbsp;·&nbsp; ${escapeHtml(c.email||'')}</p></div>
+              <span class="cr-tag ${tagClass}"><i class="fa-solid fa-star" style="font-size:9px; margin-right:3px;"></i> ${points} pts (${tagText})</span>
+            </div>
+          `;
+        }).join('');
+      }
+    } catch (e) {
+      console.log('Using default POS customers', e);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchAndRenderPosCustomers);
+
   function selectCustomerItem(el, name, phone, points, avatar, isNew = false, ordersCount = null) {
     document.querySelectorAll('#custModalList .cust-row').forEach(r => r.classList.remove('selected'));
     el.classList.add('selected');
