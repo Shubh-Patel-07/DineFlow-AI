@@ -4144,6 +4144,44 @@
         const orderIdVal = (data.data && typeof data.data === 'object' && data.data.id) ? data.data.id : (data.data || lastPlacedOrderId);
         lastPlacedOrderId = orderIdVal;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
+        // 🌟 Auto-Calculate & Award Customer Loyalty Points based on System Settings Rate
+        const earnRate = parseInt(localStorage.getItem('dineflow_point_earn_rate') || '100');
+        const earnedPts = Math.floor((calculatedOrderTotal || 0) / earnRate);
+
+        if (earnedPts > 0 && selectedCustomerData && selectedCustomerData.name && selectedCustomerData.name !== 'Walk-in Customer') {
+          fetch('/api/customers/earn-points', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json', 
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' 
+            },
+            body: JSON.stringify({
+              name: selectedCustomerData.name,
+              phone: selectedCustomerData.phone || '',
+              earned_points: earnedPts,
+              order_amount: calculatedOrderTotal
+            })
+          })
+          .then(r => r.json())
+          .then(resData => {
+            if (resData.success) {
+              selectedCustomerData.points = (selectedCustomerData.points || 0) + earnedPts;
+              showToast(`⭐ ${selectedCustomerData.name} earned +${earnedPts} Loyalty Points on this ₹${calculatedOrderTotal.toFixed(0)} order!`, 'success');
+              addPosNotification({
+                id: `points-${Date.now()}`,
+                title: `⭐ +${earnedPts} Points Earned!`,
+                message: `${selectedCustomerData.name} earned +${earnedPts} reward points on bill checkout.`,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                type: 'warning',
+                icon: 'fa-solid fa-star'
+              });
+              if (typeof fetchAndRenderPosCustomers === 'function') fetchAndRenderPosCustomers();
+            }
+          })
+          .catch(e => console.log('Auto points error:', e));
+        }
+
         clearCart();
         if (typeof loadOrdersData === 'function') loadOrdersData();
         if (typeof loadTablesData === 'function') loadTablesData();

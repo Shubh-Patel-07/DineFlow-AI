@@ -46,6 +46,42 @@ class CustomerController extends Controller
         return response()->json(['success' => true, 'data' => $customer]);
     }
 
+    public function earnPoints(Request $request)
+    {
+        $phone = $request->input('phone');
+        $name = $request->input('name');
+        $earnedPoints = intval($request->input('earned_points', 0));
+        $orderAmount = floatval($request->input('order_amount', 0));
+
+        if ($earnedPoints <= 0) {
+            return response()->json(['success' => false, 'message' => 'No points earned']);
+        }
+
+        $customer = null;
+        if ($phone) {
+            $customer = Customer::where('phone', $phone)->first();
+        }
+        if (!$customer && $name) {
+            $customer = Customer::where('name', $name)->first();
+        }
+
+        if ($customer) {
+            $customer->loyalty_points = ($customer->loyalty_points ?? 0) + $earnedPoints;
+            $customer->total_spent = ($customer->total_spent ?? 0) + $orderAmount;
+            $customer->total_visits = ($customer->total_visits ?? 0) + 1;
+            $customer->last_visit = now();
+            $customer->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Earned +{$earnedPoints} points!",
+                'data' => $customer
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Customer not found']);
+    }
+
     public function destroy($id)
     {
         $customer = Customer::find($id);
