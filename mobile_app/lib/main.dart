@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'screens/pos_screen.dart';
 import 'screens/kds_screen.dart';
 import 'screens/analytics_screen.dart';
+import 'screens/customer_menu_screen.dart';
 
 void main() {
   runApp(const DineFlowMobileApp());
@@ -46,6 +47,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
     const WaiterPosScreen(),
     const KitchenKdsScreen(),
     const OwnerAnalyticsScreen(),
+    const CustomerMenuScreen(),
   ];
 
   @override
@@ -90,6 +92,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
         backgroundColor: const Color(0xFF131A35),
         selectedItemColor: const Color(0xFF6366F1),
         unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.point_of_sale),
@@ -103,154 +106,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             icon: Icon(Icons.analytics),
             label: 'Analytics',
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class WaiterPosTab extends StatelessWidget {
-  const WaiterPosTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '⚡ Quick Mobile Order',
-            style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: 4),
-          const Text('Select table and touch items to place KOT', style: TextStyle(color: Colors.grey, fontSize: 12)),
-          const SizedBox(height: 16),
-          
-          // Table Selector Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(6, (index) {
-                final isSelected = index == 0;
-                return Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text('T-${index + 1} ${index == 1 ? "(Occupied)" : ""}'),
-                    selected: isSelected,
-                    selectedColor: const Color(0xFF6366F1),
-                    backgroundColor: const Color(0xFF131A35),
-                    labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.grey),
-                    onSelected: (val) {},
-                  ),
-                );
-              }),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Menu Category Cards Grid
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            childAspectRatio: 1.3,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            children: [
-              _buildDishTile('Paneer Butter Masala', '₹260', 'North Indian', Colors.orange),
-              _buildDishTile('Margherita Pizza', '₹320', 'Pizza', Colors.green),
-              _buildDishTile('Cold Coffee Shake', '₹140', 'Beverages', Colors.blue),
-              _buildDishTile('Veg Hakka Noodles', '₹190', 'Chinese', Colors.purple),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDishTile(String name, String price, String category, Color accentColor) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF131A35),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(category, style: TextStyle(color: accentColor, fontSize: 10, fontWeight: FontWeight.bold)),
-              ),
-              const Icon(Icons.add_circle, color: Color(0xFF6366F1), size: 22),
-            ],
-          ),
-          Text(name, maxLines: 2, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white)),
-          Text(price, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: Color(0xFF10B981))),
-        ],
-      ),
-    );
-  }
-}
-
-class KitchenKdsTab extends StatelessWidget {
-  const KitchenKdsTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text('🍳 Live Kitchen KOT Queue', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-        const SizedBox(height: 12),
-        _buildKotCard('KOT #1042', 'Table 3', '2x Paneer Masala, 4x Butter Naan', '12 mins ago', Colors.amber),
-        _buildKotCard('KOT #1043', 'Takeaway #12', '1x Margherita Pizza', '4 mins ago', Colors.green),
-      ],
-    );
-  }
-
-  Widget _buildKotCard(String kotId, String table, String items, String time, Color statusColor) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF131A35),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: statusColor.withOpacity(0.5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(kotId, style: TextStyle(fontWeight: FontWeight.bold, color: statusColor, fontSize: 16)),
-              Text(table, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(items, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(time, style: const TextStyle(color: Colors.grey, fontSize: 11)),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(backgroundColor: statusColor, foregroundColor: Colors.black),
-                child: const Text('Mark Ready', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant_menu),
+            label: 'Menu',
           ),
         ],
       ),
@@ -258,45 +116,3 @@ class KitchenKdsTab extends StatelessWidget {
   }
 }
 
-class OwnerAnalyticsTab extends StatelessWidget {
-  const OwnerAnalyticsTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text('📊 Owner Real-Time Sales', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(child: _buildStatCard('Today Revenue', '₹ 24,850', Colors.green, Icons.monetization_on)),
-            const SizedBox(width: 12),
-            Expanded(child: _buildStatCard('Total Orders', '48 Bills', Colors.indigo, Icons.receipt_long)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(String title, String val, Color iconColor, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF131A35),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: iconColor, size: 28),
-          const SizedBox(height: 12),
-          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 11)),
-          const SizedBox(height: 4),
-          Text(val, style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-        ],
-      ),
-    );
-  }
-}
