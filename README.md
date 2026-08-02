@@ -76,6 +76,15 @@ graph TD
 
 ---
 
+### 📱 Step 8: Native Flutter Mobile App & PWA Ecosystem (`mobile_app/`)
+- **Cross-Platform Flutter Codebase**: Built-in native Android & iOS mobile app codebase under `mobile_app/lib/`.
+- **Waiter Mobile POS Grid**: Touchscreen table selector, category dish tiles, and real-time `⚡ Auto-Apply Offers`.
+- **Kitchen KDS Mobile Queue**: Mobile kitchen monitor with 1-tap status toggles (`Pending` ➔ `Preparing` ➔ `Ready`).
+- **Owner Live Analytics**: Real-time sales dashboard, order count, and top-selling dishes tracking for restaurant owners.
+- **Instant PWA Installation**: Integrated `manifest.json` and `sw.js` service worker for 1-click home screen installation on any mobile phone.
+
+---
+
 ## 👥 Team Members & Detailed Module Contributions
 
 | Member Name | Role & Git Branch | Technical Contributions & Features Developed |
