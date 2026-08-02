@@ -2621,51 +2621,51 @@
     
     <div class="modal-body" style="padding:16px 20px; text-align:center; overflow-y:auto; flex:1;">
       <!-- Accepted Payment Apps Row -->
-      <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:10px; font-size:11px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:5px 12px; border-radius:20px; border:1px solid rgba(255,255,255,0.06);">
-        <span style="font-weight:700; color:#34D399;">Accepts:</span>
-        <span style="display:inline-flex; align-items:center; gap:4px; font-weight:600; color:#E2E8F0;"><i class="fa-brands fa-google-pay" style="color:#4285F4; font-size:14px;"></i> GPay</span>
+      <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:10px; font-size:11px; color:var(--text-muted); background:var(--bg); padding:6px 12px; border-radius:20px; border:1px solid var(--border);">
+        <span style="font-weight:700; color:#10B981;">Accepts:</span>
+        <span style="display:inline-flex; align-items:center; gap:4px; font-weight:700; color:var(--text-primary);"><i class="fa-brands fa-google-pay" style="color:#4285F4; font-size:14px;"></i> GPay</span>
         <span>•</span>
-        <span style="font-weight:600; color:#E2E8F0;">PhonePe</span>
+        <span style="font-weight:700; color:var(--text-primary);">PhonePe</span>
         <span>•</span>
-        <span style="font-weight:600; color:#E2E8F0;">Paytm</span>
+        <span style="font-weight:700; color:var(--text-primary);">Paytm</span>
         <span>•</span>
-        <span style="font-weight:600; color:#E2E8F0;">BHIM UPI</span>
+        <span style="font-weight:700; color:var(--text-primary);">BHIM UPI</span>
       </div>
 
-      <div style="font-size:12px; color:#94A3B8; margin-bottom:2px;" id="upiModalTable">Table 1</div>
-      <div style="font-size:26px; font-weight:900; color:#34D399; font-family:'Outfit',sans-serif; letter-spacing:-0.5px;" id="upiModalTotal">₹0.00</div>
-      <div style="font-size:11px; color:#64748B; margin-bottom:10px;">Scan with any UPI app to pay instantly</div>
+      <div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:2px;" id="upiModalTable">Table 1</div>
+      <div style="font-size:26px; font-weight:900; color:#10B981; font-family:'Outfit',sans-serif; letter-spacing:-0.5px;" id="upiModalTotal">₹0.00</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Scan with any UPI app to pay instantly</div>
 
       <!-- High Res Live UPI QR Code Container with Glowing Effect -->
       <div style="position:relative; display:inline-block; margin-bottom:10px;">
-        <div style="background:#FFFFFF; padding:10px; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.6), 0 0 20px rgba(52,211,153,0.3); border:3px solid #34D399; position:relative; z-index:2;">
+        <div style="background:#FFFFFF; padding:10px; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15), 0 0 20px rgba(16,185,129,0.3); border:3px solid #10B981; position:relative; z-index:2;">
           <img id="upiQrImg" src="" alt="UPI Payment QR Code" style="width:160px; height:160px; display:block; border-radius:8px;" />
         </div>
       </div>
 
       <!-- Receiver Merchant VPA Handle Input -->
-      <div style="margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:#94A3B8; background:rgba(255,255,255,0.03); padding:6px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-        <i class="fa-solid fa-building-columns" style="color:#34D399;"></i>
-        <span style="font-weight:600;">UPI ID:</span>
-        <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:var(--bg); color:#34D399; border:1px solid var(--border); padding:4px 8px; border-radius:8px; font-weight:800; font-size:12px; width:170px; text-align:center; outline:none;" placeholder="7777938338@omni" />
-        <button onclick="copyUpiVpa()" style="background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.3); color:#34D399; padding:3px 7px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;" title="Copy UPI ID"><i class="fa-regular fa-copy"></i></button>
+      <div style="margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:var(--text-muted); background:var(--bg); padding:6px 12px; border-radius:12px; border:1px solid var(--border);">
+        <i class="fa-solid fa-building-columns" style="color:#10B981;"></i>
+        <span style="font-weight:700; color:var(--text-primary);">UPI ID:</span>
+        <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:var(--card); color:var(--text-primary); border:1px solid var(--border); padding:4px 8px; border-radius:8px; font-weight:800; font-size:12px; width:170px; text-align:center; outline:none;" placeholder="7777938338@omni" />
+        <button onclick="copyUpiVpa()" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10B981; padding:3px 7px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;" title="Copy UPI ID"><i class="fa-regular fa-copy"></i></button>
       </div>
 
       <!-- Itemized Price Breakdown Table -->
-      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px 12px; font-size:11.5px; color:#CBD5E1;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-          <span>Subtotal:</span>
-          <span id="upiModalSubtotal" style="font-weight:600;">₹0.00</span>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:12px; color:var(--text-primary);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:var(--text-muted);">Subtotal:</span>
+          <span id="upiModalSubtotal" style="font-weight:700; color:var(--text-primary);">₹0.00</span>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-          <span>Service Charge (5%):</span>
-          <span id="upiModalService" style="font-weight:600;">₹0.00</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:var(--text-muted);">Service Charge (5%):</span>
+          <span id="upiModalService" style="font-weight:700; color:var(--text-primary);">₹0.00</span>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-          <span>GST (18%):</span>
-          <span id="upiModalGst" style="font-weight:600;">₹0.00</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--text-muted);">GST (18%):</span>
+          <span id="upiModalGst" style="font-weight:700; color:var(--text-primary);">₹0.00</span>
         </div>
-        <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.15); padding-top:5px; font-weight:800; color:#34D399; font-size:13.5px;">
+        <div style="display:flex; justify-content:space-between; border-top:1px dashed var(--border); padding-top:6px; font-weight:900; color:#10B981; font-size:14px;">
           <span>Total Payable Amount:</span>
           <span id="upiModalBreakdownTotal">₹0.00</span>
         </div>
