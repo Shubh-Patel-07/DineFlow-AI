@@ -22,6 +22,7 @@ graph TD
     D --> E["5. Live Kitchen Display System (KDS) Queue"]
     E --> F["6. Executive A4 PDF Tax Receipt & WhatsApp Billing"]
     F --> G["7. Back-Office Admin (Coupons, Inventory & RBAC Roles)"]
+    G --> H["8. 📱 Flutter Native Mobile App & Customer Self-Ordering"]
 ```
 
 ---
