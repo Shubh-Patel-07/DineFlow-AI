@@ -426,6 +426,7 @@ document.addEventListener('click', event => {
     if (combo) {
       addToCart({
         id: `${combo.id}-${Date.now()}`,
+        baseId: menuItems[0] ? menuItems[0].id : combo.id,
         name: combo.name,
         description: combo.description,
         price: combo.price,
@@ -1526,7 +1527,7 @@ async function submitCustomerReview(event) {
   const comment = document.getElementById('reviewComment').value.trim();
 
   const payload = {
-    restaurant_id: 1,
+    restaurant_id: restaurantId,
     customer_name: customerName,
     rating: rating,
     comment: comment

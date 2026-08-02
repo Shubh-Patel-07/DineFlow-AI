@@ -149,6 +149,16 @@
     <section id="favoritesSection" class="favorites-section" aria-live="polite"></section>
     <section id="recentSection" class="favorites-section" aria-live="polite"></section>
 
+    <!-- Loading Skeleton -->
+    <section id="loadingState" class="loading-skeleton" style="display:none; padding: 20px 0;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); gap:20px;">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </section>
+
     <!-- Main Food Grid -->
     <section id="foodGrid" class="food-grid" aria-live="polite"></section>
 
@@ -420,8 +430,6 @@
     </div>
   </div>
 
-  <script src="data.js"></script>
-  <script src="menu.js"></script>
   <!-- 📱 Instant Customer UPI Payment Modal -->
   <div id="customerUpiModal" class="item-modal" role="dialog" aria-modal="true" hidden>
     <div class="item-modal__backdrop" onclick="closeCustomerUpiModal()"></div>
@@ -446,5 +454,7 @@
     </article>
   </div>
 
+  <script src="data.js"></script>
+  <script src="menu.js"></script>
 </body>
 </html>
