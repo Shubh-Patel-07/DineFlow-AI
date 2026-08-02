@@ -637,47 +637,48 @@
       const selType = localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT';
       const customName = localStorage.getItem('dineflow_printer_name') || 'Default Thermal Printer';
 
-      const win = window.open('', '_blank', 'width=350,height=500');
+      const win = window.open('', '_blank', 'width=380,height=520');
       if (!win) {
         alert('Please allow popups to test print!');
         return;
       }
       const widthCss = selType === 'THERMAL_58MM' ? '58mm' : '80mm';
-      win.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Test Print — ${customName}</title>
-          <style>
-            @page { size: ${widthCss} auto; margin: 0; }
-            body { font-family: monospace; font-size: 12px; width: ${widthCss}; margin: 0 auto; padding: 10px; text-align: center; }
-            .line { border-top: 1px dashed #000; margin: 6px 0; }
-            .left { text-align: left; }
-            .right { text-align: right; }
-            .row { display: flex; justify-content: space-between; }
-          </style>
-        </head>
-        <body>
-          <h3>DINEFLOW AI POS</h3>
-          <p>*** HARDWARE PRINTER TEST ***</p>
-          <div class="line"></div>
-          <div class="row"><span>Printer:</span><span>${selType}</span></div>
-          <div class="row"><span>Target Name:</span><span>${customName}</span></div>
-          <div class="row"><span>Date:</span><span>${new Date().toLocaleString()}</span></div>
-          <div class="line"></div>
-          <div class="left">STATUS: ✅ CONNECTED & READY</div>
-          <div class="line"></div>
-          <p>Thank you for dining with us!</p>
-          <script>
-            window.onload = function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 1000);
-            };
-          <\/script>
-        </body>
-        </html>
-      `);
+      const nowStr = new Date().toLocaleString();
+      
+      const printDoc = [
+        '<!DOCTYPE html>',
+        '<html>',
+        '<head>',
+        '  <title>Test Print — ' + customName + '</title>',
+        '  <style>',
+        '    @page { size: ' + widthCss + ' auto; margin: 0; }',
+        '    body { font-family: monospace, sans-serif; font-size: 12px; width: ' + widthCss + '; margin: 0 auto; padding: 12px; text-align: center; color: #000; background: #fff; }',
+        '    .line { border-top: 1px dashed #000; margin: 8px 0; }',
+        '    .row { display: flex; justify-content: space-between; margin: 3px 0; font-size: 11px; }',
+        '    .bold { font-weight: bold; }',
+        '  </style>',
+        '</head>',
+        '<body>',
+        '  <h2 style="margin:0;">DINEFLOW AI POS</h2>',
+        '  <p style="margin:4px 0 0 0; font-size:11px;">*** HARDWARE PRINTER TEST ***</p>',
+        '  <div class="line"></div>',
+        '  <div class="row"><span>Printer Mode:</span><span class="bold">' + selType + '</span></div>',
+        '  <div class="row"><span>Target Device:</span><span class="bold">' + customName + '</span></div>',
+        '  <div class="row"><span>Timestamp:</span><span>' + nowStr + '</span></div>',
+        '  <div class="line"></div>',
+        '  <div style="font-weight:bold; margin:6px 0;">STATUS: ✅ CONNECTED &amp; READY</div>',
+        '  <div class="line"></div>',
+        '  <p style="font-size:11px; margin:8px 0 0 0;">Thank you for dining with us!</p>',
+        '</body>',
+        '</html>'
+      ].join('\n');
+
+      win.document.open();
+      win.document.write(printDoc);
       win.document.close();
+      setTimeout(function() {
+        win.print();
+      }, 500);
     }
 
     function saveAllSettings() {
