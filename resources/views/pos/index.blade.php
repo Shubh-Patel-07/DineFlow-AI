@@ -2032,12 +2032,17 @@
   <div class="modal" style="width:560px; max-width:95%; border-radius:24px; overflow:hidden;">
     
     <!-- Modal Header -->
-    <div class="modal-header" style="background:linear-gradient(135deg,#D97706,#B45309); padding:18px 22px; color:#fff;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#D97706,#B45309); padding:18px 22px; color:#fff; display:flex; align-items:center; justify-content:space-between;">
       <div class="modal-title" style="color:#fff; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px;">
         <i class="fa-solid fa-gift" style="font-size:20px;"></i>
-        <span>Offers</span>
+        <span>Offers &amp; Discounts</span>
       </div>
-      <button class="modal-close" onclick="closeModal('posOffersModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a href="/admin/coupons" target="_blank" style="background:rgba(255,255,255,0.22); border:1px solid rgba(255,255,255,0.4); color:#fff; padding:5px 12px; border-radius:8px; font-size:11.5px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" title="Edit or Create New Offers">
+          <i class="fa-solid fa-pen-to-square"></i> Edit &amp; Add Offers
+        </a>
+        <button class="modal-close" onclick="closeModal('posOffersModal')" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
     </div>
 
     <div class="modal-body" style="padding:22px; max-height:460px; overflow-y:auto;">
@@ -2099,10 +2104,10 @@
         <span style="font-size:11px; color:var(--text-muted);">Click to apply instantly</span>
       </div>
 
-      <!-- Offers Grid -->
-      <div style="display:flex; flex-direction:column; gap:12px;">
+      <!-- Dynamic Offers Grid -->
+      <div id="dynamicPosOffersContainer" style="display:flex; flex-direction:column; gap:12px;">
         
-        <!-- 1. First-Time Customer Discount -->
+        <!-- Default Fallback 1: First-Time Customer Discount -->
         <div class="offer-card-item" onclick="applySmartOffer('WELCOME15', '15% Welcome Discount (First-Time Customer)', 0, 15, 0)" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:42px; height:42px; border-radius:12px; background:rgba(99,102,241,0.15); color:#6366F1; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
@@ -2117,7 +2122,7 @@
           <button style="background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Apply</button>
         </div>
 
-        <!-- 2. Min Order Tier: Spend ₹500+ Get ₹50 OFF -->
+        <!-- Default Fallback 2: Min Order Tier: Spend ₹500+ Get ₹50 OFF -->
         <div class="offer-card-item" onclick="applySmartOffer('SAVE50', '₹50 OFF (Min Order ₹500)', 50, 0, 500)" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:42px; height:42px; border-radius:12px; background:rgba(16,185,129,0.15); color:#10B981; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
@@ -2132,7 +2137,7 @@
           <button style="background:linear-gradient(135deg,#10B981,#059669); color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Apply</button>
         </div>
 
-        <!-- 3. Min Order Tier: Spend ₹1000+ Get ₹120 OFF -->
+        <!-- Default Fallback 3: Min Order Tier: Spend ₹1000+ Get ₹120 OFF -->
         <div class="offer-card-item" onclick="applySmartOffer('SAVE120', '₹120 OFF (Min Order ₹1000)', 120, 0, 1000)" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:42px; height:42px; border-radius:12px; background:rgba(245,158,11,0.15); color:#F59E0B; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
@@ -2147,7 +2152,7 @@
           <button style="background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Apply</button>
         </div>
 
-        <!-- 4. VIP Loyalty Member Discount -->
+        <!-- Default Fallback 4: VIP Loyalty Member Discount -->
         <div class="offer-card-item" onclick="applySmartOffer('VIP10', '10% VIP Loyalty Discount', 0, 10, 0)" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:42px; height:42px; border-radius:12px; background:rgba(236,72,153,0.15); color:#EC4899; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
@@ -2161,6 +2166,8 @@
           </div>
           <button style="background:linear-gradient(135deg,#EC4899,#D946EF); color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Apply</button>
         </div>
+
+      </div>
 
         <!-- 5. Off-Peak Happy Hour Offer -->
         <div class="offer-card-item" onclick="applySmartOffer('HAPPY10', '10% Off-Peak Happy Hour Discount', 0, 10, 0)" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
@@ -2737,6 +2744,7 @@
       if (id === 'posOffersModal') {
         const ptsEl = document.getElementById('modalCustPointsCount');
         if (ptsEl) ptsEl.textContent = (typeof selectedCustomerData !== 'undefined' && selectedCustomerData && selectedCustomerData.points) ? selectedCustomerData.points : 0;
+        fetchAndRenderDynamicPosOffers();
       }
     }
   }
@@ -3198,6 +3206,50 @@
 
   /* ─── SMART OFFERS & DISCOUNT ENGINE ─── */
   let activeOffer = null;
+
+  async function fetchAndRenderDynamicPosOffers() {
+    const container = document.getElementById('dynamicPosOffersContainer');
+    if (!container) return;
+
+    try {
+      const res = await fetch('/api/coupons?restaurantId=1');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        const now = new Date();
+        const activeCoupons = data.data.filter(c => c.is_active && (!c.expires_at || new Date(c.expires_at) >= now));
+        
+        if (activeCoupons.length > 0) {
+          container.innerHTML = activeCoupons.map(c => {
+            const isPct = c.discount_type === 'percentage';
+            const flatAmt = isPct ? 0 : parseFloat(c.discount_value);
+            const pctAmt = isPct ? parseFloat(c.discount_value) : 0;
+            const minSub = parseFloat(c.min_order_amount || 0);
+            const badgeColor = isPct ? '#6366F1' : '#10B981';
+            const icon = isPct ? '⚡' : '💸';
+            
+            return `
+            <div class="offer-card-item" onclick="applySmartOffer('${escapeHtml(c.code)}', '${escapeHtml(c.name || c.code)}', ${flatAmt}, ${pctAmt}, ${minSub})" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:42px; height:42px; border-radius:12px; background:rgba(99,102,241,0.15); color:${badgeColor}; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                  ${icon}
+                </div>
+                <div>
+                  <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">${escapeHtml(c.name || c.code)}</div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                    ${isPct ? `Get ${c.discount_value}% OFF` : `Flat ₹${c.discount_value} OFF`} ${minSub > 0 ? `on order >= ₹${minSub}` : ''}
+                  </div>
+                  <span style="font-size:10px; font-weight:800; color:${badgeColor}; background:rgba(99,102,241,0.1); padding:2px 7px; border-radius:6px; margin-top:4px; display:inline-block;">Code: ${escapeHtml(c.code)}</span>
+                </div>
+              </div>
+              <button style="background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Apply</button>
+            </div>`;
+          }).join('');
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load dynamic POS coupons:', err);
+    }
+  }
 
   function applySmartOffer(code, label, flatAmount, pctAmount, minSubtotal) {
     const cartItems = MENU.filter(i => i.qty > 0);
