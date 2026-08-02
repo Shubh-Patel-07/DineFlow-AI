@@ -199,6 +199,17 @@ async function deleteCoupon(id) {
   } catch (_) { Toast.error('Network error.'); }
 }
 
+function applyCouponPreset(code, name, type, value, minOrder) {
+  document.getElementById('cpCode').value = code;
+  document.getElementById('cpName').value = name;
+  document.getElementById('cpType').value = type;
+  document.getElementById('cpValue').value = value;
+  document.getElementById('cpMinAmount').value = minOrder;
+  if (typeof Toast !== 'undefined' && Toast.success) {
+    Toast.success(`Preset applied: ${code} (${name})`);
+  }
+}
+
 function escapeHtml(str) {
   return typeof str === 'string' ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]) : '';
 }

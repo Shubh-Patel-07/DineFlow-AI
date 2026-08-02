@@ -451,6 +451,50 @@
             </button>
           </div>
 
+          <!-- 5. Promotions, Offers & Coupon Strategy -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm); grid-column: 1 / -1;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border); flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(99,102,241,0.2), rgba(79,70,229,0.1)); color:#6366F1; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                  <i class="fa-solid fa-gift"></i>
+                </div>
+                <div>
+                  <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Promotions, Offers & Coupon Strategy</h3>
+                  <span style="font-size:11.5px; color:var(--text-muted);">Manage global discount rules, auto-applied promos, BOGO deals, and promo banners</span>
+                </div>
+              </div>
+              <a href="/admin/coupons" style="padding:8px 16px; background:linear-gradient(135deg, #6366F1, #4F46E5); border-radius:10px; color:#FFFFFF; text-decoration:none; font-weight:700; font-size:12.5px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(99,102,241,0.3);">
+                <i class="fa-solid fa-ticket"></i> Open Full Coupon Manager &rarr;
+              </a>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+              <div class="form-group">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Auto-Apply Welcome Offer (%)</label>
+                <input type="number" id="settingWelcomeDiscount" class="form-input" value="15" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Default discount for new customers on order >= ₹200</span>
+              </div>
+
+              <div class="form-group">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Min Order for Free Beverage / Dish (₹)</label>
+                <input type="number" id="settingMinOrderFreeGift" class="form-input" value="500" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Trigger free reward prompt on cart checkout</span>
+              </div>
+
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Customer Menu Festival / Seasonal Promo Banner</label>
+                <input type="text" id="settingPromoBannerText" class="form-input" value="🎉 Special Offer: Use Code FESTIVE20 for 20% Instant Discount on all Pizza & Starters!" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px; font-weight:600;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Displays live alert banner on customer QR menu page</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+              <button type="button" onclick="savePromoStrategySettings()" style="padding:12px 24px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+                <i class="fa-solid fa-check"></i> Save Promo & Offer Settings
+              </button>
+            </div>
+          </div>
+
           <!-- 5. Table & Dining Area Preferences -->
           <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
             <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
