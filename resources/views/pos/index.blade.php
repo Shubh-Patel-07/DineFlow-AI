@@ -3940,6 +3940,7 @@
       if (totEl) totEl.textContent = '₹' + finalGrandTotal.toFixed(2);
 
       const brkEl = document.getElementById('upiModalBreakdownTotal');
+      if (brkEl) brkEl.textContent = '₹' + finalGrandTotal.toFixed(2);
       const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
       if (document.getElementById('merchantVpaInput')) {
         document.getElementById('merchantVpaInput').value = savedVpa;
