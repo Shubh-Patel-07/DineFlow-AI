@@ -264,6 +264,7 @@ Route::prefix('api')->group(function () {
         // Customers Management
         Route::get('/customers', [CustomerController::class, 'index'])->middleware('role:admin,manager,cashier');
         Route::post('/customers', [CustomerController::class, 'store'])->middleware('role:admin,manager,cashier');
+        Route::post('/customers/earn-points', [CustomerController::class, 'earnPoints'])->middleware('role:admin,manager,cashier');
         Route::put('/customers/{id}', [CustomerController::class, 'update'])->middleware('role:admin,manager');
         Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->middleware('role:admin');
 
