@@ -2168,23 +2168,6 @@
         </div>
 
       </div>
-
-        <!-- 5. Off-Peak Happy Hour Offer -->
-        <div class="offer-card-item" onclick="applySmartOffer('HAPPY10', '10% Off-Peak Happy Hour Discount', 0, 10, 0)" style="display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.2s;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:42px; height:42px; border-radius:12px; background:rgba(14,165,233,0.15); color:#0EA5E9; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
-              ⏰
-            </div>
-            <div>
-              <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Happy Hour Special</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Special 10% OFF during off-peak hours</div>
-              <span style="font-size:10px; font-weight:800; color:#0EA5E9; background:rgba(14,165,233,0.1); padding:2px 7px; border-radius:6px; margin-top:4px; display:inline-block;">Code: HAPPY10</span>
-            </div>
-          </div>
-          <button style="background:linear-gradient(135deg,#0EA5E9,#0284C7); color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Apply</button>
-        </div>
-
-      </div>
     </div>
     <div class="modal-footer" style="padding:14px 20px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
       <button onclick="removeActiveOffer()" style="background:none; border:1px solid var(--border); color:var(--text-secondary); padding:8px 16px; font-size:12px; font-weight:700; border-radius:10px; cursor:pointer;">Remove Active Offer</button>
