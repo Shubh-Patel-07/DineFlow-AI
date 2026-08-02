@@ -718,10 +718,23 @@ window.testSelectedPrinter = function() {
   }, 500);
 };
 
+window.savePromoStrategySettings = function() {
+  const wDisc = (document.getElementById('settingWelcomeDiscount')?.value || '15').trim();
+  const minGift = (document.getElementById('settingMinOrderFreeGift')?.value || '500').trim();
+  const banner = (document.getElementById('settingPromoBannerText')?.value || '').trim();
+
+  localStorage.setItem('dineflow_welcome_discount', wDisc);
+  localStorage.setItem('dineflow_min_order_free_gift', minGift);
+  localStorage.setItem('dineflow_promo_banner_text', banner);
+
+  alert('✅ Promotions, Offers & Seasonal Banner Settings saved successfully!');
+};
+
 window.saveAllSettings = function() {
   if (typeof saveStoreCurrencySetting === 'function') {
     saveStoreCurrencySetting();
   }
   window.savePrinterSettings();
+  window.savePromoStrategySettings();
   alert('✅ All System & Hardware Printer Settings saved successfully!');
 };
