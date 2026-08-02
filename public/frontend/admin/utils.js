@@ -719,15 +719,19 @@ window.testSelectedPrinter = function() {
 };
 
 window.savePromoStrategySettings = function() {
+  const pEarn = (document.getElementById('settingPointEarnRate')?.value || '100').trim();
+  const pRedeem = (document.getElementById('settingPointRedeemValue')?.value || '1').trim();
+  const minRedeem = (document.getElementById('settingMinRedeemPoints')?.value || '50').trim();
   const wDisc = (document.getElementById('settingWelcomeDiscount')?.value || '15').trim();
-  const minGift = (document.getElementById('settingMinOrderFreeGift')?.value || '500').trim();
   const banner = (document.getElementById('settingPromoBannerText')?.value || '').trim();
 
+  localStorage.setItem('dineflow_point_earn_rate', pEarn);
+  localStorage.setItem('dineflow_point_redeem_value', pRedeem);
+  localStorage.setItem('dineflow_min_redeem_points', minRedeem);
   localStorage.setItem('dineflow_welcome_discount', wDisc);
-  localStorage.setItem('dineflow_min_order_free_gift', minGift);
   localStorage.setItem('dineflow_promo_banner_text', banner);
 
-  alert('✅ Promotions, Offers & Seasonal Banner Settings saved successfully!');
+  alert('✅ Customer Loyalty Rewards & Promo Offer Settings saved successfully!');
 };
 
 window.saveAllSettings = function() {
