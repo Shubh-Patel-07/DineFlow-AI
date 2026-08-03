@@ -21,7 +21,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/frontend/style.css">
   <link rel="stylesheet" href="/frontend/admin/admin.css?v=1.0.1">
 
   <style>
@@ -294,7 +293,7 @@
       border-top: 1px solid var(--border);
     }
 
-    /* ─── 100% LIGHT THEME EXPLICIT OVERRIDES FOR MENU MANAGER ─── */
+    /* ─── LIGHT THEME OVERRIDES FOR MENU MANAGER ─── */
     html.light-theme body, body.light-theme {
       background: #F8FAFC !important;
       color: #0F172A !important;
@@ -390,9 +389,9 @@
       width: 34px;
       height: 34px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.06);
-      color: #CBD5E1;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-secondary);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -401,14 +400,14 @@
       transition: all 0.2s;
     }
     .action-btn.edit-btn:hover {
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba(99, 102, 241, 0.15);
       border-color: #6366F1;
-      color: #818CF8;
+      color: #6366F1;
     }
     .action-btn.delete-btn:hover {
-      background: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.15);
       border-color: #EF4444;
-      color: #F87171;
+      color: #EF4444;
     }
     .toggle-switch {
       position: relative;
@@ -420,7 +419,7 @@
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .slider {
       position: absolute; cursor: pointer; inset: 0;
-      background-color: rgba(255,255,255,0.15); transition: .3s; border-radius: 24px;
+      background-color: var(--border); transition: .3s; border-radius: 24px;
     }
     .slider:before {
       position: absolute; content: ""; height: 18px; width: 18px;
@@ -443,34 +442,41 @@
   <div class="admin-mobile-header">
     <div style="display:flex; align-items:center; gap:10px;">
       <button class="mobile-menu-btn" onclick="toggleAdminSidebar()"><i class="fa-solid fa-bars"></i></button>
-      <h2 style="font-size:15px; font-weight:700; margin:0; color:#fff; font-family:'Outfit',sans-serif;">DineFlow AI</h2>
+      <h2 style="font-size:15px; font-weight:700; margin:0; color:var(--text-primary); font-family:'Outfit',sans-serif;">DineFlow AI</h2>
     </div>
-    <span style="font-size:11px; color:#64748B; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px;">Menu Manager</span>
+    <span style="font-size:11px; color:var(--text-muted); background:var(--primary-light); padding:4px 8px; border-radius:6px;">Menu Manager</span>
   </div>
 
   <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
-        <img src="/images/dineflow_logo.jpg" alt="Logo">
-        <div>
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="brand-text">
           <h2>DineFlow AI</h2>
           <span>Admin Suite</span>
         </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
       </div>
-      <nav>
-        <a href="/dashboard" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-        <a href="/pos" class="nav-item"><i class="fa-solid fa-cash-register"></i> POS Terminal</a>
-        <a href="/admin/menu-manager" class="nav-item active"><i class="fa-solid fa-utensils"></i> Menu Items</a>
-        <a href="/z-report" class="nav-item"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
-        <a href="/admin/inventory" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
-        <a href="/admin/coupons" class="nav-item"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
-        <a href="/admin/customers" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
-        <a href="/admin/tables" class="nav-item"><i class="fa-solid fa-table-cells-large"></i> Table Manager</a>
-        <a href="/admin/staff" class="nav-item"><i class="fa-solid fa-user-shield"></i> Staff & Roles</a>
-        <a href="/admin/settings" class="nav-item"><i class="fa-solid fa-gear"></i> System Settings</a>
-        <a href="/admin/feedback" class="nav-item"><i class="fa-solid fa-star"></i> Reviews & Feedback</a>
-      </nav>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Main</div>
+          <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
+          <a class="nav-item active" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item" href="/z-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+          <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+          <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
+        </div>
+      </div>
     </aside>
 
     <!-- Main Content -->

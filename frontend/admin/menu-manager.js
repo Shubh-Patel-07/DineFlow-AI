@@ -216,14 +216,17 @@ async function handleSaveItem(event) {
     });
     const data = await res.json();
     if (res.ok || data.success) {
-      Toast.success(isEdit ? 'Menu item updated successfully!' : 'New menu item added!');
+      if (typeof Toast !== 'undefined') Toast.success(isEdit ? 'Menu item updated successfully!' : 'New menu item added!');
+      else alert(isEdit ? 'Menu item updated successfully!' : 'New menu item added!');
       closeItemModal();
       loadMenuItems();
     } else {
-      Toast.error(data.message || 'Failed to save menu item.');
+      if (typeof Toast !== 'undefined') Toast.error(data.message || 'Failed to save menu item.');
+      else alert(data.message || 'Failed to save menu item.');
     }
   } catch (err) {
-    Toast.error('Network error saving menu item.');
+    if (typeof Toast !== 'undefined') Toast.error('Network error saving menu item.');
+    else alert('Network error saving menu item.');
   }
 }
 
@@ -231,11 +234,11 @@ async function toggleItemAvailability(id, isAvailable) {
   try {
     const res = await fetch(`/api/menu/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ is_available: isAvailable })
     });
     if (res.ok) {
-      Toast.success(isAvailable ? 'Item marked Available!' : 'Item marked Out of Stock!');
+      if (typeof Toast !== 'undefined') Toast.success(isAvailable ? 'Item marked Available!' : 'Item marked Out of Stock!');
       const item = allMenuItems.find(i => String(i.id) === String(id));
       if (item) item.is_available = isAvailable;
       renderMenuItems();
@@ -246,15 +249,18 @@ async function toggleItemAvailability(id, isAvailable) {
 async function deleteMenuItem(id) {
   if (!confirm('Are you sure you want to delete this menu item?')) return;
   try {
-    const res = await fetch(`/api/menu/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/menu/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
     if (res.ok) {
-      Toast.success('Menu item deleted.');
+      if (typeof Toast !== 'undefined') Toast.success('Menu item deleted.');
+      else alert('Menu item deleted.');
       loadMenuItems();
     } else {
-      Toast.error('Failed to delete menu item.');
+      if (typeof Toast !== 'undefined') Toast.error('Failed to delete menu item.');
+      else alert('Failed to delete menu item.');
     }
   } catch (_) {
-    Toast.error('Error deleting menu item.');
+    if (typeof Toast !== 'undefined') Toast.error('Error deleting menu item.');
+    else alert('Error deleting menu item.');
   }
 }
 
