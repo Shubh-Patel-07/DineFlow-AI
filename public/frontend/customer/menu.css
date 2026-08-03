@@ -1212,40 +1212,115 @@ body::after {
   .menu-wrapper { padding: 12px 10px 140px !important; }
 
   /* Hero Header Mobile Alignment */
-  .menu-hero-header { padding: 16px 14px !important; border-radius: 20px !important; gap: 14px !important; }
-  .hero-top-bar { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
-  .brand-badge { justify-content: flex-start !important; align-items: center !important; }
-  .brand-logo { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
-  .logo { font-size: 1.35rem !important; }
+  .menu-hero-header { padding: 14px 12px !important; border-radius: 18px !important; gap: 12px !important; }
+  .hero-top-bar { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; padding-bottom: 10px !important; }
+  .brand-badge { justify-content: flex-start !important; align-items: center !important; gap: 10px !important; }
+  .brand-logo { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
+  .logo { font-size: 1.25rem !important; }
+  .eyebrow { font-size: 0.65rem !important; }
   
-  .header-controls { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; width: 100% !important; justify-content: flex-start !important; }
-  .review-btn, .language-picker, .theme-toggle { padding: 6px 12px !important; font-size: 12px !important; border-radius: 10px !important; }
+  /* Horizontal Touch-Scrollable Controls Strip (No Wrap!) */
+  .header-controls { 
+    display: flex !important; 
+    flex-wrap: nowrap !important; 
+    overflow-x: auto !important; 
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 6px !important; 
+    width: 100% !important; 
+    justify-content: flex-start !important; 
+    padding-bottom: 2px !important;
+  }
+  .header-controls::-webkit-scrollbar { display: none !important; }
+  .review-btn, .language-picker, .theme-toggle { 
+    padding: 6px 10px !important; 
+    font-size: 11.5px !important; 
+    border-radius: 10px !important; 
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
 
-  .hero-restaurant-info { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
-  .table-card-wrapper { width: 100% !important; display: flex !important; justify-content: center !important; }
-  .table-card { width: 100% !important; max-width: 100% !important; justify-content: center !important; }
+  .hero-restaurant-info { 
+    display: flex !important;
+    flex-direction: column !important; 
+    align-items: stretch !important; 
+    gap: 10px !important; 
+  }
+  #restaurantName { 
+    font-size: 16px !important; 
+    line-height: 1.25 !important; 
+    margin-bottom: 4px !important;
+    word-break: break-word !important;
+  }
+  .restaurant-meta {
+    font-size: 11.5px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .table-card-wrapper { 
+    width: 100% !important; 
+    display: flex !important; 
+    justify-content: flex-start !important; 
+  }
+  .table-card { 
+    width: auto !important; 
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 12px !important;
+    background: rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    border-radius: 12px !important;
+  }
+  .table-card span {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #818CF8 !important;
+    text-transform: uppercase !important;
+  }
+  .table-card select {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #34D399 !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+  }
 
   /* Filter & Search Bar Mobile Responsive */
-  .menu-tools-bar { gap: 12px !important; margin: 14px 0 !important; }
+  .menu-tools-bar { gap: 10px !important; margin: 12px 0 !important; }
   .search-wrapper { width: 100% !important; }
-  .search-box { padding: 10px 14px !important; border-radius: 14px !important; }
-  .search-box input { font-size: 13.5px !important; }
+  .search-box { padding: 9px 12px !important; border-radius: 12px !important; }
+  .search-box input { font-size: 13px !important; }
 
-  .filter-controls-group { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 10px !important; }
+  .filter-controls-group { 
+    width: 100% !important; 
+    display: flex !important; 
+    flex-direction: column !important; 
+    gap: 8px !important; 
+  }
   
-  /* Horizontal Smooth Scroll for Diet & Category Chips */
-  .diet-filter, .category-scroll-container, .categories-bar, .category-bar, .category-scroll-bar {
+  /* Horizontal Touch-Scrollable Filter Bars */
+  .diet-filter, .advanced-filter, .category-scroll-container, .categories-bar, .category-bar, .category-scroll-bar {
     display: flex !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
-    padding-bottom: 6px !important;
-    gap: 8px !important;
-    margin-bottom: 16px !important;
+    padding-bottom: 4px !important;
+    gap: 6px !important;
+    margin-bottom: 8px !important;
   }
-  .diet-filter::-webkit-scrollbar, .categories-bar::-webkit-scrollbar, .category-bar::-webkit-scrollbar, .category-scroll-bar::-webkit-scrollbar { display: none !important; }
-  .diet-btn, .category-btn { flex-shrink: 0 !important; font-size: 12.5px !important; padding: 8px 16px !important; border-radius: 12px !important; }
+  .diet-filter::-webkit-scrollbar, .advanced-filter::-webkit-scrollbar, .categories-bar::-webkit-scrollbar, .category-bar::-webkit-scrollbar, .category-scroll-bar::-webkit-scrollbar { display: none !important; }
+  .diet-btn, .filter-btn, .category-btn, .cat-pill { 
+    flex-shrink: 0 !important; 
+    font-size: 11.5px !important; 
+    padding: 6px 14px !important; 
+    border-radius: 12px !important; 
+    white-space: nowrap !important;
+  }
 
   /* Mobile Food Cards Layout - Auto Height & Flexible Rows */
   .food-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
