@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DineFlow AI POS - Premium Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --danger: #EF4444;
+            --bg: #090D1A;
+            --card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+
+        /* ─── SPLIT LAYOUT ─── */
+        .split-left {
+            flex: 1;
+            background: linear-gradient(135deg, #090D1A 0%, #1e1b4b 50%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            position: relative;
+        }
+
+        .split-left::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: -200px; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .left-content {
+            max-width: 520px;
+            z-index: 2;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        /* Animated Glowing Brand Logo */
+        .logo-img-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #38BDF8, #818CF8, #C084FC, #38BDF8);
+            background-size: 300% 300%;
+            animation: logoGradientRotate 4s linear infinite;
+            opacity: 0.85;
+            filter: blur(8px);
+            z-index: 0;
+        }
+
+        @keyframes logoGradientRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 1;
+            height: 64px;
+            width: 64px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.5);
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            animation: logoFloatPulse 3s ease-in-out infinite alternate;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+
+        @keyframes logoFloatPulse {
+            0% {
+                transform: translateY(0px) scale(1);
+                box-shadow: 0 8px 24px rgba(56, 189, 248, 0.4), 0 0 15px rgba(129, 140, 248, 0.3);
+            }
+            100% {
+                transform: translateY(-5px) scale(1.04);
+                box-shadow: 0 16px 36px rgba(192, 132, 252, 0.65), 0 0 25px rgba(56, 189, 248, 0.55);
+            }
+        }
+
+        .logo-img-wrapper:hover .logo-img {
+            transform: translateY(-7px) scale(1.09) rotate(3deg);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.85), 0 0 35px rgba(56, 189, 248, 0.85);
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+
+        .logo-text span {
+            background: linear-gradient(135deg, #38BDF8, #818CF8, #C084FC, #38BDF8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 3s linear infinite;
+        }
+
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
+
+        .left-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #94A3B8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-slider {
+            height: 100px;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-slide {
+            position: absolute;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .feature-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-slide h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #E2E8F0;
+        }
+
+        .feature-slide p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .split-right {
+            width: 490px;
+            background: #0B0F19;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 44px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* ─── TABS SWITCHER ─── */
+        .tab-group {
+            display: flex;
+            background: var(--card);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        /* ─── FORM ELEMENTS ─── */
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--primary), #4F46E5);
+            border: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+
+        .error-container {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: #FCA5A5;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        /* ─── ROLE SELECTOR PILLS ─── */
+        .role-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+
+        .role-pill {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .role-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        /* ─── PIN KEYPAD ─── */
+        .pin-dots {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            transition: all 0.18s ease;
+        }
+
+        .pin-dot.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 12px var(--primary);
+            transform: scale(1.1);
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 310px;
+            margin: 0 auto;
+        }
+
+        .key {
+            height: 52px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.12s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .key:active {
+            background: var(--primary);
+            transform: scale(0.95);
+        }
+
+        .key-action {
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ─── DEMO CREDENTIALS DRAWER ─── */
+        .credentials-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px dashed rgba(99, 102, 241, 0.35);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 24px;
+            font-size: 12.5px;
+            color: #A5B4FC;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .demo-chip {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #E2E8F0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            .split-left { display: none; }
+            .split-right { width: 100%; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Split -->
+    <div class="split-left">
+        <div class="left-content">
+            <div class="logo-group">
+                <div class="logo-img-wrapper">
+                    <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" class="logo-img" onerror="this.src='/images/dineflow_logo.png'">
+                </div>
+                <div class="logo-text">Dine<span>Flow</span> AI</div>
+            </div>
+
+
+            <h1 class="left-title">Next-Gen Restaurant POS Suite</h1>
+            
+            <div class="feature-slider" id="slider">
+                <div class="feature-slide active">
+                    <h3>⚡ Walk-In POS Terminal</h3>
+                    <p>Speed up checkout with instant order billing, table assignments, and inventory tracking.</p>
+                </div>
+                <div class="feature-slide">
+                    <h3>📱 QR Menu Ordering</h3>
+                    <p>Contactless guest table orders and quick translations served directly from customer phones.</p>
+                </div>
+                <div class="feature-slide">
+                    <h3>🖨️ Multi-Printer KOT Routing</h3>
+                    <p>Auto-print specific order tickets to Kitchen KOT and Bar KOT printers concurrently.</p>
+                </div>
+                <div class="feature-slide">
+                    <h3>🔔 Live Waiter Chime Alerts</h3>
+                    <p>Instant table alerts with synthetic bell sounds displaying on the cashier screen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Split -->
+    <div class="split-right">
+        <div style="margin-bottom: 24px; display:flex; align-items:center; gap:14px;">
+            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:50px; width:50px; border-radius:12px; box-shadow:0 4px 18px rgba(99,102,241,0.35); object-fit:cover; border:1px solid rgba(99,102,241,0.3);" onerror="this.src='/images/dineflow_logo.png'">
+            <div>
+                <h2 style="font-family:'Outfit', sans-serif; font-size:24px; font-weight:800; margin-bottom:2px; color:#fff;">Welcome Back</h2>
+                <p style="color:var(--text-secondary); font-size:13px;">Sign in to access your DineFlow POS dashboard.</p>
+            </div>
+        </div>
+
+
+        
+        <!-- Switcher Tabs -->
+        <div class="tab-group">
+            <button class="tab-btn active" id="tabPassword" onclick="switchTab('password')">
+                <i class="fa-solid fa-key"></i> Password Login
+            </button>
+            <button class="tab-btn" id="tabPin" onclick="switchTab('pin')">
+                <i class="fa-solid fa-fingerprint"></i> Quick PIN
+            </button>
+        </div>
+
+        <!-- PASSWORD FORM -->
+        <div class="form-panel active" id="panelPassword">
+            <form method="POST" action="/login">
+                <input type="hidden" name="_token" value="kALbEH0p6VfywS65WPicWQOJlixHDno6LqfWDKQj" autocomplete="off">                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="username" class="form-control" placeholder="Enter username (e.g. admin)" value="" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password (e.g. password)" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login to POS
+                </button>
+            </form>
+        </div>
+
+        <!-- PIN FORM -->
+        <div class="form-panel" id="panelPin">
+            <form method="POST" action="/pin-login" id="pinSubmitForm">
+                <input type="hidden" name="_token" value="kALbEH0p6VfywS65WPicWQOJlixHDno6LqfWDKQj" autocomplete="off">                
+                <!-- Select Staff Account Dropdown & Pills -->
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 11.5px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Select Staff Account</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
+                        <select name="username" id="pinUsername" class="form-control" onchange="onRoleSelectDropdownChange(this.value)" style="padding-left:42px; appearance:none; -webkit-appearance:none; background:var(--card); font-weight:600; cursor:pointer;">
+                            <option value="admin">👑 admin (Admin User — PIN: 1234)</option>
+                            <option value="manager">👔 manager (Store Manager — PIN: 5678)</option>
+                            <option value="cashier">💳 cashier (POS Cashier — PIN: 9999)</option>
+                            <option value="kitchen">👨‍🍳 kitchen (Head Chef — PIN: 2580)</option>
+                            <option value="waiter">🛎️ waiter (Table Staff — PIN: 3690)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down" style="left:auto; right:14px; pointer-events:none; font-size:12px;"></i>
+                    </div>
+                </div>
+
+                <div class="role-pills" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+                    <button type="button" class="role-pill active" data-role="admin" onclick="selectRole('admin', this)"><i class="fa-solid fa-crown"></i> Admin</button>
+                    <button type="button" class="role-pill" data-role="manager" onclick="selectRole('manager', this)"><i class="fa-solid fa-user-tie"></i> Manager</button>
+                    <button type="button" class="role-pill" data-role="cashier" onclick="selectRole('cashier', this)"><i class="fa-solid fa-cash-register"></i> Cashier</button>
+                    <button type="button" class="role-pill" data-role="kitchen" onclick="selectRole('kitchen', this)"><i class="fa-solid fa-utensils"></i> Chef</button>
+                    <button type="button" class="role-pill" data-role="waiter" onclick="selectRole('waiter', this)"><i class="fa-solid fa-bell"></i> Waiter</button>
+                </div>
+
+                <input type="hidden" name="numeric_pin" id="hiddenPinInput">
+
+
+                <!-- PIN Dots -->
+                <div class="pin-dots">
+                    <div class="pin-dot" id="dot1"></div>
+                    <div class="pin-dot" id="dot2"></div>
+                    <div class="pin-dot" id="dot3"></div>
+                    <div class="pin-dot" id="dot4"></div>
+                </div>
+
+                <!-- Keypad -->
+                <div class="keypad">
+                    <button type="button" class="key" onclick="pressKey(1)">1</button>
+                    <button type="button" class="key" onclick="pressKey(2)">2</button>
+                    <button type="button" class="key" onclick="pressKey(3)">3</button>
+                    <button type="button" class="key" onclick="pressKey(4)">4</button>
+                    <button type="button" class="key" onclick="pressKey(5)">5</button>
+                    <button type="button" class="key" onclick="pressKey(6)">6</button>
+                    <button type="button" class="key" onclick="pressKey(7)">7</button>
+                    <button type="button" class="key" onclick="pressKey(8)">8</button>
+                    <button type="button" class="key" onclick="pressKey(9)">9</button>
+                    <button type="button" class="key key-action" onclick="clearPin()">C</button>
+                    <button type="button" class="key" onclick="pressKey(0)">0</button>
+                    <button type="button" class="key key-action" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
+                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--primary), #4338CA); color: white; border-radius: 12px; height: 48px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 14px var(--primary-glow);" onclick="manualPinSubmit()"><i class="fa-solid fa-right-to-bracket"></i> Submit Quick PIN</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 1-Click Demo Drawer -->
+        <div class="credentials-box">
+            <div style="font-weight:700; color:#fff; font-size:12px; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-bolt" style="color:var(--success);"></i> 1-Click Quick Demo Login:
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button type="button" onclick="quickFillPassword('admin', 'password')" class="demo-chip">🔑 Admin</button>
+                <button type="button" onclick="quickFillPin('admin', '1234')" class="demo-chip">👑 Admin PIN (1234)</button>
+                <button type="button" onclick="quickFillPin('manager', '5678')" class="demo-chip">👔 Manager PIN (5678)</button>
+                <button type="button" onclick="quickFillPin('cashier', '9999')" class="demo-chip">💳 Cashier PIN (9999)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        // Feature Slider
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.feature-slide');
+        setInterval(() => {
+            if (slides.length) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+        }, 4000);
+
+        // Tab Switcher
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
+
+            if (type === 'password') {
+                document.getElementById('tabPassword').classList.add('active');
+                document.getElementById('panelPassword').classList.add('active');
+            } else {
+                document.getElementById('tabPin').classList.add('active');
+                document.getElementById('panelPin').classList.add('active');
+                clearPin();
+            }
+        }
+
+        // Role Selector Sync
+        function selectRole(role, btnEl) {
+            const sel = document.getElementById('pinUsername');
+            if (sel) sel.value = role;
+            document.querySelectorAll('.role-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-role') === role || btn === btnEl);
+            });
+            clearPin();
+        }
+
+        function onRoleSelectDropdownChange(role) {
+            document.querySelectorAll('.role-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-role') === role);
+            });
+            clearPin();
+        }
+
+
+        // Quick PIN Logic
+        let enteredPin = '';
+        const hiddenPinInput = document.getElementById('hiddenPinInput');
+        const pinSubmitForm = document.getElementById('pinSubmitForm');
+
+        function updatePinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById('dot' + i);
+                if (dot) {
+                    if (enteredPin.length >= i) dot.classList.add('active');
+                    else dot.classList.remove('active');
+                }
+            }
+        }
+
+        function pressKey(num) {
+            if (enteredPin.length < 4) {
+                enteredPin += String(num);
+                updatePinDisplay();
+                
+                if (enteredPin.length === 4) {
+                    hiddenPinInput.value = enteredPin;
+                    setTimeout(() => {
+                        pinSubmitForm.submit();
+                    }, 200);
+                }
+            }
+        }
+
+        function manualPinSubmit() {
+            if (enteredPin.length >= 4) {
+                hiddenPinInput.value = enteredPin;
+                pinSubmitForm.submit();
+            } else {
+                alert('Please enter a 4-digit PIN (e.g. 1234 for Admin) to login.');
+            }
+        }
+
+        function clearPin() {
+            enteredPin = '';
+            updatePinDisplay();
+        }
+
+        function backspacePin() {
+            if (enteredPin.length > 0) {
+                enteredPin = enteredPin.slice(0, -1);
+                updatePinDisplay();
+            }
+        }
+
+        // 1-Click Fillers
+        function quickFillPassword(username, password) {
+            switchTab('password');
+            const userInput = document.querySelector('input[name="username"]');
+            const passInput = document.querySelector('input[name="password"]');
+            if (userInput) userInput.value = username;
+            if (passInput) passInput.value = password;
+            setTimeout(() => {
+                const form = document.querySelector('#panelPassword form');
+                if (form) form.submit();
+            }, 150);
+        }
+
+        function quickFillPin(username, pin) {
+            switchTab('pin');
+            const pills = document.querySelectorAll('.role-pill');
+            pills.forEach(pill => {
+                if (pill.textContent.toLowerCase().includes(username)) {
+                    selectRole(username, pill);
+                }
+            });
+            clearPin();
+            for (let char of String(pin)) {
+                pressKey(parseInt(char));
+            }
+        }
+
+        // Keyboard Support
+        document.addEventListener('keydown', (e) => {
+            const pinPanel = document.getElementById('panelPin');
+            if (!pinPanel || !pinPanel.classList.contains('active')) return;
+
+            if (e.key >= '0' && e.key <= '9') {
+                pressKey(parseInt(e.key));
+            } else if (e.key === 'Backspace') {
+                e.preventDefault();
+                backspacePin();
+            } else if (e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
+                clearPin();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                manualPinSubmit();
+            }
+        });
+    </script>
+</body>
+</html>
+
