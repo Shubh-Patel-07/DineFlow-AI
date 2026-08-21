@@ -19,8 +19,10 @@ async function loadMenuItems() {
   const loader = document.querySelector('[data-loader]');
   if (loader) loader.style.display = 'flex';
 
+  const currentRestaurantId = window.AUTH_USER_RESTAURANT_ID || (typeof Auth !== 'undefined' && Auth.getUser()?.restaurant_id) || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+
   try {
-    const res = await fetch('/api/menu?restaurantId=1');
+    const res = await fetch(`/api/menu?restaurantId=${currentRestaurantId}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data) && data.data.length > 0) {
       allMenuItems = data.data;
@@ -190,10 +192,10 @@ async function handleSaveItem(event) {
   event.preventDefault();
   const id = document.getElementById('itemId').value;
   const isVegSelected = document.getElementById('typeVegRadio')?.checked ?? true;
-  const isAvailable = document.getElementById('itemIsAvailable').checked;
+  const currentRestaurantId = window.AUTH_USER_RESTAURANT_ID || (typeof Auth !== 'undefined' && Auth.getUser()?.restaurant_id) || new URLSearchParams(window.location.search).get('restaurantId') || '1';
   const payload = {
-    restaurant_id: 1,
-    restaurantId: '1',
+    restaurant_id: currentRestaurantId,
+    restaurantId: currentRestaurantId,
     name: document.getElementById('itemName').value.trim(),
     category: document.getElementById('itemCategory').value,
     price: parseFloat(document.getElementById('itemPrice').value),
@@ -254,8 +256,14 @@ async function toggleItemAvailability(id, isAvailable) {
         item.isAvailable = isAvailable;
       }
       renderMenuItems();
+    } else {
+      if (typeof Toast !== 'undefined') Toast.error('Failed to update item availability.');
+      renderMenuItems();
     }
-  } catch (_) {}
+  } catch (err) {
+    if (typeof Toast !== 'undefined') Toast.error('Network error updating item availability.');
+    renderMenuItems();
+  }
 }
 
 async function deleteMenuItem(id) {

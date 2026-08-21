@@ -4042,7 +4042,7 @@
     try {
       const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
       localStorage.setItem('dineflow_merchant_vpa', inputVal);
-      const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      const tableNumber = document.getElementById('selectedTableNo')?.textContent || document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
       
       const payAmount = (currentUpiPayAmount && currentUpiPayAmount > 0) ? Math.round(currentUpiPayAmount) : 1;
       
@@ -4394,7 +4394,7 @@
     }
 
     const activeCartItems = MENU.filter(i => i.qty > 0);
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    const tableNumber = document.getElementById('selectedTableNo')?.textContent || document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
 
     if (activeCartItems.length > 0) {
       const itemsPayload = activeCartItems.map(i => ({ name: i.name, qty: i.qty, price: i.price }));
@@ -4411,7 +4411,7 @@
 
   function sendWhatsAppInvoice(customOrderData = null) {
     try {
-      let tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+      let tableNumber = document.getElementById('selectedTableNo')?.textContent || document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
       let subtotal = 0;
       let itemsText = "";
       const activeCartItems = MENU.filter(i => i.qty > 0);
@@ -4806,13 +4806,13 @@
     if (modPrice > 0) {
       lastItem.price += modPrice;
     }
-    if (!lastItem.name.includes(`(${modName})`)) {
-      lastItem.name += ` (${modName})`;
+    const currentNote = lastItem.cookingNote || '';
+    if (!currentNote.includes(modName)) {
+      lastItem.cookingNote = currentNote ? `${currentNote}, +${modName}` : `+${modName}`;
     }
 
-    renderMenu();
     renderCart();
-    showToast(`✅ Applied "${modName}" to ${lastItem.name}!`, 'success');
+    showToast(`✅ Attached modifier "${modName}" to ${lastItem.name}!`, 'success');
   }
 
   // Poll for waiter calls and live notifications every 3 seconds for 100% instant real-time updates!

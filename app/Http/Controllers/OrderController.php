@@ -36,6 +36,16 @@ class OrderController extends Controller
                 }
 
                 if (!$menuItem) {
+                    if (!empty($item['name']) && isset($item['price']) && floatval($item['price']) > 0) {
+                        $price = floatval($item['price']);
+                        $totalAmount += $price * $quantity;
+                        $itemsData[] = [
+                            'menu_item_id' => null,
+                            'name' => (string)$item['name'],
+                            'quantity' => $quantity,
+                            'price' => $price,
+                        ];
+                    }
                     continue;
                 }
 
@@ -44,7 +54,7 @@ class OrderController extends Controller
                     continue;
                 }
 
-                $price = $menuItem->price;
+                $price = (!empty($item['price']) && floatval($item['price']) >= floatval($menuItem->price)) ? floatval($item['price']) : floatval($menuItem->price);
                 $totalAmount += $price * $quantity;
 
                 $itemsData[] = [
