@@ -523,16 +523,28 @@
       background: var(--bg); flex-wrap: wrap;
     }
     .search-box {
-      flex: 1; min-width: 200px; position: relative;
+      flex: 1; min-width: 200px; position: relative; display: flex; align-items: center;
     }
-    .search-box i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
+    .search-box > i.fa-search {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; pointer-events: none;
+    }
     .search-input {
-      width: 100%; height: 36px; padding: 0 12px 0 34px;
+      width: 100%; height: 36px; padding: 0 40px 0 34px;
       border: 1px solid var(--border); border-radius: var(--radius-sm);
       font-size: 13px; font-family: inherit; background: var(--card); outline: none;
       transition: border-color .15s;
     }
     .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.08); }
+    #posVoiceBtn {
+      position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+      background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
+      color: var(--primary); width: 28px; height: 28px; border-radius: 6px;
+      cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; z-index: 3;
+    }
+    #posVoiceBtn i {
+      position: static !important; transform: none !important; font-size: 12px !important; color: inherit !important;
+    }
 
     /* Category Pills */
     .cat-pills { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; padding: 0 16px 10px; scrollbar-width: none; }
@@ -1772,7 +1784,7 @@
         <div class="search-box">
           <i class="fa-solid fa-search"></i>
           <input class="search-input" id="posSearchInput" placeholder="Search items or tap mic to speak…" oninput="filterItems(this.value)" />
-          <button type="button" onclick="togglePosVoiceOrder()" id="posVoiceBtn" title="AI Voice Order (Gujarati/Hindi/English)" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:var(--primary); width:28px; height:28px; border-radius:6px; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; margin-right:4px; transition:all 0.2s;">
+          <button type="button" onclick="togglePosVoiceOrder()" id="posVoiceBtn" title="AI Voice Order (Gujarati/Hindi/English)">
             <i class="fa-solid fa-microphone"></i>
           </button>
         </div>
