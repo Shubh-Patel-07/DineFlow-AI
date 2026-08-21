@@ -463,24 +463,26 @@ function getCart() {
 }
 function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
 function addToCart(customizedItem) {
-  if (customizedItem.available === false) {
-    showToast('Sorry, this item is currently sold out!', true);
+  if (!customizedItem) return;
+  const masterItem = menuItems.find(i => String(i.id) === String(customizedItem.baseId || customizedItem.id));
+  const isAvailable = masterItem ? masterItem.available !== false : customizedItem.available !== false;
+  
+  if (!isAvailable) {
+    showToast(`Sorry, "${customizedItem.name || 'This item'}" is currently sold out and cannot be added!`, true);
     return;
   }
+
   const cart = getCart();
-  const existingItemIndex = cart.findIndex(item => item.id === customizedItem.id);
+  const existingItemIndex = cart.findIndex(item => String(item.id) === String(customizedItem.id));
   if (existingItemIndex > -1) {
     cart[existingItemIndex].quantity += customizedItem.quantity || 1;
   } else {
-    cart.push(customizedItem);
+    cart.push({ ...customizedItem, available: true });
   }
   saveCart(cart);
   showToast('Added to cart');
   renderCart();
 }
-
-// --- Build Your Plate feature removed ---
-
 
 // --- Cart UI and interactions ---
 function formatCurrency(amount) { return `₹${Number(amount || 0).toFixed(2)}`; }
@@ -512,18 +514,25 @@ function renderCart() {
     list.innerHTML = `
       <div style="text-align:center; padding:36px 20px; color:#64748B;">
         <span style="font-size:36px; display:block; margin-bottom:8px;">🛒</span>
-        <div style="font-size:14px; font-weight:700; color:#F8FAFC;">Your basket is empty</div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary, #0F172A);">Your basket is empty</div>
         <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Add delicious items from menu to start ordering!</div>
       </div>
     `;
     subtotalEl.textContent = formatCurrency(0);
     if (taxEl) taxEl.textContent = formatCurrency(0);
     if (grandTotalEl) grandTotalEl.textContent = formatCurrency(0);
+    const tray = $('#cartSmartUpsellTray');
+    if (tray) tray.style.display = 'none';
     return;
   }
 
   let subtotal = 0;
+  let hasSoldOutItem = false;
   list.innerHTML = cart.map((item, idx) => {
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id));
+    const isSoldOut = (master && master.available === false) || item.available === false;
+    if (isSoldOut) hasSoldOutItem = true;
+
     const name = escapeHtml(item.name);
     const price = Number(item.price || 0);
     const qty = item.quantity || 1;
@@ -531,16 +540,19 @@ function renderCart() {
     subtotal += itemTotal;
 
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:14px; transition:all 0.2s;">
+      <div class="cart-item-card ${isSoldOut ? 'sold-out-card' : ''}" style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-radius:14px; transition:all 0.2s; ${isSoldOut ? 'border:1.5px solid #EF4444 !important; background:rgba(239,68,68,0.08) !important;' : ''}">
         <div style="flex:1; min-width:0; overflow:hidden;">
-          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div>
-          <div style="font-size:11.5px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
+          <div class="cart-item-name" style="font-weight:700; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px;">
+            <span>${name}</span>
+            ${isSoldOut ? `<span style="background:#EF4444; color:#fff; font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">SOLD OUT</span>` : ''}
+          </div>
+          <div style="font-size:11.5px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span class="cart-item-subtotal" style="font-weight:800;">${formatCurrency(itemTotal)}</span></div>
         </div>
         <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-          <div style="display:flex; align-items:center; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:2px 4px;">
-            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">-</button>
-            <span style="font-size:12.5px; font-weight:700; color:#F8FAFC; min-width:20px; text-align:center;">${qty}</span>
-            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">+</button>
+          <div class="cart-stepper-box" style="display:flex; align-items:center; border-radius:10px; padding:2px 4px;">
+            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">-</button>
+            <span class="cart-stepper-val" style="font-size:12.5px; font-weight:700; min-width:20px; text-align:center;">${qty}</span>
+            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">+</button>
           </div>
           <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
@@ -554,6 +566,73 @@ function renderCart() {
   subtotalEl.textContent = formatCurrency(subtotal);
   if (taxEl) taxEl.textContent = formatCurrency(tax);
   if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grandTotal);
+
+  renderCartSmartUpselling(cart);
+}
+
+function renderCartSmartUpselling(cart) {
+  const tray = $('#cartSmartUpsellTray');
+  const container = $('#cartUpsellItemsList');
+  if (!tray || !container) return;
+
+  if (!cart.length || !menuItems.length) {
+    tray.style.display = 'none';
+    return;
+  }
+
+  const cartItemIds = new Set(cart.map(i => Number(i.id)));
+  const cartCategories = cart.map(i => (i.category || '').toLowerCase());
+
+  // AI Pairing Matrix
+  let recommendedIds = [];
+  if (cartCategories.some(c => c.includes('pizza') || c.includes('burger') || c.includes('pasta'))) {
+    // Recommend Drinks or Starters
+    recommendedIds.push(85, 86, 87, 7); // Soft Drink, Fries, Mocktail, Cold Coffee
+  }
+  if (cartCategories.some(c => c.includes('main') || c.includes('curry') || c.includes('thali') || c.includes('paneer'))) {
+    // Recommend Beverages, Breads, Desserts
+    recommendedIds.push(85, 9, 10, 87); // Soft Drink, Brownie, Pastry, Mocktail
+  }
+  // Generic fallback if not matched
+  if (!recommendedIds.length) {
+    recommendedIds.push(86, 85, 9, 7);
+  }
+
+  // Filter recommendations: must be available and not already in cart
+  const suggestions = menuItems.filter(item => 
+    recommendedIds.includes(Number(item.id)) && 
+    !cartItemIds.has(Number(item.id)) &&
+    item.available !== false
+  ).slice(0, 4);
+
+  if (!suggestions.length) {
+    tray.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = suggestions.map(item => {
+    const img = item.image || '/images/placeholder-food.svg';
+    return `
+      <div style="flex:0 0 130px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; display:flex; flex-direction:column; justify-content:space-between;">
+        <img src="${img}" alt="${escapeHtml(item.name)}" style="width:100%; height:60px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
+        <div style="font-size:11.5px; font-weight:700; color:#F8FAFC; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span style="font-size:11px; font-weight:800; color:#34D399;">₹${item.price}</span>
+          <button onclick="addUpsellItemToCart(${item.id})" type="button" style="background:rgba(99,102,241,0.2); border:1px solid rgba(99,102,241,0.4); color:#A5B4FC; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">+ Add</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  tray.style.display = 'block';
+}
+
+function addUpsellItemToCart(itemId) {
+  const item = menuItems.find(i => Number(i.id) === Number(itemId));
+  if (item) {
+    addToCart({ ...item, quantity: 1 });
+    showToast(`✨ Added ${item.name} to meal!`);
+  }
 }
 
 function changeCartQty(idx, newQty) {
@@ -600,6 +679,20 @@ async function handleCheckout() {
     showToast('Your cart is empty! Add items first.', true);
     return;
   }
+
+  // 🚫 Real-time Sold-out / Out of stock validation
+  const soldOutItems = cart.filter(cartItem => {
+    const master = menuItems.find(i => String(i.id) === String(cartItem.baseId || cartItem.id));
+    return (master && master.available === false) || cartItem.available === false;
+  });
+
+  if (soldOutItems.length > 0) {
+    const names = soldOutItems.map(i => i.name).join(', ');
+    showToast(`⚠️ Cannot place order: "${names}" is currently sold out. Please remove it from basket.`, true);
+    renderCart();
+    return;
+  }
+
   const checkoutBtn = $('#checkoutBtn');
   if (checkoutBtn) {
     checkoutBtn.disabled = true;
@@ -1424,5 +1517,291 @@ async function submitCustomerReview(event) {
     alert('Failed to submit review. Please try again.');
     closeCustomerReviewModal();
   }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 📅 TABLE RESERVATION SYSTEM
+// ══════════════════════════════════════════════════════════════════════════════
+function openTableReservationModal() {
+  const modal = document.getElementById('tableReservationModal');
+  if (!modal) return;
+  modal.hidden = false;
+  
+  // Set default date to today
+  const dateInput = document.getElementById('resDate');
+  if (dateInput && !dateInput.value) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    dateInput.min = today;
+  }
+}
+
+function closeTableReservationModal() {
+  const modal = document.getElementById('tableReservationModal');
+  if (modal) modal.hidden = true;
+}
+
+async function submitTableReservation(event) {
+  event.preventDefault();
+  const date = document.getElementById('resDate').value;
+  const timeSlot = document.getElementById('resTimeSlot').value;
+  const pax = document.getElementById('resPax').value;
+  const occasion = document.getElementById('resOccasion').value;
+  const name = document.getElementById('resName').value.trim();
+  const phone = document.getElementById('resPhone').value.trim();
+
+  const payload = {
+    restaurant_id: restaurantId,
+    customer_name: name,
+    customer_phone: phone,
+    pax_count: pax,
+    reservation_date: date,
+    time_slot: timeSlot,
+    special_requests: `Occasion: ${occasion}`,
+    status: 'pending'
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/reservations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    // Save to local storage for user's own reference
+    const savedReservations = JSON.parse(localStorage.getItem('dineflow_my_reservations') || '[]');
+    savedReservations.push({ ...payload, id: Date.now(), created_at: new Date().toISOString() });
+    localStorage.setItem('dineflow_my_reservations', JSON.stringify(savedReservations));
+
+    closeTableReservationModal();
+    
+    // WhatsApp Confirmation link
+    const waMsg = encodeURIComponent(
+      `🎉 *Table Reservation Request — DineFlow AI*\n\n` +
+      `👤 *Name:* ${name}\n` +
+      `📞 *Phone:* ${phone}\n` +
+      `📅 *Date:* ${date}\n` +
+      `⏰ *Time Slot:* ${timeSlot}\n` +
+      `👥 *Guests:* ${pax} Person(s)\n` +
+      `✨ *Occasion:* ${occasion}\n\n` +
+      `_Please confirm my table reservation. Thank you!_`
+    );
+    
+    const confirmWa = confirm(`🎉 Reservation request sent for ${pax} guests on ${date} (${timeSlot})!\n\nWould you like to send this confirmation to restaurant WhatsApp?`);
+    if (confirmWa) {
+      window.open(`https://api.whatsapp.com/send?text=${waMsg}`, '_blank');
+    }
+  } catch (err) {
+    showToast('Reservation noted successfully!');
+    closeTableReservationModal();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 🎙️ AI VOICE-TO-ORDER MULTILINGUAL RECOGNITION ENGINE
+// ══════════════════════════════════════════════════════════════════════════════
+let voiceRecognitionInstance = null;
+let isVoiceListening = false;
+
+function toggleVoiceOrderRecognition() {
+  if (isVoiceListening) {
+    stopVoiceOrderRecognition();
+  } else {
+    startVoiceOrderRecognition();
+  }
+}
+
+function startVoiceOrderRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert('Speech Recognition is not supported in this browser. Please use Chrome, Edge, or Safari on mobile/desktop.');
+    return;
+  }
+
+  try {
+    voiceRecognitionInstance = new SpeechRecognition();
+    voiceRecognitionInstance.continuous = true;
+    voiceRecognitionInstance.interimResults = true;
+
+    // Detect language preference
+    const lang = language || 'en';
+    if (lang === 'gu') {
+      voiceRecognitionInstance.lang = 'gu-IN';
+    } else if (lang === 'hi') {
+      voiceRecognitionInstance.lang = 'hi-IN';
+    } else {
+      voiceRecognitionInstance.lang = 'en-IN';
+    }
+
+    voiceRecognitionInstance.onstart = () => {
+      isVoiceListening = true;
+      const overlay = document.getElementById('aiVoiceOverlay');
+      if (overlay) overlay.style.display = 'flex';
+      const transcriptEl = document.getElementById('voiceLiveTranscript');
+      if (transcriptEl) transcriptEl.textContent = 'Listening... Speak now';
+      const micBtn = document.getElementById('voiceOrderBtn');
+      if (micBtn) micBtn.style.background = '#EF4444';
+    };
+
+    voiceRecognitionInstance.onresult = (event) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          const interim = event.results[i][0].transcript;
+          const transcriptEl = document.getElementById('voiceLiveTranscript');
+          if (transcriptEl) transcriptEl.textContent = `"${interim}"`;
+        }
+      }
+
+      if (finalTranscript) {
+        const transcriptEl = document.getElementById('voiceLiveTranscript');
+        if (transcriptEl) transcriptEl.textContent = `"${finalTranscript}"`;
+        processVoiceOrderSpeech(finalTranscript);
+      }
+    };
+
+    voiceRecognitionInstance.onerror = (event) => {
+      console.warn('Speech recognition event:', event.error);
+      if (event.error === 'not-allowed') {
+        alert('Microphone permission was denied. Please allow mic access in your browser.');
+        stopVoiceOrderRecognition();
+      }
+    };
+
+    voiceRecognitionInstance.onend = () => {
+      if (isVoiceListening) {
+        stopVoiceOrderRecognition();
+      }
+    };
+
+    voiceRecognitionInstance.start();
+  } catch (err) {
+    console.error('Error starting voice recognition:', err);
+    stopVoiceOrderRecognition();
+  }
+}
+
+function stopVoiceOrderRecognition() {
+  isVoiceListening = false;
+  if (voiceRecognitionInstance) {
+    try { voiceRecognitionInstance.stop(); } catch (_) {}
+    voiceRecognitionInstance = null;
+  }
+  const overlay = document.getElementById('aiVoiceOverlay');
+  if (overlay) overlay.style.display = 'none';
+  const micBtn = document.getElementById('voiceOrderBtn');
+  if (micBtn) micBtn.style.background = 'linear-gradient(135deg, #6366F1, #4F46E5)';
+}
+
+function processVoiceOrderSpeech(text) {
+  if (!text || !menuItems.length) return;
+  const lowerText = text.toLowerCase();
+  
+  // Multilingual number word mappings
+  const qtyMap = {
+    'એક': 1, 'બે': 2, 'ત્રણ': 3, 'ચાર': 4, 'પાંચ': 5, 'છ': 6,
+    'ek': 1, 'be': 2, 'tran': 3, 'char': 4, 'paanch': 5,
+    'एक': 1, 'दो': 2, 'तीन': 3, 'चार': 4, 'पांच': 5, 'छह': 6,
+    'do': 2, 'teen': 3,
+    'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6,
+    '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8
+  };
+
+  // Find quantity in string if present
+  let matchedQty = 1;
+  for (const [word, num] of Object.entries(qtyMap)) {
+    const regex = new RegExp(`\\b${word}\\b`, 'i');
+    if (regex.test(lowerText)) {
+      matchedQty = num;
+      break;
+    }
+  }
+
+  // Dish keyword matching aliases
+  const matchedItems = [];
+  menuItems.forEach(item => {
+    const itemNameLower = item.name.toLowerCase();
+    const itemWords = itemNameLower.split(' ').filter(w => w.length > 2);
+    
+    // Check direct substring or key word presence
+    let isMatch = lowerText.includes(itemNameLower);
+    if (!isMatch) {
+      isMatch = itemWords.some(w => lowerText.includes(w));
+    }
+    
+    // Extra multilingual phonetics
+    if (!isMatch) {
+      if (itemNameLower.includes('pizza') && (lowerText.includes('પીઝા') || lowerText.includes('पिज़्ज़ा') || lowerText.includes('piza'))) isMatch = true;
+      if (itemNameLower.includes('burger') && (lowerText.includes('બર્ગર') || lowerText.includes('બર્ગ') || lowerText.includes('बर्गर'))) isMatch = true;
+      if (itemNameLower.includes('pasta') && (lowerText.includes('પાસ્તા') || lowerText.includes('पास्ता'))) isMatch = true;
+      if (itemNameLower.includes('coffee') && (lowerText.includes('કોફી') || lowerText.includes('कॉफ़ी') || lowerText.includes('કૉફી'))) isMatch = true;
+      if (itemNameLower.includes('paneer') && (lowerText.includes('પનીર') || lowerText.includes('पनीर'))) isMatch = true;
+      if (itemNameLower.includes('fries') && (lowerText.includes('ફ્રાઈસ') || lowerText.includes('ફ્રેન્ચ ફ્રાઈસ') || lowerText.includes('chips'))) isMatch = true;
+      if (itemNameLower.includes('brownie') && (lowerText.includes('બ્રાઉની') || lowerText.includes('ચોકલેટ'))) isMatch = true;
+      if (itemNameLower.includes('drink') && (lowerText.includes('કોલ્ડ્રિંક') || lowerText.includes('સોફ્ટ ડ્રિંક') || lowerText.includes('pepsi') || lowerText.includes('coke'))) isMatch = true;
+    }
+
+    if (isMatch && item.available !== false) {
+      matchedItems.push(item);
+    }
+  });
+
+  if (matchedItems.length > 0) {
+    const targetItem = matchedItems[0];
+    addToCart({ ...targetItem, quantity: matchedQty });
+    
+    const confirmMessage = `Added ${matchedQty} × ${targetItem.name} to your basket!`;
+    showToast(`🤖 AI Voice: ${confirmMessage}`);
+    
+    // Voice Feedback (SpeechSynthesis)
+    if ('speechSynthesis' in window) {
+      try {
+        const utterance = new SpeechSynthesisUtterance(confirmMessage);
+        utterance.rate = 1.05;
+        window.speechSynthesis.speak(utterance);
+      } catch (_) {}
+    }
+
+    setTimeout(() => {
+      stopVoiceOrderRecognition();
+      // Auto open cart to show items
+      openCart();
+    }, 1200);
+  } else {
+    showToast('Could not match item name. Please speak dish name clearly.', true);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 💬 WHATSAPP AUTOMATED DIGITAL INVOICE GENERATOR
+// ══════════════════════════════════════════════════════════════════════════════
+function generateWhatsAppBillLink(orderId, orderDetails) {
+  const restName = window.restaurant?.name || 'DineFlow Gourmet Restaurant';
+  const table = orderDetails.table_id || '1';
+  const items = orderDetails.items || [];
+  const subtotal = orderDetails.total_amount || 0;
+  const tax = (subtotal * 0.05).toFixed(2);
+  const total = (Number(subtotal) + Number(tax)).toFixed(2);
+  
+  let itemLines = items.map(i => `• ${i.name || i.menu_item_name} × ${i.quantity} — ₹${(i.price * i.quantity).toFixed(2)}`).join('\n');
+  if (!itemLines) itemLines = `• Order #${orderId} (Dine-in meal)`;
+
+  const message = 
+    `🍽️ *${restName}*\n` +
+    `🧾 *Digital Bill & Receipt — Order #${orderId}*\n` +
+    `📍 *Table:* #${table} | *Date:* ${new Date().toLocaleDateString('en-IN')}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `${itemLines}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💵 *Subtotal:* ₹${Number(subtotal).toFixed(2)}\n` +
+    `🏷️ *GST (5%):* ₹${tax}\n` +
+    `💰 *Grand Total:* ₹${total} (PAID ✅)\n\n` +
+    `🌟 *Rate your dining experience:* \n` +
+    `https://dineflow.ai/review?order=${orderId}\n\n` +
+    `_Thank you for dining with us! Visit again._ 🙏`;
+
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
 }
 

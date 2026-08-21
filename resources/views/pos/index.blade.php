@@ -1771,7 +1771,10 @@
       <div class="menu-controls">
         <div class="search-box">
           <i class="fa-solid fa-search"></i>
-          <input class="search-input" placeholder="Search items…" oninput="filterItems(this.value)" />
+          <input class="search-input" id="posSearchInput" placeholder="Search items or tap mic to speak…" oninput="filterItems(this.value)" />
+          <button type="button" onclick="togglePosVoiceOrder()" id="posVoiceBtn" title="AI Voice Order (Gujarati/Hindi/English)" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:var(--primary); width:28px; height:28px; border-radius:6px; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; margin-right:4px; transition:all 0.2s;">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
         </div>
         <div class="cat-popup-wrap">
           <button class="cat-popup-btn" id="catPopupBtn" onclick="toggleCatPopup()">

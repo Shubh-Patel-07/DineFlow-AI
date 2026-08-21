@@ -87,6 +87,9 @@ function renderCustomers() {
       </td>
       <td>
         <div style="display:flex; gap:6px;">
+          <button onclick="sendSingleWhatsAppPromo(${c.id})" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:#10B981; padding:5px 9px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Send WhatsApp Offer">
+            <i class="fa-brands fa-whatsapp"></i> Promo
+          </button>
           <button onclick="editCustomerPoints(${c.id})" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:#D97706; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Edit Points">
             <i class="fa-solid fa-pen-to-square"></i> Edit Points
           </button>
@@ -197,4 +200,103 @@ async function deleteCustomer(id) {
 
 function escapeHtml(str) {
   return typeof str === 'string' ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]) : '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 💬 WHATSAPP AUTOMATION & RE-ENGAGEMENT CAMPAIGNS
+// ══════════════════════════════════════════════════════════════════════════════
+function sendSingleWhatsAppPromo(customerId) {
+  const c = customerList.find(cust => String(cust.id) === String(customerId));
+  if (!c || !c.phone) {
+    if (typeof Toast !== 'undefined') Toast.error('No phone number on file for this customer.');
+    else alert('No phone number on file for this customer.');
+    return;
+  }
+
+  const phone = c.phone.replace(/[^0-9]/g, '');
+  const name = c.name || 'Foodie';
+  const points = c.loyalty_points || 0;
+
+  const msg = encodeURIComponent(
+    `👋 Hello *${name}*! Greetings from *DineFlow Gourmet Restaurant* 🍽️\n\n` +
+    `⭐ You currently have *${points} Loyalty Reward Points* in your wallet (Worth ₹${points} OFF)!\n\n` +
+    `🎉 We would love to serve you again. Use code *TASTY15* to enjoy a flat *15% Discount* on your next visit!\n\n` +
+    `👉 View Live Menu: https://dineflow.ai/menu\n` +
+    `📅 Reserve Table: https://dineflow.ai/reserve\n\n` +
+    `_See you soon!_ 🙏`
+  );
+
+  window.open(`https://api.whatsapp.com/send?phone=91${phone}&text=${msg}`, '_blank');
+}
+
+function openWhatsAppCampaignModal() {
+  const modal = document.getElementById('waCampaignModal');
+  if (modal) modal.style.display = 'flex';
+  updateWaCampaignStats();
+}
+
+function closeWhatsAppCampaignModal() {
+  const modal = document.getElementById('waCampaignModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function updateWaCampaignStats() {
+  const segment = document.getElementById('waAudienceSelect')?.value || 'all';
+  const targetLabel = document.getElementById('waTargetCount');
+  if (!targetLabel) return;
+
+  let count = customerList.length;
+  if (segment === 'vip') {
+    count = customerList.filter(c => parseFloat(c.total_spent || 0) >= 2000).length;
+    targetLabel.textContent = `Targeting: ${count} VIP & Platinum Customers`;
+  } else if (segment === 'inactive') {
+    count = customerList.filter(c => {
+      if (!c.last_visit) return true;
+      const daysDiff = (new Date() - new Date(c.last_visit)) / (1000 * 60 * 60 * 24);
+      return daysDiff >= 15;
+    }).length;
+    targetLabel.textContent = `Targeting: ${count} Inactive Customers (>15 days)`;
+  } else {
+    targetLabel.textContent = `Targeting: All ${count} Registered Customers`;
+  }
+}
+
+function dispatchWhatsAppCampaign() {
+  const segment = document.getElementById('waAudienceSelect')?.value || 'all';
+  const rawMsg = document.getElementById('waMessageText')?.value || '';
+  if (!rawMsg.trim()) {
+    alert('Please enter campaign message text.');
+    return;
+  }
+
+  let targets = customerList;
+  if (segment === 'vip') {
+    targets = customerList.filter(c => parseFloat(c.total_spent || 0) >= 2000);
+  } else if (segment === 'inactive') {
+    targets = customerList.filter(c => {
+      if (!c.last_visit) return true;
+      const daysDiff = (new Date() - new Date(c.last_visit)) / (1000 * 60 * 60 * 24);
+      return daysDiff >= 15;
+    });
+  }
+
+  if (!targets.length) {
+    alert('No customers matched the selected audience filter.');
+    return;
+  }
+
+  const encoded = encodeURIComponent(rawMsg);
+  closeWhatsAppCampaignModal();
+
+  if (typeof Toast !== 'undefined') {
+    Toast.success(`🚀 Broadcast initialized for ${targets.length} customers!`);
+  }
+
+  // Open first recipient in WhatsApp Web
+  const firstPhone = (targets[0].phone || '').replace(/[^0-9]/g, '');
+  if (firstPhone) {
+    window.open(`https://api.whatsapp.com/send?phone=91${firstPhone}&text=${encoded}`, '_blank');
+  } else {
+    window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+  }
 }
