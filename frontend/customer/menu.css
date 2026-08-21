@@ -763,22 +763,47 @@ button, input, select, textarea { font: inherit; }
 /* ==========================================================================
    Cart Drawer Panel
    ========================================================================== */
-.cart-modal-card {
+#cartPanel {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  z-index: 950;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#cartPanel[hidden] {
+  display: none !important;
+}
+
+.cart-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.cart-modal-card {
+  position: relative;
+  z-index: 2;
   width: 440px;
   max-width: 100vw;
+  height: 100vh;
   background: var(--card-solid-bg);
   border-left: 1px solid var(--card-border);
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.7);
-  z-index: 950;
   display: flex;
   flex-direction: column;
   padding: 24px;
   overflow-y: auto;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .cart-header {

@@ -407,7 +407,8 @@ async function openItemModal(item) {
 
   const addBtn = $('#modalAddToCartBtn');
   if (addBtn) {
-    if (item.available === false) {
+    addBtn.dataset.modalItemId = item.id;
+    if (item.available === false || item.is_available === false) {
       addBtn.disabled = true;
       addBtn.setAttribute('disabled', 'disabled');
       addBtn.textContent = '🚫 Currently Out of Stock (Sold Out)';
@@ -418,7 +419,7 @@ async function openItemModal(item) {
     } else {
       addBtn.disabled = false;
       addBtn.removeAttribute('disabled');
-      addBtn.textContent = '+ Add to Order';
+      addBtn.textContent = '+ Add to Order Basket';
       addBtn.style.opacity = '1';
       addBtn.style.cursor = 'pointer';
       addBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
@@ -466,17 +467,20 @@ document.addEventListener('click', event => {
     return;
   }
 
-  if (event.target.closest('#modalAddToCartBtn')) {
+  const modalAddBtn = event.target.closest('#modalAddToCartBtn');
+  if (modalAddBtn) {
+    const itemId = modalAddBtn.dataset.modalItemId;
     const name = $('#modalItemName')?.textContent;
-    const item = menuItems.find(i => i.name === name);
+    const item = (itemId ? menuItems.find(i => String(i.id) === String(itemId)) : null) || menuItems.find(i => i.name === name);
     if (item) {
-      if (item.available === false) {
-        showToast('Sorry, this item is currently sold out!', true);
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
         return;
       }
       addToCart({ ...item, quantity: 1 });
       closeItemModal();
     }
+    return;
   }
 });
 
@@ -491,24 +495,25 @@ function addToCart(customizedItem) {
   if (!customizedItem) return;
   const masterItem = menuItems.find(i => String(i.id) === String(customizedItem.baseId || customizedItem.id) || (customizedItem.name && i.name.toLowerCase() === customizedItem.name.toLowerCase()));
   
-  const isSoldOut = (masterItem && (masterItem.available === false || masterItem.is_available === false || masterItem.is_available === 0 || masterItem.is_available === '0')) ||
-                    customizedItem.available === false || customizedItem.is_available === false || customizedItem.is_available === 0 || customizedItem.is_available === '0';
+  const isMasterSoldOut = masterItem ? (masterItem.available === false || masterItem.is_available === false || masterItem.is_available === 0 || masterItem.is_available === '0') : false;
+  const isCustomSoldOut = customizedItem.available === false || customizedItem.is_available === false || customizedItem.is_available === 0 || customizedItem.is_available === '0';
 
-  if (isSoldOut) {
-    showToast(`Sorry, "${customizedItem.name || 'This item'}" is currently sold out and cannot be added to cart!`, true);
+  if (isMasterSoldOut || isCustomSoldOut) {
+    showToast(`Sorry, "${customizedItem.name || 'This item'}" is currently sold out and cannot be added!`, true);
     return;
   }
 
   const cart = getCart();
   const existingItemIndex = cart.findIndex(item => String(item.id) === String(customizedItem.id));
   if (existingItemIndex > -1) {
-    cart[existingItemIndex].quantity += customizedItem.quantity || 1;
+    cart[existingItemIndex].quantity = (cart[existingItemIndex].quantity || 1) + (customizedItem.quantity || 1);
   } else {
-    cart.push({ ...customizedItem, available: true });
+    cart.push({ ...customizedItem, quantity: customizedItem.quantity || 1, available: true });
   }
   saveCart(cart);
-  showToast('Added to cart');
+  showToast(`🛒 Added ${customizedItem.name || 'Item'} to basket!`);
   renderCart();
+  openCart();
 }
 
 // --- Cart UI and interactions ---
