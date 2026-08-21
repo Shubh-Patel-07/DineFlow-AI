@@ -86,7 +86,7 @@ function renderRecommendedSection() {
   if (!section) return;
 
   const recommendedItems = menuItems
-    .filter(item => item.popular || getFavoriteIds().has(String(item.id)) || getRecentItemIds().includes(String(item.id)))
+    .filter(item => (item.available !== false && item.is_available !== false) && (item.popular || getFavoriteIds().has(String(item.id)) || getRecentItemIds().includes(String(item.id))))
     .slice(0, 4);
 
   if (!recommendedItems.length) {
@@ -437,7 +437,13 @@ document.addEventListener('click', event => {
   const recommendedButton = event.target.closest('[data-recommended-item-id]');
   if (recommendedButton) {
     const item = menuItems.find(i => String(i.id) === String(recommendedButton.dataset.recommendedItemId));
-    if (item) openItemModal(item);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+        return;
+      }
+      openItemModal(item);
+    }
     return;
   }
 
@@ -1189,7 +1195,16 @@ if (_foodGrid) _foodGrid.addEventListener('click', event => {
   }
 
   const card = event.target.closest('[data-item-id]');
-  if (card) openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId));
+  if (card) {
+    const item = menuItems.find(item => String(item.id) === card.dataset.itemId);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out and out of stock!`, true);
+        return;
+      }
+      openItemModal(item);
+    }
+  }
 });
 
 const _favSection = $('#favoritesSection');
