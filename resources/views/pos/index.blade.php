@@ -3908,7 +3908,7 @@
           return;
         }
         
-        const sortedOrders = data.data;
+        const sortedOrders = ordersList;
         
         tbody.innerHTML = sortedOrders.map(order => {
           const itemsSummary = order.items ? order.items.map(item => `${item.name} (x${item.quantity})`).join(', ') : 'Order Items';
