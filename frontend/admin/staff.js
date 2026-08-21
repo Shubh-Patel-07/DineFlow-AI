@@ -6,6 +6,7 @@ const MODULE_DEFINITIONS = [
   { key: 'pos',       name: 'POS Terminal',       icon: 'fa-cash-register' },
   { key: 'menu',      name: 'Menu Items',         icon: 'fa-utensils' },
   { key: 'reports',   name: 'Sales Reports',      icon: 'fa-chart-line' },
+  { key: 'expenses',  name: 'Expenses & Overhead',icon: 'fa-file-invoice-dollar' },
   { key: 'inventory', name: 'Inventory',          icon: 'fa-boxes-stacked' },
   { key: 'coupons',   name: 'Offers & Discounts', icon: 'fa-gift' },
   { key: 'customers', name: 'Customers',          icon: 'fa-users' },

@@ -482,7 +482,7 @@ class Auth {
   static logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = 'login.html';
+    window.location.href = '/login';
   }
 
   static checkAuth() {
@@ -591,12 +591,14 @@ window.DineFlowRBAC = {
       '/pos': 'pos',
       '/admin/menu-manager': 'menu',
       '/z-report': 'reports',
+      '/admin/expenses': 'reports',
       '/admin/inventory': 'inventory',
       '/admin/coupons': 'coupons',
       '/admin/customers': 'customers',
       '/admin/tables': 'tables',
       '/admin/staff': 'staff',
       '/admin/settings': 'settings',
+      '/admin/qr-generator': 'settings',
       '/admin/feedback': 'feedback'
     };
 
@@ -666,7 +668,6 @@ window.savePrinterSettings = function() {
   localStorage.setItem('dineflow_receipt_footer', footerNote);
 
   const displayLabel = selType === 'CUSTOM_PRINTER' && customName ? customName : selType;
-  alert('✅ Target Hardware Printer set to: ' + displayLabel);
 };
 
 window.testSelectedPrinter = function() {
@@ -730,15 +731,32 @@ window.savePromoStrategySettings = function() {
   localStorage.setItem('dineflow_min_redeem_points', minRedeem);
   localStorage.setItem('dineflow_welcome_discount', wDisc);
   localStorage.setItem('dineflow_promo_banner_text', banner);
+};
 
-  alert('✅ Customer Loyalty Rewards & Promo Offer Settings saved successfully!');
+window.saveProfileAndTaxSettings = function() {
+  const rName = (document.getElementById('settingRestaurantName')?.value || '').trim();
+  const gstin = (document.getElementById('settingGstin')?.value || '').trim();
+  const gstRate = (document.getElementById('settingGstRate')?.value || '18').trim();
+  const svcCharge = (document.getElementById('settingServiceCharge')?.value || '5').trim();
+
+  if (rName) localStorage.setItem('dineflow_restaurant_name', rName);
+  if (gstin) localStorage.setItem('dineflow_gstin', gstin);
+  if (gstRate) localStorage.setItem('dineflow_gst_rate', gstRate);
+  if (svcCharge) localStorage.setItem('dineflow_service_charge', svcCharge);
 };
 
 window.saveAllSettings = function() {
   if (typeof saveStoreCurrencySetting === 'function') {
     saveStoreCurrencySetting();
   }
+  if (typeof window.saveProfileAndTaxSettings === 'function') {
+    window.saveProfileAndTaxSettings();
+  }
   window.savePrinterSettings();
   window.savePromoStrategySettings();
-  alert('✅ All System & Hardware Printer Settings saved successfully!');
+  if (typeof Toast !== 'undefined' && Toast.success) {
+    Toast.success('All System, Profile & Hardware Printer Settings saved successfully!');
+  } else {
+    alert('✅ All System, Profile & Hardware Printer Settings saved successfully!');
+  }
 };

@@ -352,17 +352,17 @@
                 <div class="divider"></div>
 
                 <table class="info-table total-section">
+                    @php
+                        $subtotal = $order->items->sum(fn($i) => $i->price * $i->quantity) ?: $order->total_amount;
+                        $serviceCharge = $subtotal * 0.05;
+                        $cgst = ($subtotal + $serviceCharge) * 0.09;
+                        $sgst = ($subtotal + $serviceCharge) * 0.09;
+                        $grandTotal = $subtotal + $serviceCharge + $cgst + $sgst;
+                    @endphp
                     <tr>
                         <td>Subtotal:</td>
-                        <td class="text-right">₹{{ number_format($order->total_amount, 2) }}</td>
+                        <td class="text-right">₹{{ number_format($subtotal, 2) }}</td>
                     </tr>
-                    @php
-                        $serviceCharge = $order->total_amount * 0.05; // 5% Service Charge
-                        $taxableAmount = $order->total_amount + $serviceCharge;
-                        $cgst = $taxableAmount * 0.09; // 9% CGST (18% Total GST)
-                        $sgst = $taxableAmount * 0.09; // 9% SGST (18% Total GST)
-                        $grandTotal = round($taxableAmount + $cgst + $sgst);
-                    @endphp
                     <tr>
                         <td>Service Charge (5%):</td>
                         <td class="text-right">₹{{ number_format($serviceCharge, 2) }}</td>

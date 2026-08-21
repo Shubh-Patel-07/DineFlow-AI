@@ -14,9 +14,11 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'restaurant_id' => 'required|string',
-            'table_id' => 'required|string',
-            'items' => 'required|array',
+            'restaurant_id' => 'required',
+            'table_id' => 'required',
+            'items' => 'required|array|min:1',
+            'payment_method' => 'nullable|string',
+            'special_instructions' => 'nullable|string',
         ]);
 
         return DB::transaction(function () use ($request) {
@@ -24,23 +26,22 @@ class OrderController extends Controller
             $itemsData = [];
 
             foreach ($request->items as $item) {
-                $menuItemId = $item['menu_item_id'];
-                $quantity = $item['quantity'];
+                $menuItemId = $item['menu_item_id'] ?? $item['menuItemId'] ?? null;
+                $quantity = max(1, intval($item['quantity'] ?? 1));
 
-                $menuItem = MenuItem::find($menuItemId);
-                if (!$menuItem && !empty($item['name'])) {
+                if (!$menuItemId && !empty($item['name'])) {
                     $menuItem = MenuItem::where('name', $item['name'])->first();
+                } else {
+                    $menuItem = MenuItem::find($menuItemId);
                 }
 
                 if (!$menuItem) {
-                    $menuItem = MenuItem::create([
-                        'restaurant_id' => $request->restaurant_id,
-                        'name' => $item['name'] ?? ('Item #' . $menuItemId),
-                        'price' => isset($item['price']) ? floatval($item['price']) : 100.00,
-                        'category' => 'Mains',
-                        'is_available' => true,
-                        'is_veg' => true
-                    ]);
+                    continue;
+                }
+
+                // Reject sold-out / unavailable items
+                if (!$menuItem->is_available) {
+                    continue;
                 }
 
                 $price = $menuItem->price;
@@ -60,15 +61,21 @@ class OrderController extends Controller
 
                     if ($inventory) {
                         if ($inventory->quantity >= $quantity) {
-                            $inventory->quantity -= $quantity;
-                            $inventory->save();
+                            $inventory->decrement('quantity', $quantity);
                         } else {
-                            \Illuminate\Support\Facades\Log::warning("Not enough stock for {$menuItem->name}. Available: {$inventory->quantity}, Required: {$quantity}");
+                            \Log::warning("Insufficient inventory for menu item: {$menuItem->name}");
                         }
                     }
-                } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning("Inventory update skipped: " . $e->getMessage());
+                } catch (\Exception $e) {
+                    \Log::error("Error updating inventory for order: " . $e->getMessage());
                 }
+            }
+
+            if (empty($itemsData)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No available menu items could be ordered.'
+                ], 422);
             }
 
             // Check if there is already an active (unpaid) order for this table
@@ -163,7 +170,7 @@ class OrderController extends Controller
 
     public function getRestaurantOrders($restaurantId)
     {
-        $orders = Order::where('restaurant_id', $restaurantId)->with(['items.menuItem', 'table'])->orderBy('created_at', 'desc')->get();
+        $orders = Order::where('restaurant_id', $restaurantId)->with(['items.menuItem', 'table'])->orderBy('created_at', 'desc')->paginate(50);
         return response()->json(['success' => true, 'data' => $orders]);
     }
 
@@ -183,22 +190,7 @@ class OrderController extends Controller
         $order = Order::with('items')->find($id);
 
         if (!$order) {
-            $order = new Order([
-                'id' => is_numeric($id) ? $id : 9,
-                'restaurant_id' => 1,
-                'table_id' => 1,
-                'total_amount' => 920,
-                'status' => 'completed',
-                'payment_status' => 'paid',
-                'payment_method' => 'cash',
-                'created_at' => now(),
-            ]);
-            $order->setRelation('items', collect([
-                (object)['name' => 'Chicken Biryani', 'quantity' => 1, 'price' => 380],
-                (object)['name' => 'Mango Lassi', 'quantity' => 1, 'price' => 120],
-                (object)['name' => 'Veg Biryani', 'quantity' => 1, 'price' => 280],
-                (object)['name' => 'Cold Coffee', 'quantity' => 1, 'price' => 140],
-            ]));
+            abort(404, 'Order not found');
         }
 
         $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
@@ -220,44 +212,8 @@ class OrderController extends Controller
             $order = Order::with('items.menuItem')->find($id);
         }
 
-        if ($id === 'live' || $request->has('items') || !$order) {
-            $itemsData = json_decode($request->get('items', '[]'), true);
-            $tableName = $request->get('table', 'Walk-In');
-            $calcSubtotal = 0;
-            $itemsCollection = collect();
-
-            if (is_array($itemsData) && count($itemsData) > 0) {
-                foreach ($itemsData as $it) {
-                    $qty = (int)($it['qty'] ?? $it['quantity'] ?? 1);
-                    $price = (float)($it['price'] ?? $it['unit_price'] ?? 0);
-                    $calcSubtotal += $price * $qty;
-                    $itemsCollection->push((object)[
-                        'name' => $it['name'] ?? 'Item',
-                        'quantity' => $qty,
-                        'price' => $price,
-                    ]);
-                }
-            } else if (!$order) {
-                $calcSubtotal = 360;
-                $itemsCollection = collect([
-                    (object)['name' => 'Paneer Butter Masala', 'quantity' => 1, 'price' => 240],
-                    (object)['name' => 'Garlic Naan', 'quantity' => 2, 'price' => 60],
-                ]);
-            }
-
-            if (!$order) {
-                $order = new Order([
-                    'id' => is_numeric($id) ? $id : time(),
-                    'restaurant_id' => 1,
-                    'table_id' => 1,
-                    'total_amount' => $calcSubtotal,
-                    'status' => 'placed',
-                    'payment_status' => 'pending',
-                    'payment_method' => 'cash',
-                    'created_at' => now(),
-                ]);
-                $order->setRelation('items', $itemsCollection);
-            }
+        if (!$order) {
+            abort(404, 'Order not found');
         }
 
         $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
@@ -269,7 +225,7 @@ class OrderController extends Controller
         ]);
 
         $table = \App\Models\Table::find($order->table_id);
-        $tableName = isset($tableName) ? $tableName : ($table ? $table->table_number : 'Table #' . $order->table_id);
+        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         return view('pos.invoice_a4', compact('order', 'restaurant', 'tableName'));
     }

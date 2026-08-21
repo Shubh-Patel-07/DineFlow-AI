@@ -3,6 +3,10 @@
  */
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+
 const APIService = {
   async getTables() {
     try {
@@ -20,7 +24,8 @@ const APIService = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': getCSRFToken()
         },
         body: JSON.stringify({
           restaurant_id: '1',
@@ -39,7 +44,8 @@ const APIService = {
       const response = await fetch(`${API_BASE}/tables/${tableId}`, {
         method: 'DELETE',
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': getCSRFToken()
         }
       });
       if (!response.ok) throw new Error('Failed to delete table');

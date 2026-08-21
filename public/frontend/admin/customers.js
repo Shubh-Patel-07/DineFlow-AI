@@ -164,11 +164,9 @@ async function handleSaveCustomer(e) {
       if (typeof Toast !== 'undefined') Toast.error(err.message || 'Failed to save customer.');
       else alert(err.message || 'Failed to save customer.');
     }
-  } catch (_) {
-    if (typeof Toast !== 'undefined') Toast.error('Saved customer successfully.');
-    else alert('Customer saved successfully!');
-    closeCustomerModal();
-    loadCustomers();
+  } catch (err) {
+    if (typeof Toast !== 'undefined') Toast.error('Error saving customer: ' + (err.message || 'Network error'));
+    else alert('Error saving customer.');
   }
 }
 

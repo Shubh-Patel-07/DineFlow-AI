@@ -22,15 +22,20 @@ Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.sw
 // Protected UI Pages
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
+        $user = auth()->user();
+        $restaurantId = ($user && strtolower(trim($user->role ?? '')) === 'admin')
+            ? request()->query('restaurantId', $user->restaurant_id ?? 1)
+            : ($user->restaurant_id ?? 1);
+
         // Today's Orders
-        $todayOrdersCount = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::today())->count();
-        $yesterdayOrdersCount = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::yesterday())->count();
+        $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
+        $yesterdayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::yesterday())->count();
         $ordersDiff = $todayOrdersCount - $yesterdayOrdersCount;
         $ordersDiffText = ($ordersDiff >= 0 ? '+' : '') . $ordersDiff . ' from yesterday';
 
         // Total Revenue
-        $todayRevenue = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::today())->where('payment_status', 'paid')->sum('total_amount');
-        $yesterdayRevenue = \App\Models\Order::whereDate('created_at', \Carbon\Carbon::yesterday())->where('payment_status', 'paid')->sum('total_amount');
+        $todayRevenue = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->where('payment_status', 'paid')->sum('total_amount');
+        $yesterdayRevenue = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::yesterday())->where('payment_status', 'paid')->sum('total_amount');
         if ($yesterdayRevenue > 0) {
             $revenueChange = round((($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100);
         } else {
@@ -39,11 +44,12 @@ Route::middleware('auth')->group(function () {
         $revenueDiffText = ($revenueChange >= 0 ? '+' : '') . $revenueChange . '% from yesterday';
 
         // Occupied Tables
-        $occupiedTablesCount = \App\Models\Order::where('payment_status', 'pending')
-            ->whereNotIn('status', ['completed', 'cancelled'])
+        $occupiedTablesCount = \App\Models\Order::where('restaurant_id', $restaurantId)
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled', 'served'])
             ->distinct('table_id')
             ->count('table_id');
-        $totalTablesCount = \App\Models\Table::count() ?: 12;
+        $totalTablesCount = \App\Models\Table::where('restaurant_id', $restaurantId)->count() ?: 12;
 
         // Active Customers
         $activeCustomers = $occupiedTablesCount * 3;
@@ -54,16 +60,17 @@ Route::middleware('auth')->group(function () {
         for ($i = 6; $i >= 0; $i--) {
             $date = \Carbon\Carbon::today()->subDays($i);
             $weeklySalesLabels[] = $date->format('D');
-            $weeklySalesData[] = \App\Models\Order::whereDate('created_at', $date)->where('payment_status', 'paid')->sum('total_amount');
+            $weeklySalesData[] = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', $date)->where('payment_status', 'paid')->sum('total_amount');
         }
 
         // Get Category Wise Sales Distribution (Paid orders only)
         $categorySales = \DB::table('order_items')
-            ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->leftJoin('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
+            ->where('orders.restaurant_id', $restaurantId)
             ->where('orders.payment_status', 'paid')
-            ->select('menu_items.category', \DB::raw('SUM(order_items.quantity * order_items.price) as total'))
-            ->groupBy('menu_items.category')
+            ->select(\DB::raw("COALESCE(menu_items.category, 'General') as category"), \DB::raw('SUM(order_items.quantity * order_items.price) as total'))
+            ->groupBy(\DB::raw("COALESCE(menu_items.category, 'General')"))
             ->pluck('total', 'category')
             ->toArray();
 
@@ -105,12 +112,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined');
 
     Route::get('/z-report', function (Illuminate\Http\Request $request) {
+        $user = auth()->user();
+        $restaurantId = ($user && strtolower(trim($user->role ?? '')) === 'admin')
+            ? $request->query('restaurant_id', $user->restaurant_id ?? 1)
+            : ($user->restaurant_id ?? 1);
+
         $reportDate = $request->query('date', \Carbon\Carbon::today()->format('Y-m-d'));
-        $orders = \App\Models\Order::whereDate('created_at', $reportDate)->where('payment_status', 'paid')->get();
+        $orders = \App\Models\Order::where('restaurant_id', $restaurantId)
+            ->whereDate('created_at', $reportDate)
+            ->where('payment_status', 'paid')
+            ->get();
 
         $grossRevenue = $orders->sum('total_amount');
-        $netSubtotal = $grossRevenue / 1.18; // 18% tax inclusive calculation
-        $taxTotal = $grossRevenue - $netSubtotal;
+        $netSubtotal = $grossRevenue;
+        $taxTotal = $grossRevenue * 0.18; // 18% GST calculation
         $totalOrdersCount = $orders->count();
 
         $paymentSplit = [
@@ -134,11 +149,12 @@ Route::middleware('auth')->group(function () {
 
         $categoryBreakdown = \DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
+            ->leftJoin('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
+            ->where('orders.restaurant_id', $restaurantId)
             ->whereDate('orders.created_at', $reportDate)
             ->where('orders.payment_status', 'paid')
-            ->select('menu_items.category', \DB::raw('SUM(order_items.quantity) as total_qty'), \DB::raw('SUM(order_items.price * order_items.quantity) as total_sales'))
-            ->groupBy('menu_items.category')
+            ->select(\DB::raw("COALESCE(menu_items.category, 'General') as category"), \DB::raw('SUM(order_items.quantity) as total_qty'), \DB::raw('SUM(order_items.price * order_items.quantity) as total_sales'))
+            ->groupBy(\DB::raw("COALESCE(menu_items.category, 'General')"))
             ->get();
 
         return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
@@ -185,6 +201,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/frontend/admin/expenses.html', fn() => $serveAdminPage('frontend/admin/expenses.html'));
     Route::get('/admin/expenses', fn() => $serveAdminPage('frontend/admin/expenses.html'));
+
+    Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('frontend/admin/qr-generator.html'));
+    Route::get('/admin/qr-generator', fn() => $serveAdminPage('frontend/admin/qr-generator.html'));
+
+    Route::get('/frontend/admin/admin-dashboard.html', fn() => $serveAdminPage('frontend/admin/admin-dashboard.html'));
+    Route::get('/admin/admin-dashboard', fn() => $serveAdminPage('frontend/admin/admin-dashboard.html'));
 });
 
 
@@ -218,13 +240,13 @@ Route::prefix('api')->group(function () {
     
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
-    Route::post('/orders/{id}/pay', [OrderController::class, 'pay']);
+    Route::post('/orders/{id}/pay', [OrderController::class, 'pay'])->middleware('auth');
     
     Route::post('/feedback', [CustomerController::class, 'placeFeedback']);
     Route::post('/waiter-calls', [CustomerController::class, 'callWaiter']);
 
     // Coupon validation (public - used at POS checkout)
-    Route::post('/coupons/validate', [CouponController::class, 'validate']);
+    Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
 
     // --- PROTECTED & TENANT SECURED ENDPOINTS ---
     Route::middleware(['auth'])->group(function () {

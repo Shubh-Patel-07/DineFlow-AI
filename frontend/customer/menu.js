@@ -4,9 +4,9 @@ let tableId = params.get('tableId') || params.get('table') || '1';
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
 const translations = {
-  en: { welcome: 'Smart QR Restaurant Ordering', table: 'Table', all: 'All', veg: 'Veg', nonveg: 'Non-Veg', menu: 'Our Menu', subtitle: 'Freshly prepared, just for you', search: 'Search delicious food...', callWaiter: 'Call Waiter', loading: 'Loading menu…', unavailable: 'Out of stock', available: 'Available', empty: 'No dishes found', emptyHint: 'Try changing your search or filters.', waiterSent: 'Your waiter has been called.', waiterError: 'Could not call waiter. Please try again.', calling: 'Calling…' },
-  hi: { welcome: 'स्मार्ट QR रेस्टोरेंट ऑर्डरिंग', table: 'टेबल', all: 'सभी', veg: 'वेज', nonveg: 'नॉन-वेज', menu: 'हमारा मेनू', subtitle: 'आपके लिए ताज़ा तैयार', search: 'खाना खोजें...', callWaiter: 'वेटर बुलाएँ', loading: 'मेनू लोड हो रहा है…', unavailable: 'स्टॉक में नहीं', available: 'उपलब्ध', empty: 'कोई डिश नहीं मिली', emptyHint: 'खोज या फ़िल्टर बदलकर देखें।', waiterSent: 'वेटर को बुला दिया गया है।', waiterError: 'वेटर को नहीं बुला सके। फिर कोशिश करें।', calling: 'बुलाया जा रहा है…' },
-  gu: { welcome: 'સ્માર્ટ QR રેસ્ટોરન્ટ ઓર્ડરિંગ', table: 'ટેબલ', all: 'બધા', veg: 'વેજ', nonveg: 'નોન-વેજ', menu: 'અમારું મેનૂ', subtitle: 'તમારા માટે તાજું બનાવેલું', search: 'ખાવાનું શોધો...', callWaiter: 'વેઇટરને બોલાવો', loading: 'મેનૂ લોડ થઈ રહ્યું છે…', unavailable: 'સ્ટોકમાં નથી', available: 'ઉપલબ્ધ', empty: 'કોઈ વાનગી મળી નથી', emptyHint: 'શોધ અથવા ફિલ્ટર બદલીને જુઓ.', waiterSent: 'વેઇટરને બોલાવવામાં આવ્યા છે.', waiterError: 'વેઇટરને બોલાવી શકાયા નથી. ફરી પ્રયાસ કરો.', calling: 'બોલાવવામાં આવે છે…' }
+  en: { welcome: 'Smart QR Restaurant Ordering', table: 'Table', all: 'All', veg: '🟢 Veg', nonveg: '🔴 Non-Veg', menu: 'Our Menu', subtitle: 'Freshly prepared, just for you', search: 'Search delicious food...', callWaiter: 'Call Waiter', loading: 'Loading menu…', unavailable: 'Out of stock', available: 'Available', empty: 'No dishes found', emptyHint: 'Try changing your search or filters.', waiterSent: 'Your waiter has been called.', waiterError: 'Could not call waiter. Please try again.', calling: 'Calling…' },
+  hi: { welcome: 'स्मार्ट QR रेस्टोरेंट ऑर्डरिंग', table: 'टेबल', all: 'सभी', veg: '🟢 वेज', nonveg: '🔴 नॉन-वेज', menu: 'हमारा मेनू', subtitle: 'आपके लिए ताज़ा तैयार', search: 'खाना खोजें...', callWaiter: 'वेटर बुलाएँ', loading: 'मेनू लोड हो रहा है…', unavailable: 'स्टॉक में नहीं', available: 'उपलब्ध', empty: 'कोई डिश नहीं मिली', emptyHint: 'खोज या फ़िल्टर बदलकर देखें।', waiterSent: 'वेटर को बुला दिया गया है।', waiterError: 'वेटर को नहीं बुला सके। फिर कोशिश करें।', calling: 'बुलाया जा रहा है…' },
+  gu: { welcome: 'સ્માર્ટ QR રેસ્ટોરન્ટ ઓર્ડરિંગ', table: 'ટેબલ', all: 'બધા', veg: '🟢 વેજ', nonveg: '🔴 નોન-વેજ', menu: 'અમારું મેનૂ', subtitle: 'તમારા માટે તાજું બનાવેલું', search: 'ખાવાનું શોધો...', callWaiter: 'વેઇટરને બોલાવો', loading: 'મેનૂ લોડ થઈ રહ્યું છે…', unavailable: 'સ્ટોકમાં નથી', available: 'ઉપલબ્ધ', empty: 'કોઈ વાનગી મળી નથી', emptyHint: 'શોધ અથવા ફિલ્ટર બદલીને જુઓ.', waiterSent: 'વેઇટરને બોલાવવામાં આવ્યા છે.', waiterError: 'વેઇટરને બોલાવી શકાયા નથી. ફરી પ્રયાસ કરો.', calling: 'બોલાવવામાં આવે છે…' }
 };
 
 let language = localStorage.getItem('dineflow-language') || 'en';
@@ -204,7 +204,7 @@ function clearRecentlyViewed() {
   renderMenu();
 }
 
-function resolveImagePath(image, fallback = 'assests/images/placeholder-food.svg') {
+function resolveImagePath(image, fallback = '/images/placeholder-food.svg') {
   const value = typeof image === 'string' ? image.trim() : '';
   if (!value) return fallback;
   if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) return value;
@@ -335,7 +335,7 @@ function renderMenu() {
         <p>${escapeHtml(item.description || '')}</p>
         <div class="food-footer">
           <strong>₹${escapeHtml(item.price)}</strong>
-          <button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>
+          ${item.available ? `<button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>` : `<button class="btn-add-to-order sold-out" type="button" disabled style="opacity:0.5;cursor:not-allowed;background:#EF4444;">Sold Out</button>`}
         </div>
       </div>
     </article>`;
@@ -357,15 +357,6 @@ async function openItemModal(item) {
 
   // Estimate prep time based on real active kitchen load
   let activeKotsCount = 0;
-  try {
-    const activeOrdersRes = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
-    const activeOrdersData = await activeOrdersRes.json();
-    if (activeOrdersData.success && Array.isArray(activeOrdersData.data)) {
-      activeKotsCount = activeOrdersData.data.filter(o => o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'served').length;
-    }
-  } catch (err) {
-    console.log('Error fetching active orders count:', err);
-  }
 
   const prepBadge = $('#kitchenTrafficBadge');
   if (prepBadge) {
@@ -378,33 +369,44 @@ async function openItemModal(item) {
       trafficText = 'Low Traffic';
       prepTime = 12;
       badgeColor = '#34D399';
-      bgLight = 'rgba(52, 211, 153, 0.1)';
     } else if (activeKotsCount > 2 && activeKotsCount <= 5) {
-      trafficText = 'Medium Traffic';
+      trafficText = 'Moderate';
       prepTime = 18;
       badgeColor = '#F59E0B';
-      bgLight = 'rgba(245, 158, 11, 0.1)';
+      bgLight = 'rgba(245, 158, 11, 0.12)';
     } else if (activeKotsCount > 5) {
-      trafficText = 'High Traffic / Busy';
+      trafficText = 'Busy Kitchen';
       prepTime = 25;
       badgeColor = '#EF4444';
-      bgLight = 'rgba(239, 68, 68, 0.1)';
+      bgLight = 'rgba(239, 68, 68, 0.12)';
     }
 
-    prepBadge.style.background = bgLight;
-    prepBadge.style.border = `1px solid ${badgeColor}`;
+    prepBadge.innerHTML = `<span style="margin-right:6px;">⏱️</span> ~${prepTime} mins prep (${trafficText})`;
     prepBadge.style.color = badgeColor;
-    prepBadge.innerHTML = `
-      <span style="font-size: 14px;">⏱️</span>
-      <div>
-        <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Est. Prep Time: ~${prepTime} Mins</div>
-        <div style="font-size: 9px; opacity: 0.8; margin-top: 1px;">Kitchen Load: ${trafficText} (${activeKotsCount} active KOTs)</div>
-      </div>
-    `;
+    prepBadge.style.background = bgLight;
+    prepBadge.style.borderColor = badgeColor;
   }
 
   const modal = $('#itemModal');
   if (modal) modal.hidden = false;
+
+  const addBtn = $('#modalAddToCartBtn');
+  if (addBtn) {
+    if (item.available === false) {
+      addBtn.disabled = true;
+      addBtn.textContent = 'Out of Stock';
+      addBtn.style.opacity = '0.5';
+      addBtn.style.cursor = 'not-allowed';
+      addBtn.style.background = '#EF4444';
+    } else {
+      addBtn.disabled = false;
+      addBtn.textContent = '+ Add to Order';
+      addBtn.style.opacity = '1';
+      addBtn.style.cursor = 'pointer';
+      addBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+    }
+  }
+
   const closeBtn = $('#btnCloseModal') || $('#closeItemModal');
   if (closeBtn) closeBtn.focus();
 }
@@ -425,8 +427,8 @@ document.addEventListener('click', event => {
     const combo = COMBO_OFFERS.find(item => item.id === comboButton.dataset.comboAddId);
     if (combo) {
       addToCart({
-        id: `${combo.id}-${Date.now()}`,
-        baseId: menuItems[0] ? menuItems[0].id : combo.id,
+        id: combo.id,
+        baseId: combo.id,
         name: combo.name,
         description: combo.description,
         price: combo.price,
@@ -442,7 +444,14 @@ document.addEventListener('click', event => {
   if (event.target.closest('#modalAddToCartBtn')) {
     const name = $('#modalItemName')?.textContent;
     const item = menuItems.find(i => i.name === name);
-    if (item) { addToCart({ ...item, quantity: 1 }); closeItemModal(); }
+    if (item) {
+      if (item.available === false) {
+        showToast('Sorry, this item is currently sold out!', true);
+        return;
+      }
+      addToCart({ ...item, quantity: 1 });
+      closeItemModal();
+    }
   }
 });
 
@@ -454,212 +463,23 @@ function getCart() {
 }
 function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
 function addToCart(customizedItem) {
+  if (customizedItem.available === false) {
+    showToast('Sorry, this item is currently sold out!', true);
+    return;
+  }
   const cart = getCart();
-  cart.push(customizedItem);
+  const existingItemIndex = cart.findIndex(item => item.id === customizedItem.id);
+  if (existingItemIndex > -1) {
+    cart[existingItemIndex].quantity += customizedItem.quantity || 1;
+  } else {
+    cart.push(customizedItem);
+  }
   saveCart(cart);
   showToast('Added to cart');
   renderCart();
 }
 
-// --- Build Your Plate feature ---
-let currentBuildItem = null;
-function openBuildPlateModal(item) {
-  if (!item) return;
-  currentBuildItem = item;
-  const buildModal = $('#buildPlateModal');
-  if (!buildModal) { addToCart({ ...item, quantity: 1 }); return; }
-  const nameEl = $('#buildItemName');
-  if (nameEl) nameEl.textContent = item.name + ` — ₹${Number(item.price).toFixed(2)}`;
-  const spicyEl = $('#buildSpicy'); if (spicyEl) spicyEl.value = 'Medium';
-  const portionEl = $('#buildPortion'); if (portionEl) portionEl.value = 'full';
-  document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
-  document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
-  const instrEl = $('#buildInstruction'); if (instrEl) instrEl.value = '';
-  updateBuildPrice();
-  buildModal.hidden = false;
-  const closeBtn = $('#closeBuildPlateModal'); if (closeBtn) closeBtn.focus();
-}
-
-function openBuildPlateModalFromDetails() {
-  const name = $('#modalItemName').textContent;
-  const item = menuItems.find(i => i.name === name) || menuItems.find(i => String(i.id) === String($('#modalItemName').dataset?.id));
-  openBuildPlateModal(item);
-}
-
-function closeBuildPlateModal() { const m = $('#buildPlateModal'); if (m) m.hidden = true; currentBuildItem = null; }
-
-function parseNumber(value) { const n = parseFloat(value); return isNaN(n) ? 0 : n; }
-
-function updateBuildPrice() {
-  const priceEl = $('#buildPrice');
-  if (!currentBuildItem) { if (priceEl) priceEl.textContent = '₹0.00'; return 0; }
-  const base = parseNumber(currentBuildItem.price);
-  const portionEl = $('#buildPortion');
-  const portion = portionEl ? portionEl.value : 'full';
-  const portionMultiplier = portion === 'half' ? 0.5 : 1;
-  let addonsTotal = 0;
-  document.querySelectorAll('.build-addon').forEach(chk => { if (chk.checked) addonsTotal += parseNumber(chk.dataset.price); });
-  const subtotal = (base * portionMultiplier) + addonsTotal;
-  if (priceEl) priceEl.textContent = `₹${subtotal.toFixed(2)}`;
-  return subtotal;
-}
-
-function buildDescription() {
-  if (!currentBuildItem) return '';
-  const parts = [];
-  const spicyEl = $('#buildSpicy');
-  const portionEl = $('#buildPortion');
-  const spicy = spicyEl ? spicyEl.value : 'Medium';
-  const portion = portionEl ? portionEl.value : 'full';
-  parts.push(`${spicy} spicy`);
-  const removes = [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove);
-  removes.forEach(r => parts.push(r));
-  const addons = [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => `${c.dataset.addon}${c.dataset.price ? ` (+₹${c.dataset.price})` : ''}`);
-  addons.forEach(a => parts.push(a));
-  const instrEl = $('#buildInstruction');
-  const instr = instrEl ? instrEl.value.trim() : '';
-  if (instr) parts.push(`Note: ${instr}`);
-  return parts.join(', ');
-}
-
-// Wire up build modal interactions
-document.addEventListener('change', event => {
-  if (event.target.closest('#buildPlateModal')) updateBuildPrice();
-});
-const closesBuildBtn = document.getElementById('closeBuildPlateModal');
-if (closesBuildBtn) closesBuildBtn.addEventListener('click', closeBuildPlateModal);
-const cancelBuildBtn = document.querySelector('#btnCancelBuild');
-if (cancelBuildBtn) cancelBuildBtn.addEventListener('click', closeBuildPlateModal);
-const addBuildBtn = document.getElementById('btnAddBuildToCart');
-if (addBuildBtn) addBuildBtn.addEventListener('click', () => {
-  if (!currentBuildItem) return;
-  const total = updateBuildPrice();
-  const desc = buildDescription();
-  const portionEl = $('#buildPortion');
-  const spicyEl = $('#buildSpicy');
-  const instrEl = $('#buildInstruction');
-  const customized = {
-    id: `${currentBuildItem.id}-${Date.now()}`,
-    baseId: currentBuildItem.id,
-    name: currentBuildItem.name,
-    description: desc,
-    price: Number((total || 0).toFixed(2)),
-    quantity: 1,
-    portion: portionEl ? portionEl.value : 'full',
-    spicy: spicyEl ? spicyEl.value : 'Medium',
-    addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
-    removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
-    specialInstruction: instrEl ? instrEl.value.trim() : '',
-  };
-  addToCart(customized);
-  closeBuildPlateModal();
-  closeItemModal();
-});
-
-// --- Add-on availability (from API) and Presets ---
-let addonAvailability = {};
-async function loadAddonAvailability() {
-  try {
-    const res = await fetch(`${API_BASE}/addons/availability?restaurantId=${encodeURIComponent(restaurantId)}`);
-    const data = await res.json().catch(() => ({}));
-    if (data && data.success && data.data) addonAvailability = data.data;
-    else addonAvailability = {};
-  } catch (err) {
-    addonAvailability = {};
-  }
-  applyAddonAvailability();
-}
-
-function applyAddonAvailability() {
-  document.querySelectorAll('.build-addon').forEach(chk => {
-    const name = chk.dataset.addon;
-    const label = chk.closest('label');
-    const available = addonAvailability && Object.prototype.hasOwnProperty.call(addonAvailability, name) ? Boolean(addonAvailability[name]) : true;
-    chk.disabled = !available;
-    // update label status
-    if (label) {
-      let status = label.querySelector('.addon-status');
-      if (!status) { status = document.createElement('span'); status.className = 'addon-status'; status.style.marginLeft = '8px'; status.style.fontSize = '12px'; status.style.opacity = '0.85'; label.appendChild(status); }
-      status.textContent = available ? '' : ' (unavailable)';
-      label.style.opacity = available ? '1' : '0.6';
-    }
-  });
-}
-
-// Presets storage
-const PRESETS_KEY = 'dineflow-presets';
-function getPresets() { try { return JSON.parse(localStorage.getItem(PRESETS_KEY) || '[]'); } catch { return []; } }
-function savePresets(presets) { localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); }
-
-function renderPresets() {
-  const list = $('#buildPresetsList');
-  if (!list) return;
-  const presets = getPresets();
-  if (!presets.length) { list.innerHTML = `<div style="opacity:0.7; font-size:13px;">No saved presets</div>`; return; }
-  list.innerHTML = presets.map((p, idx) => `<button type="button" class="preset-btn" data-preset-idx="${idx}" style="padding:6px 8px; border-radius:8px; background: rgba(255,255,255,0.04); font-size:13px;">${escapeHtml(p.name)}</button>`).join('');
-}
-
-function applyPreset(idx) {
-  const presets = getPresets();
-  const p = presets[idx];
-  if (!p || !currentBuildItem) return;
-  // apply options
-  $('#buildSpicy').value = p.spicy || 'Medium';
-  $('#buildPortion').value = p.portion || 'full';
-  document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
-  (p.addons || []).forEach(a => {
-    const chk = Array.from(document.querySelectorAll('.build-addon')).find(c => c.dataset.addon === a.name);
-    if (chk && !chk.disabled) chk.checked = true;
-  });
-  document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
-  (p.removes || []).forEach(r => {
-    const chk = Array.from(document.querySelectorAll('.build-remove')).find(c => c.dataset.remove === r);
-    if (chk) chk.checked = true;
-  });
-  $('#buildInstruction').value = p.specialInstruction || '';
-  updateBuildPrice();
-}
-
-function saveCurrentPreset() {
-  if (!currentBuildItem) { showToast('Open an item first', true); return; }
-  const presets = getPresets();
-  const name = `${currentBuildItem.name} Preset ${presets.length + 1}`;
-  const preset = {
-    id: `preset-${Date.now()}`,
-    name,
-    baseId: currentBuildItem.id,
-    spicy: $('#buildSpicy').value,
-    portion: $('#buildPortion').value,
-    addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
-    removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
-    specialInstruction: $('#buildInstruction').value.trim(),
-    price: updateBuildPrice()
-  };
-  presets.push(preset);
-  savePresets(presets);
-  renderPresets();
-  showToast('Preset saved');
-}
-
-// Wire preset clicks
-document.addEventListener('click', event => {
-  const btn = event.target.closest('[data-preset-idx]');
-  if (btn) { applyPreset(Number(btn.dataset.presetIdx)); }
-});
-
-// Hook save preset button
-const savePBtn = document.getElementById('btnSavePreset');
-if (savePBtn) savePBtn.addEventListener('click', saveCurrentPreset);
-
-// Load addon availability & presets when opening build modal - only if build modal exists
-if (document.getElementById('buildPlateModal')) {
-  const origOpenBuild = openBuildPlateModal;
-  openBuildPlateModal = function(item) {
-    origOpenBuild(item);
-    loadAddonAvailability();
-    renderPresets();
-  };
-}
+// --- Build Your Plate feature removed ---
 
 
 // --- Cart UI and interactions ---
@@ -711,24 +531,24 @@ function renderCart() {
     subtotal += itemTotal;
 
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 14px; border-radius:14px; transition:all 0.2s;">
-        <div style="flex:1;">
-          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px;">${name}</div>
-          <div style="font-size:12px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:14px; transition:all 0.2s;">
+        <div style="flex:1; min-width:0; overflow:hidden;">
+          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div>
+          <div style="font-size:11.5px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
+        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
           <div style="display:flex; align-items:center; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:2px 4px;">
-            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:26px; height:26px; cursor:pointer; font-size:14px;">-</button>
+            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">-</button>
             <span style="font-size:12.5px; font-weight:700; color:#F8FAFC; min-width:20px; text-align:center;">${qty}</span>
-            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:26px; height:26px; cursor:pointer; font-size:14px;">+</button>
+            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">+</button>
           </div>
-          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:28px; height:28px; border-radius:8px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
       </div>
     `;
   }).join('');
 
-  const tax = subtotal * 0.18;
+  const tax = subtotal * 0.05;
   const grandTotal = subtotal + tax;
 
   subtotalEl.textContent = formatCurrency(subtotal);
@@ -792,12 +612,19 @@ async function handleCheckout() {
 
   const payload = {
     restaurant_id: String(restaurantId),
+    restaurantId: String(restaurantId),
     table_id: String(tableId),
+    tableId: String(tableId),
     payment_method: selectedCartPayMethod || 'cash',
+    paymentMethod: selectedCartPayMethod || 'cash',
     special_instructions: combinedInstructions,
+    specialInstructions: combinedInstructions,
     items: cart.map(item => ({
       menu_item_id: item.baseId || item.id,
-      quantity: item.quantity || 1
+      menuItemId: item.baseId || item.id,
+      name: item.name,
+      price: Number(item.price) || 0,
+      quantity: Number(item.quantity) || 1
     }))
   };
 
@@ -812,8 +639,8 @@ async function handleCheckout() {
     });
     const data = await res.json();
     if (data.success && data.data) {
-      const orderId = data.data.id;
-      const amount = data.data.total_amount || 0;
+      const orderId = data.data.id || data.data._id;
+      const amount = data.data.total_amount ?? data.data.totalAmount ?? 0;
       saveCart([]);
       renderCart();
       closeCart();
@@ -849,8 +676,31 @@ function openCustomerUpiModal(orderId, amount) {
 
   const formattedAmount = Number(amount || 0).toFixed(2);
   if (amountEl) amountEl.textContent = `₹${formattedAmount}`;
+  
+  const merchantUpi = '7777938338@omni';
+  const merchantName = 'DineFlow AI Restaurant';
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent('Order #' + orderId)}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
   if (qrImg) {
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=dineflow@upi%26pn=DineFlow%20AI%26am=${formattedAmount}%26cu=INR`;
+    qrImg.src = qrUrl;
+    qrImg.onerror = () => {
+      const parent = qrImg.parentElement;
+      if (parent) {
+        parent.innerHTML = `
+          <div style="padding:16px;text-align:center;">
+            <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
+            <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${merchantUpi}</p>
+            <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Amount: ₹${formattedAmount}</p>
+          </div>`;
+      }
+    };
+  }
+
+  // Update deep link button if present
+  const deepLink = $('#customerUpiDeepLink');
+  if (deepLink) {
+    deepLink.href = upiUrl;
   }
 
   if (modal) modal.hidden = false;
@@ -871,11 +721,12 @@ async function confirmCustomerUpiPaid() {
   }
 
   try {
-    await fetch(`${API_BASE}/orders/${currentCustomerUpiOrderId}/pay`, {
+    const res = await fetch(`${API_BASE}/orders/${currentCustomerUpiOrderId}/pay`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ payment_method: 'upi' })
     });
+    if (!res.ok) throw new Error('Payment failed');
     showToast(`🎉 Order #${currentCustomerUpiOrderId} Paid! Voice alert sent to POS Soundbox.`, false);
   } catch(e) {
     console.error('UPI pay error:', e);
@@ -890,8 +741,21 @@ let liveOrderPollInterval = null;
 async function checkLiveOrderStatus(orderId) {
   try {
     const res = await fetch(`${API_BASE}/orders/${orderId}`);
+    if (!res.ok) {
+      if (liveOrderPollInterval) { clearInterval(liveOrderPollInterval); liveOrderPollInterval = null; }
+      return;
+    }
     const data = await res.json();
     if (data.success && data.data) {
+      const status = (data.data.status || '').toLowerCase();
+      if (status === 'cancelled') {
+        if (liveOrderPollInterval) { clearInterval(liveOrderPollInterval); liveOrderPollInterval = null; }
+        const tracker = $('#liveOrderTracker');
+        if (tracker) tracker.hidden = true;
+        localStorage.removeItem(`dineflow_session_order_${tableId}`);
+        showToast('Order was cancelled by restaurant.', true);
+        return;
+      }
       updateLiveOrderTrackerUI(data.data);
     }
   } catch (err) {
@@ -998,15 +862,6 @@ document.addEventListener('click', event => {
   }
 });
 
-document.addEventListener('change', event => {
-  const sel = event.target.closest('.cart-qty');
-  if (!sel) return;
-  const idx = Number(sel.dataset.cartIdx);
-  const qty = Number(sel.value);
-  const cart = getCart();
-  if (cart[idx]) { cart[idx].quantity = qty; saveCart(cart); renderCart(); }
-});
-
 // Quick test helper
 window.__printCart = function() { console.log('Cart contents:', getCart()); };
 
@@ -1067,6 +922,11 @@ async function loadMenu() {
 }
 
 async function checkTableActiveOrder() {
+  if (liveOrderPollInterval) {
+    clearInterval(liveOrderPollInterval);
+    liveOrderPollInterval = null;
+  }
+
   const tracker = $('#liveOrderTracker');
   if (tracker) {
     tracker.hidden = true;
@@ -1162,7 +1022,6 @@ if (_languageSelect) _languageSelect.addEventListener('change', event => { langu
 if (_tableNumber) _tableNumber.addEventListener('change', event => { tableId = event.target.value; const nextUrl = new URL(window.location.href); nextUrl.searchParams.set('tableId', tableId); window.history.replaceState({}, '', nextUrl); loadMenu(); });
 if (_categorySection) _categorySection.addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; category = button.dataset.category; renderCategories(); renderMenu(); });
 document.querySelectorAll('.diet-btn').forEach(button => button.addEventListener('click', () => { diet = button.dataset.diet; document.querySelectorAll('.diet-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
-document.querySelectorAll('.view-btn').forEach(button => button.addEventListener('click', () => { activeView = button.dataset.view; document.querySelectorAll('.view-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
 const _foodGrid = $('#foodGrid');
 if (_foodGrid) _foodGrid.addEventListener('click', event => {
   const favoriteButton = event.target.closest('[data-favorite-toggle]');
@@ -1251,7 +1110,7 @@ let tableUnpaidItems = [];
 let currentSplitPeopleCount = 2;
 
 function changeSplitPeople(delta) {
-  currentSplitPeopleCount = Math.max(2, Math.min(10, currentSplitPeopleCount + delta));
+  currentSplitPeopleCount = Math.max(1, Math.min(10, currentSplitPeopleCount + delta));
   const el = $('#splitPeopleCount');
   if (el) el.textContent = currentSplitPeopleCount;
   recalculateSplit();
@@ -1290,27 +1149,40 @@ async function openSplitBillModal() {
     }
   }
 
-  // Try DB order first
-  try {
-    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data)) {
-      const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
-      if (activeOrder && Array.isArray(activeOrder.items) && activeOrder.items.length > 0) {
-        renderSplitItems(activeOrder.items, 'order');
-        const modal = $('#splitBillModal');
-        if (modal) modal.hidden = false;
-        return;
+  // Try session order first (saved when customer placed order)
+  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  if (sessionOrderId) {
+    try {
+      const res = await fetch(`${API_BASE}/orders/${sessionOrderId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const order = data.data || data;
+        if (order && order.payment_status === 'pending' && Array.isArray(order.items) && order.items.length > 0) {
+          renderSplitItems(order.items, 'order');
+          const modal = $('#splitBillModal');
+          if (modal) modal.hidden = false;
+          // Auto-check all items by default for equal split
+          setTimeout(() => {
+            document.querySelectorAll('.split-item-chk').forEach(chk => { chk.checked = true; });
+            recalculateSplit();
+          }, 100);
+          return;
+        }
       }
+    } catch (err) {
+      console.log('Session order fetch failed:', err);
     }
-  } catch (err) {
-    console.log('Split bill DB fetch failed, trying cart:', err);
   }
 
   // Fallback: use cart items
   const cart = getCart();
   if (cart && cart.length > 0) {
     renderSplitItems(cart, 'cart');
+    // Auto-check all items by default
+    setTimeout(() => {
+      document.querySelectorAll('.split-item-chk').forEach(chk => { chk.checked = true; });
+      recalculateSplit();
+    }, 100);
   } else {
     tableUnpaidItems = [];
     if (listEl) {
@@ -1345,7 +1217,7 @@ function recalculateSplit() {
   });
 
   const tax = subtotal * 0.05;
-  const total = subtotal + tax;
+  const total = (subtotal + tax) / currentSplitPeopleCount;
 
   setEl('#splitSubtotal', `₹${subtotal.toFixed(2)}`);
   setEl('#splitTax', `₹${tax.toFixed(2)}`);
@@ -1428,36 +1300,35 @@ async function openPayFullBillModal() {
     if (upiSection) upiSection.style.display = 'block';
   }
 
-  // Try to fetch from DB first
-  try {
-    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data)) {
-      const activeOrder = data.data.find(o =>
-        String(o.table_id) === String(tableId) && o.payment_status === 'pending'
-      );
-      if (activeOrder && Array.isArray(activeOrder.items) && activeOrder.items.length > 0) {
-        setEl('#fullBillTableLabel', `Table #${tableId} — Order #${activeOrder.id}`);
-        let subtotal = 0;
-        if (itemListEl) {
-          itemListEl.innerHTML = activeOrder.items.map(item => {
-            const name = item.name || item.menu_item?.name || 'Item';
-            const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
-            subtotal += lineTotal;
-            return `<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;">
-              <span style="font-weight:600;">${escapeHtml(name)} × ${item.quantity || 1}</span>
-              <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
-            </div>`;
-          }).join('');
-          subtotal = 0;
-          activeOrder.items.forEach(item => { subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1); });
+  // Try session order first (saved when customer placed order)
+  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  if (sessionOrderId) {
+    try {
+      const res = await fetch(`${API_BASE}/orders/${sessionOrderId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const order = data.data || data;
+        if (order && order.payment_status === 'pending' && Array.isArray(order.items) && order.items.length > 0) {
+          setEl('#fullBillTableLabel', `Table #${tableId} — Order #${order.id}`);
+          let subtotal = 0;
+          if (itemListEl) {
+            itemListEl.innerHTML = order.items.map(item => {
+              const name = item.name || item.menu_item?.name || 'Item';
+              const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
+              subtotal += lineTotal;
+              return `<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;">
+                <span style="font-weight:600;">${escapeHtml(name)} × ${item.quantity || 1}</span>
+                <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
+              </div>`;
+            }).join('');
+          }
+          generateAndShowQR(subtotal, order.id);
+          return;
         }
-        generateAndShowQR(subtotal, activeOrder.id);
-        return;
       }
+    } catch (err) {
+      console.log('Session order fetch failed:', err);
     }
-  } catch (err) {
-    console.log('DB fetch failed, using cart fallback:', err);
   }
 
   // Fallback: use local cart
@@ -1474,8 +1345,6 @@ async function openPayFullBillModal() {
           <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
         </div>`;
       }).join('');
-      subtotal = 0;
-      cart.forEach(item => { subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1); });
     }
     generateAndShowQR(subtotal, null);
     return;
@@ -1534,7 +1403,7 @@ async function submitCustomerReview(event) {
   };
 
   try {
-    const res = await fetch('/api/feedback', {
+    const res = await fetch(`${API_BASE}/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1552,7 +1421,7 @@ async function submitCustomerReview(event) {
       alert('Failed to submit review: ' + (data.message || 'Error'));
     }
   } catch (err) {
-    alert('Thank you for rating! Your 5-Star review was saved locally.');
+    alert('Failed to submit review. Please try again.');
     closeCustomerReviewModal();
   }
 }

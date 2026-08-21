@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('restaurant_id');
             $table->string('table_id');
             $table->string('status')->default('pending'); // pending, resolved
+            $table->string('reason')->nullable()->default('General Assistance');
             $table->timestamps();
         });
     }

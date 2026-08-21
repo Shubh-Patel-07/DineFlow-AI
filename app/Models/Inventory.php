@@ -19,4 +19,9 @@ class Inventory extends Model
         'cost_per_unit',
         'notes',
     ];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
 }

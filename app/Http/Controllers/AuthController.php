@@ -43,6 +43,7 @@ class AuthController extends Controller
         session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
         
         Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
         return redirect()->route('pos.index')->with('success', 'Welcome to DineFlow AI POS!');
     }
 
@@ -102,11 +103,12 @@ class AuthController extends Controller
         if ($dbPin !== $inputPin) {
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors(['numeric_pin' => "Invalid PIN for {$user->username}. Hint: PIN is {$dbPin}"]);
+                ->withErrors(['numeric_pin' => 'Invalid PIN.']);
         }
 
         session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
         Auth::login($user, remember: true);
+        $request->session()->regenerate();
         
         return redirect()->intended(route('pos.index'))->with('success', 'Login successful!');
     }

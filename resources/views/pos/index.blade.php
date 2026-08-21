@@ -694,14 +694,14 @@
     }
     .ci-controls { display: flex; align-items: center; gap: 0; }
     .ci-btn {
-      width: 22px; height: 22px; border: 1px solid var(--border); background: var(--bg);
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: all .12s;
+      width: 32px; height: 32px; border: 1px solid var(--border); background: var(--bg);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 13px; color: var(--text-secondary); transition: all .12s;
     }
     .ci-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
-    .ci-qty { width: 28px; text-align: center; font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .ci-qty { width: 28px; text-align: center; font-size: 13px; font-weight: 700; color: var(--text-primary); }
     .ci-price { font-size: 13px; font-weight: 700; color: var(--text-primary); flex-shrink: 0; text-align: right; white-space: nowrap; }
-    .ci-del { width: 22px; height: 22px; border: none; background: none; color: var(--text-muted); cursor: pointer; font-size: 12px; transition: color .12s; }
+    .ci-del { width: 32px; height: 32px; border: none; background: none; color: var(--text-muted); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: color .12s; }
     .ci-del:hover { color: var(--danger); }
 
     /* Cart Note */
@@ -831,11 +831,11 @@
       min-height: 0;
       overflow-y: auto;
     }
-    .table-popup-modal { width: 420px; }
-    .meta-popup-modal  { width: 360px; }
+    .table-popup-modal { width: 420px; max-width: 95vw; }
+    .meta-popup-modal  { width: 360px; max-width: 95vw; }
 
     /* Table Modal */
-    .table-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+    .table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; }
     .table-cell {
       aspect-ratio: 1; border: 2px solid var(--border); border-radius: var(--radius-sm);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -1918,7 +1918,7 @@
 
 <!-- WhatsApp Invoice Modal -->
 <div class="modal-overlay" id="whatsappModal">
-  <div class="modal" style="width:440px;">
+  <div class="modal" style="width:440px; max-width:95vw;">
     <div class="modal-header">
       <div class="modal-title" style="color:#25D366; display:flex; align-items:center; gap:8px;">
         <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i>
@@ -2178,7 +2178,7 @@
 
 <!-- Notifications Modal -->
 <div class="modal-overlay" id="notifModal">
-  <div class="modal" style="width:450px; background:var(--card); color:var(--text-primary); border:1px solid var(--border); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+  <div class="modal" style="width:450px; max-width:95vw; background:var(--card); color:var(--text-primary); border:1px solid var(--border); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
     <div class="modal-header" style="background:linear-gradient(135deg,#1E1B4B,#312E81); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px;">
       <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
         <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
@@ -2246,7 +2246,7 @@
 
 <!-- KOT Modal -->
 <div class="modal-overlay" id="kotModal">
-  <div class="modal" style="width:360px;">
+  <div class="modal" style="width:360px; max-width:95vw;">
     <div class="modal-header">
       <div class="modal-title"><i class="fa-solid fa-fire-burner" style="color:var(--warning);"></i>&nbsp; Kitchen Order Ticket</div>
       <button class="modal-close" onclick="closeModal('kotModal')"><i class="fa-solid fa-xmark"></i></button>
@@ -2311,7 +2311,7 @@
       <button class="modal-close" onclick="closeModal('deliveryOrdersModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body" style="padding:18px;">
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:16px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:16px;">
         <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px; text-align:center;">
           <div style="font-size:11px; font-weight:700; color:#34D399; text-transform:uppercase;">Active Deliveries</div>
           <div style="font-size:22px; font-weight:800; color:#F8FAFC; margin-top:2px;">3 Orders</div>
@@ -2326,7 +2326,8 @@
         </div>
       </div>
 
-      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12.5px; color:var(--text-primary);">
+      <div style="overflow-x:auto;">
+        <table style="width:100%; min-width:600px; border-collapse:collapse; text-align:left; font-size:12.5px; color:var(--text-primary);">
         <thead>
           <tr style="border-bottom:2px solid var(--border); color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
             <th style="padding:10px;">Dispatch ID</th>
@@ -2373,6 +2374,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </div>
@@ -2672,7 +2674,7 @@
 </div>
 
 <!-- Item Preference & Cooking Note Customizer Modal -->
-<div id="posItemNoteModal" class="modal-backdrop" style="display:none; align-items:center; justify-content:center; z-index:999999; backdrop-filter:blur(6px);">
+<div id="posItemNoteModal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:999999; backdrop-filter:blur(6px);">
   <div class="modal-dialog" style="background:var(--card); color:var(--text-primary); width:420px; max-width:92vw; border-radius:20px; border:1px solid var(--border); padding:22px; box-shadow:var(--shadow-lg);">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px;">
       <div>
@@ -2713,6 +2715,18 @@
 <div class="cart-backdrop" id="cartBackdrop" onclick="toggleMobileCart()"></div>
 
 <script>
+  const RESTAURANT_ID = '{{ Auth::user()?->restaurant_id ?? 1 }}';
+
+  function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+  }
+
+  let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
+  let currentOrderType = 'dinein';
+
   // ─── CORE MODAL UTILITIES & ADMIN MODULE LAUNCHERS ───
   function openModal(id) {
     const modal = document.getElementById(id);
@@ -2958,7 +2972,7 @@
 
   async function syncPosMenuWithDatabase() {
     try {
-      const res = await fetch('/api/menu?restaurantId=1');
+      const res = await fetch(`/api/menu?restaurantId=${RESTAURANT_ID}`);
       const data = await res.json();
       if (res.ok && data && (data.success || Array.isArray(data.data))) {
         const rawItems = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
@@ -3195,7 +3209,7 @@
     if (!container) return;
 
     try {
-      const res = await fetch('/api/coupons?restaurantId=1');
+      const res = await fetch(`/api/coupons?restaurantId=${RESTAURANT_ID}`);
       const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         const now = new Date();
@@ -3288,14 +3302,13 @@
   async function checkAndAutoApplyCoupon(subtotal) {
     if (userManuallySelectedOffer || subtotal <= 0) return;
 
-    const custSel = document.getElementById('customerSelect');
-    const isNewCust = custSel && (custSel.value === 'NEW' || custSel.value === '');
+    const isNewCust = (typeof selectedCustomerData !== 'undefined' && selectedCustomerData) ? (selectedCustomerData.isNew || selectedCustomerData.is_new || !selectedCustomerData.phone) : true;
     const ordType = typeof currentOrderType !== 'undefined' ? currentOrderType : 'all';
 
     try {
       const res = await fetch('/api/coupons/auto-apply', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
         body: JSON.stringify({
           order_amount: subtotal,
           is_new_customer: isNewCust,
@@ -3336,13 +3349,12 @@
     }
 
     try {
-      const custSel = document.getElementById('customerSelect');
-      const isNewCust = custSel && (custSel.value === 'NEW' || custSel.value === '');
+      const isNewCust = (typeof selectedCustomerData !== 'undefined' && selectedCustomerData) ? (selectedCustomerData.isNew || selectedCustomerData.is_new || !selectedCustomerData.phone) : true;
       const ordType = typeof currentOrderType !== 'undefined' ? currentOrderType : 'all';
 
       const res = await fetch('/api/coupons/validate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
         body: JSON.stringify({
           code: code,
           order_amount: getSubtotal(),
@@ -3594,6 +3606,7 @@
 
   /* ─── DELIVERY TYPE ──────────────────────── */
   function setDelivery(el, type) {
+    currentOrderType = type;
     document.querySelectorAll('.delivery-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
     const tableGrp  = document.getElementById('tableGroup');
@@ -3629,7 +3642,7 @@
 
   async function loadTablesData() {
     try {
-      const response = await fetch('/api/tables/restaurant/1');
+      const response = await fetch(`/api/tables/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
         allTablesData = data.data;
@@ -3712,11 +3725,12 @@
     el.querySelector('span:last-child').textContent = 'Selected';
     
     // Dynamically sync and load existing unpaid items for the selected table
-    fetch('/api/orders/restaurant/1')
+    fetch(`/api/orders/restaurant/${RESTAURANT_ID}`)
       .then(res => res.json())
       .then(data => {
-        if (data.success && Array.isArray(data.data)) {
-          const activeOrder = data.data.find(order => String(order.table_id) === String(id) && order.payment_status === 'pending');
+        const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
+        if (data.success && Array.isArray(ordersList)) {
+          const activeOrder = ordersList.find(order => String(order.table_id) === String(id) && order.payment_status === 'pending');
           if (activeOrder && Array.isArray(activeOrder.items)) {
             MENU.forEach(item => item.qty = 0);
             activeOrder.items.forEach(orderItem => {
@@ -3745,13 +3759,14 @@
 
   async function loadOrdersData() {
     try {
-      const response = await fetch('/api/orders/restaurant/1');
+      const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
-      if (data.success && Array.isArray(data.data)) {
-        allOrdersData = data.data;
+      const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
+      if (data.success && Array.isArray(ordersList)) {
+        allOrdersData = ordersList;
         const tbody = document.getElementById('ordersModalTableBody');
         if (!tbody) return;
-        if (data.data.length === 0) {
+        if (ordersList.length === 0) {
           tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-secondary);">No orders found.</td></tr>`;
           return;
         }
@@ -4005,10 +4020,11 @@
 
       if (!targetOrderId) {
         try {
-          const res = await fetch('/api/orders/restaurant/1');
+          const res = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
           const ordersRes = await res.json();
-          if (ordersRes.success && Array.isArray(ordersRes.data)) {
-            const unpaidOrder = ordersRes.data.find(o => String(o.payment_status).toLowerCase() === 'pending');
+          const ordersList = Array.isArray(ordersRes.data) ? ordersRes.data : (ordersRes.data?.data || []);
+          if (ordersRes.success && Array.isArray(ordersList)) {
+            const unpaidOrder = ordersList.find(o => String(o.payment_status).toLowerCase() === 'pending');
             if (unpaidOrder) targetOrderId = unpaidOrder.id;
           }
         } catch(e) {}
@@ -4118,9 +4134,9 @@
     activeOrderHasBar = cartItems.some(item => ['beverages', 'desserts', 'drinks', 'dessert'].includes((item.cat || '').toLowerCase()));
 
     const payload = {
-      restaurant_id: "1",
+      restaurant_id: RESTAURANT_ID,
       table_id: String(selectedTableId),
-      special_instructions: document.querySelector('.bottom-meta textarea')?.value || '',
+      special_instructions: document.getElementById('cartNote')?.value || '',
       items: cartItems.map(item => ({
         menu_item_id: item.id,
         name: item.name,
@@ -4145,7 +4161,7 @@
         lastPlacedOrderId = orderIdVal;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
         // 🌟 Auto-Calculate & Award Customer Loyalty Points based on System Settings Rate
-        const earnRate = parseInt(localStorage.getItem('dineflow_point_earn_rate') || '100');
+        const earnRate = Math.max(1, parseInt(localStorage.getItem('dineflow_point_earn_rate')) || 100);
         const earnedPts = Math.floor((calculatedOrderTotal || 0) / earnRate);
 
         if (earnedPts > 0 && selectedCustomerData && selectedCustomerData.name && selectedCustomerData.name !== 'Walk-in Customer') {
@@ -4325,11 +4341,12 @@
     
     if (!lastPlacedOrderId) {
       try {
-        const res = await fetch('/api/orders/restaurant/1');
+        const res = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
         const data = await res.json();
-        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          allOrdersData = data.data;
-          lastPlacedOrderId = data.data[0].id;
+        const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
+        if (data.success && Array.isArray(ordersList) && ordersList.length > 0) {
+          allOrdersData = ordersList;
+          lastPlacedOrderId = ordersList[0].id;
         }
       } catch (e) {
         console.log('Error fetching order for print:', e);
@@ -4529,7 +4546,7 @@
 
   async function checkWaiterCalls() {
     try {
-      const response = await fetch('/api/waiter-calls/restaurant/1');
+      const response = await fetch(`/api/waiter-calls/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
         // Filter unresolved (pending) calls
@@ -4643,7 +4660,7 @@
   }
 
   // Poll for waiter calls and live notifications every 3 seconds for 100% instant real-time updates!
-  setInterval(checkWaiterCalls, 3000);
+  setInterval(() => { if (document.visibilityState === 'hidden') return; checkWaiterCalls(); }, 3000);
   checkWaiterCalls();
   loadTablesData(); // Populate allTablesData array immediately on page load!
 
@@ -4681,7 +4698,7 @@
     }
   }
   updateLiveClock();
-  setInterval(updateLiveClock, 1000);
+  setInterval(() => { if (document.visibilityState === 'hidden') return; updateLiveClock(); }, 1000);
 
   // Initial immediate menu render
   if (typeof renderMenu === 'function') renderMenu();
@@ -4698,19 +4715,20 @@
 
   async function checkNewPayments() {
     try {
-      const response = await fetch('/api/orders/restaurant/1');
+      const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
-      if (data.success && Array.isArray(data.data)) {
+      const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
+      if (data.success && Array.isArray(ordersList)) {
         // Initialize announced list on first run to avoid repeating old orders
         if (announcedOrderIds.length === 0) {
-          announcedOrderIds = data.data
+          announcedOrderIds = ordersList
             .filter(order => order.payment_status === 'paid')
             .map(order => String(order.id));
           localStorage.setItem('dineflow_announced_orders', JSON.stringify(announcedOrderIds));
           return;
         }
 
-        data.data.forEach(order => {
+        ordersList.forEach(order => {
           const orderIdStr = String(order.id);
           if (order.payment_status === 'paid' && !announcedOrderIds.includes(orderIdStr)) {
             // Find table number
@@ -4743,15 +4761,15 @@
   if (typeof loadOrdersData === 'function') loadOrdersData();
 
   // Background polling for payment soundbox announcements (optimized to 45s to eliminate server lag)
-  setInterval(checkNewPayments, 45000);
+  setInterval(() => { if (document.visibilityState === 'hidden') return; checkNewPayments(); }, 45000);
 
-  // Customer Modal Selection & Filter Logic
-  let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
+    // Customer Modal Selection & Filter Logic
+    selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
 
-  async function fetchAndRenderPosCustomers() {
-    try {
-      const res = await fetch('/api/customers?restaurantId=1');
-      const data = await res.json();
+    async function fetchAndRenderPosCustomers() {
+      try {
+        const res = await fetch(`/api/customers?restaurantId=${RESTAURANT_ID}`);
+        const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         const listEl = document.getElementById('custModalList');
         if (!listEl) return;
@@ -5004,10 +5022,11 @@
 
   async function syncRealTimeLiveAlerts() {
     try {
-      const oRes = await fetch('/api/orders/restaurant/1');
+      const oRes = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
       const oData = await oRes.json();
-      if (oData.success && Array.isArray(oData.data)) {
-        oData.data.slice(0, 12).forEach(order => {
+      const ordersList = Array.isArray(oData.data) ? oData.data : (oData.data?.data || []);
+      if (oData.success && Array.isArray(ordersList)) {
+        ordersList.slice(0, 12).forEach(order => {
           if (!knownOrdersSet.has(order.id)) {
             knownOrdersSet.add(order.id);
 
@@ -5037,7 +5056,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     renderPosNotifications();
     syncRealTimeLiveAlerts();
-    setInterval(syncRealTimeLiveAlerts, 3000);
+    setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 3000);
   });
 </script>
 </body>

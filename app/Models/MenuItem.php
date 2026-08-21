@@ -12,4 +12,9 @@ class MenuItem extends Model
     {
         return $this->hasMany(OrderItem::class, 'menu_item_id');
     }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
 }
