@@ -763,17 +763,37 @@ body.light-theme .cart-modal-card {
 
 body.light-theme .logo,
 body.light-theme .restaurant-left h2,
+body.light-theme #restaurantName,
 body.light-theme .section-title h2,
 body.light-theme .food-content h3,
-body.light-theme .cart-header h3 {
+body.light-theme .cart-header h3,
+body.light-theme .promo-section__title,
+body.light-theme .promo-card__name,
+body.light-theme .combo-card__title,
+body.light-theme .favorites-section__header h3 {
   color: #0F172A !important;
 }
 
 body.light-theme .eyebrow,
 body.light-theme .section-title p,
 body.light-theme .food-content p,
-body.light-theme .location-text {
+body.light-theme .location-text,
+body.light-theme .promo-section__meta,
+body.light-theme .promo-card__desc,
+body.light-theme .combo-card__includes,
+body.light-theme .favorites-section__meta {
   color: #64748B !important;
+}
+
+body.light-theme .promo-card,
+body.light-theme .combo-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .combo-card__price {
+  color: #059669 !important;
 }
 
 body.light-theme .diet-btn,
@@ -784,8 +804,29 @@ body.light-theme .search-box,
 body.light-theme .language-picker,
 body.light-theme .theme-toggle {
   background: #FFFFFF !important;
-  color: #334155 !important;
+  color: #0F172A !important;
   border-color: #CBD5E1 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light-theme .language-picker select {
+  color: #0F172A !important;
+}
+
+body.light-theme .theme-toggle span {
+  color: #0F172A !important;
+}
+
+body.light-theme .review-btn {
+  background: #FFFBEB !important;
+  border: 1px solid #FCD34D !important;
+  color: #D97706 !important;
+}
+
+body.light-theme .book-table-btn {
+  background: #EEF2FF !important;
+  border: 1px solid #C7D2FE !important;
+  color: #4F46E5 !important;
 }
 
 body.light-theme .search-box input { color: #0F172A !important; }
