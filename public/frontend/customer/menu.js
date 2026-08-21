@@ -711,24 +711,24 @@ function renderCart() {
     subtotal += itemTotal;
 
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 14px; border-radius:14px; transition:all 0.2s;">
-        <div style="flex:1;">
-          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px;">${name}</div>
-          <div style="font-size:12px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:14px; transition:all 0.2s;">
+        <div style="flex:1; min-width:0; overflow:hidden;">
+          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div>
+          <div style="font-size:11.5px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
+        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
           <div style="display:flex; align-items:center; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:2px 4px;">
-            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:26px; height:26px; cursor:pointer; font-size:14px;">-</button>
+            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">-</button>
             <span style="font-size:12.5px; font-weight:700; color:#F8FAFC; min-width:20px; text-align:center;">${qty}</span>
-            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:26px; height:26px; cursor:pointer; font-size:14px;">+</button>
+            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">+</button>
           </div>
-          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:28px; height:28px; border-radius:8px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
       </div>
     `;
   }).join('');
 
-  const tax = subtotal * 0.18;
+  const tax = subtotal * 0.05;
   const grandTotal = subtotal + tax;
 
   subtotalEl.textContent = formatCurrency(subtotal);

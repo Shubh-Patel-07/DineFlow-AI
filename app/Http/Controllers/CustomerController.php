@@ -20,16 +20,20 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        $validated = $request->validate([
+            'name'          => 'required|string|max:255',
+            'restaurant_id' => 'nullable',
+            'phone'         => 'nullable|string|max:30',
+            'email'         => 'nullable|email|max:255',
+            'notes'         => 'nullable|string|max:1000',
         ]);
 
         $customer = Customer::create([
-            'restaurant_id' => $request->restaurant_id ?? 1,
-            'name'          => $request->name,
-            'phone'         => $request->phone ?? null,
-            'email'         => $request->email ?? null,
-            'notes'         => $request->notes ?? null,
+            'restaurant_id' => $request->restaurant_id ?? auth()->user()?->restaurant_id ?? 1,
+            'name'          => $validated['name'],
+            'phone'         => $validated['phone'] ?? null,
+            'email'         => $validated['email'] ?? null,
+            'notes'         => $validated['notes'] ?? null,
         ]);
 
         return response()->json(['success' => true, 'data' => $customer], 201);
@@ -41,7 +45,16 @@ class CustomerController extends Controller
         if (!$customer) {
             return response()->json(['success' => false, 'message' => 'Customer not found'], 404);
         }
-        $customer->fill($request->only(['name', 'phone', 'email', 'loyalty_points', 'notes']));
+
+        $validated = $request->validate([
+            'name'           => 'sometimes|required|string|max:255',
+            'phone'          => 'nullable|string|max:30',
+            'email'          => 'nullable|email|max:255',
+            'loyalty_points' => 'nullable|integer|min:0',
+            'notes'          => 'nullable|string|max:1000',
+        ]);
+
+        $customer->fill($validated);
         $customer->save();
         return response()->json(['success' => true, 'data' => $customer]);
     }
@@ -57,18 +70,19 @@ class CustomerController extends Controller
             return response()->json(['success' => false, 'message' => 'No points earned']);
         }
 
+        $restaurantId = $request->input('restaurant_id', '1');
         $customer = null;
         if ($phone) {
-            $customer = Customer::where('phone', $phone)->first();
+            $customer = Customer::where('phone', $phone)->where('restaurant_id', $restaurantId)->first();
         }
         if (!$customer && $name) {
-            $customer = Customer::where('name', $name)->first();
+            $customer = Customer::where('name', $name)->where('restaurant_id', $restaurantId)->first();
         }
 
         if ($customer) {
-            $customer->loyalty_points = ($customer->loyalty_points ?? 0) + $earnedPoints;
-            $customer->total_spent = ($customer->total_spent ?? 0) + $orderAmount;
-            $customer->total_visits = ($customer->total_visits ?? 0) + 1;
+            $customer->increment('loyalty_points', $earnedPoints);
+            $customer->increment('total_spent', $orderAmount);
+            $customer->increment('total_visits', 1);
             $customer->last_visit = now();
             $customer->save();
 
@@ -131,6 +145,7 @@ class CustomerController extends Controller
         $call = WaiterCall::create([
             'restaurant_id' => (string) $restaurantId,
             'table_id'      => (string) $tableId,
+            'reason'        => $request->input('reason', 'General Assistance'),
             'status'        => 'pending',
         ]);
 

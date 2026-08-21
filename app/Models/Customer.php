@@ -24,4 +24,9 @@ class Customer extends Model
         'total_spent' => 'float',
         'last_visit' => 'datetime',
     ];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
 }

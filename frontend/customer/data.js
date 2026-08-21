@@ -112,7 +112,7 @@ window.foodItems = [
     isVeg: true
 },
 {
-    id: 8.5,
+    id: 85,
     name: "Soft Drink",
     category: "Drinks",
     price: 80,
@@ -125,7 +125,7 @@ window.foodItems = [
     isVeg: true
 },
 {
-    id: 8.6,
+    id: 86,
     name: "French Fries",
     category: "Starters",
     price: 120,
@@ -138,7 +138,7 @@ window.foodItems = [
     isVeg: true
 },
 {
-    id: 8.7,
+    id: 87,
     name: "Mocktail",
     category: "Drinks",
     price: 140,
@@ -172,7 +172,7 @@ window.foodItems = [
     badge: "Traditional",
     popular: true,
     image: "https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=400&q=75&auto=format",
-    description: "Soft milk-solid balls dipped in rose-flavored sugar syrup.",
+    description: "Delicious sweet pastry.",
     available: true,
     isVeg: true
 },

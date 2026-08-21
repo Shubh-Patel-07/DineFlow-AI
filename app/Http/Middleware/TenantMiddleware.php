@@ -11,18 +11,32 @@ class TenantMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-        $restaurantId = $request->route('restaurantId') ?? $request->input('restaurant_id') ?? $request->query('restaurantId');
-
-        // Admin has access to all tenant data
-        if ($user && strtolower(trim($user->role ?? '')) === 'admin') {
+        if (!$user) {
             return $next($request);
         }
 
-        if ($restaurantId && $user && $user->restaurant_id && strval($user->restaurant_id) !== strval($restaurantId)) {
+        // Admin has access to all tenant data
+        if (strtolower(trim($user->role ?? '')) === 'admin') {
+            return $next($request);
+        }
+
+        $restaurantId = $request->route('restaurantId') 
+            ?? $request->input('restaurant_id') 
+            ?? $request->query('restaurantId')
+            ?? $request->query('restaurant_id');
+
+        // If no restaurantId is provided in request, inject authenticated user's restaurant_id
+        if (!$restaurantId && $user->restaurant_id) {
+            $request->merge(['restaurant_id' => $user->restaurant_id]);
+            $request->query->set('restaurantId', $user->restaurant_id);
+            return $next($request);
+        }
+
+        if ($restaurantId && $user->restaurant_id && strval($user->restaurant_id) !== strval($restaurantId)) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Forbidden: You do not have access to this restaurant\'s data.'
+                    'message' => "Forbidden: You do not have access to restaurant {$restaurantId}'s data."
                 ], 403);
             }
             abort(403, 'Tenant access denied.');

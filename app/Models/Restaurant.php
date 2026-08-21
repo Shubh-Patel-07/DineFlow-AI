@@ -22,4 +22,34 @@ class Restaurant extends Model
     {
         return $this->hasMany(MenuItem::class);
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'restaurant_id');
+    }
+
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class, 'restaurant_id');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'restaurant_id');
+    }
+
+    public function inventory()
+    {
+        return $this->hasMany(Inventory::class, 'restaurant_id');
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class, 'restaurant_id');
+    }
+
+    public function waiterCalls()
+    {
+        return $this->hasMany(WaiterCall::class, 'restaurant_id');
+    }
 }

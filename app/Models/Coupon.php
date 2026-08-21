@@ -35,4 +35,9 @@ class Coupon extends Model
         'min_order_amount' => 'float',
         'max_discount' => 'float',
     ];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
 }

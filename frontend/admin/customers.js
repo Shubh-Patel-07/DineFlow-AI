@@ -87,7 +87,7 @@ function renderCustomers() {
       </td>
       <td>
         <div style="display:flex; gap:6px;">
-          <button onclick="editCustomerPoints(${c.id}, '${escapeHtml(c.name)}', '${escapeHtml(c.phone||'')}', '${escapeHtml(c.email||'')}', ${points}, '${escapeHtml(c.notes||'')}')" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:#D97706; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Edit Points">
+          <button onclick="editCustomerPoints(${c.id})" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:#D97706; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Edit Points">
             <i class="fa-solid fa-pen-to-square"></i> Edit Points
           </button>
           <button onclick="deleteCustomer(${c.id})" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; padding:5px 9px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;" title="Delete">
@@ -111,13 +111,15 @@ function openAddCustomerModal() {
   if (modal) modal.style.display = 'flex';
 }
 
-function editCustomerPoints(id, name, phone, email, points, notes) {
-  document.getElementById('custEditId').value = id;
-  document.getElementById('custName').value = name;
-  document.getElementById('custPhone').value = phone;
-  document.getElementById('custEmail').value = email;
-  document.getElementById('custPoints').value = points;
-  document.getElementById('custNotes').value = notes || '';
+function editCustomerPoints(id) {
+  const c = customerList.find(cust => String(cust.id) === String(id));
+  if (!c) return;
+  document.getElementById('custEditId').value = c.id;
+  document.getElementById('custName').value = c.name;
+  document.getElementById('custPhone').value = c.phone || '';
+  document.getElementById('custEmail').value = c.email || '';
+  document.getElementById('custPoints').value = c.loyalty_points || c.points || 0;
+  document.getElementById('custNotes').value = c.notes || '';
 
   const modal = document.getElementById('customerModal') || document.getElementById('addCustomerModal');
   if (modal) modal.style.display = 'flex';
@@ -150,7 +152,11 @@ async function handleSaveCustomer(e) {
   try {
     const res = await fetch(url, {
       method: method,
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      },
       body: JSON.stringify(payload)
     });
 
@@ -164,11 +170,9 @@ async function handleSaveCustomer(e) {
       if (typeof Toast !== 'undefined') Toast.error(err.message || 'Failed to save customer.');
       else alert(err.message || 'Failed to save customer.');
     }
-  } catch (_) {
-    if (typeof Toast !== 'undefined') Toast.error('Saved customer successfully.');
-    else alert('Customer saved successfully!');
-    closeCustomerModal();
-    loadCustomers();
+  } catch (err) {
+    if (typeof Toast !== 'undefined') Toast.error('Error saving customer: ' + (err.message || 'Network error'));
+    else alert('Error saving customer.');
   }
 }
 
@@ -177,7 +181,10 @@ async function deleteCustomer(id) {
   try {
     const res = await fetch(`/api/customers/${id}`, {
       method: 'DELETE',
-      headers: { 'Accept': 'application/json' }
+      headers: { 
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      }
     });
     if (res.ok) {
       if (typeof Toast !== 'undefined') Toast.success('Customer deleted.');

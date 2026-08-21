@@ -49,11 +49,23 @@ class CouponController extends Controller
         if (!$coupon) {
             return response()->json(['success' => false, 'message' => 'Coupon not found'], 404);
         }
-        $coupon->fill($request->only([
-            'name', 'discount_type', 'discount_value', 'min_order_amount',
-            'max_discount', 'usage_limit', 'is_active', 'is_auto_apply',
-            'first_time_only', 'category', 'order_type', 'expires_at'
-        ]));
+
+        $validated = $request->validate([
+            'name'             => 'sometimes|required|string|max:255',
+            'discount_type'    => 'sometimes|required|in:percentage,fixed',
+            'discount_value'   => 'sometimes|required|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'max_discount'     => 'nullable|numeric|min:0',
+            'usage_limit'      => 'nullable|integer|min:1',
+            'is_active'        => 'nullable|boolean',
+            'is_auto_apply'    => 'nullable|boolean',
+            'first_time_only'  => 'nullable|boolean',
+            'category'         => 'nullable|string|max:100',
+            'order_type'       => 'nullable|string',
+            'expires_at'       => 'nullable|date',
+        ]);
+
+        $coupon->fill($validated);
         $coupon->save();
         return response()->json(['success' => true, 'data' => $coupon]);
     }
@@ -79,6 +91,7 @@ class CouponController extends Controller
 
         $coupons = Coupon::where('is_active', true)
             ->where('is_auto_apply', true)
+            ->where('restaurant_id', $request->restaurant_id ?? $request->input('restaurant_id', '1'))
             ->get();
 
         $bestCoupon = null;
@@ -124,7 +137,7 @@ class CouponController extends Controller
     /**
      * Validate a coupon code at POS checkout
      */
-    public function validate(Request $request)
+    public function validateCoupon(Request $request)
     {
         $code = strtoupper($request->input('code'));
         $orderAmount = $request->input('order_amount', 0);
@@ -133,6 +146,7 @@ class CouponController extends Controller
 
         $coupon = Coupon::where('code', $code)
             ->where('is_active', true)
+            ->where('restaurant_id', $request->restaurant_id ?? $request->input('restaurant_id', '1'))
             ->first();
 
         if (!$coupon) {

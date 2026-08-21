@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard — DineFlow AI POS</title>
-  <script>window.AUTH_USER_ROLE = "{{ Auth::user()->role ?? Auth::user()->username ?? session('active_role') ?? '' }}";</script>
+  <script>window.AUTH_USER_ROLE = "{{ Auth::user()?->role ?? Auth::user()?->username ?? session('active_role') ?? '' }}";</script>
   <script src="/frontend/admin/utils.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
@@ -354,10 +354,10 @@
 
   <div class="sidebar-footer">
     <div class="user-card">
-      <div class="user-avatar" style="background:var(--primary);">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+      <div class="user-avatar" style="background:var(--primary);">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
       <div class="user-info">
-        <h4>{{ Auth::user()->name }}</h4>
-        <p style="text-transform:capitalize;">{{ Auth::user()->role ?? 'User' }}</p>
+        <h4>{{ Auth::user()?->name ?? 'Administrator' }}</h4>
+        <p style="text-transform:capitalize;">{{ Auth::user()?->role ?? 'User' }}</p>
       </div>
       <form method="POST" action="{{ route('auth.logout') }}" id="dashLogoutForm" style="margin-left:auto;">
         @csrf
@@ -409,10 +409,10 @@
     <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()" style="cursor:pointer;"><i class="fa-solid fa-expand"></i></div>
     <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
     <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
-      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
       <div style="display:flex;flex-direction:column;">
-        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()->name }}</span>
-        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()->role ?? 'staff' }}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()?->name ?? 'Administrator' }}</span>
+        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()?->role ?? 'staff' }}</span>
       </div>
       <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
         @csrf
@@ -437,7 +437,7 @@
         <img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 20px rgba(99,102,241,0.4); border: 2px solid rgba(99,102,241,0.5);">
         <div>
           <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:var(--text-primary); margin:0 0 4px; display:flex; align-items:center; gap:8px;">
-            Welcome back, {{ Auth::user()->name }}! <span style="font-size:18px;">👋</span>
+            Welcome back, {{ Auth::user()?->name ?? 'Administrator' }}! <span style="font-size:18px;">👋</span>
           </h2>
           <p style="margin:0; color:var(--text-muted); font-size:13px; font-weight:500;">DineFlow AI POS Operations Center • Live Real-Time Analytics & Soundbox Enabled</p>
         </div>

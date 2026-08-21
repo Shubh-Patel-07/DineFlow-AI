@@ -47,6 +47,8 @@ class TableController extends Controller
 
             $activeOrder = \App\Models\Order::where('table_id', $table->id)
                 ->where('payment_status', 'pending')
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->latest()
                 ->first();
             if ($activeOrder) {
                 $table->status = 'occupied';
@@ -89,6 +91,7 @@ class TableController extends Controller
         // Prevent deleting a table if it has active unpaid orders
         $hasActiveOrder = \App\Models\Order::where('table_id', $table->id)
             ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled'])
             ->exists();
 
         if ($hasActiveOrder) {

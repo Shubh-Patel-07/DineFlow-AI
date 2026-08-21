@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -162,4 +159,3 @@
   <script src="/frontend/admin/utils.js"></script>
 </body>
 </html>
-@endsection

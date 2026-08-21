@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="csrf-token" content="">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Settings | DineFlow AI</title>
+  <script>
+    (function() {
+      var t = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
+      if (t === 'light') {
+        document.documentElement.classList.add('light-theme');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if (t === 'light' && document.body) {
+          document.body.classList.add('light-theme');
+        }
+      });
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/frontend/admin/admin.css?v=1.0.1">
+
+  <style>
+    .settings-grid, .settings-main-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 20px;
+    }
+    @media (max-width: 900px) {
+      .settings-grid, .settings-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .settings-card {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .settings-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+    .settings-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-input:focus {
+      border-color: #6366F1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    /* Light Theme Overrides for System Settings */
+    html.light-theme .settings-card,
+    body.light-theme .settings-card {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05) !important;
+    }
+    html.light-theme .settings-card-title,
+    body.light-theme .settings-card-title {
+      color: #0F172A !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    html.light-theme .form-group label,
+    body.light-theme .form-group label {
+      color: #64748B !important;
+    }
+    html.light-theme .form-input,
+    body.light-theme .form-input {
+      background: #F8FAFC !important;
+      border-color: #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html.light-theme .toggle-row,
+    body.light-theme .toggle-row {
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light-theme h1, html.light-theme h2, html.light-theme h3,
+    body.light-theme h1, body.light-theme h2, body.light-theme h3 {
+      color: #0F172A !important;
+    }
+    html.light-theme [style*="color:#F8FAFC"],
+    html.light-theme [style*="color: #F8FAFC"],
+    body.light-theme [style*="color:#F8FAFC"],
+    body.light-theme [style*="color: #F8FAFC"] {
+      color: #0F172A !important;
+    }
+    html.light-theme [style*="color:#94A3B8"],
+    html.light-theme [style*="color: #94A3B8"],
+    body.light-theme [style*="color:#94A3B8"],
+    body.light-theme [style*="color: #94A3B8"] {
+      color: #64748B !important;
+    }
+    /* Page background override for html-level light theme */
+    html.light-theme body {
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+    html.light-theme .sidebar {
+      background: #FFFFFF !important;
+      border-right-color: #E2E8F0 !important;
+    }
+    html.light-theme .topbar {
+      background: #FFFFFF !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    html.light-theme .topbar-title {
+      color: #0F172A !important;
+    }
+    html.light-theme .topbar-sub {
+      color: #64748B !important;
+    }
+    html.light-theme .nav-item {
+      color: #475569 !important;
+    }
+    html.light-theme .nav-item:hover {
+      background: #F1F5F9 !important;
+      color: #0F172A !important;
+    }
+    html.light-theme .nav-item.active {
+      background: #6366F1 !important;
+      color: #FFFFFF !important;
+    }
+    html.light-theme .brand-text h2 {
+      color: #0F172A !important;
+    }
+    html.light-theme .brand-text span {
+      color: #64748B !important;
+    }
+    html.light-theme .sidebar-section-label {
+      color: #94A3B8 !important;
+    }
+    html.light-theme input,
+    html.light-theme select,
+    html.light-theme textarea {
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+      border-color: #CBD5E1 !important;
+    }
+    html.light-theme .admin-mobile-header {
+      background: #FFFFFF !important;
+      border-bottom-color: #E2E8F0 !important;
+    }
+    html.light-theme .admin-mobile-header h2 {
+      color: #0F172A !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader -->
+  <div data-loader class="loader">
+    <div class="spinner-ring"></div>
+    <p>Loading System Settings...</p>
+  </div>
+  <script>document.addEventListener('DOMContentLoaded', () => { const l = document.querySelector('[data-loader]'); if (l) l.style.display = 'none'; });</script>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleAdminSidebar()"></div>
+
+  <div class="admin-mobile-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="mobile-menu-btn" onclick="toggleAdminSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <h2 style="font-size:15px; font-weight:700; margin:0; color:#fff; font-family:'Outfit',sans-serif;">DineFlow AI</h2>
+    </div>
+    <span style="font-size:11px; color:#64748B; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px;">System Settings</span>
+  </div>
+
+  <div style="display: flex; min-height: 100vh;">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="brand-text">
+          <h2>DineFlow AI</h2>
+          <span>Admin Suite</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Main</div>
+          <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
+          <a class="nav-item" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item" href="/z-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+          <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+          <a class="nav-item active" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+          <a class="nav-item" href="/admin/expenses"><span class="nav-icon">💰</span>Expenses</a>
+          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main View -->
+    <div class="main" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="sidebar-toggle topbar-mobile-menu" onclick="toggleAdminSidebar()" style="display: none; border: none; background: transparent; color: inherit; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+          <div class="topbar-title-group">
+            <h2 class="topbar-title">System Settings & Configuration</h2>
+            <p class="topbar-sub">Manage restaurant profile, tax rates, currency & soundbox</p>
+          </div>
+        </div>
+        <div class="topbar-spacer"></div>
+      </header>
+
+      <div style="flex: 1; padding: 28px; overflow-y: auto;">
+        <!-- Page Header Banner -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px; background:var(--card); padding:24px; border-radius:20px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+          <div>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+              <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, rgba(99,102,241,0.2), rgba(79,70,229,0.1)); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-gear"></i>
+              </div>
+              <div>
+                <h1 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; margin:0; color:var(--text-primary);">System Configuration & Preferences</h1>
+                <p style="margin:2px 0 0; color:var(--text-muted); font-size:13px;">Configure tax rates, soundbox voice, thermal receipt formats and store currency</p>
+              </div>
+            </div>
+          </div>
+          <button onclick="saveAllSettings()" style="padding:12px 26px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:14px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:10px; box-shadow:0 6px 20px rgba(16,185,129,0.35); transition:all 0.2s;">
+            <i class="fa-solid fa-check" style="font-size:15px;"></i> Save All Settings
+          </button>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="settings-main-grid">
+          
+          <!-- 1. Restaurant Profile & Tax -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(99,102,241,0.2), rgba(79,70,229,0.1)); color:#6366F1; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-store"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Restaurant Profile & Tax</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Business name, GSTIN & service charge</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Restaurant Legal Name</label>
+              <input type="text" id="settingRestaurantName" class="form-input" value="DineFlow AI Gourmet Restaurant" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+            </div>
+
+            <div style="display:flex; gap:14px; flex-wrap:wrap;">
+              <div class="form-group" style="flex:1; min-width:140px;">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">GSTIN Number</label>
+                <input type="text" id="settingGstin" class="form-input" value="24ABCDE1234F1Z5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700; text-transform:uppercase;">
+              </div>
+              <div class="form-group" style="flex:1; min-width:120px;">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">GST Tax Rate (%)</label>
+                <input type="number" id="settingGstRate" class="form-input" value="18" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Service Charge (%)</label>
+              <input type="number" id="settingServiceCharge" class="form-input" value="5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+            </div>
+          </div>
+
+          <!-- 2. Vocal Soundbox & AI Voice -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1)); color:#10B981; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-volume-high"></i>
+              </div>
+              <div>
+                <h3 id="soundboxCardTitle" style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Gujarati Soundbox & Voice</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Real-time payment audio notifications</span>
+              </div>
+            </div>
+
+            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
+              <div>
+                <div id="soundboxToggleLabel" style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Gujarati Soundbox Voice</div>
+                <div id="soundboxToggleSubtext" style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">"રૂપિયા પ્રાપ્ત થયા" Audio Announcement</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:#10B981; width:20px; height:20px; cursor:pointer;">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Soundbox Language</label>
+              <select id="soundboxLangSelect" onchange="saveSoundboxLanguage(this.value)" class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+                <option value="gu" selected>Gujarati (ગુજરાતી)</option>
+                <option value="hi">Hindi (हिन्दी)</option>
+                <option value="en">English (India)</option>
+              </select>
+            </div>
+
+            <button type="button" id="soundboxTestBtn" onclick="playTestSoundboxVoice()" style="margin-top:auto; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:12px; color:#10B981; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i class="fa-solid fa-volume-high"></i> Test Soundbox Voice
+            </button>
+          </div>
+
+          <!-- 3. Thermal Receipt & Printer Settings -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(244,114,182,0.2), rgba(236,72,153,0.1)); color:#EC4899; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-print"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Hardware Printer Settings</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Target printer selection & KOT receipt formatting</span>
+              </div>
+            </div>
+
+            <!-- Printer Selection Dropdown -->
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Active Hardware Printer</label>
+              <select id="printerSelect" onchange="toggleCustomPrinterInput(this.value)" class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <option value="SYSTEM_DEFAULT" selected>🖨️ System Default (Browser Printer Dialog)</option>
+                <option value="THERMAL_80MM">📄 80mm ESC/POS Thermal Receipt Printer (Standard)</option>
+                <option value="THERMAL_58MM">📱 58mm Mini Handheld Bluetooth Thermal Printer</option>
+                <option value="CUSTOM_PRINTER">🔌 Network / Specific USB Printer (EPSON, TVS, Star)</option>
+              </select>
+            </div>
+
+            <!-- Custom Printer Name / IP Input -->
+            <div id="customPrinterBox" style="display:none; flex-direction:column; gap:10px; background:var(--bg); border:1px solid var(--border); padding:14px; border-radius:14px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Specific Printer Name or IP Address</label>
+                <input type="text" id="printerNameInput" class="form-input" placeholder="e.g. EPSON TM-T82, POS-80, or 192.168.1.100" style="padding:10px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700;">
+              </div>
+            </div>
+
+            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
+              <div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Auto-Print KOT to Selected Printer</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Automatically dispatch KOT slips upon bill checkout</div>
+              </div>
+              <input type="checkbox" id="autoPrintKotCheck" checked style="accent-color:#6366F1; width:20px; height:20px; cursor:pointer;">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Receipt Footer Note</label>
+              <input type="text" id="receiptFooterInput" class="form-input" value="Thank you for dining with us! Visit again!" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px;">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+              <button type="button" onclick="savePrinterSettings()" style="flex:1; padding:12px; background:linear-gradient(135deg, #EC4899, #DB2777); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(236,72,153,0.35);">
+                <i class="fa-solid fa-check"></i> Save Printer
+              </button>
+              <button type="button" onclick="testSelectedPrinter()" style="padding:12px 16px; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); border-radius:12px; color:#EC4899; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                <i class="fa-solid fa-print"></i> Test Print 🖨️
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. Currency & Localization -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(245,158,11,0.2), rgba(217,119,6,0.1)); color:#F59E0B; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-coins"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Currency & Region</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Default currency symbol & custom signs</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Default Store Currency</label>
+              <select class="form-input" id="settingCurrencySelect" onchange="toggleCustomCurrencyInput(this.value)" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <option value="INR">₹ INR (Indian Rupee)</option>
+                <option value="USD">$ USD (US Dollar)</option>
+                <option value="EUR">€ EUR (Euro)</option>
+                <option value="GBP">£ GBP (British Pound)</option>
+                <option value="AED">د.إ AED (UAE Dirham)</option>
+                <option value="CAD">$ CAD (Canadian Dollar)</option>
+                <option value="SAR">﷼ SAR (Saudi Riyal)</option>
+                <option value="SGD">$ SGD (Singapore Dollar)</option>
+                <option value="CUSTOM">✏️ Custom Currency (AUD, CAD, BDT, OMR, etc.)</option>
+              </select>
+            </div>
+
+            <div id="customCurrencyFields" style="display:none; flex-direction:column; gap:12px; background:var(--bg); border:1px solid var(--border); padding:16px; border-radius:14px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Custom Currency Code</label>
+                <input type="text" id="settingCustomCode" class="form-input" placeholder="e.g. AUD, BDT, CAD" style="padding:10px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; text-transform:uppercase; font-weight:700;">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Custom Currency Symbol</label>
+                <input type="text" id="settingCustomSymbol" class="form-input" placeholder="e.g. $, ৳, QR, د.ع" style="padding:10px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700;">
+              </div>
+            </div>
+
+            <button type="button" onclick="saveStoreCurrencySetting()" style="margin-top:auto; padding:12px; background:linear-gradient(135deg,#F59E0B,#D97706); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(245,158,11,0.35);">
+              <i class="fa-solid fa-check"></i> Save Store Currency Configuration
+            </button>
+          </div>
+
+          <!-- 5. Customer Loyalty Rewards & Offer Strategy -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm); grid-column: 1 / -1;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border); flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(245,158,11,0.2), rgba(217,119,6,0.1)); color:#F59E0B; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <div>
+                  <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Customer Loyalty Rewards &amp; Offer Strategy</h3>
+                  <span style="font-size:11.5px; color:var(--text-muted);">Manage loyalty point earning rates, point conversion values, and promo deals</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <a href="/admin/customers" style="padding:8px 14px; background:linear-gradient(135deg, #F59E0B, #D97706); border-radius:10px; color:#FFFFFF; text-decoration:none; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(245,158,11,0.3);">
+                  <i class="fa-solid fa-users"></i> Customer Points Directory &rarr;
+                </a>
+                <a href="/admin/coupons" style="padding:8px 14px; background:linear-gradient(135deg, #6366F1, #4F46E5); border-radius:10px; color:#FFFFFF; text-decoration:none; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(99,102,241,0.3);">
+                  <i class="fa-solid fa-ticket"></i> Full Coupon Manager &rarr;
+                </a>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+              <div class="form-group">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Point Earn Rate (Spend ₹ to earn 1 Pt)</label>
+                <input type="number" id="settingPointEarnRate" class="form-input" value="100" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Customers earn 1 point for every ₹100 spent</span>
+              </div>
+
+              <div class="form-group">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Point Redemption Value (1 Pt = ₹)</label>
+                <input type="number" id="settingPointRedeemValue" class="form-input" value="1" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#F59E0B; font-size:13.5px; font-weight:800;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">1 Loyalty Point = ₹1 Instant Checkout Discount</span>
+              </div>
+
+              <div class="form-group">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Min Points Required to Redeem</label>
+                <input type="number" id="settingMinRedeemPoints" class="form-input" value="50" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Minimum 50 pts threshold for redemption</span>
+              </div>
+
+              <div class="form-group">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Auto-Apply Welcome Offer (%)</label>
+                <input type="number" id="settingWelcomeDiscount" class="form-input" value="15" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Default 15% discount for first-time customers</span>
+              </div>
+
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Customer Menu Festival / Seasonal Promo Banner</label>
+                <input type="text" id="settingPromoBannerText" class="form-input" value="🎉 Special Offer: Use Code FESTIVE20 for 20% Instant Discount on all Pizza & Starters!" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px; font-weight:600;">
+                <span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Displays live alert banner on customer QR menu page</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+              <button type="button" onclick="savePromoStrategySettings()" style="padding:12px 24px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+                <i class="fa-solid fa-check"></i> Save Loyalty &amp; Promo Settings
+              </button>
+            </div>
+          </div>
+
+          <!-- 5. Table & Dining Area Preferences -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(14,165,233,0.2), rgba(2,132,199,0.1)); color:#0EA5E9; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-chair"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Table & Dining Area Preferences</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Auto-assign tables & reservation hold times</span>
+              </div>
+            </div>
+
+            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
+              <div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Quick Table Auto-Assign</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Auto select first available table for new walk-in orders</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:#0EA5E9; width:20px; height:20px; cursor:pointer;">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Table Reservation Hold Limit</label>
+              <select class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+                <option value="15">15 Minutes Hold</option>
+                <option value="30" selected>30 Minutes Standard Hold</option>
+                <option value="45">45 Minutes Hold</option>
+                <option value="60">60 Minutes Maximum Hold</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 6. POS Terminal & Checkout Controls -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+              <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(168,85,247,0.2), rgba(147,51,234,0.1)); color:#A855F7; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">POS Terminal & Quick Checkout</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">One-click payment & printer copy counts</span>
+              </div>
+            </div>
+
+            <div class="toggle-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
+              <div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">Quick Cash One-Click Checkout</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Complete cash orders instantly without modal prompt</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:#A855F7; width:20px; height:20px; cursor:pointer;">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Receipt Print Copies</label>
+              <select class="form-input" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+                <option value="1" selected>1 Customer Copy</option>
+                <option value="2">2 Copies (Customer + Merchant)</option>
+                <option value="3">3 Copies (Customer + Merchant + Kitchen)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function saveSoundboxLanguage(lang) {
+      localStorage.setItem('dineflow_soundbox_lang', lang);
+      updateSoundboxUI(lang);
+    }
+
+    function updateSoundboxUI(lang) {
+      const cardTitle = document.getElementById('soundboxCardTitle');
+      const toggleLabel = document.getElementById('soundboxToggleLabel');
+      const toggleSubtext = document.getElementById('soundboxToggleSubtext');
+      const testBtn = document.getElementById('soundboxTestBtn');
+
+      if (lang === 'hi') {
+        if (cardTitle) cardTitle.innerText = "Hindi Soundbox & Voice";
+        if (toggleLabel) toggleLabel.innerText = "Hindi Voice Announcement";
+        if (toggleSubtext) toggleSubtext.innerText = '"रुपये प्राप्त हुए" Audio Announcement';
+        if (testBtn) testBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Test Hindi Soundbox Voice';
+      } else if (lang === 'en') {
+        if (cardTitle) cardTitle.innerText = "English Soundbox & Voice";
+        if (toggleLabel) toggleLabel.innerText = "English Voice Announcement";
+        if (toggleSubtext) toggleSubtext.innerText = '"Payment Received" Audio Announcement';
+        if (testBtn) testBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Test English Soundbox Voice';
+      } else {
+        if (cardTitle) cardTitle.innerText = "Gujarati Soundbox & Voice";
+        if (toggleLabel) toggleLabel.innerText = "Gujarati Voice Announcement";
+        if (toggleSubtext) toggleSubtext.innerText = '"રૂપિયા પ્રાપ્ત થયા" Audio Announcement';
+        if (testBtn) testBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Test Gujarati Soundbox Voice';
+      }
+    }
+
+    function playTestSoundboxVoice() {
+      const lang = localStorage.getItem('dineflow_soundbox_lang') || document.getElementById('soundboxLangSelect')?.value || 'gu';
+      let testMsg = "";
+      let langTag = "gu-IN";
+
+      if (lang === 'hi') {
+        testMsg = "डाइनफ्लो एआई साउंडबॉक्स कॉन्फ़िगरेशन टेस्ट सफल रहा.";
+        langTag = "hi-IN";
+      } else if (lang === 'en') {
+        testMsg = "DineFlow AI soundbox configuration test successful.";
+        langTag = "en-IN";
+      } else {
+        testMsg = "ડાઇનફ્લો એઆઈ સાઉન્ડબોક્સ કન્ફિગરેશન ટેસ્ટ સફળ રહી.";
+        langTag = "gu-IN";
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(testMsg);
+      utterance.lang = langTag;
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const langCode = lang.toLowerCase();
+        const targetVoice = voices.find(v => v.lang.toLowerCase().includes(langCode)) ||
+                             voices.find(v => v.lang.toLowerCase().includes('hi')) ||
+                             voices[0];
+        if (targetVoice) utterance.voice = targetVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleCustomCurrencyInput(val) {
+      const box = document.getElementById('customCurrencyFields');
+      if (box) box.style.display = val === 'CUSTOM' ? 'flex' : 'none';
+    }
+
+    function saveStoreCurrencySetting() {
+      const sel = document.getElementById('settingCurrencySelect').value;
+      if (sel === 'CUSTOM') {
+        const code = (document.getElementById('settingCustomCode').value || 'CUSTOM').trim().toUpperCase();
+        const symbol = (document.getElementById('settingCustomSymbol').value || '$').trim();
+        if (!symbol) {
+          alert('Please enter custom currency symbol!');
+          return;
+        }
+        localStorage.setItem('dineflow_currency', 'CUSTOM');
+        localStorage.setItem('dineflow_custom_currency_code', code);
+        localStorage.setItem('dineflow_custom_currency_symbol', symbol);
+        if (typeof Toast !== 'undefined' && Toast.success) {
+          Toast.success(`System Currency saved: ${code} (${symbol})`);
+        } else {
+          alert(`✅ System Currency saved: ${code} (${symbol})`);
+        }
+      } else {
+        localStorage.setItem('dineflow_currency', sel);
+        if (typeof Toast !== 'undefined' && Toast.success) {
+          Toast.success(`System Currency saved: ${sel}`);
+        } else {
+          alert(`✅ System Currency saved: ${sel}`);
+        }
+      }
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedPrinterType = localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT';
+      const pSel = document.getElementById('printerSelect');
+      if (pSel) {
+        pSel.value = savedPrinterType;
+        toggleCustomPrinterInput(savedPrinterType);
+      }
+      const savedPrinterName = localStorage.getItem('dineflow_printer_name');
+      if (savedPrinterName && document.getElementById('printerNameInput')) {
+        document.getElementById('printerNameInput').value = savedPrinterName;
+      }
+      const savedAutoPrint = localStorage.getItem('dineflow_auto_print_kot');
+      if (savedAutoPrint && document.getElementById('autoPrintKotCheck')) {
+        document.getElementById('autoPrintKotCheck').checked = savedAutoPrint === 'true';
+      }
+      const savedFooter = localStorage.getItem('dineflow_receipt_footer');
+      if (savedFooter && document.getElementById('receiptFooterInput')) {
+        document.getElementById('receiptFooterInput').value = savedFooter;
+      }
+
+      const savedLang = localStorage.getItem('dineflow_soundbox_lang') || 'gu';
+      const sLangSel = document.getElementById('soundboxLangSelect');
+      if (sLangSel) sLangSel.value = savedLang;
+      updateSoundboxUI(savedLang);
+
+      const savedCurr = localStorage.getItem('dineflow_currency') || 'INR';
+      const sel = document.getElementById('settingCurrencySelect');
+      if (sel) {
+        sel.value = savedCurr;
+        toggleCustomCurrencyInput(savedCurr);
+      }
+      if (savedCurr === 'CUSTOM') {
+        const cCode = document.getElementById('settingCustomCode');
+        const cSym = document.getElementById('settingCustomSymbol');
+        if (cCode) cCode.value = localStorage.getItem('dineflow_custom_currency_code') || 'CUSTOM';
+        if (cSym) cSym.value = localStorage.getItem('dineflow_custom_currency_symbol') || '$';
+      }
+    });
+  </script>
+  <script src="/frontend/admin/utils.js"></script>
+</body>
+</html>

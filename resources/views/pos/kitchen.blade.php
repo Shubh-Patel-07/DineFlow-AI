@@ -351,15 +351,16 @@
         statusBadge.style.color = '#F59E0B';
         statusBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
 
-        const response = await fetch('/api/orders/restaurant/{{ Auth::user()->restaurant_id ?? 1 }}');
+        const response = await fetch('/api/orders/restaurant/{{ Auth::user()?->restaurant_id ?? 1 }}');
         const data = await response.json();
         
         statusBadge.style.color = 'var(--success)';
         statusBadge.innerHTML = '<i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring';
 
-        if (data.success && Array.isArray(data.data)) {
-          // Show all active orders that are pending, preparing or served (both paid and unpaid)
-          const activeOrders = data.data.filter(order => order.status !== 'completed' && order.status !== 'cancelled' && order.status !== 'served');
+        const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
+        if (data.success && Array.isArray(ordersList)) {
+          // Show all active orders that are pending, preparing or cooking
+          const activeOrders = ordersList.filter(order => order.status !== 'completed' && order.status !== 'cancelled' && order.status !== 'served');
           
           if (activeOrders.length === 0) {
             document.getElementById('kdsGrid').innerHTML = `
@@ -393,7 +394,7 @@
           // Render KDS cards
           document.getElementById('kdsGrid').innerHTML = activeOrders.map(order => {
             const tableNum = order.table ? order.table.table_number : 'Table #' + order.table_id;
-            const itemsHtml = order.items.map(item => `
+            const itemsHtml = (order.items || []).map(item => `
               <div class="item-row">
                 <div>
                   <span class="item-name">${item.name}</span>
@@ -456,9 +457,12 @@
         const resData = await response.json();
         if (resData.success) {
           loadKOTs();
+        } else {
+          alert('Failed to start cooking: ' + (resData.message || 'Unknown error'));
         }
       } catch (err) {
         console.log('Error starting cooking:', err);
+        alert('Error starting cooking. Please try again.');
       }
     }
 
@@ -468,7 +472,7 @@
     }
 
     async function completeKOT(orderId) {
-      if (confirm('Mark Order #' + orderId + ' as completed?')) {
+      if (confirm('Mark Order #' + orderId + ' as Ready / Served?')) {
         const card = document.getElementById('kds-card-' + orderId);
         if (card) {
           card.style.opacity = '0.3';
@@ -482,11 +486,12 @@
               'Accept': 'application/json',
               'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
             },
-            body: JSON.stringify({ status: 'completed' })
+            body: JSON.stringify({ status: 'served' })
           });
           const resData = await response.json();
           if (resData.success) {
-            processedOrders.delete(orderId);
+            processedOrders.delete(String(orderId));
+            localStorage.setItem('dineflow_kitchen_processed', JSON.stringify(Array.from(processedOrders)));
             loadKOTs();
           } else {
             alert('Failed to update order status');

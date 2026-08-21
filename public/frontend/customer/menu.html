@@ -17,7 +17,7 @@
     <header class="menu-hero-header">
       <div class="hero-top-bar">
         <div class="brand-badge">
-          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="brand-logo">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="brand-logo" id="restaurantLogo">
           <div>
             <h1 class="logo">Dine<span>Flow</span> AI</h1>
             <p class="eyebrow" data-i18n="welcome">Smart QR Restaurant Ordering</p>
@@ -195,7 +195,7 @@
         <button id="btnCloseCart" class="cart-close-btn" type="button" aria-label="Close cart" style="background:rgba(255,255,255,0.08); border:none; color:#94A3B8; width:32px; height:32px; border-radius:10px; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>
       </div>
 
-      <div id="cartList" class="cart-items-list" style="max-height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; padding-right:4px;"></div>
+      <div id="cartList" class="cart-items-list" style="overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; padding-right:4px;"></div>
 
       <!-- Quick Cooking Note Chips -->
       <div class="cooking-notes-section" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; margin-bottom:16px;">
@@ -212,7 +212,7 @@
       <!-- Payment Method Selection -->
       <div class="payment-method-section" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; margin-bottom:16px;">
         <label style="font-size:12px; font-weight:700; color:#818CF8; display:block; margin-bottom:10px;">💳 Select Payment Option</label>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
           <label id="payMethodCashLabel" style="display:flex; align-items:center; gap:8px; background:rgba(99,102,241,0.15); border:1.5px solid #6366F1; padding:10px 12px; border-radius:12px; cursor:pointer; transition:all 0.2s;">
             <input type="radio" name="cartPaymentMethod" value="cash" checked onclick="selectCartPayMethod('cash')" style="accent-color:#6366F1;">
             <div>
@@ -267,7 +267,8 @@
         <p id="modalItemType" class="item-modal__type"></p>
         <p id="modalItemDescription" class="item-modal__description"></p>
         <strong id="modalItemPrice" class="item-modal__price"></strong>
-        <div style="margin-top:20px; display:flex; gap:10px;">
+        <span id="kitchenTrafficBadge" style="display:inline-block; margin-top:8px; font-size:12px; font-weight:700; color:#F59E0B; background:rgba(245,158,11,0.12); padding:4px 10px; border-radius:8px; border:1px solid rgba(245,158,11,0.25);"></span>
+        <div style="margin-top:12px; display:flex; gap:10px;">
           <button id="modalAddToCartBtn" class="btn-checkout" style="flex:1; padding:12px;">+ Add to Order</button>
         </div>
       </div>

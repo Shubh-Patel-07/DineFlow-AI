@@ -71,10 +71,10 @@
 
         <div class="sidebar-footer">
             <div class="user-card">
-                <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', Auth::user()->name)[1] ?? '', 0, 1)) }}</div>
+                <div class="user-avatar">{{ strtoupper(substr(Auth::user()?->name ?? 'S', 0, 1)) }}</div>
                 <div class="user-info">
-                    <h4>{{ Auth::user()->name }}</h4>
-                    <p>Staff</p>
+                    <h4>{{ Auth::user()?->name ?? 'Staff' }}</h4>
+                    <p>{{ Auth::user()?->role ?? 'Staff' }}</p>
                 </div>
             </div>
         </div>
@@ -98,13 +98,13 @@
             <div style="width:1px;height:26px;background:var(--border);"></div>
             <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
                 <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', Auth::user()->name)[1] ?? '', 0, 1)) }}
+                    {{ strtoupper(substr(Auth::user()?->name ?? 'S', 0, 1)) }}
                 </div>
-                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()->name }}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()?->name ?? 'Staff' }}</span>
                 <form action="{{ route('auth.logout') }}" method="POST" style="display:none;" id="logoutForm">
                     @csrf
                 </form>
-                <a href="#" onclick="document.getElementById('logoutForm').submit()" style="color:var(--text-muted);text-decoration:none;">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();" style="color:var(--text-muted);text-decoration:none;">
                     <i class="fa-solid fa-sign-out-alt" style="font-size:14px;"></i>
                 </a>
             </div>
@@ -265,7 +265,7 @@
 
 <!-- Customer Modal -->
 <div class="modal-overlay" id="customerModal">
-    <div class="modal" style="width:480px;">
+    <div class="modal" style="width:480px; max-width:95vw;">
         <div class="modal-header">
             <div class="modal-title"><i class="fa-solid fa-user" style="color:var(--primary);"></i>&nbsp; Select Customer</div>
             <button class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
@@ -1494,6 +1494,7 @@ function clearCart() {
 }
 
 function selectTable(el, table) {
+    selectedTableId = table;
     document.querySelectorAll('.table-cell').forEach(e => e.classList.remove('selected'));
     el.classList.add('selected');
     document.querySelector('.meta-picker-value').textContent = table;
@@ -1512,7 +1513,11 @@ function selectPay(el) {
 }
 
 function filterItems(query) {
-    // Simple filter implementation
+    const cards = document.querySelectorAll('.item-card');
+    cards.forEach(card => {
+        const name = card.querySelector('.item-name')?.textContent || '';
+        card.style.display = name.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+    });
 }
 
 let lastPlacedOrderId = null;
@@ -1532,10 +1537,10 @@ async function checkout() {
 
     const payload = {
         restaurant_id: "1",
-        table_id: "1",
+        table_id: (typeof selectedTableId !== 'undefined' && selectedTableId) ? String(selectedTableId) : "1",
         items: Object.keys(cart).map(itemId => ({
             menu_item_id: itemId,
-            quantity: cart[itemId]
+            quantity: cart[itemId].qty || cart[itemId]
         }))
     };
 
@@ -1608,7 +1613,7 @@ function copyUpiVpa() {
 function updateUpiQrCodeFromInput() {
     const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
     localStorage.setItem('dineflow_merchant_vpa', inputVal);
-    const tableNumber = document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
+    const tableNumber = document.querySelector('.meta-picker-value')?.textContent || 'Walk-In';
     const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${currentUpiPayAmount}.00&cu=INR&tn=${encodeURIComponent('Bill Payment for ' + tableNumber)}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
     const imgEl = document.getElementById('upiQrImg');
@@ -1620,9 +1625,8 @@ function openUpiQrModal() {
         let finalGrandTotal = 0;
         let subtotal = 0;
         Object.keys(cart).forEach(id => {
-            const qty = cart[id];
-            const item = menuItems.find(m => String(m.id) === String(id));
-            if (item) subtotal += (item.price * qty);
+            const item = cart[id];
+            if (item) subtotal += (item.price * (item.qty || 1));
         });
         const serviceCharge = subtotal * 0.05;
         const gst = (subtotal + serviceCharge) * 0.18;

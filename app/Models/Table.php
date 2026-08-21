@@ -12,4 +12,14 @@ class Table extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
+
+    public function waiterCalls()
+    {
+        return $this->hasMany(WaiterCall::class, 'table_id');
+    }
 }

@@ -190,15 +190,19 @@ async function handleSaveItem(event) {
   event.preventDefault();
   const id = document.getElementById('itemId').value;
   const isVegSelected = document.getElementById('typeVegRadio')?.checked ?? true;
+  const isAvailable = document.getElementById('itemIsAvailable').checked;
   const payload = {
     restaurant_id: 1,
+    restaurantId: '1',
     name: document.getElementById('itemName').value.trim(),
     category: document.getElementById('itemCategory').value,
     price: parseFloat(document.getElementById('itemPrice').value),
     image: document.getElementById('itemImage').value.trim(),
     description: document.getElementById('itemDesc').value.trim(),
     is_veg: isVegSelected,
-    is_available: document.getElementById('itemIsAvailable').checked
+    isVeg: isVegSelected,
+    is_available: isAvailable,
+    isAvailable: isAvailable
   };
 
   const isEdit = Boolean(id);
@@ -210,7 +214,8 @@ async function handleSaveItem(event) {
       method: method,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
       },
       body: JSON.stringify(payload)
     });
@@ -234,13 +239,20 @@ async function toggleItemAvailability(id, isAvailable) {
   try {
     const res = await fetch(`/api/menu/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ is_available: isAvailable })
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      },
+      body: JSON.stringify({ is_available: isAvailable, isAvailable: isAvailable })
     });
     if (res.ok) {
       if (typeof Toast !== 'undefined') Toast.success(isAvailable ? 'Item marked Available!' : 'Item marked Out of Stock!');
-      const item = allMenuItems.find(i => String(i.id) === String(id));
-      if (item) item.is_available = isAvailable;
+      const item = allMenuItems.find(i => String(i.id || i._id) === String(id));
+      if (item) {
+        item.is_available = isAvailable;
+        item.isAvailable = isAvailable;
+      }
       renderMenuItems();
     }
   } catch (_) {}
@@ -249,7 +261,13 @@ async function toggleItemAvailability(id, isAvailable) {
 async function deleteMenuItem(id) {
   if (!confirm('Are you sure you want to delete this menu item?')) return;
   try {
-    const res = await fetch(`/api/menu/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
+    const res = await fetch(`/api/menu/${id}`, { 
+      method: 'DELETE', 
+      headers: { 
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      } 
+    });
     if (res.ok) {
       if (typeof Toast !== 'undefined') Toast.success('Menu item deleted.');
       else alert('Menu item deleted.');
