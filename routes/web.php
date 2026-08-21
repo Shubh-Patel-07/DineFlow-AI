@@ -9,6 +9,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Route;
 
 // Traditional Authentication Routes
@@ -244,6 +245,7 @@ Route::prefix('api')->group(function () {
     
     Route::post('/feedback', [CustomerController::class, 'placeFeedback']);
     Route::post('/waiter-calls', [CustomerController::class, 'callWaiter']);
+    Route::post('/reservations', [ReservationController::class, 'store']);
 
     // Coupon validation (public - used at POS checkout)
     Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
@@ -257,6 +259,14 @@ Route::prefix('api')->group(function () {
         // Tables
         Route::post('/tables', [TableController::class, 'store'])->middleware('role:admin');
         Route::delete('/tables/{id}', [TableController::class, 'destroy'])->middleware('role:admin');
+
+        // Table Reservations
+        Route::get('/reservations/restaurant/{restaurantId}', [ReservationController::class, 'index'])
+            ->middleware(['role:admin,manager,cashier,waiter', 'tenant']);
+        Route::put('/reservations/{id}/status', [ReservationController::class, 'updateStatus'])
+            ->middleware('role:admin,manager,cashier,waiter');
+        Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])
+            ->middleware('role:admin,manager');
 
         // Menu Items CRUD
         Route::post('/menu', [MenuItemController::class, 'store'])->middleware('role:admin');
@@ -290,9 +300,13 @@ Route::prefix('api')->group(function () {
         Route::put('/customers/{id}', [CustomerController::class, 'update'])->middleware('role:admin,manager');
         Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->middleware('role:admin');
 
-        // Sales Analytics
+        // Sales & AI Analytics
         Route::get('/analytics/restaurant/{restaurantId}', [AnalyticsController::class, 'getSalesAnalytics'])
             ->middleware(['role:admin,manager,cashier', 'tenant']);
+        Route::get('/analytics/menu-engineering/{restaurantId}', [AnalyticsController::class, 'getMenuEngineeringMatrix'])
+            ->middleware(['role:admin,manager', 'tenant']);
+        Route::get('/analytics/demand-forecast/{restaurantId}', [AnalyticsController::class, 'getDemandForecast'])
+            ->middleware(['role:admin,manager', 'tenant']);
 
         // Customer Reviews & Waiter Alerts
         Route::get('/feedback/restaurant/{restaurantId}', [CustomerController::class, 'getFeedbacks'])

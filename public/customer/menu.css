@@ -901,23 +901,116 @@ body.light-theme .cart-modal-card {
   background: #FFFFFF !important;
   border-color: #E2E8F0 !important;
   color: #0F172A !important;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15) !important;
 }
-body.light-theme .cart-modal-card h3,
-body.light-theme .cart-modal-card strong,
-body.light-theme .cart-modal-card span {
-  color: #1E293B !important;
+body.light-theme .cart-header {
+  border-bottom-color: #E2E8F0 !important;
 }
-body.light-theme .cart-modal-card input[type="text"] {
+body.light-theme .cart-header h3 {
+  color: #0F172A !important;
+}
+body.light-theme .cart-close-btn {
   background: #F1F5F9 !important;
-  border-color: #CBD5E1 !important;
-  color: #1E293B !important;
+  color: #64748B !important;
 }
+body.light-theme .cart-item-card {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+body.light-theme .cart-item-name {
+  color: #0F172A !important;
+}
+body.light-theme .cart-item-subtotal {
+  color: #0F172A !important;
+}
+body.light-theme .cart-stepper-box {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+}
+body.light-theme .cart-stepper-btn,
+body.light-theme .cart-stepper-val {
+  color: #0F172A !important;
+}
+body.light-theme .cooking-notes-section {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+body.light-theme .cooking-notes-section label {
+  color: #4F46E5 !important;
+}
+body.light-theme #cartSpecialInstructions {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+body.light-theme .payment-method-section {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+body.light-theme .payment-method-section label div {
+  color: #0F172A !important;
+}
+body.light-theme #payMethodCashLabel,
+body.light-theme #payMethodUpiLabel {
+  background: #FFFFFF !important;
+}
+body.light-theme #payMethodCashLabel div div:first-child,
+body.light-theme #payMethodUpiLabel div div:first-child {
+  color: #0F172A !important;
+}
+body.light-theme #payMethodCashLabel div div:last-child,
+body.light-theme #payMethodUpiLabel div div:last-child {
+  color: #64748B !important;
+}
+body.light-theme .cart-summary-box {
+  background: #F1F5F9 !important;
+  border: 1px solid #E2E8F0 !important;
+}
+body.light-theme .cart-summary-box span {
+  color: #475569 !important;
+}
+body.light-theme #cartSubtotal {
+  color: #0F172A !important;
+}
+body.light-theme #cartTax {
+  color: #64748B !important;
+}
+body.light-theme #cartGrandTotal {
+  color: #059669 !important;
+}
+body.light-theme .cart-upsell-tray {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+body.light-theme .cart-upsell-tray [style*="background:rgba(15,23,42"] {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+body.light-theme .cart-upsell-tray [style*="color:#F8FAFC"] {
+  color: #0F172A !important;
+}
+
 /* Fix review modal textarea and inputs */
 body.light-theme #customerReviewModal input,
 body.light-theme #customerReviewModal textarea {
   background: #F1F5F9 !important;
   border-color: #CBD5E1 !important;
   color: #1E293B !important;
+}
+/* Fix Table Reservation Modal in Light Theme */
+body.light-theme #tableReservationModal .item-modal__content {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15) !important;
+}
+body.light-theme #tableReservationModal h3 {
+  color: #0F172A !important;
+}
+body.light-theme #tableReservationModal input,
+body.light-theme #tableReservationModal select {
+  background: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
 }
 /* Fix UPI modal colors */
 body.light-theme #customerUpiModal span {
