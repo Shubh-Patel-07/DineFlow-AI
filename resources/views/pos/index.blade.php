@@ -2829,6 +2829,15 @@
     }
 
     if (matchedItem) {
+      if (matchedItem.is_available === false || matchedItem.available === false) {
+        showToast(matchedItem.name + ' is currently Out of Stock!', 'error');
+        if ('speechSynthesis' in window) {
+          const utter = new SpeechSynthesisUtterance(`${matchedItem.name} is currently out of stock`);
+          utter.lang = 'en-IN';
+          window.speechSynthesis.speak(utter);
+        }
+        return;
+      }
       for (let i = 0; i < qty; i++) {
         addQuickItem(matchedItem.id);
       }
@@ -3156,8 +3165,8 @@
     } catch (err) {
       console.warn('POS dynamic menu sync warning, keeping fallback', err);
     } finally {
-      if (typeof renderCategories === 'function') {
-        renderCategories();
+      if (typeof renderCatPopup === 'function') {
+        renderCatPopup();
       }
       renderMenu();
     }
@@ -3629,6 +3638,10 @@
   function updateQty(id, delta) {
     const item = MENU.find(i => String(i.id) === String(id));
     if (item) {
+      if (delta > 0 && (item.is_available === false || item.available === false)) {
+        showToast(item.name + ' is currently Out of Stock!', 'error');
+        return;
+      }
       item.qty += delta;
       if (item.qty < 0) item.qty = 0;
       renderMenu();
@@ -3648,6 +3661,12 @@
 
   function clearCart() {
     MENU.forEach(i => i.qty = 0);
+    const cartNote = document.getElementById('cartNote');
+    if (cartNote) cartNote.value = '';
+    const couponInput = document.getElementById('couponInput');
+    if (couponInput) couponInput.value = '';
+    activeOffer = null;
+    userManuallySelectedOffer = false;
     renderMenu();
     renderCart();
     showToast('Cart cleared', 'warning');
@@ -3871,7 +3890,7 @@
           if (activeOrder && Array.isArray(activeOrder.items)) {
             MENU.forEach(item => item.qty = 0);
             activeOrder.items.forEach(orderItem => {
-              const menuItem = MENU.find(m => m.id === orderItem.menu_item_id);
+              const menuItem = MENU.find(m => String(m.id) === String(orderItem.menu_item_id));
               if (menuItem) {
                 menuItem.qty = orderItem.quantity;
               }
