@@ -33,6 +33,7 @@ async function loadInventory() {
   } finally {
     if (loader) loader.style.display = 'none';
     renderInventory();
+    loadAiDemandForecast();
   }
 }
 
@@ -173,4 +174,77 @@ async function deleteInventoryItem(id) {
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
   return str.replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[match]);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 📈 AI DEMAND PREDICTION & INGREDIENT CONSUMPTION HORIZON
+// ══════════════════════════════════════════════════════════════════════════════
+async function loadAiDemandForecast() {
+  const grid = document.getElementById('aiForecastGrid');
+  if (!grid) return;
+
+  try {
+    const res = await fetch('/api/analytics/demand-forecast/1');
+    const json = await res.json();
+    if (json.success && json.data && json.data.items) {
+      renderAiForecast(json.data);
+    }
+  } catch (err) {
+    console.warn('AI Forecast fetch error:', err);
+  }
+}
+
+function renderAiForecast(forecast) {
+  const grid = document.getElementById('aiForecastGrid');
+  const badge = document.getElementById('surgeBadge');
+  if (!grid) return;
+
+  if (badge && forecast.weekend_surge_factor > 1.2) {
+    badge.innerHTML = `🔥 Weekend Rush Active (+${Math.round((forecast.weekend_surge_factor - 1) * 100)}% Surge)`;
+    badge.style.background = 'rgba(239,68,68,0.15)';
+    badge.style.color = '#EF4444';
+    badge.style.borderColor = 'rgba(239,68,68,0.3)';
+  }
+
+  const items = forecast.items || [];
+  if (!items.length) {
+    grid.innerHTML = `<div style="color:var(--text-muted); font-size:12px; grid-column:1/-1; text-align:center;">No ingredient data available for forecast analysis.</div>`;
+    return;
+  }
+
+  grid.innerHTML = items.slice(0, 6).map(item => {
+    const isUrgent = item.status === 'restock_urgently';
+    return `
+      <div style="background:var(--card); border:1px solid ${isUrgent ? 'rgba(239,68,68,0.4)' : 'var(--border)'}; border-radius:12px; padding:14px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--shadow-sm);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div>
+            <div style="font-weight:700; font-size:13.5px; color:var(--text-primary);">${escapeHtml(item.name)}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Stock: <span style="font-weight:700; color:var(--text-primary);">${item.current_stock} ${item.unit}</span></div>
+          </div>
+          <span style="background:${isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)'}; color:${isUrgent ? '#EF4444' : '#10B981'}; font-size:10px; font-weight:800; padding:2px 6px; border-radius:6px; border:1px solid ${isUrgent ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'};">
+            ${isUrgent ? '⚠️ RESTOCK' : '✅ OPTIMAL'}
+          </span>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:8px 10px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+            <span>Predicted 3-Day Need:</span>
+            <span style="font-weight:700; color:#818CF8;">~${item.predicted_3day_need} ${item.unit}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px;">
+            <span>Projected Balance:</span>
+            <span style="font-weight:700; color:${item.projected_balance <= 5 ? '#EF4444' : '#10B981'};">${item.projected_balance} ${item.unit}</span>
+          </div>
+        </div>
+
+        ${isUrgent ? `
+          <button onclick="adjustQty('${item.id}', ${item.suggested_reorder})" style="padding:6px; background:linear-gradient(135deg,#EF4444,#DC2626); border:none; border-radius:8px; color:#fff; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+            <i class="fa-solid fa-cart-plus"></i> Auto-Reorder +${item.suggested_reorder} ${item.unit}
+          </button>
+        ` : `
+          <div style="text-align:center; font-size:11px; color:#10B981; font-weight:700;">Stock Sufficient for 3 Days</div>
+        `}
+      </div>
+    `;
+  }).join('');
 }
