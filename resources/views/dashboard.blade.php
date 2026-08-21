@@ -907,10 +907,11 @@ async function fetchLiveNotifications() {
     // 2. Recent Orders (last 30 min, pending/preparing)
     const orRes = await fetch('/api/orders/restaurant/1');
     const orData = await orRes.json();
-    if (orData.success && orData.data) {
+    const orOrdersList = Array.isArray(orData.data) ? orData.data : (orData.data?.data || []);
+    if (orData.success && Array.isArray(orOrdersList)) {
       const now = Date.now();
       const thirtyMinsAgo = now - (30 * 60 * 1000);
-      orData.data.forEach(order => {
+      orOrdersList.forEach(order => {
         const orderTime = new Date(order.created_at).getTime();
         if (orderTime > thirtyMinsAgo) {
           if (order.status === 'pending') {
@@ -1181,8 +1182,8 @@ async function loadDashOrdersModalData() {
     if (!res.ok) throw new Error('API request failed');
     const rawData = await res.json();
     
-    // Support both direct array or Laravel object { success: true, data: [...] }
-    let orders = Array.isArray(rawData) ? rawData : (rawData.data || []);
+    // Support direct array, Laravel object { success: true, data: [...] } or paginated { success: true, data: { data: [...] } }
+    let orders = Array.isArray(rawData) ? rawData : (Array.isArray(rawData.data) ? rawData.data : (rawData.data?.data || []));
     
     if (currentDashOrderFilter === 'delivery') {
       orders = orders.filter(o => {
