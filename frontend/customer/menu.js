@@ -1417,6 +1417,17 @@ function recalculateSplit() {
     if (total > 0) {
       qrImg.src = qrUrl;
       qrImg.style.display = 'block';
+      qrImg.onerror = () => {
+        const parent = qrImg.parentElement;
+        if (parent) {
+          parent.innerHTML = `
+            <div style="padding:16px;text-align:center;">
+              <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
+              <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${merchantUpi}</p>
+              <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Your Share: ₹${total.toFixed(2)}</p>
+            </div>`;
+        }
+      };
     } else {
       qrImg.src = '';
       qrImg.style.display = 'none';
