@@ -3603,6 +3603,10 @@
   function addQuickItem(id) {
     const item = MENU.find(i => String(i.id) === String(id));
     if (item) {
+      if (item.is_available === false || item.available === false) {
+        showToast(item.name + ' is currently Out of Stock!', 'error');
+        return;
+      }
       item.qty += 1;
       renderMenu();
       renderCart();
