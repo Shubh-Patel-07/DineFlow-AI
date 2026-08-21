@@ -53,14 +53,14 @@ class MenuItemController extends Controller
         ]);
 
         $data = $request->only([
-            'name', 'description', 'price', 'category', 'image', 'is_available', 'is_veg'
+            'name', 'description', 'price', 'category', 'image'
         ]);
 
-        if (array_key_exists('is_available', $data)) {
-            $data['is_available'] = filter_var($data['is_available'], FILTER_VALIDATE_BOOLEAN);
+        if ($request->has('is_available') || $request->has('isAvailable')) {
+            $data['is_available'] = filter_var($request->input('is_available', $request->input('isAvailable')), FILTER_VALIDATE_BOOLEAN);
         }
-        if (array_key_exists('is_veg', $data)) {
-            $data['is_veg'] = filter_var($data['is_veg'], FILTER_VALIDATE_BOOLEAN);
+        if ($request->has('is_veg') || $request->has('isVeg')) {
+            $data['is_veg'] = filter_var($request->input('is_veg', $request->input('isVeg')), FILTER_VALIDATE_BOOLEAN);
         }
 
         $item->update($data);

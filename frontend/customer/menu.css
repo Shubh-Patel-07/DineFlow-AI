@@ -1050,10 +1050,18 @@ body.light-theme #payMethodCashLabel,
 body.light-theme #payMethodUpiLabel,
 body.light-theme #waiterModal h2,
 body.light-theme #splitBillModal h2,
+body.light-theme #splitBillModal .split-item-name,
+body.light-theme #splitBillModal .split-item-qty,
+body.light-theme #splitBillModal #splitPeopleCount,
+body.light-theme #splitBillModal #splitSubtotal,
+body.light-theme #splitBillModal span:not(.btn-text),
 body.light-theme #payFullBillModal h2,
 body.light-theme #customerUpiModal h2,
 body.light-theme #tableReservationModal h2,
-body.light-theme #customerReviewModal h3 {
+body.light-theme #tableReservationModal h3,
+body.light-theme #tableReservationModal label,
+body.light-theme #customerReviewModal h3,
+body.light-theme #customerReviewModal label {
   color: #0F172A !important;
 }
 
@@ -1061,6 +1069,13 @@ body.light-theme #waiterModal button[onclick*="sendWaiterRequest"] {
   background: #EEF2FF !important;
   border-color: #C7D2FE !important;
   color: #1E293B !important;
+}
+
+body.light-theme #customerReviewModal button[type="button"],
+body.light-theme #tableReservationModal button[type="button"] {
+  background: #F1F5F9 !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #475569 !important;
 }
 
 body.light-theme .bottom-floating-actions {

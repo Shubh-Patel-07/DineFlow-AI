@@ -204,7 +204,9 @@ function clearRecentlyViewed() {
   renderMenu();
 }
 
-function resolveImagePath(image, fallback = '/images/placeholder-food.svg') {
+const DEFAULT_FOOD_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%231e293b'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%2364748b'>🍽️</text></svg>";
+
+function resolveImagePath(image, fallback = DEFAULT_FOOD_PLACEHOLDER) {
   const value = typeof image === 'string' ? image.trim() : '';
   if (!value) return fallback;
   if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) return value;
@@ -1215,9 +1217,22 @@ if (_foodGrid) _foodGrid.addEventListener('click', event => {
 const _favSection = $('#favoritesSection');
 if (_favSection) _favSection.addEventListener('click', event => {
   const removeButton = event.target.closest('[data-favorite-remove-id]');
-  if (!removeButton) return;
-  event.stopPropagation();
-  removeFavorite(removeButton.dataset.favoriteRemoveId);
+  if (removeButton) {
+    event.stopPropagation();
+    removeFavorite(removeButton.dataset.favoriteRemoveId);
+    return;
+  }
+  const chip = event.target.closest('[data-favorite-chip-id]');
+  if (chip) {
+    const item = menuItems.find(entry => String(entry.id) === chip.dataset.favoriteChipId);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+        return;
+      }
+      openItemModal(item);
+    }
+  }
 });
 
 const _recentSection = $('#recentSection');
@@ -1304,12 +1319,12 @@ async function openSplitBillModal() {
           <div style="display: flex; align-items: center; gap: 10px;">
             <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: #6366F1;">
             <div style="text-align: left; font-size: 13px;">
-              <div style="font-weight: 700; color: white;">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
-              <div style="font-size: 10px; opacity: 0.6;">₹${Number(item.price || 0).toFixed(2)} each</div>
+              <div class="split-item-name" style="font-weight: 700; color: var(--text-main);">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
+              <div style="font-size: 10px; opacity: 0.6; color: var(--text-muted);">₹${Number(item.price || 0).toFixed(2)} each</div>
             </div>
           </div>
-          <div style="font-size: 12px; font-weight: 700; color: white;">
-            Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
+          <div class="split-item-qty" style="font-size: 12px; font-weight: 700; color: var(--text-main);">
+            Qty: <select class="split-item-qty-select" onchange="recalculateSplit()" style="background: var(--input-bg); border: 1px solid var(--input-border); color: var(--input-text); border-radius: 4px; padding: 2px 4px; font-size: 11px;">
               ${Array.from({ length: item.quantity || 1 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
             </select>
           </div>
@@ -1643,6 +1658,11 @@ async function submitTableReservation(event) {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok && data.success === false) {
+      showToast(data.message || 'Could not submit reservation. Please check your details.', true);
+      return;
+    }
     
     // Save to local storage for user's own reference
     const savedReservations = JSON.parse(localStorage.getItem('dineflow_my_reservations') || '[]');
@@ -1839,7 +1859,7 @@ function processVoiceOrderSpeech(text) {
 
   if (matchedItems.length > 0) {
     const targetItem = matchedItems[0];
-    addToCart(targetItem);
+    addToCart({ ...targetItem, quantity: matchedQty });
     
     const confirmMessage = `Added ${matchedQty} × ${targetItem.name} to your basket!`;
     showToast(`🤖 AI Voice: ${confirmMessage}`);

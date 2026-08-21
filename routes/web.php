@@ -268,9 +268,8 @@ Route::prefix('api')->group(function () {
         Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])
             ->middleware('role:admin,manager');
 
-        // Menu Items CRUD
-        Route::post('/menu', [MenuItemController::class, 'store'])->middleware('role:admin');
-        Route::put('/menu/{id}', [MenuItemController::class, 'update'])->middleware('role:admin');
+        Route::post('/menu', [MenuItemController::class, 'store'])->middleware('role:admin,manager');
+        Route::put('/menu/{id}', [MenuItemController::class, 'update'])->middleware('role:admin,manager,kitchen');
         Route::delete('/menu/{id}', [MenuItemController::class, 'destroy'])->middleware('role:admin');
 
         // Orders Management
