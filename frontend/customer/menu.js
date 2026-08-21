@@ -240,6 +240,18 @@ function getStaticFoodItemsList() {
   return [];
 }
 
+function parseBoolean(val, defaultVal = true) {
+  if (val === undefined || val === null) return defaultVal;
+  if (typeof val === 'boolean') return val;
+  if (typeof val === 'number') return val === 1;
+  if (typeof val === 'string') {
+    const s = val.trim().toLowerCase();
+    if (s === '0' || s === 'false' || s === 'no' || s === 'unavailable' || s === 'sold_out' || s === 'out_of_stock') return false;
+    if (s === '1' || s === 'true' || s === 'yes' || s === 'available' || s === 'in_stock') return true;
+  }
+  return defaultVal;
+}
+
 function normalizeItem(item) {
   let cat = String(item.category || 'Mains').trim();
   if (cat.toLowerCase() === 'main course' || cat.toLowerCase() === 'mains') cat = 'Mains';
@@ -250,12 +262,14 @@ function normalizeItem(item) {
 
   const isPop = Boolean(item.popular || (item.badge && String(item.badge).toLowerCase().includes('popular')) || (item.badge && String(item.badge).toLowerCase().includes('seller')) || Number(item.rating) >= 4.8);
 
+  const isAvail = parseBoolean(item.is_available ?? item.available ?? (item.status === 'out_of_stock' ? false : true), true);
+
   return {
     ...item,
     id: item.id || item._id,
     category: cat,
     image: resolveImagePath(item.image),
-    available: item.is_available ?? item.available ?? true,
+    available: isAvail,
     isVeg: item.is_veg ?? item.isVeg ?? true,
     rating: String(item.rating || '4.8'),
     badge: item.badge || cat,
@@ -323,19 +337,20 @@ function renderMenu() {
   $('#foodGrid').innerHTML = items.length ? items.map(item => {
     const imageSrc = resolveImagePath(item.image);
     const isFavorite = favorites.has(String(item.id));
-    return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}">
+    return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}" style="position:relative;">
+      ${!item.available ? `<div style="position:absolute; top:12px; left:12px; z-index:5; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; box-shadow:0 4px 10px rgba(239,68,68,0.4); letter-spacing:0.5px;">🚫 SOLD OUT</div>` : ''}
       <button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" data-favorite-toggle="${escapeHtml(item.id)}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">♡</button>
-      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';">
+      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';" style="${!item.available ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
       <div class="food-content">
         <div class="food-topline">
           <span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span>
           <span class="rating-tag">★ ${escapeHtml(item.rating)}</span>
         </div>
-        <h3>${escapeHtml(item.name)}</h3>
+        <h3 style="${!item.available ? 'color:var(--text-muted); text-decoration:line-through;' : ''}">${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.description || '')}</p>
         <div class="food-footer">
           <strong>₹${escapeHtml(item.price)}</strong>
-          ${item.available ? `<button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>` : `<button class="btn-add-to-order sold-out" type="button" disabled style="opacity:0.5;cursor:not-allowed;background:#EF4444;">Sold Out</button>`}
+          ${item.available ? `<button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>` : `<button class="btn-add-to-order sold-out" type="button" disabled style="opacity:0.6;cursor:not-allowed;background:#EF4444;color:#fff;pointer-events:none;">Sold Out</button>`}
         </div>
       </div>
     </article>`;
@@ -394,16 +409,20 @@ async function openItemModal(item) {
   if (addBtn) {
     if (item.available === false) {
       addBtn.disabled = true;
-      addBtn.textContent = 'Out of Stock';
-      addBtn.style.opacity = '0.5';
+      addBtn.setAttribute('disabled', 'disabled');
+      addBtn.textContent = '🚫 Currently Out of Stock (Sold Out)';
+      addBtn.style.opacity = '0.6';
       addBtn.style.cursor = 'not-allowed';
       addBtn.style.background = '#EF4444';
+      addBtn.style.pointerEvents = 'none';
     } else {
       addBtn.disabled = false;
+      addBtn.removeAttribute('disabled');
       addBtn.textContent = '+ Add to Order';
       addBtn.style.opacity = '1';
       addBtn.style.cursor = 'pointer';
       addBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+      addBtn.style.pointerEvents = 'all';
     }
   }
 
@@ -464,11 +483,13 @@ function getCart() {
 function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
 function addToCart(customizedItem) {
   if (!customizedItem) return;
-  const masterItem = menuItems.find(i => String(i.id) === String(customizedItem.baseId || customizedItem.id));
-  const isAvailable = masterItem ? masterItem.available !== false : customizedItem.available !== false;
+  const masterItem = menuItems.find(i => String(i.id) === String(customizedItem.baseId || customizedItem.id) || (customizedItem.name && i.name.toLowerCase() === customizedItem.name.toLowerCase()));
   
-  if (!isAvailable) {
-    showToast(`Sorry, "${customizedItem.name || 'This item'}" is currently sold out and cannot be added!`, true);
+  const isSoldOut = (masterItem && (masterItem.available === false || masterItem.is_available === false || masterItem.is_available === 0 || masterItem.is_available === '0')) ||
+                    customizedItem.available === false || customizedItem.is_available === false || customizedItem.is_available === 0 || customizedItem.is_available === '0';
+
+  if (isSoldOut) {
+    showToast(`Sorry, "${customizedItem.name || 'This item'}" is currently sold out and cannot be added to cart!`, true);
     return;
   }
 
