@@ -524,6 +524,45 @@
       </div>
     </div>
 
+    <!-- 📊 BCG Menu Engineering & Profitability Matrix -->
+    <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+            <span>📊</span> <span>AI Menu Engineering & Profitability Matrix</span>
+          </h3>
+          <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Classifies dishes into 4 BCG quadrants (Popularity vs Profit Margin) to maximize restaurant profit</p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">⭐ Stars (High Profit & Pop)</span>
+          <span style="background: rgba(99,102,241,0.12); color: #818CF8; border: 1px solid rgba(99,102,241,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🐎 Plowhorses (High Pop)</span>
+          <span style="background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🧩 Puzzles (High Profit)</span>
+          <span style="background: rgba(239,68,68,0.12); color: #F87171; border: 1px solid rgba(239,68,68,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🐕 Dogs (Low Pop & Profit)</span>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+              <th style="padding: 12px 14px;">Dish Name</th>
+              <th style="padding: 12px 14px;">Category</th>
+              <th style="padding: 12px 14px;">Price</th>
+              <th style="padding: 12px 14px;">Profit Margin</th>
+              <th style="padding: 12px 14px;">Qty Sold</th>
+              <th style="padding: 12px 14px;">BCG Quadrant</th>
+              <th style="padding: 12px 14px;">AI Recommendation</th>
+            </tr>
+          </thead>
+          <tbody id="menuMatrixBody">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">Loading Menu Engineering Matrix...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
 </div>
@@ -598,6 +637,58 @@ document.addEventListener("DOMContentLoaded", function() {
       cutout: '70%'
     }
   });
+
+  // Load Menu Engineering Matrix
+  loadMenuMatrix();
+});
+
+async function loadMenuMatrix() {
+  const tbody = document.getElementById('menuMatrixBody');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch('/api/analytics/menu-engineering/1');
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      renderMenuMatrix(json.data);
+    } else {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-muted);">No sales data available yet to categorize items into BCG quadrants.</td></tr>`;
+    }
+  } catch (err) {
+    console.warn('Matrix fetch error:', err);
+  }
+}
+
+function renderMenuMatrix(items) {
+  const tbody = document.getElementById('menuMatrixBody');
+  if (!tbody) return;
+
+  const quadConfig = {
+    'Star':      { badge: '⭐ STAR',       color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+    'Plowhorse': { badge: '🐎 PLOWHORSE', color: '#818CF8', bg: 'rgba(99,102,241,0.15)' },
+    'Puzzle':    { badge: '🧩 PUZZLE',    color: '#34D399', bg: 'rgba(16,185,129,0.15)' },
+    'Dog':       { badge: '🐕 DOG',       color: '#F87171', bg: 'rgba(239,68,68,0.15)' }
+  };
+
+  tbody.innerHTML = items.map(item => {
+    const q = quadConfig[item.matrix_quad] || { badge: item.matrix_quad, color: '#94A3B8', bg: 'rgba(148,163,184,0.15)' };
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+        <td style="padding: 12px 14px; font-weight: 700; color: var(--text-primary);">${item.name}</td>
+        <td style="padding: 12px 14px; color: var(--text-secondary);">${item.category_name || 'General'}</td>
+        <td style="padding: 12px 14px; font-weight: 700; color: var(--text-primary);">₹${item.price}</td>
+        <td style="padding: 12px 14px; color: #10B981; font-weight: 700;">₹${item.margin} <span style="font-size:11px; color:var(--text-muted);">(${item.margin_pct}%)</span></td>
+        <td style="padding: 12px 14px; font-weight: 700; color: #818CF8;">${item.qty_sold} sold</td>
+        <td style="padding: 12px 14px;">
+          <span style="background: ${q.bg}; color: ${q.color}; border: 1px solid ${q.color}40; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800;">
+            ${q.badge}
+          </span>
+        </td>
+        <td style="padding: 12px 14px; font-size: 12px; color: var(--text-muted);">${item.action_hint}</td>
+      </tr>
+    `;
+  }).join('');
+}
 
   // Live Clock Ticker
   function updateLiveClock() {

@@ -2730,6 +2730,124 @@
   let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
   let currentOrderType = 'dinein';
 
+  // ─── AI VOICE-TO-ORDER ENGINE FOR POS ───
+  let posVoiceRecognition = null;
+  let isPosVoiceListening = false;
+
+  function togglePosVoiceOrder() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Speech Recognition is not supported by your browser. Please use Chrome.');
+      return;
+    }
+
+    const btn = document.getElementById('posVoiceBtn');
+    const input = document.getElementById('posSearchInput');
+
+    if (isPosVoiceListening) {
+      if (posVoiceRecognition) posVoiceRecognition.stop();
+      isPosVoiceListening = false;
+      if (btn) {
+        btn.style.background = 'rgba(99,102,241,0.15)';
+        btn.style.color = 'var(--primary)';
+      }
+      if (input) input.placeholder = 'Search items or tap mic to speak…';
+      return;
+    }
+
+    posVoiceRecognition = new SpeechRecognition();
+    posVoiceRecognition.continuous = false;
+    posVoiceRecognition.interimResults = false;
+    posVoiceRecognition.lang = 'gu-IN';
+
+    posVoiceRecognition.onstart = () => {
+      isPosVoiceListening = true;
+      if (btn) {
+        btn.style.background = '#EF4444';
+        btn.style.color = '#FFFFFF';
+      }
+      if (input) input.placeholder = '🎙️ Listening... (બોલો જેમ કે: "બે પિઝા ઉમેરો")';
+    };
+
+    posVoiceRecognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript.toLowerCase();
+      if (input) input.value = transcript;
+      processPosVoiceCommand(transcript);
+    };
+
+    posVoiceRecognition.onerror = () => {
+      if (btn) {
+        btn.style.background = 'rgba(99,102,241,0.15)';
+        btn.style.color = 'var(--primary)';
+      }
+      if (input) input.placeholder = 'Search items or tap mic to speak…';
+      isPosVoiceListening = false;
+    };
+
+    posVoiceRecognition.onend = () => {
+      if (btn) {
+        btn.style.background = 'rgba(99,102,241,0.15)';
+        btn.style.color = 'var(--primary)';
+      }
+      if (input) input.placeholder = 'Search items or tap mic to speak…';
+      isPosVoiceListening = false;
+    };
+
+    posVoiceRecognition.start();
+  }
+
+  function processPosVoiceCommand(text) {
+    if (!MENU || !MENU.length) return;
+    
+    let qty = 1;
+    const numMap = { 'એક':1, 'બે':2, 'ત્રણ':3, 'ચાર':4, 'પાંચ':5, 'एक':1, 'दो':2, 'तीन':3, 'चार':4, 'पाँच':5, 'one':1, 'two':2, 'three':3, 'four':4, 'five':5 };
+    for (const [k, v] of Object.entries(numMap)) {
+      if (text.includes(k)) { qty = v; break; }
+    }
+    const digitMatch = text.match(/\b\d+\b/);
+    if (digitMatch) qty = parseInt(digitMatch[0]);
+
+    let matchedItem = null;
+    for (const item of MENU) {
+      const cleanName = item.name.toLowerCase();
+      if (text.includes(cleanName) || cleanName.split(' ').some(word => word.length > 3 && text.includes(word))) {
+        matchedItem = item;
+        break;
+      }
+    }
+
+    if (matchedItem) {
+      for (let i = 0; i < qty; i++) {
+        addQuickItem(matchedItem.id);
+      }
+      if ('speechSynthesis' in window) {
+        const utter = new SpeechSynthesisUtterance(`${qty} ${matchedItem.name} added to cart`);
+        utter.lang = 'en-IN';
+        window.speechSynthesis.speak(utter);
+      }
+    } else {
+      filterItems(text);
+    }
+  }
+
+  function sendPosWhatsAppBill(orderId, customerPhone, totalAmount) {
+    const phone = (customerPhone || '').replace(/[^0-9]/g, '');
+    const billText = encodeURIComponent(
+      `🧾 *DineFlow AI — Official Tax Invoice*\n` +
+      `----------------------------------------\n` +
+      `🔢 Order ID: #${orderId}\n` +
+      `💳 Total Paid: ₹${totalAmount}\n` +
+      `✅ Payment Status: Completed\n\n` +
+      `🙏 Thank you for dining with us! We hope to serve you again.\n` +
+      `⭐ Rate your experience: https://dineflow.ai/feedback`
+    );
+    if (phone) {
+      window.open(`https://api.whatsapp.com/send?phone=91${phone}&text=${billText}`, '_blank');
+    } else {
+      window.open(`https://api.whatsapp.com/send?text=${billText}`, '_blank');
+    }
+  }
+
   // ─── CORE MODAL UTILITIES & ADMIN MODULE LAUNCHERS ───
   function openModal(id) {
     const modal = document.getElementById(id);
