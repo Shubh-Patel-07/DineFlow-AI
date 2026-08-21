@@ -588,7 +588,33 @@ function renderCart() {
   if (taxEl) taxEl.textContent = formatCurrency(tax);
   if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grandTotal);
 
+  if (hasSoldOutItem) {
+    const banner = `
+      <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <div style="font-size:12px; color:#EF4444; font-weight:700; display:flex; align-items:center; gap:6px;">
+          <span>⚠️</span> <span>Some items are sold out.</span>
+        </div>
+        <button type="button" onclick="removeSoldOutCartItems()" style="background:#EF4444; border:none; color:#fff; font-size:11px; font-weight:800; padding:5px 10px; border-radius:8px; cursor:pointer; white-space:nowrap;">
+          Remove Sold Out
+        </button>
+      </div>
+    `;
+    list.insertAdjacentHTML('afterbegin', banner);
+  }
+
   renderCartSmartUpselling(cart);
+}
+
+function removeSoldOutCartItems() {
+  const cart = getCart();
+  const validCart = cart.filter(item => {
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.toLowerCase() === item.name.toLowerCase()));
+    const isSoldOut = (master && (master.available === false || master.is_available === false)) || item.available === false || item.is_available === false;
+    return !isSoldOut;
+  });
+  saveCart(validCart);
+  showToast('Removed sold-out items from basket');
+  renderCart();
 }
 
 function renderCartSmartUpselling(cart) {
@@ -649,10 +675,13 @@ function renderCartSmartUpselling(cart) {
 }
 
 function addUpsellItemToCart(itemId) {
-  const item = menuItems.find(i => Number(i.id) === Number(itemId));
+  const item = menuItems.find(i => String(i.id) === String(itemId));
   if (item) {
-    addToCart({ ...item, quantity: 1 });
-    showToast(`✨ Added ${item.name} to meal!`);
+    if (item.available === false) {
+      showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+      return;
+    }
+    addToCart(item);
   }
 }
 
@@ -1020,14 +1049,14 @@ async function loadMenu() {
       }
     }
     if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
-      const apiItems = menuResult.value.map(normalizeItem);
-      const staticFoodItems = getStaticFoodItemsList().map(normalizeItem);
-      menuItems = apiItems.map(apiItem => {
+      const apiRawItems = menuResult.value;
+      const staticFoodItems = getStaticFoodItemsList();
+      menuItems = apiRawItems.map(apiItem => {
         const match = staticFoodItems.find(s => s.name.toLowerCase() === apiItem.name.toLowerCase() || String(s.id) === String(apiItem.id));
-        if (match) {
-          return { ...match, ...apiItem, image: apiItem.image || match.image };
-        }
-        return apiItem;
+        const merged = match ? { ...match, ...apiItem, image: apiItem.image || match.image } : { ...apiItem };
+        merged.is_available = apiItem.is_available !== undefined ? apiItem.is_available : (apiItem.available !== undefined ? apiItem.available : true);
+        merged.available = parseBoolean(merged.is_available, true);
+        return normalizeItem(merged);
       });
       renderCategories();
       renderMenu();
@@ -1149,7 +1178,13 @@ if (_foodGrid) _foodGrid.addEventListener('click', event => {
   if (addCartBtn) {
     event.stopPropagation();
     const item = menuItems.find(i => String(i.id) === String(addCartBtn.dataset.addCart));
-    if (item) addToCart(item);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+        return;
+      }
+      addToCart(item);
+    }
     return;
   }
 
@@ -1764,14 +1799,27 @@ function processVoiceOrderSpeech(text) {
       if (itemNameLower.includes('drink') && (lowerText.includes('કોલ્ડ્રિંક') || lowerText.includes('સોફ્ટ ડ્રિંક') || lowerText.includes('pepsi') || lowerText.includes('coke'))) isMatch = true;
     }
 
-    if (isMatch && item.available !== false) {
+    if (isMatch) {
+      if (item.available === false || item.is_available === false) {
+        const outMessage = `Sorry, ${item.name} is currently sold out!`;
+        showToast(`🚫 AI Voice: ${outMessage}`, true);
+        if ('speechSynthesis' in window) {
+          try {
+            const utterance = new SpeechSynthesisUtterance(outMessage);
+            utterance.rate = 1.05;
+            window.speechSynthesis.speak(utterance);
+          } catch (_) {}
+        }
+        stopVoiceOrderRecognition();
+        return;
+      }
       matchedItems.push(item);
     }
   });
 
   if (matchedItems.length > 0) {
     const targetItem = matchedItems[0];
-    addToCart({ ...targetItem, quantity: matchedQty });
+    addToCart(targetItem);
     
     const confirmMessage = `Added ${matchedQty} × ${targetItem.name} to your basket!`;
     showToast(`🤖 AI Voice: ${confirmMessage}`);
