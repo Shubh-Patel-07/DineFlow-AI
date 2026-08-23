@@ -86,6 +86,7 @@
       background: #F1F5F9 !important;
       color: #475569 !important;
       border-color: #CBD5E1 !important;
+    }
     #liveClockBadge {
       background: rgba(99, 102, 241, 0.15);
       border: 1px solid rgba(99, 102, 241, 0.35);
