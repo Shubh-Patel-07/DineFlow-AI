@@ -675,30 +675,34 @@ function renderCartSmartUpselling(cart) {
     return;
   }
 
-  const cartItemIds = new Set(cart.map(i => Number(i.id)));
-  const cartCategories = cart.map(i => (i.category || '').toLowerCase());
+  const cartItemIds = new Set(cart.map(i => String(i.baseId || i.id)));
+  const cartItemNames = new Set(cart.map(i => (i.name || '').toLowerCase().trim()));
 
-  // AI Pairing Matrix
-  let recommendedIds = [];
-  if (cartCategories.some(c => c.includes('pizza') || c.includes('burger') || c.includes('pasta'))) {
-    // Recommend Drinks or Starters
-    recommendedIds.push(85, 86, 87, 7); // Soft Drink, Fries, Mocktail, Cold Coffee
-  }
-  if (cartCategories.some(c => c.includes('main') || c.includes('curry') || c.includes('thali') || c.includes('paneer'))) {
-    // Recommend Beverages, Breads, Desserts
-    recommendedIds.push(85, 9, 10, 87); // Soft Drink, Brownie, Pastry, Mocktail
-  }
-  // Generic fallback if not matched
-  if (!recommendedIds.length) {
-    recommendedIds.push(86, 85, 9, 7);
+  // Dynamic Smart Pairing: find complementary items not in cart
+  const availableCandidates = menuItems.filter(item => 
+    !cartItemIds.has(String(item.id)) &&
+    !cartItemNames.has((item.name || '').toLowerCase().trim()) &&
+    item.available !== false &&
+    item.is_available !== false
+  );
+
+  if (!availableCandidates.length) {
+    tray.style.display = 'none';
+    return;
   }
 
-  // Filter recommendations: must be available and not already in cart
-  const suggestions = menuItems.filter(item => 
-    recommendedIds.includes(Number(item.id)) && 
-    !cartItemIds.has(Number(item.id)) &&
-    item.available !== false
-  ).slice(0, 4);
+  // Prioritize Drinks, Breads, Starters, Desserts
+  const priorityCategories = ['drinks', 'beverage', 'breads', 'starters', 'desserts'];
+  let suggestions = availableCandidates.filter(item => 
+    priorityCategories.includes(String(item.category || '').toLowerCase())
+  );
+
+  if (suggestions.length < 4) {
+    const remaining = availableCandidates.filter(item => !suggestions.includes(item));
+    suggestions = suggestions.concat(remaining);
+  }
+
+  suggestions = suggestions.slice(0, 5);
 
   if (!suggestions.length) {
     tray.style.display = 'none';
@@ -706,14 +710,14 @@ function renderCartSmartUpselling(cart) {
   }
 
   container.innerHTML = suggestions.map(item => {
-    const img = item.image || '/images/placeholder-food.svg';
+    const img = resolveImagePath(item.image);
     return `
-      <div style="flex:0 0 130px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; display:flex; flex-direction:column; justify-content:space-between;">
-        <img src="${img}" alt="${escapeHtml(item.name)}" style="width:100%; height:60px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
-        <div style="font-size:11.5px; font-weight:700; color:var(--text-main, #F8FAFC); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+      <div class="cart-upsell-card">
+        <img src="${escapeHtml(img)}" alt="${escapeHtml(item.name)}" style="width:100%; height:62px; object-fit:cover; border-radius:10px; margin-bottom:6px;" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';">
+        <div style="font-size:11.5px; font-weight:800; color:var(--text-main, #0F172A); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-          <span style="font-size:11px; font-weight:800; color:#34D399;">₹${item.price}</span>
-          <button onclick="addUpsellItemToCart(${item.id})" type="button" style="background:rgba(99,102,241,0.2); border:1px solid rgba(99,102,241,0.4); color:#A5B4FC; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">+ Add</button>
+          <span style="font-size:11.5px; font-weight:800; color:#059669;">₹${Number(item.price || 0).toFixed(2)}</span>
+          <button class="cart-upsell-btn" onclick="addUpsellItemToCart('${escapeHtml(item.id)}')" type="button">+ Add</button>
         </div>
       </div>
     `;
@@ -725,11 +729,21 @@ function renderCartSmartUpselling(cart) {
 function addUpsellItemToCart(itemId) {
   const item = menuItems.find(i => String(i.id) === String(itemId));
   if (item) {
-    if (item.available === false || item.is_available === false || item.is_available === 0 || item.is_available === '0') {
+    if (item.available === false || item.is_available === false || item.is_available === 0 || item.is_available === '0' || item.status === 'out_of_stock') {
       showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
       return;
     }
     addToCart(item);
+
+    // Smoothly highlight the newly added item in the basket list
+    setTimeout(() => {
+      const cartList = $('#cartList');
+      if (cartList && cartList.lastElementChild) {
+        cartList.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        cartList.lastElementChild.classList.add('cart-item-highlight');
+        setTimeout(() => cartList.lastElementChild?.classList.remove('cart-item-highlight'), 900);
+      }
+    }, 80);
   }
 }
 
