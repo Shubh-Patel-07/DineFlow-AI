@@ -86,6 +86,43 @@
       background: #F1F5F9 !important;
       color: #475569 !important;
       border-color: #CBD5E1 !important;
+    #liveClockBadge {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #818CF8;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+    body.light-theme #liveClockBadge {
+      background: #EEF2FF !important;
+      border: 1.5px solid #C7D2FE !important;
+      color: #4338CA !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08) !important;
+    }
+
+    #localWeatherBadge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    body.light-theme #localWeatherBadge {
+      background: #ECFDF5 !important;
+      border: 1.5px solid #A7F3D0 !important;
+      color: #065F46 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08) !important;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -386,8 +423,8 @@
           <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover;">
           <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
         </div>
-        <div id="liveClockBadge" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); color: #818CF8; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: monospace; letter-spacing: 0.5px;">--:--:-- --</div>
-        <div id="localWeatherBadge" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34D399; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
+        <div id="liveClockBadge">--:--:-- --</div>
+        <div id="localWeatherBadge"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
       </div>
       <div class="topbar-sub" id="topbarDate">{{ now()->format('l, M d, Y') }} • Shift: Evening (16:00 - 24:00)</div>
     </div>
