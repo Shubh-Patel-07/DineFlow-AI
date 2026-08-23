@@ -257,9 +257,9 @@ function renderQRHistory(filter = 'all') {
 }
 
 // Filter QR codes
-function filterQRCodes(filter) {
+function filterQRCodes(filter, event) {
     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event) event.target.classList.add('active');
     renderQRHistory(filter);
 }
 

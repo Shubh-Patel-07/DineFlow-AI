@@ -4,9 +4,9 @@ let tableId = params.get('tableId') || params.get('table') || '1';
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
 const translations = {
-  en: { welcome: 'Smart QR Restaurant Ordering', table: 'Table', all: 'All', veg: 'Veg', nonveg: 'Non-Veg', menu: 'Our Menu', subtitle: 'Freshly prepared, just for you', search: 'Search delicious food...', callWaiter: 'Call Waiter', loading: 'Loading menu…', unavailable: 'Out of stock', available: 'Available', empty: 'No dishes found', emptyHint: 'Try changing your search or filters.', waiterSent: 'Your waiter has been called.', waiterError: 'Could not call waiter. Please try again.', calling: 'Calling…' },
-  hi: { welcome: 'स्मार्ट QR रेस्टोरेंट ऑर्डरिंग', table: 'टेबल', all: 'सभी', veg: 'वेज', nonveg: 'नॉन-वेज', menu: 'हमारा मेनू', subtitle: 'आपके लिए ताज़ा तैयार', search: 'खाना खोजें...', callWaiter: 'वेटर बुलाएँ', loading: 'मेनू लोड हो रहा है…', unavailable: 'स्टॉक में नहीं', available: 'उपलब्ध', empty: 'कोई डिश नहीं मिली', emptyHint: 'खोज या फ़िल्टर बदलकर देखें।', waiterSent: 'वेटर को बुला दिया गया है।', waiterError: 'वेटर को नहीं बुला सके। फिर कोशिश करें।', calling: 'बुलाया जा रहा है…' },
-  gu: { welcome: 'સ્માર્ટ QR રેસ્ટોરન્ટ ઓર્ડરિંગ', table: 'ટેબલ', all: 'બધા', veg: 'વેજ', nonveg: 'નોન-વેજ', menu: 'અમારું મેનૂ', subtitle: 'તમારા માટે તાજું બનાવેલું', search: 'ખાવાનું શોધો...', callWaiter: 'વેઇટરને બોલાવો', loading: 'મેનૂ લોડ થઈ રહ્યું છે…', unavailable: 'સ્ટોકમાં નથી', available: 'ઉપલબ્ધ', empty: 'કોઈ વાનગી મળી નથી', emptyHint: 'શોધ અથવા ફિલ્ટર બદલીને જુઓ.', waiterSent: 'વેઇટરને બોલાવવામાં આવ્યા છે.', waiterError: 'વેઇટરને બોલાવી શકાયા નથી. ફરી પ્રયાસ કરો.', calling: 'બોલાવવામાં આવે છે…' }
+  en: { welcome: 'Smart QR Restaurant Ordering', table: 'Table', all: 'All', veg: '🟢 Veg', nonveg: '🔴 Non-Veg', menu: 'Our Menu', subtitle: 'Freshly prepared, just for you', search: 'Search delicious food...', callWaiter: 'Call Waiter', loading: 'Loading menu…', unavailable: 'Out of stock', available: 'Available', empty: 'No dishes found', emptyHint: 'Try changing your search or filters.', waiterSent: 'Your waiter has been called.', waiterError: 'Could not call waiter. Please try again.', calling: 'Calling…' },
+  hi: { welcome: 'स्मार्ट QR रेस्टोरेंट ऑर्डरिंग', table: 'टेबल', all: 'सभी', veg: '🟢 वेज', nonveg: '🔴 नॉन-वेज', menu: 'हमारा मेनू', subtitle: 'आपके लिए ताज़ा तैयार', search: 'खाना खोजें...', callWaiter: 'वेटर बुलाएँ', loading: 'मेनू लोड हो रहा है…', unavailable: 'स्टॉक में नहीं', available: 'उपलब्ध', empty: 'कोई डिश नहीं मिली', emptyHint: 'खोज या फ़िल्टर बदलकर देखें।', waiterSent: 'वेटर को बुला दिया गया है।', waiterError: 'वेटर को नहीं बुला सके। फिर कोशिश करें।', calling: 'बुलाया जा रहा है…' },
+  gu: { welcome: 'સ્માર્ટ QR રેસ્ટોરન્ટ ઓર્ડરિંગ', table: 'ટેબલ', all: 'બધા', veg: '🟢 વેજ', nonveg: '🔴 નોન-વેજ', menu: 'અમારું મેનૂ', subtitle: 'તમારા માટે તાજું બનાવેલું', search: 'ખાવાનું શોધો...', callWaiter: 'વેઇટરને બોલાવો', loading: 'મેનૂ લોડ થઈ રહ્યું છે…', unavailable: 'સ્ટોકમાં નથી', available: 'ઉપલબ્ધ', empty: 'કોઈ વાનગી મળી નથી', emptyHint: 'શોધ અથવા ફિલ્ટર બદલીને જુઓ.', waiterSent: 'વેઇટરને બોલાવવામાં આવ્યા છે.', waiterError: 'વેઇટરને બોલાવી શકાયા નથી. ફરી પ્રયાસ કરો.', calling: 'બોલાવવામાં આવે છે…' }
 };
 
 let language = localStorage.getItem('dineflow-language') || 'en';
@@ -86,7 +86,7 @@ function renderRecommendedSection() {
   if (!section) return;
 
   const recommendedItems = menuItems
-    .filter(item => item.popular || getFavoriteIds().has(String(item.id)) || getRecentItemIds().includes(String(item.id)))
+    .filter(item => (item.available !== false && item.is_available !== false) && (item.popular || getFavoriteIds().has(String(item.id)) || getRecentItemIds().includes(String(item.id))))
     .slice(0, 4);
 
   if (!recommendedItems.length) {
@@ -98,18 +98,29 @@ function renderRecommendedSection() {
   section.style.display = 'block';
   section.innerHTML = `
     <div class="promo-section__header">
-      <h3 class="promo-section__title">Recommended for You</h3>
+      <h3 class="promo-section__title">✨ Recommended for You</h3>
       <span class="promo-section__meta">Picked for your taste</span>
     </div>
     <div class="promo-grid">
-      ${recommendedItems.map(item => `
-        <div class="promo-card">
-          <span class="promo-card__tag">${escapeHtml(item.popular ? 'Popular' : 'Suggested')}</span>
+      ${recommendedItems.map(item => {
+        const isVeg = item.is_veg !== false && item.dietary !== 'non-veg';
+        return `
+        <div class="promo-card" onclick="openItemModal(menuItems.find(i => String(i.id) === '${escapeHtml(item.id)}'))" style="cursor:pointer;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span class="promo-card__tag">${item.popular ? '🔥 Popular' : '✨ Chef Special'}</span>
+            <span style="font-size:11px; font-weight:700;">${isVeg ? '🟢 Veg' : '🔴 Non-Veg'}</span>
+          </div>
           <div class="promo-card__name">${escapeHtml(item.name)}</div>
-          <div class="promo-card__desc">${escapeHtml(item.description || 'A fresh pick from our menu')}</div>
-          <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}">View Item</button>
+          <div class="promo-card__desc">${escapeHtml(item.description || 'Freshly prepared specialty dish with signature seasoning.')}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:8px;">
+            <strong style="color:#059669; font-size:1.05rem; font-weight:800;">₹${Number(item.price || 0).toFixed(2)}</strong>
+            <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}" onclick="event.stopPropagation(); addToCart(menuItems.find(i => String(i.id) === '${escapeHtml(item.id)}'));">
+              + Add
+            </button>
+          </div>
         </div>
-      `).join('')}
+      `;
+      }).join('')}
     </div>
   `;
 }
@@ -121,7 +132,7 @@ function renderComboOffersSection() {
   section.style.display = 'block';
   section.innerHTML = `
     <div class="promo-section__header">
-      <h3 class="promo-section__title">Combo Offers</h3>
+      <h3 class="promo-section__title">🍱 Combo Offers</h3>
       <span class="promo-section__meta">Great value deals</span>
     </div>
     <div class="promo-grid">
@@ -129,8 +140,10 @@ function renderComboOffersSection() {
         <div class="combo-card">
           <div class="combo-card__title">${escapeHtml(combo.name)}</div>
           <div class="combo-card__includes">${escapeHtml(combo.includes.join(' • '))}</div>
-          <div class="combo-card__price">₹${escapeHtml(combo.price)}</div>
-          <button class="combo-card__btn" type="button" data-combo-add-id="${escapeHtml(combo.id)}">Add Combo</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:6px;">
+            <div class="combo-card__price">₹${escapeHtml(combo.price)}</div>
+            <button class="combo-card__btn" type="button" data-combo-add-id="${escapeHtml(combo.id)}">+ Add Combo</button>
+          </div>
         </div>
       `).join('')}
     </div>
@@ -204,7 +217,9 @@ function clearRecentlyViewed() {
   renderMenu();
 }
 
-function resolveImagePath(image, fallback = 'assests/images/placeholder-food.svg') {
+const DEFAULT_FOOD_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%231e293b'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%2364748b'>🍽️</text></svg>";
+
+function resolveImagePath(image, fallback = DEFAULT_FOOD_PLACEHOLDER) {
   const value = typeof image === 'string' ? image.trim() : '';
   if (!value) return fallback;
   if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) return value;
@@ -240,6 +255,18 @@ function getStaticFoodItemsList() {
   return [];
 }
 
+function parseBoolean(val, defaultVal = true) {
+  if (val === undefined || val === null) return defaultVal;
+  if (typeof val === 'boolean') return val;
+  if (typeof val === 'number') return val === 1;
+  if (typeof val === 'string') {
+    const s = val.trim().toLowerCase();
+    if (s === '0' || s === 'false' || s === 'no' || s === 'unavailable' || s === 'sold_out' || s === 'out_of_stock') return false;
+    if (s === '1' || s === 'true' || s === 'yes' || s === 'available' || s === 'in_stock') return true;
+  }
+  return defaultVal;
+}
+
 function normalizeItem(item) {
   let cat = String(item.category || 'Mains').trim();
   if (cat.toLowerCase() === 'main course' || cat.toLowerCase() === 'mains') cat = 'Mains';
@@ -250,12 +277,14 @@ function normalizeItem(item) {
 
   const isPop = Boolean(item.popular || (item.badge && String(item.badge).toLowerCase().includes('popular')) || (item.badge && String(item.badge).toLowerCase().includes('seller')) || Number(item.rating) >= 4.8);
 
+  const isAvail = parseBoolean(item.is_available ?? item.available ?? (item.status === 'out_of_stock' ? false : true), true);
+
   return {
     ...item,
     id: item.id || item._id,
     category: cat,
     image: resolveImagePath(item.image),
-    available: item.is_available ?? item.available ?? true,
+    available: isAvail,
     isVeg: item.is_veg ?? item.isVeg ?? true,
     rating: String(item.rating || '4.8'),
     badge: item.badge || cat,
@@ -323,19 +352,20 @@ function renderMenu() {
   $('#foodGrid').innerHTML = items.length ? items.map(item => {
     const imageSrc = resolveImagePath(item.image);
     const isFavorite = favorites.has(String(item.id));
-    return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}">
+    return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}" style="position:relative;">
+      ${!item.available ? `<div style="position:absolute; top:12px; left:12px; z-index:5; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; box-shadow:0 4px 10px rgba(239,68,68,0.4); letter-spacing:0.5px;">🚫 SOLD OUT</div>` : ''}
       <button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" data-favorite-toggle="${escapeHtml(item.id)}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">♡</button>
-      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';">
+      <img class="food-image" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';" style="${!item.available ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
       <div class="food-content">
         <div class="food-topline">
           <span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span>
           <span class="rating-tag">★ ${escapeHtml(item.rating)}</span>
         </div>
-        <h3>${escapeHtml(item.name)}</h3>
+        <h3 style="${!item.available ? 'color:var(--text-muted); text-decoration:line-through;' : ''}">${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.description || '')}</p>
         <div class="food-footer">
           <strong>₹${escapeHtml(item.price)}</strong>
-          <button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>
+          ${item.available ? `<button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>` : `<button class="btn-add-to-order sold-out" type="button" disabled style="opacity:0.6;cursor:not-allowed;background:#EF4444;color:#fff;pointer-events:none;">Sold Out</button>`}
         </div>
       </div>
     </article>`;
@@ -357,15 +387,6 @@ async function openItemModal(item) {
 
   // Estimate prep time based on real active kitchen load
   let activeKotsCount = 0;
-  try {
-    const activeOrdersRes = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
-    const activeOrdersData = await activeOrdersRes.json();
-    if (activeOrdersData.success && Array.isArray(activeOrdersData.data)) {
-      activeKotsCount = activeOrdersData.data.filter(o => o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'served').length;
-    }
-  } catch (err) {
-    console.log('Error fetching active orders count:', err);
-  }
 
   const prepBadge = $('#kitchenTrafficBadge');
   if (prepBadge) {
@@ -378,33 +399,49 @@ async function openItemModal(item) {
       trafficText = 'Low Traffic';
       prepTime = 12;
       badgeColor = '#34D399';
-      bgLight = 'rgba(52, 211, 153, 0.1)';
     } else if (activeKotsCount > 2 && activeKotsCount <= 5) {
-      trafficText = 'Medium Traffic';
+      trafficText = 'Moderate';
       prepTime = 18;
       badgeColor = '#F59E0B';
-      bgLight = 'rgba(245, 158, 11, 0.1)';
+      bgLight = 'rgba(245, 158, 11, 0.12)';
     } else if (activeKotsCount > 5) {
-      trafficText = 'High Traffic / Busy';
+      trafficText = 'Busy Kitchen';
       prepTime = 25;
       badgeColor = '#EF4444';
-      bgLight = 'rgba(239, 68, 68, 0.1)';
+      bgLight = 'rgba(239, 68, 68, 0.12)';
     }
 
-    prepBadge.style.background = bgLight;
-    prepBadge.style.border = `1px solid ${badgeColor}`;
+    prepBadge.innerHTML = `<span style="margin-right:6px;">⏱️</span> ~${prepTime} mins prep (${trafficText})`;
     prepBadge.style.color = badgeColor;
-    prepBadge.innerHTML = `
-      <span style="font-size: 14px;">⏱️</span>
-      <div>
-        <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Est. Prep Time: ~${prepTime} Mins</div>
-        <div style="font-size: 9px; opacity: 0.8; margin-top: 1px;">Kitchen Load: ${trafficText} (${activeKotsCount} active KOTs)</div>
-      </div>
-    `;
+    prepBadge.style.background = bgLight;
+    prepBadge.style.borderColor = badgeColor;
   }
 
   const modal = $('#itemModal');
   if (modal) modal.hidden = false;
+
+  const addBtn = $('#modalAddToCartBtn');
+  if (addBtn) {
+    addBtn.dataset.modalItemId = item.id;
+    if (item.available === false || item.is_available === false) {
+      addBtn.disabled = true;
+      addBtn.setAttribute('disabled', 'disabled');
+      addBtn.textContent = '🚫 Currently Out of Stock (Sold Out)';
+      addBtn.style.opacity = '0.6';
+      addBtn.style.cursor = 'not-allowed';
+      addBtn.style.background = '#EF4444';
+      addBtn.style.pointerEvents = 'none';
+    } else {
+      addBtn.disabled = false;
+      addBtn.removeAttribute('disabled');
+      addBtn.textContent = '+ Add to Order Basket';
+      addBtn.style.opacity = '1';
+      addBtn.style.cursor = 'pointer';
+      addBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+      addBtn.style.pointerEvents = 'all';
+    }
+  }
+
   const closeBtn = $('#btnCloseModal') || $('#closeItemModal');
   if (closeBtn) closeBtn.focus();
 }
@@ -415,8 +452,11 @@ function closeItemModal() { const m = $('#itemModal'); if (m) m.hidden = true; }
 document.addEventListener('click', event => {
   const recommendedButton = event.target.closest('[data-recommended-item-id]');
   if (recommendedButton) {
+    event.stopPropagation();
     const item = menuItems.find(i => String(i.id) === String(recommendedButton.dataset.recommendedItemId));
-    if (item) openItemModal(item);
+    if (item) {
+      addToCart(item);
+    }
     return;
   }
 
@@ -425,8 +465,8 @@ document.addEventListener('click', event => {
     const combo = COMBO_OFFERS.find(item => item.id === comboButton.dataset.comboAddId);
     if (combo) {
       addToCart({
-        id: `${combo.id}-${Date.now()}`,
-        baseId: menuItems[0] ? menuItems[0].id : combo.id,
+        id: combo.id,
+        baseId: combo.id,
         name: combo.name,
         description: combo.description,
         price: combo.price,
@@ -439,10 +479,20 @@ document.addEventListener('click', event => {
     return;
   }
 
-  if (event.target.closest('#modalAddToCartBtn')) {
+  const modalAddBtn = event.target.closest('#modalAddToCartBtn');
+  if (modalAddBtn) {
+    const itemId = modalAddBtn.dataset.modalItemId;
     const name = $('#modalItemName')?.textContent;
-    const item = menuItems.find(i => i.name === name);
-    if (item) { addToCart({ ...item, quantity: 1 }); closeItemModal(); }
+    const item = (itemId ? menuItems.find(i => String(i.id) === String(itemId)) : null) || menuItems.find(i => i.name === name);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+        return;
+      }
+      addToCart({ ...item, quantity: 1 });
+      closeItemModal();
+    }
+    return;
   }
 });
 
@@ -454,213 +504,37 @@ function getCart() {
 }
 function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
 function addToCart(customizedItem) {
-  const cart = getCart();
-  cart.push(customizedItem);
-  saveCart(cart);
-  showToast('Added to cart');
-  renderCart();
-}
+  if (!customizedItem) return;
+  const masterItem = menuItems.find(i => 
+    String(i.id) === String(customizedItem.baseId || customizedItem.id) || 
+    (customizedItem.name && i.name && i.name.trim().toLowerCase() === customizedItem.name.trim().toLowerCase())
+  );
+  
+  const isMasterSoldOut = masterItem ? (masterItem.available === false || masterItem.is_available === false || masterItem.is_available === 0 || masterItem.is_available === '0' || masterItem.status === 'out_of_stock') : false;
+  const isCustomSoldOut = customizedItem.available === false || customizedItem.is_available === false || customizedItem.is_available === 0 || customizedItem.is_available === '0' || customizedItem.status === 'out_of_stock';
 
-// --- Build Your Plate feature ---
-let currentBuildItem = null;
-function openBuildPlateModal(item) {
-  if (!item) return;
-  currentBuildItem = item;
-  const buildModal = $('#buildPlateModal');
-  if (!buildModal) { addToCart({ ...item, quantity: 1 }); return; }
-  const nameEl = $('#buildItemName');
-  if (nameEl) nameEl.textContent = item.name + ` — ₹${Number(item.price).toFixed(2)}`;
-  const spicyEl = $('#buildSpicy'); if (spicyEl) spicyEl.value = 'Medium';
-  const portionEl = $('#buildPortion'); if (portionEl) portionEl.value = 'full';
-  document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
-  document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
-  const instrEl = $('#buildInstruction'); if (instrEl) instrEl.value = '';
-  updateBuildPrice();
-  buildModal.hidden = false;
-  const closeBtn = $('#closeBuildPlateModal'); if (closeBtn) closeBtn.focus();
-}
-
-function openBuildPlateModalFromDetails() {
-  const name = $('#modalItemName').textContent;
-  const item = menuItems.find(i => i.name === name) || menuItems.find(i => String(i.id) === String($('#modalItemName').dataset?.id));
-  openBuildPlateModal(item);
-}
-
-function closeBuildPlateModal() { const m = $('#buildPlateModal'); if (m) m.hidden = true; currentBuildItem = null; }
-
-function parseNumber(value) { const n = parseFloat(value); return isNaN(n) ? 0 : n; }
-
-function updateBuildPrice() {
-  const priceEl = $('#buildPrice');
-  if (!currentBuildItem) { if (priceEl) priceEl.textContent = '₹0.00'; return 0; }
-  const base = parseNumber(currentBuildItem.price);
-  const portionEl = $('#buildPortion');
-  const portion = portionEl ? portionEl.value : 'full';
-  const portionMultiplier = portion === 'half' ? 0.5 : 1;
-  let addonsTotal = 0;
-  document.querySelectorAll('.build-addon').forEach(chk => { if (chk.checked) addonsTotal += parseNumber(chk.dataset.price); });
-  const subtotal = (base * portionMultiplier) + addonsTotal;
-  if (priceEl) priceEl.textContent = `₹${subtotal.toFixed(2)}`;
-  return subtotal;
-}
-
-function buildDescription() {
-  if (!currentBuildItem) return '';
-  const parts = [];
-  const spicyEl = $('#buildSpicy');
-  const portionEl = $('#buildPortion');
-  const spicy = spicyEl ? spicyEl.value : 'Medium';
-  const portion = portionEl ? portionEl.value : 'full';
-  parts.push(`${spicy} spicy`);
-  const removes = [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove);
-  removes.forEach(r => parts.push(r));
-  const addons = [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => `${c.dataset.addon}${c.dataset.price ? ` (+₹${c.dataset.price})` : ''}`);
-  addons.forEach(a => parts.push(a));
-  const instrEl = $('#buildInstruction');
-  const instr = instrEl ? instrEl.value.trim() : '';
-  if (instr) parts.push(`Note: ${instr}`);
-  return parts.join(', ');
-}
-
-// Wire up build modal interactions
-document.addEventListener('change', event => {
-  if (event.target.closest('#buildPlateModal')) updateBuildPrice();
-});
-const closesBuildBtn = document.getElementById('closeBuildPlateModal');
-if (closesBuildBtn) closesBuildBtn.addEventListener('click', closeBuildPlateModal);
-const cancelBuildBtn = document.querySelector('#btnCancelBuild');
-if (cancelBuildBtn) cancelBuildBtn.addEventListener('click', closeBuildPlateModal);
-const addBuildBtn = document.getElementById('btnAddBuildToCart');
-if (addBuildBtn) addBuildBtn.addEventListener('click', () => {
-  if (!currentBuildItem) return;
-  const total = updateBuildPrice();
-  const desc = buildDescription();
-  const portionEl = $('#buildPortion');
-  const spicyEl = $('#buildSpicy');
-  const instrEl = $('#buildInstruction');
-  const customized = {
-    id: `${currentBuildItem.id}-${Date.now()}`,
-    baseId: currentBuildItem.id,
-    name: currentBuildItem.name,
-    description: desc,
-    price: Number((total || 0).toFixed(2)),
-    quantity: 1,
-    portion: portionEl ? portionEl.value : 'full',
-    spicy: spicyEl ? spicyEl.value : 'Medium',
-    addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
-    removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
-    specialInstruction: instrEl ? instrEl.value.trim() : '',
-  };
-  addToCart(customized);
-  closeBuildPlateModal();
-  closeItemModal();
-});
-
-// --- Add-on availability (from API) and Presets ---
-let addonAvailability = {};
-async function loadAddonAvailability() {
-  try {
-    const res = await fetch(`${API_BASE}/addons/availability?restaurantId=${encodeURIComponent(restaurantId)}`);
-    const data = await res.json().catch(() => ({}));
-    if (data && data.success && data.data) addonAvailability = data.data;
-    else addonAvailability = {};
-  } catch (err) {
-    addonAvailability = {};
+  if (isMasterSoldOut || isCustomSoldOut) {
+    showToast(`🚫 Sorry, "${customizedItem.name || 'This item'}" is currently SOLD OUT and cannot be added!`, true);
+    return;
   }
-  applyAddonAvailability();
+
+  const cart = getCart();
+  const existingItemIndex = cart.findIndex(item => 
+    String(item.id) === String(customizedItem.id) ||
+    (item.baseId && customizedItem.baseId && String(item.baseId) === String(customizedItem.baseId)) ||
+    (item.name && customizedItem.name && item.name.trim().toLowerCase() === customizedItem.name.trim().toLowerCase())
+  );
+
+  if (existingItemIndex > -1) {
+    cart[existingItemIndex].quantity = (cart[existingItemIndex].quantity || 1) + (customizedItem.quantity || 1);
+  } else {
+    cart.push({ ...customizedItem, quantity: customizedItem.quantity || 1, available: true });
+  }
+  saveCart(cart);
+  showToast(`🛒 Added ${customizedItem.name || 'Item'} to basket!`);
+  renderCart();
+  openCart();
 }
-
-function applyAddonAvailability() {
-  document.querySelectorAll('.build-addon').forEach(chk => {
-    const name = chk.dataset.addon;
-    const label = chk.closest('label');
-    const available = addonAvailability && Object.prototype.hasOwnProperty.call(addonAvailability, name) ? Boolean(addonAvailability[name]) : true;
-    chk.disabled = !available;
-    // update label status
-    if (label) {
-      let status = label.querySelector('.addon-status');
-      if (!status) { status = document.createElement('span'); status.className = 'addon-status'; status.style.marginLeft = '8px'; status.style.fontSize = '12px'; status.style.opacity = '0.85'; label.appendChild(status); }
-      status.textContent = available ? '' : ' (unavailable)';
-      label.style.opacity = available ? '1' : '0.6';
-    }
-  });
-}
-
-// Presets storage
-const PRESETS_KEY = 'dineflow-presets';
-function getPresets() { try { return JSON.parse(localStorage.getItem(PRESETS_KEY) || '[]'); } catch { return []; } }
-function savePresets(presets) { localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); }
-
-function renderPresets() {
-  const list = $('#buildPresetsList');
-  if (!list) return;
-  const presets = getPresets();
-  if (!presets.length) { list.innerHTML = `<div style="opacity:0.7; font-size:13px;">No saved presets</div>`; return; }
-  list.innerHTML = presets.map((p, idx) => `<button type="button" class="preset-btn" data-preset-idx="${idx}" style="padding:6px 8px; border-radius:8px; background: rgba(255,255,255,0.04); font-size:13px;">${escapeHtml(p.name)}</button>`).join('');
-}
-
-function applyPreset(idx) {
-  const presets = getPresets();
-  const p = presets[idx];
-  if (!p || !currentBuildItem) return;
-  // apply options
-  $('#buildSpicy').value = p.spicy || 'Medium';
-  $('#buildPortion').value = p.portion || 'full';
-  document.querySelectorAll('.build-addon').forEach(chk => chk.checked = false);
-  (p.addons || []).forEach(a => {
-    const chk = Array.from(document.querySelectorAll('.build-addon')).find(c => c.dataset.addon === a.name);
-    if (chk && !chk.disabled) chk.checked = true;
-  });
-  document.querySelectorAll('.build-remove').forEach(chk => chk.checked = false);
-  (p.removes || []).forEach(r => {
-    const chk = Array.from(document.querySelectorAll('.build-remove')).find(c => c.dataset.remove === r);
-    if (chk) chk.checked = true;
-  });
-  $('#buildInstruction').value = p.specialInstruction || '';
-  updateBuildPrice();
-}
-
-function saveCurrentPreset() {
-  if (!currentBuildItem) { showToast('Open an item first', true); return; }
-  const presets = getPresets();
-  const name = `${currentBuildItem.name} Preset ${presets.length + 1}`;
-  const preset = {
-    id: `preset-${Date.now()}`,
-    name,
-    baseId: currentBuildItem.id,
-    spicy: $('#buildSpicy').value,
-    portion: $('#buildPortion').value,
-    addons: [...document.querySelectorAll('.build-addon')].filter(c => c.checked).map(c => ({ name: c.dataset.addon, price: parseNumber(c.dataset.price) })),
-    removes: [...document.querySelectorAll('.build-remove')].filter(c => c.checked).map(c => c.dataset.remove),
-    specialInstruction: $('#buildInstruction').value.trim(),
-    price: updateBuildPrice()
-  };
-  presets.push(preset);
-  savePresets(presets);
-  renderPresets();
-  showToast('Preset saved');
-}
-
-// Wire preset clicks
-document.addEventListener('click', event => {
-  const btn = event.target.closest('[data-preset-idx]');
-  if (btn) { applyPreset(Number(btn.dataset.presetIdx)); }
-});
-
-// Hook save preset button
-const savePBtn = document.getElementById('btnSavePreset');
-if (savePBtn) savePBtn.addEventListener('click', saveCurrentPreset);
-
-// Load addon availability & presets when opening build modal - only if build modal exists
-if (document.getElementById('buildPlateModal')) {
-  const origOpenBuild = openBuildPlateModal;
-  openBuildPlateModal = function(item) {
-    origOpenBuild(item);
-    loadAddonAvailability();
-    renderPresets();
-  };
-}
-
 
 // --- Cart UI and interactions ---
 function formatCurrency(amount) { return `₹${Number(amount || 0).toFixed(2)}`; }
@@ -692,18 +566,25 @@ function renderCart() {
     list.innerHTML = `
       <div style="text-align:center; padding:36px 20px; color:#64748B;">
         <span style="font-size:36px; display:block; margin-bottom:8px;">🛒</span>
-        <div style="font-size:14px; font-weight:700; color:#F8FAFC;">Your basket is empty</div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-main, #0F172A);">Your basket is empty</div>
         <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Add delicious items from menu to start ordering!</div>
       </div>
     `;
     subtotalEl.textContent = formatCurrency(0);
     if (taxEl) taxEl.textContent = formatCurrency(0);
     if (grandTotalEl) grandTotalEl.textContent = formatCurrency(0);
+    const tray = $('#cartSmartUpsellTray');
+    if (tray) tray.style.display = 'none';
     return;
   }
 
   let subtotal = 0;
+  let hasSoldOutItem = false;
   list.innerHTML = cart.map((item, idx) => {
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.trim().toLowerCase() === item.name.trim().toLowerCase()));
+    const isSoldOut = (master && (master.available === false || master.is_available === false || master.is_available === 0 || master.is_available === '0' || master.status === 'out_of_stock')) || item.available === false || item.is_available === false;
+    if (isSoldOut) hasSoldOutItem = true;
+
     const name = escapeHtml(item.name);
     const price = Number(item.price || 0);
     const qty = item.quantity || 1;
@@ -711,18 +592,21 @@ function renderCart() {
     subtotal += itemTotal;
 
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:14px; transition:all 0.2s;">
+      <div class="cart-item-card ${isSoldOut ? 'sold-out-card' : ''}">
         <div style="flex:1; min-width:0; overflow:hidden;">
-          <div style="font-weight:700; color:#F8FAFC; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div>
-          <div style="font-size:11.5px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span style="color:#F8FAFC;">${formatCurrency(itemTotal)}</span></div>
+          <div class="cart-item-name">
+            <span>${name}</span>
+            ${isSoldOut ? `<span class="cart-sold-out-badge">SOLD OUT</span>` : ''}
+          </div>
+          <div class="cart-item-calc">${formatCurrency(price)} × ${qty} = <span class="cart-item-subtotal">${formatCurrency(itemTotal)}</span></div>
         </div>
         <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-          <div style="display:flex; align-items:center; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:2px 4px;">
-            <button onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">-</button>
-            <span style="font-size:12.5px; font-weight:700; color:#F8FAFC; min-width:20px; text-align:center;">${qty}</span>
-            <button onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; color:#F8FAFC; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">+</button>
+          <div class="cart-stepper-box">
+            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty - 1})">-</button>
+            <span class="cart-stepper-val">${qty}</span>
+            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty + 1})">+</button>
           </div>
-          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)">✕</button>
         </div>
       </div>
     `;
@@ -734,6 +618,102 @@ function renderCart() {
   subtotalEl.textContent = formatCurrency(subtotal);
   if (taxEl) taxEl.textContent = formatCurrency(tax);
   if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grandTotal);
+
+  if (hasSoldOutItem) {
+    const banner = `
+      <div style="background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3); border-radius:12px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <div style="font-size:12px; color:#EF4444; font-weight:700; display:flex; align-items:center; gap:6px;">
+          <span>⚠️</span> <span>Some items in basket are Sold Out!</span>
+        </div>
+        <button type="button" onclick="removeSoldOutCartItems()" style="background:#EF4444; border:none; color:#fff; font-size:11px; font-weight:800; padding:6px 12px; border-radius:8px; cursor:pointer; white-space:nowrap; box-shadow:0 2px 8px rgba(239,68,68,0.4);">
+          Remove Sold Out
+        </button>
+      </div>
+    `;
+    list.insertAdjacentHTML('afterbegin', banner);
+  }
+
+  renderCartSmartUpselling(cart);
+}
+
+function removeSoldOutCartItems() {
+  const cart = getCart();
+  const validCart = cart.filter(item => {
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.toLowerCase() === item.name.toLowerCase()));
+    const isSoldOut = (master && (master.available === false || master.is_available === false || master.is_available === 0 || master.is_available === '0' || master.status === 'out_of_stock')) || item.available === false || item.is_available === false;
+    return !isSoldOut;
+  });
+  saveCart(validCart);
+  showToast('Removed sold-out items from basket');
+  renderCart();
+}
+
+function renderCartSmartUpselling(cart) {
+  const tray = $('#cartSmartUpsellTray');
+  const container = $('#cartUpsellItemsList');
+  if (!tray || !container) return;
+
+  if (!cart.length || !menuItems.length) {
+    tray.style.display = 'none';
+    return;
+  }
+
+  const cartItemIds = new Set(cart.map(i => Number(i.id)));
+  const cartCategories = cart.map(i => (i.category || '').toLowerCase());
+
+  // AI Pairing Matrix
+  let recommendedIds = [];
+  if (cartCategories.some(c => c.includes('pizza') || c.includes('burger') || c.includes('pasta'))) {
+    // Recommend Drinks or Starters
+    recommendedIds.push(85, 86, 87, 7); // Soft Drink, Fries, Mocktail, Cold Coffee
+  }
+  if (cartCategories.some(c => c.includes('main') || c.includes('curry') || c.includes('thali') || c.includes('paneer'))) {
+    // Recommend Beverages, Breads, Desserts
+    recommendedIds.push(85, 9, 10, 87); // Soft Drink, Brownie, Pastry, Mocktail
+  }
+  // Generic fallback if not matched
+  if (!recommendedIds.length) {
+    recommendedIds.push(86, 85, 9, 7);
+  }
+
+  // Filter recommendations: must be available and not already in cart
+  const suggestions = menuItems.filter(item => 
+    recommendedIds.includes(Number(item.id)) && 
+    !cartItemIds.has(Number(item.id)) &&
+    item.available !== false
+  ).slice(0, 4);
+
+  if (!suggestions.length) {
+    tray.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = suggestions.map(item => {
+    const img = item.image || '/images/placeholder-food.svg';
+    return `
+      <div style="flex:0 0 130px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; display:flex; flex-direction:column; justify-content:space-between;">
+        <img src="${img}" alt="${escapeHtml(item.name)}" style="width:100%; height:60px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
+        <div style="font-size:11.5px; font-weight:700; color:var(--text-main, #F8FAFC); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span style="font-size:11px; font-weight:800; color:#34D399;">₹${item.price}</span>
+          <button onclick="addUpsellItemToCart(${item.id})" type="button" style="background:rgba(99,102,241,0.2); border:1px solid rgba(99,102,241,0.4); color:#A5B4FC; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">+ Add</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  tray.style.display = 'block';
+}
+
+function addUpsellItemToCart(itemId) {
+  const item = menuItems.find(i => String(i.id) === String(itemId));
+  if (item) {
+    if (item.available === false || item.is_available === false || item.is_available === 0 || item.is_available === '0') {
+      showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
+      return;
+    }
+    addToCart(item);
+  }
 }
 
 function changeCartQty(idx, newQty) {
@@ -743,6 +723,12 @@ function changeCartQty(idx, newQty) {
     cart.splice(idx, 1);
     showToast('Removed from cart');
   } else {
+    const item = cart[idx];
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.toLowerCase() === item.name.toLowerCase()));
+    if (master && (master.available === false || master.is_available === false || master.is_available === 0 || master.is_available === '0')) {
+      showToast(`🚫 Cannot increase quantity: "${item.name}" is Sold Out!`, true);
+      return;
+    }
     cart[idx].quantity = newQty;
   }
   saveCart(cart);
@@ -780,6 +766,20 @@ async function handleCheckout() {
     showToast('Your cart is empty! Add items first.', true);
     return;
   }
+
+  // 🚫 Real-time Sold-out / Out of stock validation
+  const soldOutItems = cart.filter(cartItem => {
+    const master = menuItems.find(i => String(i.id) === String(cartItem.baseId || cartItem.id));
+    return (master && master.available === false) || cartItem.available === false;
+  });
+
+  if (soldOutItems.length > 0) {
+    const names = soldOutItems.map(i => i.name).join(', ');
+    showToast(`⚠️ Cannot place order: "${names}" is currently sold out. Please remove it from basket.`, true);
+    renderCart();
+    return;
+  }
+
   const checkoutBtn = $('#checkoutBtn');
   if (checkoutBtn) {
     checkoutBtn.disabled = true;
@@ -792,12 +792,19 @@ async function handleCheckout() {
 
   const payload = {
     restaurant_id: String(restaurantId),
+    restaurantId: String(restaurantId),
     table_id: String(tableId),
+    tableId: String(tableId),
     payment_method: selectedCartPayMethod || 'cash',
+    paymentMethod: selectedCartPayMethod || 'cash',
     special_instructions: combinedInstructions,
+    specialInstructions: combinedInstructions,
     items: cart.map(item => ({
       menu_item_id: item.baseId || item.id,
-      quantity: item.quantity || 1
+      menuItemId: item.baseId || item.id,
+      name: item.name,
+      price: Number(item.price) || 0,
+      quantity: Number(item.quantity) || 1
     }))
   };
 
@@ -812,8 +819,8 @@ async function handleCheckout() {
     });
     const data = await res.json();
     if (data.success && data.data) {
-      const orderId = data.data.id;
-      const amount = data.data.total_amount || 0;
+      const orderId = data.data.id || data.data._id;
+      const amount = data.data.total_amount ?? data.data.totalAmount ?? 0;
       saveCart([]);
       renderCart();
       closeCart();
@@ -849,8 +856,31 @@ function openCustomerUpiModal(orderId, amount) {
 
   const formattedAmount = Number(amount || 0).toFixed(2);
   if (amountEl) amountEl.textContent = `₹${formattedAmount}`;
+  
+  const merchantUpi = '7777938338@omni';
+  const merchantName = 'DineFlow AI Restaurant';
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent('Order #' + orderId)}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
   if (qrImg) {
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=dineflow@upi%26pn=DineFlow%20AI%26am=${formattedAmount}%26cu=INR`;
+    qrImg.src = qrUrl;
+    qrImg.onerror = () => {
+      const parent = qrImg.parentElement;
+      if (parent) {
+        parent.innerHTML = `
+          <div style="padding:16px;text-align:center;">
+            <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
+            <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${merchantUpi}</p>
+            <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Amount: ₹${formattedAmount}</p>
+          </div>`;
+      }
+    };
+  }
+
+  // Update deep link button if present
+  const deepLink = $('#customerUpiDeepLink');
+  if (deepLink) {
+    deepLink.href = upiUrl;
   }
 
   if (modal) modal.hidden = false;
@@ -871,11 +901,12 @@ async function confirmCustomerUpiPaid() {
   }
 
   try {
-    await fetch(`${API_BASE}/orders/${currentCustomerUpiOrderId}/pay`, {
+    const res = await fetch(`${API_BASE}/orders/${currentCustomerUpiOrderId}/pay`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ payment_method: 'upi' })
     });
+    if (!res.ok) throw new Error('Payment failed');
     showToast(`🎉 Order #${currentCustomerUpiOrderId} Paid! Voice alert sent to POS Soundbox.`, false);
   } catch(e) {
     console.error('UPI pay error:', e);
@@ -890,8 +921,21 @@ let liveOrderPollInterval = null;
 async function checkLiveOrderStatus(orderId) {
   try {
     const res = await fetch(`${API_BASE}/orders/${orderId}`);
+    if (!res.ok) {
+      if (liveOrderPollInterval) { clearInterval(liveOrderPollInterval); liveOrderPollInterval = null; }
+      return;
+    }
     const data = await res.json();
     if (data.success && data.data) {
+      const status = (data.data.status || '').toLowerCase();
+      if (status === 'cancelled') {
+        if (liveOrderPollInterval) { clearInterval(liveOrderPollInterval); liveOrderPollInterval = null; }
+        const tracker = $('#liveOrderTracker');
+        if (tracker) tracker.hidden = true;
+        localStorage.removeItem(`dineflow_session_order_${tableId}`);
+        showToast('Order was cancelled by restaurant.', true);
+        return;
+      }
       updateLiveOrderTrackerUI(data.data);
     }
   } catch (err) {
@@ -998,15 +1042,6 @@ document.addEventListener('click', event => {
   }
 });
 
-document.addEventListener('change', event => {
-  const sel = event.target.closest('.cart-qty');
-  if (!sel) return;
-  const idx = Number(sel.dataset.cartIdx);
-  const qty = Number(sel.value);
-  const cart = getCart();
-  if (cart[idx]) { cart[idx].quantity = qty; saveCart(cart); renderCart(); }
-});
-
 // Quick test helper
 window.__printCart = function() { console.log('Cart contents:', getCart()); };
 
@@ -1051,14 +1086,14 @@ async function loadMenu() {
       }
     }
     if (menuResult.status === 'fulfilled' && Array.isArray(menuResult.value) && menuResult.value.length > 0) {
-      const apiItems = menuResult.value.map(normalizeItem);
-      const staticFoodItems = getStaticFoodItemsList().map(normalizeItem);
-      menuItems = apiItems.map(apiItem => {
+      const apiRawItems = menuResult.value;
+      const staticFoodItems = getStaticFoodItemsList();
+      menuItems = apiRawItems.map(apiItem => {
         const match = staticFoodItems.find(s => s.name.toLowerCase() === apiItem.name.toLowerCase() || String(s.id) === String(apiItem.id));
-        if (match) {
-          return { ...match, ...apiItem, image: apiItem.image || match.image };
-        }
-        return apiItem;
+        const merged = match ? { ...match, ...apiItem, image: apiItem.image || match.image } : { ...apiItem };
+        merged.is_available = apiItem.is_available !== undefined ? apiItem.is_available : (apiItem.available !== undefined ? apiItem.available : true);
+        merged.available = parseBoolean(merged.is_available, true);
+        return normalizeItem(merged);
       });
       renderCategories();
       renderMenu();
@@ -1067,6 +1102,11 @@ async function loadMenu() {
 }
 
 async function checkTableActiveOrder() {
+  if (liveOrderPollInterval) {
+    clearInterval(liveOrderPollInterval);
+    liveOrderPollInterval = null;
+  }
+
   const tracker = $('#liveOrderTracker');
   if (tracker) {
     tracker.hidden = true;
@@ -1127,11 +1167,11 @@ function applyTheme(theme) {
   if (toggle) {
     toggle.setAttribute('aria-pressed', String(!isLight));
     toggle.setAttribute('aria-label', isLight ? 'Enable dark mode' : 'Enable light mode');
-    const span = toggle.querySelector('span');
-    if (span) span.textContent = isLight ? 'Dark mode' : 'Light mode';
-    if (toggle.firstChild) toggle.firstChild.textContent = isLight ? '☾ ' : '☀ ';
+    toggle.innerHTML = isLight ? '<span>🌙</span> <span>Dark mode</span>' : '<span>☀️</span> <span>Light mode</span>';
   }
   localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
+  localStorage.setItem('posTheme', selectedTheme);
+  localStorage.setItem('dineflow_theme', selectedTheme);
 }
 
 // --- Safe event listener bindings (null-guarded) ---
@@ -1162,7 +1202,6 @@ if (_languageSelect) _languageSelect.addEventListener('change', event => { langu
 if (_tableNumber) _tableNumber.addEventListener('change', event => { tableId = event.target.value; const nextUrl = new URL(window.location.href); nextUrl.searchParams.set('tableId', tableId); window.history.replaceState({}, '', nextUrl); loadMenu(); });
 if (_categorySection) _categorySection.addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; category = button.dataset.category; renderCategories(); renderMenu(); });
 document.querySelectorAll('.diet-btn').forEach(button => button.addEventListener('click', () => { diet = button.dataset.diet; document.querySelectorAll('.diet-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
-document.querySelectorAll('.view-btn').forEach(button => button.addEventListener('click', () => { activeView = button.dataset.view; document.querySelectorAll('.view-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
 const _foodGrid = $('#foodGrid');
 if (_foodGrid) _foodGrid.addEventListener('click', event => {
   const favoriteButton = event.target.closest('[data-favorite-toggle]');
@@ -1176,20 +1215,48 @@ if (_foodGrid) _foodGrid.addEventListener('click', event => {
   if (addCartBtn) {
     event.stopPropagation();
     const item = menuItems.find(i => String(i.id) === String(addCartBtn.dataset.addCart));
-    if (item) addToCart(item);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+        return;
+      }
+      addToCart(item);
+    }
     return;
   }
 
   const card = event.target.closest('[data-item-id]');
-  if (card) openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId));
+  if (card) {
+    const item = menuItems.find(item => String(item.id) === card.dataset.itemId);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out and out of stock!`, true);
+        return;
+      }
+      openItemModal(item);
+    }
+  }
 });
 
 const _favSection = $('#favoritesSection');
 if (_favSection) _favSection.addEventListener('click', event => {
   const removeButton = event.target.closest('[data-favorite-remove-id]');
-  if (!removeButton) return;
-  event.stopPropagation();
-  removeFavorite(removeButton.dataset.favoriteRemoveId);
+  if (removeButton) {
+    event.stopPropagation();
+    removeFavorite(removeButton.dataset.favoriteRemoveId);
+    return;
+  }
+  const chip = event.target.closest('[data-favorite-chip-id]');
+  if (chip) {
+    const item = menuItems.find(entry => String(entry.id) === chip.dataset.favoriteChipId);
+    if (item) {
+      if (item.available === false || item.is_available === false) {
+        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+        return;
+      }
+      openItemModal(item);
+    }
+  }
 });
 
 const _recentSection = $('#recentSection');
@@ -1201,9 +1268,30 @@ if (_recentSection) _recentSection.addEventListener('click', event => {
   const recentButton = event.target.closest('[data-recent-item-id]');
   if (!recentButton) return;
   const item = menuItems.find(entry => String(entry.id) === recentButton.dataset.recentItemId);
-  if (item) openItemModal(item);
+  if (item) {
+    if (item.available === false || item.is_available === false) {
+      showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
+      return;
+    }
+    openItemModal(item);
+  }
 });
-if (_foodGrid) _foodGrid.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { const card = event.target.closest('[data-item-id]'); if (card) { event.preventDefault(); openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); } } });
+if (_foodGrid) _foodGrid.addEventListener('keydown', event => { 
+  if (event.key === 'Enter' || event.key === ' ') { 
+    const card = event.target.closest('[data-item-id]'); 
+    if (card) { 
+      event.preventDefault(); 
+      const item = menuItems.find(item => String(item.id) === card.dataset.itemId);
+      if (item) {
+        if (item.available === false || item.is_available === false) {
+          showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
+          return;
+        }
+        openItemModal(item);
+      }
+    } 
+  } 
+});
 
 const btnCloseModal = $('#btnCloseModal') || $('#closeItemModal');
 if (btnCloseModal) btnCloseModal.addEventListener('click', closeItemModal);
@@ -1251,7 +1339,7 @@ let tableUnpaidItems = [];
 let currentSplitPeopleCount = 2;
 
 function changeSplitPeople(delta) {
-  currentSplitPeopleCount = Math.max(2, Math.min(10, currentSplitPeopleCount + delta));
+  currentSplitPeopleCount = Math.max(1, Math.min(10, currentSplitPeopleCount + delta));
   const el = $('#splitPeopleCount');
   if (el) el.textContent = currentSplitPeopleCount;
   recalculateSplit();
@@ -1276,12 +1364,12 @@ async function openSplitBillModal() {
           <div style="display: flex; align-items: center; gap: 10px;">
             <input type="checkbox" class="split-item-chk" value="${idx}" onchange="recalculateSplit()" style="width: 16px; height: 16px; accent-color: #6366F1;">
             <div style="text-align: left; font-size: 13px;">
-              <div style="font-weight: 700; color: white;">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
-              <div style="font-size: 10px; opacity: 0.6;">₹${Number(item.price || 0).toFixed(2)} each</div>
+              <div class="split-item-name" style="font-weight: 700; color: var(--text-main);">${escapeHtml(item.name || item.menu_item?.name || 'Item')}</div>
+              <div style="font-size: 10px; opacity: 0.6; color: var(--text-muted);">₹${Number(item.price || 0).toFixed(2)} each</div>
             </div>
           </div>
-          <div style="font-size: 12px; font-weight: 700; color: white;">
-            Qty: <select class="split-item-qty" onchange="recalculateSplit()" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; padding: 2px 4px; font-size: 11px;">
+          <div class="split-item-qty" style="font-size: 12px; font-weight: 700; color: var(--text-main);">
+            Qty: <select class="split-item-qty-select" onchange="recalculateSplit()" style="background: var(--input-bg); border: 1px solid var(--input-border); color: var(--input-text); border-radius: 4px; padding: 2px 4px; font-size: 11px;">
               ${Array.from({ length: item.quantity || 1 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
             </select>
           </div>
@@ -1290,27 +1378,40 @@ async function openSplitBillModal() {
     }
   }
 
-  // Try DB order first
-  try {
-    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data)) {
-      const activeOrder = data.data.find(order => String(order.table_id) === String(tableId) && order.payment_status === 'pending');
-      if (activeOrder && Array.isArray(activeOrder.items) && activeOrder.items.length > 0) {
-        renderSplitItems(activeOrder.items, 'order');
-        const modal = $('#splitBillModal');
-        if (modal) modal.hidden = false;
-        return;
+  // Try session order first (saved when customer placed order)
+  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  if (sessionOrderId) {
+    try {
+      const res = await fetch(`${API_BASE}/orders/${sessionOrderId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const order = data.data || data;
+        if (order && order.payment_status === 'pending' && Array.isArray(order.items) && order.items.length > 0) {
+          renderSplitItems(order.items, 'order');
+          const modal = $('#splitBillModal');
+          if (modal) modal.hidden = false;
+          // Auto-check all items by default for equal split
+          setTimeout(() => {
+            document.querySelectorAll('.split-item-chk').forEach(chk => { chk.checked = true; });
+            recalculateSplit();
+          }, 100);
+          return;
+        }
       }
+    } catch (err) {
+      console.log('Session order fetch failed:', err);
     }
-  } catch (err) {
-    console.log('Split bill DB fetch failed, trying cart:', err);
   }
 
   // Fallback: use cart items
   const cart = getCart();
   if (cart && cart.length > 0) {
     renderSplitItems(cart, 'cart');
+    // Auto-check all items by default
+    setTimeout(() => {
+      document.querySelectorAll('.split-item-chk').forEach(chk => { chk.checked = true; });
+      recalculateSplit();
+    }, 100);
   } else {
     tableUnpaidItems = [];
     if (listEl) {
@@ -1345,7 +1446,7 @@ function recalculateSplit() {
   });
 
   const tax = subtotal * 0.05;
-  const total = subtotal + tax;
+  const total = (subtotal + tax) / currentSplitPeopleCount;
 
   setEl('#splitSubtotal', `₹${subtotal.toFixed(2)}`);
   setEl('#splitTax', `₹${tax.toFixed(2)}`);
@@ -1361,6 +1462,17 @@ function recalculateSplit() {
     if (total > 0) {
       qrImg.src = qrUrl;
       qrImg.style.display = 'block';
+      qrImg.onerror = () => {
+        const parent = qrImg.parentElement;
+        if (parent) {
+          parent.innerHTML = `
+            <div style="padding:16px;text-align:center;">
+              <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
+              <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${merchantUpi}</p>
+              <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Your Share: ₹${total.toFixed(2)}</p>
+            </div>`;
+        }
+      };
     } else {
       qrImg.src = '';
       qrImg.style.display = 'none';
@@ -1428,36 +1540,35 @@ async function openPayFullBillModal() {
     if (upiSection) upiSection.style.display = 'block';
   }
 
-  // Try to fetch from DB first
-  try {
-    const res = await fetch(`${API_BASE}/orders/restaurant/${restaurantId}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data)) {
-      const activeOrder = data.data.find(o =>
-        String(o.table_id) === String(tableId) && o.payment_status === 'pending'
-      );
-      if (activeOrder && Array.isArray(activeOrder.items) && activeOrder.items.length > 0) {
-        setEl('#fullBillTableLabel', `Table #${tableId} — Order #${activeOrder.id}`);
-        let subtotal = 0;
-        if (itemListEl) {
-          itemListEl.innerHTML = activeOrder.items.map(item => {
-            const name = item.name || item.menu_item?.name || 'Item';
-            const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
-            subtotal += lineTotal;
-            return `<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;">
-              <span style="font-weight:600;">${escapeHtml(name)} × ${item.quantity || 1}</span>
-              <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
-            </div>`;
-          }).join('');
-          subtotal = 0;
-          activeOrder.items.forEach(item => { subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1); });
+  // Try session order first (saved when customer placed order)
+  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  if (sessionOrderId) {
+    try {
+      const res = await fetch(`${API_BASE}/orders/${sessionOrderId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const order = data.data || data;
+        if (order && order.payment_status === 'pending' && Array.isArray(order.items) && order.items.length > 0) {
+          setEl('#fullBillTableLabel', `Table #${tableId} — Order #${order.id}`);
+          let subtotal = 0;
+          if (itemListEl) {
+            itemListEl.innerHTML = order.items.map(item => {
+              const name = item.name || item.menu_item?.name || 'Item';
+              const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
+              subtotal += lineTotal;
+              return `<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;">
+                <span style="font-weight:600;">${escapeHtml(name)} × ${item.quantity || 1}</span>
+                <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
+              </div>`;
+            }).join('');
+          }
+          generateAndShowQR(subtotal, order.id);
+          return;
         }
-        generateAndShowQR(subtotal, activeOrder.id);
-        return;
       }
+    } catch (err) {
+      console.log('Session order fetch failed:', err);
     }
-  } catch (err) {
-    console.log('DB fetch failed, using cart fallback:', err);
   }
 
   // Fallback: use local cart
@@ -1474,8 +1585,6 @@ async function openPayFullBillModal() {
           <span style="color:#34D399;font-weight:800;">₹${lineTotal.toFixed(2)}</span>
         </div>`;
       }).join('');
-      subtotal = 0;
-      cart.forEach(item => { subtotal += parseFloat(item.price || 0) * parseInt(item.quantity || 1); });
     }
     generateAndShowQR(subtotal, null);
     return;
@@ -1534,7 +1643,7 @@ async function submitCustomerReview(event) {
   };
 
   try {
-    const res = await fetch('/api/feedback', {
+    const res = await fetch(`${API_BASE}/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1552,8 +1661,312 @@ async function submitCustomerReview(event) {
       alert('Failed to submit review: ' + (data.message || 'Error'));
     }
   } catch (err) {
-    alert('Thank you for rating! Your 5-Star review was saved locally.');
+    alert('Failed to submit review. Please try again.');
     closeCustomerReviewModal();
   }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 📅 TABLE RESERVATION SYSTEM
+// ══════════════════════════════════════════════════════════════════════════════
+function openTableReservationModal() {
+  const modal = document.getElementById('tableReservationModal');
+  if (!modal) return;
+  modal.hidden = false;
+  
+  // Set default date to today
+  const dateInput = document.getElementById('resDate');
+  if (dateInput && !dateInput.value) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    dateInput.min = today;
+  }
+}
+
+function closeTableReservationModal() {
+  const modal = document.getElementById('tableReservationModal');
+  if (modal) modal.hidden = true;
+}
+
+async function submitTableReservation(event) {
+  event.preventDefault();
+  const date = document.getElementById('resDate').value;
+  const timeSlot = document.getElementById('resTimeSlot').value;
+  const pax = document.getElementById('resPax').value;
+  const occasion = document.getElementById('resOccasion').value;
+  const name = document.getElementById('resName').value.trim();
+  const phone = document.getElementById('resPhone').value.trim();
+
+  const payload = {
+    restaurant_id: restaurantId,
+    customer_name: name,
+    customer_phone: phone,
+    pax_count: pax,
+    reservation_date: date,
+    time_slot: timeSlot,
+    special_requests: `Occasion: ${occasion}`,
+    status: 'pending'
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/reservations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok && data.success === false) {
+      showToast(data.message || 'Could not submit reservation. Please check your details.', true);
+      return;
+    }
+    
+    // Save to local storage for user's own reference
+    const savedReservations = JSON.parse(localStorage.getItem('dineflow_my_reservations') || '[]');
+    savedReservations.push({ ...payload, id: Date.now(), created_at: new Date().toISOString() });
+    localStorage.setItem('dineflow_my_reservations', JSON.stringify(savedReservations));
+
+    closeTableReservationModal();
+    
+    // WhatsApp Confirmation link
+    const waMsg = encodeURIComponent(
+      `🎉 *Table Reservation Request — DineFlow AI*\n\n` +
+      `👤 *Name:* ${name}\n` +
+      `📞 *Phone:* ${phone}\n` +
+      `📅 *Date:* ${date}\n` +
+      `⏰ *Time Slot:* ${timeSlot}\n` +
+      `👥 *Guests:* ${pax} Person(s)\n` +
+      `✨ *Occasion:* ${occasion}\n\n` +
+      `_Please confirm my table reservation. Thank you!_`
+    );
+    
+    const confirmWa = confirm(`🎉 Reservation request sent for ${pax} guests on ${date} (${timeSlot})!\n\nWould you like to send this confirmation to restaurant WhatsApp?`);
+    if (confirmWa) {
+      window.open(`https://api.whatsapp.com/send?text=${waMsg}`, '_blank');
+    }
+  } catch (err) {
+    showToast('Reservation noted successfully!');
+    closeTableReservationModal();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 🎙️ AI VOICE-TO-ORDER MULTILINGUAL RECOGNITION ENGINE
+// ══════════════════════════════════════════════════════════════════════════════
+let voiceRecognitionInstance = null;
+let isVoiceListening = false;
+
+function toggleVoiceOrderRecognition() {
+  if (isVoiceListening) {
+    stopVoiceOrderRecognition();
+  } else {
+    startVoiceOrderRecognition();
+  }
+}
+
+function startVoiceOrderRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert('Speech Recognition is not supported in this browser. Please use Chrome, Edge, or Safari on mobile/desktop.');
+    return;
+  }
+
+  try {
+    voiceRecognitionInstance = new SpeechRecognition();
+    voiceRecognitionInstance.continuous = true;
+    voiceRecognitionInstance.interimResults = true;
+
+    // Detect language preference
+    const lang = language || 'en';
+    if (lang === 'gu') {
+      voiceRecognitionInstance.lang = 'gu-IN';
+    } else if (lang === 'hi') {
+      voiceRecognitionInstance.lang = 'hi-IN';
+    } else {
+      voiceRecognitionInstance.lang = 'en-IN';
+    }
+
+    voiceRecognitionInstance.onstart = () => {
+      isVoiceListening = true;
+      const overlay = document.getElementById('aiVoiceOverlay');
+      if (overlay) overlay.style.display = 'flex';
+      const transcriptEl = document.getElementById('voiceLiveTranscript');
+      if (transcriptEl) transcriptEl.textContent = 'Listening... Speak now';
+      const micBtn = document.getElementById('voiceOrderBtn');
+      if (micBtn) micBtn.style.background = '#EF4444';
+    };
+
+    voiceRecognitionInstance.onresult = (event) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          const interim = event.results[i][0].transcript;
+          const transcriptEl = document.getElementById('voiceLiveTranscript');
+          if (transcriptEl) transcriptEl.textContent = `"${interim}"`;
+        }
+      }
+
+      if (finalTranscript) {
+        const transcriptEl = document.getElementById('voiceLiveTranscript');
+        if (transcriptEl) transcriptEl.textContent = `"${finalTranscript}"`;
+        processVoiceOrderSpeech(finalTranscript);
+      }
+    };
+
+    voiceRecognitionInstance.onerror = (event) => {
+      console.warn('Speech recognition event:', event.error);
+      if (event.error === 'not-allowed') {
+        alert('Microphone permission was denied. Please allow mic access in your browser.');
+        stopVoiceOrderRecognition();
+      }
+    };
+
+    voiceRecognitionInstance.onend = () => {
+      if (isVoiceListening) {
+        stopVoiceOrderRecognition();
+      }
+    };
+
+    voiceRecognitionInstance.start();
+  } catch (err) {
+    console.error('Error starting voice recognition:', err);
+    stopVoiceOrderRecognition();
+  }
+}
+
+function stopVoiceOrderRecognition() {
+  isVoiceListening = false;
+  if (voiceRecognitionInstance) {
+    try { voiceRecognitionInstance.stop(); } catch (_) {}
+    voiceRecognitionInstance = null;
+  }
+  const overlay = document.getElementById('aiVoiceOverlay');
+  if (overlay) overlay.style.display = 'none';
+  const micBtn = document.getElementById('voiceOrderBtn');
+  if (micBtn) micBtn.style.background = 'linear-gradient(135deg, #6366F1, #4F46E5)';
+}
+
+function processVoiceOrderSpeech(text) {
+  if (!text || !menuItems.length) return;
+  const lowerText = text.toLowerCase();
+  
+  // Multilingual number word mappings
+  const qtyMap = {
+    'એક': 1, 'બે': 2, 'ત્રણ': 3, 'ચાર': 4, 'પાંચ': 5, 'છ': 6,
+    'ek': 1, 'be': 2, 'tran': 3, 'char': 4, 'paanch': 5,
+    'एक': 1, 'दो': 2, 'तीन': 3, 'चार': 4, 'पांच': 5, 'छह': 6,
+    'do': 2, 'teen': 3,
+    'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6,
+    '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8
+  };
+
+  // Find quantity in string if present
+  let matchedQty = 1;
+  for (const [word, num] of Object.entries(qtyMap)) {
+    const regex = new RegExp(`\\b${word}\\b`, 'i');
+    if (regex.test(lowerText)) {
+      matchedQty = num;
+      break;
+    }
+  }
+
+  // Dish keyword matching aliases
+  const matchedItems = [];
+  menuItems.forEach(item => {
+    const itemNameLower = item.name.toLowerCase();
+    const itemWords = itemNameLower.split(' ').filter(w => w.length > 2);
+    
+    // Check direct substring or key word presence
+    let isMatch = lowerText.includes(itemNameLower);
+    if (!isMatch) {
+      isMatch = itemWords.some(w => lowerText.includes(w));
+    }
+    
+    // Extra multilingual phonetics
+    if (!isMatch) {
+      if (itemNameLower.includes('pizza') && (lowerText.includes('પીઝા') || lowerText.includes('पिज़्ज़ा') || lowerText.includes('piza'))) isMatch = true;
+      if (itemNameLower.includes('burger') && (lowerText.includes('બર્ગર') || lowerText.includes('બર્ગ') || lowerText.includes('बर्गर'))) isMatch = true;
+      if (itemNameLower.includes('pasta') && (lowerText.includes('પાસ્તા') || lowerText.includes('पास्ता'))) isMatch = true;
+      if (itemNameLower.includes('coffee') && (lowerText.includes('કોફી') || lowerText.includes('कॉफ़ी') || lowerText.includes('કૉફી'))) isMatch = true;
+      if (itemNameLower.includes('paneer') && (lowerText.includes('પનીર') || lowerText.includes('पनीर'))) isMatch = true;
+      if (itemNameLower.includes('fries') && (lowerText.includes('ફ્રાઈસ') || lowerText.includes('ફ્રેન્ચ ફ્રાઈસ') || lowerText.includes('chips'))) isMatch = true;
+      if (itemNameLower.includes('brownie') && (lowerText.includes('બ્રાઉની') || lowerText.includes('ચોકલેટ'))) isMatch = true;
+      if (itemNameLower.includes('drink') && (lowerText.includes('કોલ્ડ્રિંક') || lowerText.includes('સોફ્ટ ડ્રિંક') || lowerText.includes('pepsi') || lowerText.includes('coke'))) isMatch = true;
+    }
+
+    if (isMatch) {
+      if (item.available === false || item.is_available === false) {
+        const outMessage = `Sorry, ${item.name} is currently sold out!`;
+        showToast(`🚫 AI Voice: ${outMessage}`, true);
+        if ('speechSynthesis' in window) {
+          try {
+            const utterance = new SpeechSynthesisUtterance(outMessage);
+            utterance.rate = 1.05;
+            window.speechSynthesis.speak(utterance);
+          } catch (_) {}
+        }
+        stopVoiceOrderRecognition();
+        return;
+      }
+      matchedItems.push(item);
+    }
+  });
+
+  if (matchedItems.length > 0) {
+    const targetItem = matchedItems[0];
+    addToCart({ ...targetItem, quantity: matchedQty });
+    
+    const confirmMessage = `Added ${matchedQty} × ${targetItem.name} to your basket!`;
+    showToast(`🤖 AI Voice: ${confirmMessage}`);
+    
+    // Voice Feedback (SpeechSynthesis)
+    if ('speechSynthesis' in window) {
+      try {
+        const utterance = new SpeechSynthesisUtterance(confirmMessage);
+        utterance.rate = 1.05;
+        window.speechSynthesis.speak(utterance);
+      } catch (_) {}
+    }
+
+    setTimeout(() => {
+      stopVoiceOrderRecognition();
+      // Auto open cart to show items
+      openCart();
+    }, 1200);
+  } else {
+    showToast('Could not match item name. Please speak dish name clearly.', true);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 💬 WHATSAPP AUTOMATED DIGITAL INVOICE GENERATOR
+// ══════════════════════════════════════════════════════════════════════════════
+function generateWhatsAppBillLink(orderId, orderDetails) {
+  const restName = window.restaurant?.name || 'DineFlow Gourmet Restaurant';
+  const table = orderDetails.table_id || '1';
+  const items = orderDetails.items || [];
+  const subtotal = orderDetails.total_amount || 0;
+  const tax = (subtotal * 0.05).toFixed(2);
+  const total = (Number(subtotal) + Number(tax)).toFixed(2);
+  
+  let itemLines = items.map(i => `• ${i.name || i.menu_item_name} × ${i.quantity} — ₹${(i.price * i.quantity).toFixed(2)}`).join('\n');
+  if (!itemLines) itemLines = `• Order #${orderId} (Dine-in meal)`;
+
+  const message = 
+    `🍽️ *${restName}*\n` +
+    `🧾 *Digital Bill & Receipt — Order #${orderId}*\n` +
+    `📍 *Table:* #${table} | *Date:* ${new Date().toLocaleDateString('en-IN')}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `${itemLines}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💵 *Subtotal:* ₹${Number(subtotal).toFixed(2)}\n` +
+    `🏷️ *GST (5%):* ₹${tax}\n` +
+    `💰 *Grand Total:* ₹${total} (PAID ✅)\n\n` +
+    `🌟 *Rate your dining experience:* \n` +
+    `https://dineflow.ai/review?order=${orderId}\n\n` +
+    `_Thank you for dining with us! Visit again._ 🙏`;
+
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
 }
 

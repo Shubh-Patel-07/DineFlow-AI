@@ -135,24 +135,35 @@ async function handleSaveCoupon(e) {
 
   const payload = {
     restaurant_id: 1,
+    restaurantId: '1',
     code, name,
     discount_type: type,
+    discountType: type,
     discount_value: value,
+    discountValue: value,
     min_order_amount: minAmt,
+    minOrderAmount: minAmt,
     max_discount: maxDiscount,
+    maxDiscount: maxDiscount,
     order_type: orderType,
+    orderType: orderType,
     category: category,
     usage_limit: usageLimit,
+    usageLimit: usageLimit,
     is_active: 1,
+    isActive: 1,
     is_auto_apply: isAutoApply,
+    isAutoApply: isAutoApply,
     first_time_only: firstTimeOnly,
+    firstTimeOnly: firstTimeOnly,
     expires_at: expiry || null,
+    expiresAt: expiry || null,
   };
 
   try {
     const res = await fetch('/api/coupons', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
       body: JSON.stringify(payload)
     });
     if (res.ok) {
@@ -173,8 +184,8 @@ async function toggleCoupon(id, newActive) {
   try {
     const res = await fetch(`/api/coupons/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
-      body: JSON.stringify({ is_active: newActive })
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
+      body: JSON.stringify({ is_active: newActive, isActive: newActive })
     });
     if (res.ok) {
       Toast.success(newActive ? 'Coupon activated!' : 'Coupon deactivated!');
