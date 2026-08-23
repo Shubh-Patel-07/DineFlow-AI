@@ -98,18 +98,29 @@ function renderRecommendedSection() {
   section.style.display = 'block';
   section.innerHTML = `
     <div class="promo-section__header">
-      <h3 class="promo-section__title">Recommended for You</h3>
+      <h3 class="promo-section__title">✨ Recommended for You</h3>
       <span class="promo-section__meta">Picked for your taste</span>
     </div>
     <div class="promo-grid">
-      ${recommendedItems.map(item => `
-        <div class="promo-card">
-          <span class="promo-card__tag">${escapeHtml(item.popular ? 'Popular' : 'Suggested')}</span>
+      ${recommendedItems.map(item => {
+        const isVeg = item.is_veg !== false && item.dietary !== 'non-veg';
+        return `
+        <div class="promo-card" onclick="openItemModal(menuItems.find(i => String(i.id) === '${escapeHtml(item.id)}'))" style="cursor:pointer;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span class="promo-card__tag">${item.popular ? '🔥 Popular' : '✨ Chef Special'}</span>
+            <span style="font-size:11px; font-weight:700;">${isVeg ? '🟢 Veg' : '🔴 Non-Veg'}</span>
+          </div>
           <div class="promo-card__name">${escapeHtml(item.name)}</div>
-          <div class="promo-card__desc">${escapeHtml(item.description || 'A fresh pick from our menu')}</div>
-          <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}">View Item</button>
+          <div class="promo-card__desc">${escapeHtml(item.description || 'Freshly prepared specialty dish with signature seasoning.')}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:8px;">
+            <strong style="color:#059669; font-size:1.05rem; font-weight:800;">₹${Number(item.price || 0).toFixed(2)}</strong>
+            <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}" onclick="event.stopPropagation(); addToCart(menuItems.find(i => String(i.id) === '${escapeHtml(item.id)}')); showToast('Added to Cart!');">
+              + Add
+            </button>
+          </div>
         </div>
-      `).join('')}
+      `;
+      }).join('')}
     </div>
   `;
 }
@@ -121,7 +132,7 @@ function renderComboOffersSection() {
   section.style.display = 'block';
   section.innerHTML = `
     <div class="promo-section__header">
-      <h3 class="promo-section__title">Combo Offers</h3>
+      <h3 class="promo-section__title">🍱 Combo Offers</h3>
       <span class="promo-section__meta">Great value deals</span>
     </div>
     <div class="promo-grid">
@@ -129,8 +140,10 @@ function renderComboOffersSection() {
         <div class="combo-card">
           <div class="combo-card__title">${escapeHtml(combo.name)}</div>
           <div class="combo-card__includes">${escapeHtml(combo.includes.join(' • '))}</div>
-          <div class="combo-card__price">₹${escapeHtml(combo.price)}</div>
-          <button class="combo-card__btn" type="button" data-combo-add-id="${escapeHtml(combo.id)}">Add Combo</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:6px;">
+            <div class="combo-card__price">₹${escapeHtml(combo.price)}</div>
+            <button class="combo-card__btn" type="button" data-combo-add-id="${escapeHtml(combo.id)}">+ Add Combo</button>
+          </div>
         </div>
       `).join('')}
     </div>
@@ -1143,11 +1156,11 @@ function applyTheme(theme) {
   if (toggle) {
     toggle.setAttribute('aria-pressed', String(!isLight));
     toggle.setAttribute('aria-label', isLight ? 'Enable dark mode' : 'Enable light mode');
-    const span = toggle.querySelector('span');
-    if (span) span.textContent = isLight ? 'Dark mode' : 'Light mode';
-    if (toggle.firstChild) toggle.firstChild.textContent = isLight ? '☾ ' : '☀ ';
+    toggle.innerHTML = isLight ? '<span>🌙</span> <span>Dark mode</span>' : '<span>☀️</span> <span>Light mode</span>';
   }
   localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
+  localStorage.setItem('posTheme', selectedTheme);
+  localStorage.setItem('dineflow_theme', selectedTheme);
 }
 
 // --- Safe event listener bindings (null-guarded) ---

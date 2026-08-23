@@ -446,10 +446,10 @@ button, input, select, textarea { font: inherit; }
 /* ==========================================================================
    Promo Sections & Combo Deals
    ========================================================================== */
-.promo-section { margin-bottom: 20px; }
-.promo-section__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.promo-section__title { font: 800 1.15rem var(--font-accent); color: var(--text-main); }
-.promo-section__meta { font-size: 0.85rem; color: var(--text-muted); }
+.promo-section { margin-bottom: 24px; width: 100%; }
+.promo-section__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding: 0 2px; }
+.promo-section__title { font: 800 1.25rem var(--font-accent); color: var(--text-main); margin: 0; letter-spacing: -0.2px; }
+.promo-section__meta { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
 
 .promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 
@@ -989,30 +989,113 @@ body.light-theme .diet-btn,
 body.light-theme .filter-btn,
 body.light-theme .category-btn,
 body.light-theme #sortSelect,
-body.light-theme .search-box,
-body.light-theme .language-picker,
-body.light-theme .theme-toggle {
+body.light-theme .search-box {
   background: #FFFFFF !important;
   color: #0F172A !important;
   border-color: #CBD5E1 !important;
 }
 
-body.light-theme .language-picker select { color: #0F172A !important; }
-body.light-theme .theme-toggle span { color: #0F172A !important; }
+body.light-theme .language-picker,
+body.light-theme .theme-toggle {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid #CBD5E1 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .language-picker select {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
+
+body.light-theme .theme-toggle {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
+
+body.light-theme .theme-toggle span {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
 
 body.light-theme .review-btn {
-  background: #FFFBEB !important;
-  border: 1px solid #FCD34D !important;
-  color: #D97706 !important;
+  background: #FEF3C7 !important;
+  border: 1.5px solid #FCD34D !important;
+  color: #B45309 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.12) !important;
+}
+body.light-theme .review-btn span {
+  color: #B45309 !important;
+  font-weight: 700 !important;
+}
+body.light-theme .review-btn:hover {
+  background: #FDE68A !important;
+  border-color: #F59E0B !important;
 }
 
 body.light-theme .book-table-btn {
   background: #EEF2FF !important;
-  border: 1px solid #C7D2FE !important;
-  color: #4F46E5 !important;
+  border: 1.5px solid #C7D2FE !important;
+  color: #4338CA !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.1) !important;
+}
+body.light-theme .book-table-btn span {
+  color: #4338CA !important;
+  font-weight: 700 !important;
+}
+body.light-theme .book-table-btn:hover {
+  background: #E0E7FF !important;
+  border-color: #A5B4FC !important;
+}
+
+body.light-theme .table-card-wrapper {
+  background: #EEF2FF !important;
+  border: 1.5px solid #C7D2FE !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08) !important;
+}
+body.light-theme .table-card {
+  color: #4338CA !important;
+}
+body.light-theme .table-card select {
+  color: #059669 !important;
 }
 
 body.light-theme .search-box input { color: #0F172A !important; }
+
+body.light-theme .promo-card,
+body.light-theme .combo-card {
+  background: #FFFFFF !important;
+  border: 1.5px solid #E2E8F0 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .promo-card__tag {
+  background: #EEF2FF !important;
+  color: #4F46E5 !important;
+  font-weight: 800 !important;
+}
+
+body.light-theme .promo-card__name,
+body.light-theme .combo-card__title {
+  color: #0F172A !important;
+  font-weight: 800 !important;
+}
+
+body.light-theme .promo-card__desc,
+body.light-theme .combo-card__includes {
+  color: #475569 !important;
+}
+
+body.light-theme .promo-card__btn {
+  background: linear-gradient(135deg, #6366F1, #4F46E5) !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25) !important;
+}
+
 body.light-theme .food-footer strong,
 body.light-theme .combo-card__price,
 body.light-theme #cartGrandTotal,
