@@ -482,7 +482,7 @@ function renderMenu() {
         </div>
       </div>
     </article>`;
-  }).join('') : `<div class="empty-state"><span class="empty-illustration" aria-hidden="true">🍽️</span><h3>${getText('empty')}</h3><p>${getText('emptyHint')}</p></div>`;
+  }).join('');
 }
 
 async function openItemModal(item) {
