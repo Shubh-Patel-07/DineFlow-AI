@@ -452,13 +452,10 @@ function closeItemModal() { const m = $('#itemModal'); if (m) m.hidden = true; }
 document.addEventListener('click', event => {
   const recommendedButton = event.target.closest('[data-recommended-item-id]');
   if (recommendedButton) {
+    event.stopPropagation();
     const item = menuItems.find(i => String(i.id) === String(recommendedButton.dataset.recommendedItemId));
     if (item) {
-      if (item.available === false || item.is_available === false) {
-        showToast(`Sorry, "${item.name}" is currently sold out!`, true);
-        return;
-      }
-      openItemModal(item);
+      addToCart(item);
     }
     return;
   }
