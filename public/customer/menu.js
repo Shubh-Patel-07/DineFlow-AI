@@ -885,14 +885,14 @@ function selectCartPayMethod(method) {
   selectedCartPayMethod = method;
   const cashLabel = $('#payMethodCashLabel');
   const upiLabel = $('#payMethodUpiLabel');
+  const cashRadio = cashLabel?.querySelector('input[type="radio"]');
+  const upiRadio = upiLabel?.querySelector('input[type="radio"]');
   
   if (cashLabel && upiLabel) {
     cashLabel.classList.toggle('active', method === 'cash');
     upiLabel.classList.toggle('active', method === 'upi');
-    cashLabel.style.background = '';
-    cashLabel.style.borderColor = '';
-    upiLabel.style.background = '';
-    upiLabel.style.borderColor = '';
+    if (cashRadio) cashRadio.checked = (method === 'cash');
+    if (upiRadio) upiRadio.checked = (method === 'upi');
   }
 }
 

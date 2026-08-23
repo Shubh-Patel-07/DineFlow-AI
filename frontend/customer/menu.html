@@ -248,24 +248,32 @@
         </div>
 
         <!-- Payment Method Selection -->
-        <div class="payment-method-section" style="border-radius:16px; padding:14px;">
-          <label style="font-size:12px; font-weight:700; color:var(--primary, #6366F1); display:flex; align-items:center; gap:6px; margin-bottom:10px;">
-            <span>💳</span> <span>Select Payment Option</span>
-          </label>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <label id="payMethodCashLabel" class="pay-method-card active" style="display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; cursor:pointer; transition:all 0.2s;">
-              <input type="radio" name="cartPaymentMethod" value="cash" checked onclick="selectCartPayMethod('cash')" style="accent-color:#6366F1;">
-              <div>
-                <div style="font-size:12.5px; font-weight:700; color:var(--text-main, #0F172A);">💵 Pay at Counter</div>
-                <div style="font-size:10.5px; color:var(--text-muted, #64748B);">Cash / Card later</div>
+        <div class="payment-method-section" style="border-radius:18px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <label style="font-size:12.5px; font-weight:800; color:var(--text-main, #0F172A); display:flex; align-items:center; gap:8px;">
+              <span>💳</span> <span>Payment Method</span>
+            </label>
+            <span style="font-size:10.5px; font-weight:700; color:#10B981; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:6px;">Secure Checkout</span>
+          </div>
+
+          <div class="pay-methods-grid">
+            <label id="payMethodCashLabel" class="pay-method-card active" onclick="selectCartPayMethod('cash')">
+              <input type="radio" name="cartPaymentMethod" value="cash" checked style="accent-color:#6366F1;">
+              <div class="pay-method-icon-wrap" style="background:rgba(99,102,241,0.12); color:#6366F1;">💵</div>
+              <div class="pay-method-info">
+                <div class="pay-method-title">Pay at Counter</div>
+                <div class="pay-method-sub">Cash / Card later</div>
               </div>
             </label>
-            <label id="payMethodUpiLabel" class="pay-method-card" style="display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; cursor:pointer; transition:all 0.2s;">
-              <input type="radio" name="cartPaymentMethod" value="upi" onclick="selectCartPayMethod('upi')" style="accent-color:#10B981;">
-              <div>
-                <div style="font-size:12.5px; font-weight:700; color:var(--text-main, #0F172A);">📱 Instant UPI QR</div>
-                <div style="font-size:10.5px; color:var(--text-muted, #64748B);">GPay / PhonePe / Paytm</div>
+
+            <label id="payMethodUpiLabel" class="pay-method-card" onclick="selectCartPayMethod('upi')">
+              <input type="radio" name="cartPaymentMethod" value="upi" style="accent-color:#10B981;">
+              <div class="pay-method-icon-wrap" style="background:rgba(16,185,129,0.12); color:#10B981;">📱</div>
+              <div class="pay-method-info">
+                <div class="pay-method-title">Instant UPI QR</div>
+                <div class="pay-method-sub">GPay / PhonePe / Paytm</div>
               </div>
+              <span class="pay-fast-badge">FAST ⚡</span>
             </label>
           </div>
         </div>
