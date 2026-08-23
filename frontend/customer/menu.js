@@ -505,18 +505,26 @@ function getCart() {
 function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
 function addToCart(customizedItem) {
   if (!customizedItem) return;
-  const masterItem = menuItems.find(i => String(i.id) === String(customizedItem.baseId || customizedItem.id) || (customizedItem.name && i.name.toLowerCase() === customizedItem.name.toLowerCase()));
+  const masterItem = menuItems.find(i => 
+    String(i.id) === String(customizedItem.baseId || customizedItem.id) || 
+    (customizedItem.name && i.name && i.name.trim().toLowerCase() === customizedItem.name.trim().toLowerCase())
+  );
   
-  const isMasterSoldOut = masterItem ? (masterItem.available === false || masterItem.is_available === false || masterItem.is_available === 0 || masterItem.is_available === '0') : false;
-  const isCustomSoldOut = customizedItem.available === false || customizedItem.is_available === false || customizedItem.is_available === 0 || customizedItem.is_available === '0';
+  const isMasterSoldOut = masterItem ? (masterItem.available === false || masterItem.is_available === false || masterItem.is_available === 0 || masterItem.is_available === '0' || masterItem.status === 'out_of_stock') : false;
+  const isCustomSoldOut = customizedItem.available === false || customizedItem.is_available === false || customizedItem.is_available === 0 || customizedItem.is_available === '0' || customizedItem.status === 'out_of_stock';
 
   if (isMasterSoldOut || isCustomSoldOut) {
-    showToast(`Sorry, "${customizedItem.name || 'This item'}" is currently sold out and cannot be added!`, true);
+    showToast(`🚫 Sorry, "${customizedItem.name || 'This item'}" is currently SOLD OUT and cannot be added!`, true);
     return;
   }
 
   const cart = getCart();
-  const existingItemIndex = cart.findIndex(item => String(item.id) === String(customizedItem.id));
+  const existingItemIndex = cart.findIndex(item => 
+    String(item.id) === String(customizedItem.id) ||
+    (item.baseId && customizedItem.baseId && String(item.baseId) === String(customizedItem.baseId)) ||
+    (item.name && customizedItem.name && item.name.trim().toLowerCase() === customizedItem.name.trim().toLowerCase())
+  );
+
   if (existingItemIndex > -1) {
     cart[existingItemIndex].quantity = (cart[existingItemIndex].quantity || 1) + (customizedItem.quantity || 1);
   } else {
@@ -558,7 +566,7 @@ function renderCart() {
     list.innerHTML = `
       <div style="text-align:center; padding:36px 20px; color:#64748B;">
         <span style="font-size:36px; display:block; margin-bottom:8px;">🛒</span>
-        <div style="font-size:14px; font-weight:700; color:var(--text-primary, #0F172A);">Your basket is empty</div>
+        <div style="font-size:14px; font-weight:700; color:var(--text-main, #0F172A);">Your basket is empty</div>
         <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Add delicious items from menu to start ordering!</div>
       </div>
     `;
@@ -573,8 +581,8 @@ function renderCart() {
   let subtotal = 0;
   let hasSoldOutItem = false;
   list.innerHTML = cart.map((item, idx) => {
-    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id));
-    const isSoldOut = (master && master.available === false) || item.available === false;
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.trim().toLowerCase() === item.name.trim().toLowerCase()));
+    const isSoldOut = (master && (master.available === false || master.is_available === false || master.is_available === 0 || master.is_available === '0' || master.status === 'out_of_stock')) || item.available === false || item.is_available === false;
     if (isSoldOut) hasSoldOutItem = true;
 
     const name = escapeHtml(item.name);
@@ -584,21 +592,21 @@ function renderCart() {
     subtotal += itemTotal;
 
     return `
-      <div class="cart-item-card ${isSoldOut ? 'sold-out-card' : ''}" style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-radius:14px; transition:all 0.2s; ${isSoldOut ? 'border:1.5px solid #EF4444 !important; background:rgba(239,68,68,0.08) !important;' : ''}">
+      <div class="cart-item-card ${isSoldOut ? 'sold-out-card' : ''}">
         <div style="flex:1; min-width:0; overflow:hidden;">
-          <div class="cart-item-name" style="font-weight:700; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px;">
+          <div class="cart-item-name">
             <span>${name}</span>
-            ${isSoldOut ? `<span style="background:#EF4444; color:#fff; font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">SOLD OUT</span>` : ''}
+            ${isSoldOut ? `<span class="cart-sold-out-badge">SOLD OUT</span>` : ''}
           </div>
-          <div style="font-size:11.5px; color:#818CF8; font-weight:700; margin-top:2px;">${formatCurrency(price)} × ${qty} = <span class="cart-item-subtotal" style="font-weight:800;">${formatCurrency(itemTotal)}</span></div>
+          <div class="cart-item-calc">${formatCurrency(price)} × ${qty} = <span class="cart-item-subtotal">${formatCurrency(itemTotal)}</span></div>
         </div>
         <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-          <div class="cart-stepper-box" style="display:flex; align-items:center; border-radius:10px; padding:2px 4px;">
-            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty - 1})" style="background:none; border:none; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">-</button>
-            <span class="cart-stepper-val" style="font-size:12.5px; font-weight:700; min-width:20px; text-align:center;">${qty}</span>
-            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty + 1})" style="background:none; border:none; font-weight:800; width:30px; height:30px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">+</button>
+          <div class="cart-stepper-box">
+            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty - 1})">-</button>
+            <span class="cart-stepper-val">${qty}</span>
+            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty + 1})">+</button>
           </div>
-          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)" style="background:rgba(239,68,68,0.15); border:none; color:#F87171; width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)">✕</button>
         </div>
       </div>
     `;
@@ -613,11 +621,11 @@ function renderCart() {
 
   if (hasSoldOutItem) {
     const banner = `
-      <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+      <div style="background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3); border-radius:12px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
         <div style="font-size:12px; color:#EF4444; font-weight:700; display:flex; align-items:center; gap:6px;">
-          <span>⚠️</span> <span>Some items are sold out.</span>
+          <span>⚠️</span> <span>Some items in basket are Sold Out!</span>
         </div>
-        <button type="button" onclick="removeSoldOutCartItems()" style="background:#EF4444; border:none; color:#fff; font-size:11px; font-weight:800; padding:5px 10px; border-radius:8px; cursor:pointer; white-space:nowrap;">
+        <button type="button" onclick="removeSoldOutCartItems()" style="background:#EF4444; border:none; color:#fff; font-size:11px; font-weight:800; padding:6px 12px; border-radius:8px; cursor:pointer; white-space:nowrap; box-shadow:0 2px 8px rgba(239,68,68,0.4);">
           Remove Sold Out
         </button>
       </div>
@@ -632,7 +640,7 @@ function removeSoldOutCartItems() {
   const cart = getCart();
   const validCart = cart.filter(item => {
     const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.toLowerCase() === item.name.toLowerCase()));
-    const isSoldOut = (master && (master.available === false || master.is_available === false)) || item.available === false || item.is_available === false;
+    const isSoldOut = (master && (master.available === false || master.is_available === false || master.is_available === 0 || master.is_available === '0' || master.status === 'out_of_stock')) || item.available === false || item.is_available === false;
     return !isSoldOut;
   });
   saveCart(validCart);
@@ -685,7 +693,7 @@ function renderCartSmartUpselling(cart) {
     return `
       <div style="flex:0 0 130px; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; display:flex; flex-direction:column; justify-content:space-between;">
         <img src="${img}" alt="${escapeHtml(item.name)}" style="width:100%; height:60px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
-        <div style="font-size:11.5px; font-weight:700; color:#F8FAFC; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+        <div style="font-size:11.5px; font-weight:700; color:var(--text-main, #F8FAFC); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           <span style="font-size:11px; font-weight:800; color:#34D399;">₹${item.price}</span>
           <button onclick="addUpsellItemToCart(${item.id})" type="button" style="background:rgba(99,102,241,0.2); border:1px solid rgba(99,102,241,0.4); color:#A5B4FC; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">+ Add</button>
@@ -700,8 +708,8 @@ function renderCartSmartUpselling(cart) {
 function addUpsellItemToCart(itemId) {
   const item = menuItems.find(i => String(i.id) === String(itemId));
   if (item) {
-    if (item.available === false) {
-      showToast(`Sorry, "${item.name}" is currently sold out!`, true);
+    if (item.available === false || item.is_available === false || item.is_available === 0 || item.is_available === '0') {
+      showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
       return;
     }
     addToCart(item);
