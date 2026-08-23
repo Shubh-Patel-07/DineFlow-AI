@@ -1004,6 +1004,71 @@ body.light-theme .sold-out-card {
   letter-spacing: 0.5px;
 }
 
+/* Smart Upselling Tray & Cards */
+.cart-upsell-tray {
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+body.light-theme .cart-upsell-tray {
+  background: linear-gradient(135deg, #EEF2FF, #ECFDF5) !important;
+  border: 1.5px solid #C7D2FE !important;
+}
+
+.cart-upsell-card {
+  flex: 0 0 132px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cart-upsell-card:hover {
+  transform: translateY(-2px);
+  border-color: #818CF8;
+}
+body.light-theme .cart-upsell-card {
+  background: #FFFFFF !important;
+  border: 1.5px solid #E2E8F0 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+body.light-theme .cart-upsell-card:hover {
+  border-color: #6366F1 !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12) !important;
+}
+
+.cart-upsell-btn {
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+  border: none;
+  color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
+  transition: all 0.15s ease;
+}
+.cart-upsell-btn:hover {
+  transform: scale(1.06);
+  filter: brightness(1.1);
+}
+
+@keyframes cartItemPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  50% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.cart-item-highlight {
+  animation: cartItemPulse 0.8s ease-out;
+  border-color: #10B981 !important;
+}
+
 .cooking-notes-section, .payment-method-section, .cart-summary-box {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--card-border);
