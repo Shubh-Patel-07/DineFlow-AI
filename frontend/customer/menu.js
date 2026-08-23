@@ -114,7 +114,7 @@ function renderRecommendedSection() {
           <div class="promo-card__desc">${escapeHtml(item.description || 'Freshly prepared specialty dish with signature seasoning.')}</div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:8px;">
             <strong style="color:#059669; font-size:1.05rem; font-weight:800;">₹${Number(item.price || 0).toFixed(2)}</strong>
-            <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}" onclick="event.stopPropagation(); addToCart(menuItems.find(i => String(i.id) === '${escapeHtml(item.id)}')); showToast('Added to Cart!');">
+            <button class="promo-card__btn" type="button" data-recommended-item-id="${escapeHtml(item.id)}" onclick="event.stopPropagation(); addToCart(menuItems.find(i => String(i.id) === '${escapeHtml(item.id)}'));">
               + Add
             </button>
           </div>
@@ -718,6 +718,12 @@ function changeCartQty(idx, newQty) {
     cart.splice(idx, 1);
     showToast('Removed from cart');
   } else {
+    const item = cart[idx];
+    const master = menuItems.find(i => String(i.id) === String(item.baseId || item.id) || (item.name && i.name.toLowerCase() === item.name.toLowerCase()));
+    if (master && (master.available === false || master.is_available === false || master.is_available === 0 || master.is_available === '0')) {
+      showToast(`🚫 Cannot increase quantity: "${item.name}" is Sold Out!`, true);
+      return;
+    }
     cart[idx].quantity = newQty;
   }
   saveCart(cart);
@@ -1257,9 +1263,30 @@ if (_recentSection) _recentSection.addEventListener('click', event => {
   const recentButton = event.target.closest('[data-recent-item-id]');
   if (!recentButton) return;
   const item = menuItems.find(entry => String(entry.id) === recentButton.dataset.recentItemId);
-  if (item) openItemModal(item);
+  if (item) {
+    if (item.available === false || item.is_available === false) {
+      showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
+      return;
+    }
+    openItemModal(item);
+  }
 });
-if (_foodGrid) _foodGrid.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { const card = event.target.closest('[data-item-id]'); if (card) { event.preventDefault(); openItemModal(menuItems.find(item => String(item.id) === card.dataset.itemId)); } } });
+if (_foodGrid) _foodGrid.addEventListener('keydown', event => { 
+  if (event.key === 'Enter' || event.key === ' ') { 
+    const card = event.target.closest('[data-item-id]'); 
+    if (card) { 
+      event.preventDefault(); 
+      const item = menuItems.find(item => String(item.id) === card.dataset.itemId);
+      if (item) {
+        if (item.available === false || item.is_available === false) {
+          showToast(`🚫 Sorry, "${item.name}" is currently Sold Out!`, true);
+          return;
+        }
+        openItemModal(item);
+      }
+    } 
+  } 
+});
 
 const btnCloseModal = $('#btnCloseModal') || $('#closeItemModal');
 if (btnCloseModal) btnCloseModal.addEventListener('click', closeItemModal);
