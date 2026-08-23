@@ -807,7 +807,15 @@ function selectCartPayMethod(method) {
   }
 }
 
-function openCart() { const p = $('#cartPanel'); if (p) { p.hidden = false; renderCart(); } }
+function openCart() {
+  const p = $('#cartPanel');
+  if (p) {
+    p.hidden = false;
+    renderCart();
+    const scrollArea = p.querySelector('.cart-scroll-area');
+    if (scrollArea) scrollArea.scrollTop = 0;
+  }
+}
 function closeCart() { const p = $('#cartPanel'); if (p) p.hidden = true; }
 
 async function handleCheckout() {
