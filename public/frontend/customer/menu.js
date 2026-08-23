@@ -279,13 +279,27 @@ function normalizeItem(item) {
 
   const isAvail = parseBoolean(item.is_available ?? item.available ?? (item.status === 'out_of_stock' ? false : true), true);
 
+  // Bulletproof Veg / Non-Veg detection
+  let isVeg = true;
+  if (item.is_veg !== undefined && item.is_veg !== null) {
+    isVeg = parseBoolean(item.is_veg, true);
+  } else if (item.isVeg !== undefined && item.isVeg !== null) {
+    isVeg = parseBoolean(item.isVeg, true);
+  } else if (item.diet) {
+    isVeg = !String(item.diet).toLowerCase().includes('non');
+  } else if (item.food_type) {
+    isVeg = !String(item.food_type).toLowerCase().includes('non');
+  } else if (item.type) {
+    isVeg = !String(item.type).toLowerCase().includes('non');
+  }
+
   return {
     ...item,
     id: item.id || item._id,
     category: cat,
     image: resolveImagePath(item.image),
     available: isAvail,
-    isVeg: item.is_veg ?? item.isVeg ?? true,
+    isVeg: isVeg,
     rating: String(item.rating || '4.8'),
     badge: item.badge || cat,
     popular: isPop
@@ -294,7 +308,19 @@ function normalizeItem(item) {
 
 function applyLanguage() {
   document.documentElement.lang = language;
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = getText(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const txt = getText(key);
+    if (el.classList.contains('diet-btn')) {
+      const dietType = el.dataset.diet;
+      if (dietType === 'all') el.innerHTML = `🍽️ <span>${txt}</span>`;
+      else if (dietType === 'veg') el.innerHTML = `🟢 <span>${txt}</span>`;
+      else if (dietType === 'nonveg') el.innerHTML = `🔴 <span>${txt}</span>`;
+      else el.textContent = txt;
+    } else {
+      el.textContent = txt;
+    }
+  });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = getText(el.dataset.i18nPlaceholder); });
   const langSel = $('#languageSelect');
   if (langSel) langSel.value = language;
@@ -329,36 +355,83 @@ function renderCategories() {
   });
 
   const categories = ['All', ...normalizedCategories];
-  $('#categorySection').innerHTML = categories.map(item => {
-    const key = item.toLowerCase().trim();
-    const icon = categoryIcons[key] || '🍴';
-    const label = item === 'All' ? getText('all') : escapeHtml(item);
-    return `<button class="category-btn ${item === category ? 'active' : ''}" data-category="${escapeHtml(item)}" type="button"><span class="cat-icon">${icon}</span> <span>${label}</span></button>`;
-  }).join('');
+  const catSection = $('#categorySection');
+  if (catSection) {
+    catSection.innerHTML = categories.map(item => {
+      const key = item.toLowerCase().trim();
+      const icon = categoryIcons[key] || '🍴';
+      const label = item === 'All' ? getText('all') : escapeHtml(item);
+      const isAct = String(item).toLowerCase() === String(category).toLowerCase();
+      return `<button class="category-btn ${isAct ? 'active' : ''}" data-category="${escapeHtml(item)}" type="button"><span class="cat-icon">${icon}</span> <span>${label}</span></button>`;
+    }).join('');
+  }
 }
 
 function filteredItems() {
-  const search = $('#searchInput').value.trim().toLowerCase();
+  const searchInput = $('#searchInput');
+  const search = searchInput ? searchInput.value.trim().toLowerCase() : '';
   const favorites = getFavoriteIds();
   const recentIds = new Set(getRecentItemIds());
 
-  const matches = menuItems.filter(item => {
-    const matchesCategory = category === 'All' || (item.category && item.category.toLowerCase() === category.toLowerCase());
-    const matchesDiet = diet === 'all' || (diet === 'veg' ? item.isVeg : !item.isVeg);
-    const matchesSearch = !search || `${item.name} ${item.description || ''}`.toLowerCase().includes(search);
+  let matches = menuItems.filter(item => {
+    // 1. Category Filter
+    let matchesCategory = true;
+    if (category && String(category).toLowerCase() !== 'all') {
+      const itemCat = String(item.category || '').toLowerCase().trim();
+      const selCat = String(category).toLowerCase().trim();
+      matchesCategory = (itemCat === selCat) ||
+        (selCat === 'mains' && (itemCat.includes('main') || itemCat.includes('curry') || itemCat.includes('thali') || itemCat.includes('paneer'))) ||
+        (selCat === 'drinks' && (itemCat.includes('drink') || itemCat.includes('bever'))) ||
+        (selCat === 'beverages' && (itemCat.includes('drink') || itemCat.includes('bever'))) ||
+        (selCat === 'starters' && (itemCat.includes('start') || itemCat.includes('snack') || itemCat.includes('appetizer'))) ||
+        (selCat === 'breads' && (itemCat.includes('bread') || itemCat.includes('roti') || itemCat.includes('naan'))) ||
+        (selCat === 'desserts' && (itemCat.includes('dessert') || itemCat.includes('sweet') || itemCat.includes('ice')));
+    }
+
+    // 2. Diet Filter
+    let matchesDiet = true;
+    if (diet === 'veg') {
+      matchesDiet = Boolean(item.isVeg);
+    } else if (diet === 'nonveg') {
+      matchesDiet = !item.isVeg;
+    }
+
+    // 3. Search Query
+    const matchesSearch = !search || `${item.name} ${item.description || ''} ${item.category || ''}`.toLowerCase().includes(search);
+
+    // 4. View filters (Favorites / Recent)
     const isFavorite = favorites.has(String(item.id));
     const isRecent = recentIds.has(String(item.id));
     const matchesView = activeView === 'all' || (activeView === 'favorites' && isFavorite) || (activeView === 'recent' && isRecent) || (activeView === 'popular' && Boolean(item.popular));
 
+    // 5. Quick Tag Filters
     const matchesPopular = !activeFilters.has('popular') || Boolean(item.popular);
     const matchesAvailable = !activeFilters.has('available') || Boolean(item.available);
-    const matchesRating = !activeFilters.has('rating') || Number(item.rating) >= 4.5;
+    const matchesRating = !activeFilters.has('rating') || Number(item.rating || 0) >= 4.5;
+
     return matchesCategory && matchesDiet && matchesSearch && matchesView && matchesPopular && matchesAvailable && matchesRating;
   });
+
+  // Sort
   const sort = $('#sortSelect')?.value;
-  if (sort === 'price-asc') return matches.sort((a, b) => Number(a.price) - Number(b.price));
-  if (sort === 'price-desc') return matches.sort((a, b) => Number(b.price) - Number(a.price));
+  if (sort === 'price-asc') matches.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+  if (sort === 'price-desc') matches.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+
   return matches;
+}
+
+function resetAllFilters() {
+  category = 'All';
+  diet = 'all';
+  activeFilters.clear();
+  const searchInput = $('#searchInput');
+  if (searchInput) searchInput.value = '';
+  const sortSelect = $('#sortSelect');
+  if (sortSelect) sortSelect.value = 'default';
+  document.querySelectorAll('.diet-btn').forEach(b => b.classList.toggle('active', b.dataset.diet === 'all'));
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('is-active', 'active'));
+  renderCategories();
+  renderMenu();
 }
 
 function renderMenu() {
@@ -373,7 +446,23 @@ function renderMenu() {
     loadingEl.hidden = true;
     loadingEl.style.display = 'none';
   }
-  $('#foodGrid').innerHTML = items.length ? items.map(item => {
+
+  const foodGrid = $('#foodGrid');
+  if (!foodGrid) return;
+
+  if (!items.length) {
+    foodGrid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align:center; padding: 48px 20px; background:var(--card-bg); border-radius:20px; border:1px solid var(--card-border); box-shadow:var(--shadow-card);">
+        <div style="font-size:44px; margin-bottom:12px;">🔍</div>
+        <h3 style="font-size:18px; font-weight:800; color:var(--text-main); margin-bottom:6px;">No Dishes Found</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Try adjusting your search keywords or active filters.</p>
+        <button type="button" onclick="resetAllFilters()" style="background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; color:#fff; padding:10px 22px; border-radius:12px; font-size:13px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(99,102,241,0.35);">Reset All Filters</button>
+      </div>
+    `;
+    return;
+  }
+
+  foodGrid.innerHTML = items.map(item => {
     const imageSrc = resolveImagePath(item.image);
     const isFavorite = favorites.has(String(item.id));
     return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}" style="position:relative;">
@@ -1263,14 +1352,54 @@ if (_searchInput) {
   });
 }
 if (_searchSuggestions) _searchSuggestions.addEventListener('click', event => { const suggestion = event.target.closest('[data-suggestion-id]'); if (suggestion) selectSuggestion(suggestion.dataset.suggestionId); });
-document.addEventListener('click', event => { if (!event.target.closest('.search-wrapper') && _searchSuggestions) _searchSuggestions.hidden = true; });
+document.addEventListener('click', event => {
+  if (!event.target.closest('.search-wrapper') && _searchSuggestions) _searchSuggestions.hidden = true;
+
+  // 1. Diet Button Click
+  const dietBtn = event.target.closest('.diet-btn');
+  if (dietBtn) {
+    event.preventDefault();
+    diet = dietBtn.dataset.diet || 'all';
+    document.querySelectorAll('.diet-btn').forEach(b => {
+      b.classList.toggle('active', (b.dataset.diet || 'all') === diet);
+    });
+    renderMenu();
+    return;
+  }
+
+  // 2. Quick Filter Button Click
+  const filterBtn = event.target.closest('.filter-btn');
+  if (filterBtn) {
+    event.preventDefault();
+    const filter = filterBtn.dataset.filter;
+    if (filter) {
+      if (activeFilters.has(filter)) {
+        activeFilters.delete(filter);
+        filterBtn.classList.remove('is-active', 'active');
+      } else {
+        activeFilters.add(filter);
+        filterBtn.classList.add('is-active', 'active');
+      }
+      renderMenu();
+    }
+    return;
+  }
+
+  // 3. Category Button Click
+  const catBtn = event.target.closest('.category-btn');
+  if (catBtn) {
+    event.preventDefault();
+    category = catBtn.dataset.category || 'All';
+    renderCategories();
+    renderMenu();
+    return;
+  }
+});
+
 if (_themeToggle) _themeToggle.addEventListener('click', () => applyTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'));
-document.querySelectorAll('.filter-btn').forEach(button => button.addEventListener('click', () => { const { filter } = button.dataset; activeFilters.has(filter) ? activeFilters.delete(filter) : activeFilters.add(filter); button.classList.toggle('is-active', activeFilters.has(filter)); renderMenu(); }));
 if (_sortSelect) _sortSelect.addEventListener('change', renderMenu);
 if (_languageSelect) _languageSelect.addEventListener('change', event => { language = event.target.value; localStorage.setItem('dineflow-language', language); applyLanguage(); });
 if (_tableNumber) _tableNumber.addEventListener('change', event => { tableId = event.target.value; const nextUrl = new URL(window.location.href); nextUrl.searchParams.set('tableId', tableId); window.history.replaceState({}, '', nextUrl); loadMenu(); });
-if (_categorySection) _categorySection.addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; category = button.dataset.category; renderCategories(); renderMenu(); });
-document.querySelectorAll('.diet-btn').forEach(button => button.addEventListener('click', () => { diet = button.dataset.diet; document.querySelectorAll('.diet-btn').forEach(item => item.classList.toggle('active', item === button)); renderMenu(); }));
 const _foodGrid = $('#foodGrid');
 if (_foodGrid) _foodGrid.addEventListener('click', event => {
   const favoriteButton = event.target.closest('[data-favorite-toggle]');
