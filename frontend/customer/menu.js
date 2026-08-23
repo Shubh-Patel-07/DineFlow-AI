@@ -302,6 +302,25 @@ function applyLanguage() {
 }
 
 function renderCategories() {
+  const categoryIcons = {
+    'all': '🍽️',
+    'mains': '🍲',
+    'main course': '🍲',
+    'starters': '🥟',
+    'starter': '🥟',
+    'breads': '🍞',
+    'bread': '🍞',
+    'rice': '🍚',
+    'biryani': '🍚',
+    'beverages': '🥤',
+    'beverage': '🥤',
+    'drinks': '🥤',
+    'desserts': '🍨',
+    'dessert': '🍨',
+    'pizza': '🍕',
+    'burger': '🍔'
+  };
+
   const rawCategories = menuItems.map(item => item.category).filter(Boolean);
   const normalizedCategories = [];
   rawCategories.forEach(cat => {
@@ -310,7 +329,12 @@ function renderCategories() {
   });
 
   const categories = ['All', ...normalizedCategories];
-  $('#categorySection').innerHTML = categories.map(item => `<button class="category-btn ${item === category ? 'active' : ''}" data-category="${escapeHtml(item)}">${item === 'All' ? getText('all') : escapeHtml(item)}</button>`).join('');
+  $('#categorySection').innerHTML = categories.map(item => {
+    const key = item.toLowerCase().trim();
+    const icon = categoryIcons[key] || '🍴';
+    const label = item === 'All' ? getText('all') : escapeHtml(item);
+    return `<button class="category-btn ${item === category ? 'active' : ''}" data-category="${escapeHtml(item)}" type="button"><span class="cat-icon">${icon}</span> <span>${label}</span></button>`;
+  }).join('');
 }
 
 function filteredItems() {
@@ -989,44 +1013,55 @@ function updateLiveOrderTrackerUI(order) {
   const fill = $('#progressFill');
   const statusMsg = $('#trackerStatusMsg');
 
+  // Reset any previous inline colors
+  if (stepIcon1) { stepIcon1.style.background = ''; stepIcon1.style.color = ''; }
+  if (stepIcon2) { stepIcon2.style.background = ''; stepIcon2.style.color = ''; }
+  if (stepIcon3) { stepIcon3.style.background = ''; stepIcon3.style.color = ''; }
+
   if (status === 'pending') {
     if (fill) fill.style.width = '0%';
-    if (step1) step1.classList.add('active');
-    if (step2) step2.classList.remove('active');
-    if (step3) step3.classList.remove('active');
-    if (stepIcon1) { stepIcon1.style.background = '#F59E0B'; stepIcon1.style.color = '#000'; }
-    if (stepIcon2) { stepIcon2.style.background = 'rgba(255,255,255,0.1)'; stepIcon2.style.color = 'var(--text-muted)'; }
-    if (stepIcon3) { stepIcon3.style.background = 'rgba(255,255,255,0.1)'; stepIcon3.style.color = 'var(--text-muted)'; }
-    if (statusMsg) statusMsg.textContent = '🟡 Order received! Sent to kitchen chef.';
+    step1?.classList.add('active');
+    step1?.classList.remove('completed');
+    step2?.classList.remove('active', 'completed');
+    step3?.classList.remove('active', 'completed');
+    if (stepIcon1) stepIcon1.innerHTML = '1';
+    if (stepIcon2) stepIcon2.innerHTML = '2';
+    if (stepIcon3) stepIcon3.innerHTML = '3';
+    if (statusMsg) statusMsg.innerHTML = '<span>🟡</span> <span>Order received! Sent to kitchen chef.</span>';
   } else if (status === 'preparing') {
     if (fill) fill.style.width = '50%';
-    if (step1) step1.classList.add('active');
-    if (step2) step2.classList.add('active');
-    if (step3) step3.classList.remove('active');
-    if (stepIcon1) { stepIcon1.style.background = '#F59E0B'; stepIcon1.style.color = '#000'; }
-    if (stepIcon2) { stepIcon2.style.background = '#F97316'; stepIcon2.style.color = '#fff'; }
-    if (stepIcon3) { stepIcon3.style.background = 'rgba(255,255,255,0.1)'; stepIcon3.style.color = 'var(--text-muted)'; }
-    if (statusMsg) statusMsg.textContent = '🟠 Chef is cooking your delicious meal in the kitchen!';
+    step1?.classList.remove('active');
+    step1?.classList.add('completed');
+    step2?.classList.add('active');
+    step2?.classList.remove('completed');
+    step3?.classList.remove('active', 'completed');
+    if (stepIcon1) stepIcon1.innerHTML = '✓';
+    if (stepIcon2) stepIcon2.innerHTML = '2';
+    if (stepIcon3) stepIcon3.innerHTML = '3';
+    if (statusMsg) statusMsg.innerHTML = '<span>🔥</span> <span>Chef is cooking your delicious meal in the kitchen!</span>';
   } else if (status === 'served' || status === 'completed') {
     if (fill) fill.style.width = '100%';
-    if (step1) step1.classList.add('active');
-    if (step2) step2.classList.add('active');
-    if (step3) step3.classList.add('active');
-    if (stepIcon1) { stepIcon1.style.background = '#10B981'; stepIcon1.style.color = '#fff'; }
-    if (stepIcon2) { stepIcon2.style.background = '#10B981'; stepIcon2.style.color = '#fff'; }
-    if (stepIcon3) { stepIcon3.style.background = '#10B981'; stepIcon3.style.color = '#fff'; }
-    if (statusMsg) statusMsg.textContent = '🟢 Food is ready & served at your table! Enjoy your meal!';
+    step1?.classList.remove('active');
+    step1?.classList.add('completed');
+    step2?.classList.remove('active');
+    step2?.classList.add('completed');
+    step3?.classList.remove('active');
+    step3?.classList.add('completed');
+    if (stepIcon1) stepIcon1.innerHTML = '✓';
+    if (stepIcon2) stepIcon2.innerHTML = '✓';
+    if (stepIcon3) stepIcon3.innerHTML = '✓';
+    if (statusMsg) statusMsg.innerHTML = '<span>🎉</span> <span>Food is ready & served at your table! Enjoy your meal!</span>';
 
     if (liveOrderPollInterval) {
       clearInterval(liveOrderPollInterval);
       liveOrderPollInterval = null;
     }
 
-    // Auto-dismiss/hide tracker banner after 6 seconds when served/completed
+    // Auto-dismiss/hide tracker banner after 8 seconds when served/completed
     setTimeout(() => {
       hideLiveOrderTracker();
       localStorage.removeItem(`dineflow_session_order_${tableId}`);
-    }, 6000);
+    }, 8000);
   }
 }
 
