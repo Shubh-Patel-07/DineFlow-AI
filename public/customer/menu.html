@@ -192,15 +192,19 @@
   <!-- Cart Slide-Over Panel -->
   <div id="cartPanel" role="dialog" aria-modal="true" hidden>
     <div class="cart-backdrop" data-close-cart></div>
-    <article class="cart-modal-card glass-panel" style="max-width:480px; width:100%; border-radius:24px;">
+    <article class="cart-modal-card glass-panel" style="max-width:480px; width:100%; border-radius:24px; padding:22px 20px;">
       <div class="cart-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:14px; margin-bottom:16px;">
-        <h3 style="font-family:'Outfit',sans-serif; color:var(--text-main, #0F172A); font-size:1.25rem; font-weight:800; display:flex; align-items:center; gap:8px;">
-          <span>🛒</span> <span>Your Order Basket</span>
-        </h3>
-        <button id="btnCloseCart" class="cart-close-btn" type="button" aria-label="Close cart" style="background:rgba(255,255,255,0.08); border:none; color:#94A3B8; width:32px; height:32px; border-radius:10px; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, rgba(99,102,241,0.25), rgba(16,185,129,0.2)); border:1px solid rgba(99,102,241,0.3); display:flex; align-items:center; justify-content:center; font-size:18px;">🛒</div>
+          <div>
+            <h3 style="font-family:'Outfit',sans-serif; color:var(--text-main, #0F172A); font-size:1.25rem; font-weight:800; margin:0; line-height:1.2;">Your Order Basket</h3>
+            <span id="cartHeaderItemCount" style="font-size:11px; font-weight:700; color:var(--primary, #6366F1);">0 items</span>
+          </div>
+        </div>
+        <button id="btnCloseCart" class="cart-close-btn" type="button" aria-label="Close cart" style="background:rgba(255,255,255,0.08); border:none; color:var(--text-muted, #94A3B8); width:32px; height:32px; border-radius:10px; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>
       </div>
 
-      <div id="cartList" class="cart-items-list" style="overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; padding-right:4px;"></div>
+      <div id="cartList" class="cart-items-list" style="overflow-y:auto; max-height:42vh; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; padding-right:4px;"></div>
 
       <!-- AI Smart Recommendations & Upselling (Frequently Ordered Together) -->
       <div id="cartSmartUpsellTray" class="cart-upsell-tray" style="display:none; background:linear-gradient(135deg, rgba(99,102,241,0.12), rgba(16,185,129,0.08)); border:1px solid rgba(99,102,241,0.25); border-radius:16px; padding:12px 14px; margin-bottom:16px;">
@@ -214,57 +218,65 @@
       </div>
 
       <!-- Quick Cooking Note Chips -->
-      <div class="cooking-notes-section" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; margin-bottom:16px;">
-        <label style="font-size:12px; font-weight:700; color:#818CF8; display:block; margin-bottom:8px;">🧑‍🍳 Cooking Preferences & Notes</label>
+      <div class="cooking-notes-section" style="border-radius:16px; padding:14px; margin-bottom:16px;">
+        <label style="font-size:12px; font-weight:700; color:var(--primary, #6366F1); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+          <span>🧑‍🍳</span> <span>Cooking Preferences & Notes</span>
+        </label>
         <div class="note-chips" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
-          <button type="button" onclick="addCookingChip('🌶️ Extra Spicy')" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#FCA5A5; padding:4px 9px; border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;">🌶️ Extra Spicy</button>
-          <button type="button" onclick="addCookingChip('🧅 No Onion/Garlic')" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:4px 9px; border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;">🧅 No Onion</button>
-          <button type="button" onclick="addCookingChip('🧀 Extra Cheese')" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#A5B4FC; padding:4px 9px; border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;">🧀 Extra Cheese</button>
-          <button type="button" onclick="addCookingChip('🧪 Jain Food')" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:4px 9px; border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;">🧪 Jain</button>
+          <button type="button" class="cooking-chip" onclick="addCookingChip('🌶️ Extra Spicy')">🌶️ Extra Spicy</button>
+          <button type="button" class="cooking-chip" onclick="addCookingChip('🧅 No Onion/Garlic')">🧅 No Onion</button>
+          <button type="button" class="cooking-chip" onclick="addCookingChip('🧀 Extra Cheese')">🧀 Extra Cheese</button>
+          <button type="button" class="cooking-chip" onclick="addCookingChip('🧪 Jain Food')">🧪 Jain</button>
         </div>
-        <input id="cartSpecialInstructions" type="text" placeholder="Add custom instruction for chef..." style="width:100%; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px 12px; color:#F8FAFC; font-size:12.5px;">
+        <input id="cartSpecialInstructions" type="text" placeholder="Add custom instruction for chef..." style="width:100%; border-radius:10px; padding:9px 12px; font-size:12.5px;">
       </div>
 
       <!-- Payment Method Selection -->
-      <div class="payment-method-section" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; margin-bottom:16px;">
-        <label style="font-size:12px; font-weight:700; color:#818CF8; display:block; margin-bottom:10px;">💳 Select Payment Option</label>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
-          <label id="payMethodCashLabel" style="display:flex; align-items:center; gap:8px; background:rgba(99,102,241,0.15); border:1.5px solid #6366F1; padding:10px 12px; border-radius:12px; cursor:pointer; transition:all 0.2s;">
+      <div class="payment-method-section" style="border-radius:16px; padding:14px; margin-bottom:16px;">
+        <label style="font-size:12px; font-weight:700; color:var(--primary, #6366F1); display:flex; align-items:center; gap:6px; margin-bottom:10px;">
+          <span>💳</span> <span>Select Payment Option</span>
+        </label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label id="payMethodCashLabel" class="pay-method-card active" style="display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; cursor:pointer; transition:all 0.2s;">
             <input type="radio" name="cartPaymentMethod" value="cash" checked onclick="selectCartPayMethod('cash')" style="accent-color:#6366F1;">
             <div>
-              <div style="font-size:12.5px; font-weight:700; color:#F8FAFC;">💵 Pay at Counter</div>
-              <div style="font-size:10.5px; color:#94A3B8;">Pay cash later</div>
+              <div style="font-size:12.5px; font-weight:700; color:var(--text-main, #0F172A);">💵 Pay at Counter</div>
+              <div style="font-size:10.5px; color:var(--text-muted, #64748B);">Cash / Card later</div>
             </div>
           </label>
-          <label id="payMethodUpiLabel" style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1.5px solid rgba(255,255,255,0.1); padding:10px 12px; border-radius:12px; cursor:pointer; transition:all 0.2s;">
+          <label id="payMethodUpiLabel" class="pay-method-card" style="display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; cursor:pointer; transition:all 0.2s;">
             <input type="radio" name="cartPaymentMethod" value="upi" onclick="selectCartPayMethod('upi')" style="accent-color:#10B981;">
             <div>
-              <div style="font-size:12.5px; font-weight:700; color:var(--text-main, #F8FAFC);">📱 Instant UPI QR</div>
-              <div style="font-size:10.5px; color:#94A3B8;">GPay / PhonePe / Paytm</div>
+              <div style="font-size:12.5px; font-weight:700; color:var(--text-main, #0F172A);">📱 Instant UPI QR</div>
+              <div style="font-size:10.5px; color:var(--text-muted, #64748B);">GPay / PhonePe / Paytm</div>
             </div>
           </label>
         </div>
       </div>
 
       <!-- Bill Summary Card -->
-      <div class="cart-summary-box" style="background:var(--card-bg, rgba(15,23,42,0.9)); border:1px solid var(--card-border, rgba(255,255,255,0.08)); border-radius:16px; padding:14px; margin-bottom:16px; display:flex; flex-direction:column; gap:8px;">
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#94A3B8;">
-          <span>Subtotal</span>
-          <strong id="cartSubtotal" style="color:var(--text-main, #F8FAFC);">₹0.00</strong>
+      <div class="cart-summary-box" style="border-radius:16px; padding:14px; margin-bottom:16px; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted, #64748B);">
+          <span>Item Subtotal</span>
+          <strong id="cartSubtotal" style="color:var(--text-main, #0F172A);">₹0.00</strong>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:12px; color:#64748B;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted, #64748B);">
           <span>Taxes & GST (5%)</span>
-          <span id="cartTax">₹0.00</span>
+          <span id="cartTax" style="font-weight:600;">₹0.00</span>
         </div>
-        <div style="border-top:1px dashed rgba(255,255,255,0.1); padding-top:8px; margin-top:2px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-weight:700; color:var(--text-main, #F8FAFC); font-size:14px;">Total Payable</span>
-          <strong id="cartGrandTotal" style="font-size:18px; font-weight:800; color:#34D399;">₹0.00</strong>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--accent-green, #10B981);">
+          <span>Restaurant Packaging</span>
+          <span style="font-weight:700;">FREE</span>
+        </div>
+        <div style="border-top:1px dashed var(--card-border, rgba(255,255,255,0.1)); padding-top:10px; margin-top:2px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:800; color:var(--text-main, #0F172A); font-size:14.5px;">Total Payable</span>
+          <strong id="cartGrandTotal" style="font-size:19px; font-weight:800; color:#059669;">₹0.00</strong>
         </div>
       </div>
 
       <div class="cart-actions-row" style="display:flex; gap:10px;">
-        <button id="checkoutBtn" class="btn-checkout" style="flex:2; padding:12px; font-size:14px; font-weight:700; background:linear-gradient(135deg,#10B981,#059669); border-radius:12px; box-shadow:0 4px 15px rgba(16,185,129,0.35);">🚀 Confirm & Place Order</button>
-        <button id="clearCartBtn" class="btn-clear-cart" style="flex:1; padding:12px; font-size:13px; font-weight:600; background:rgba(239,68,68,0.15); color:#F87171; border:1px solid rgba(239,68,68,0.3); border-radius:12px;">Clear</button>
+        <button id="checkoutBtn" class="btn-checkout" type="button" onclick="handleCheckout()" style="flex:2; padding:14px; font-size:14.5px; font-weight:800; border-radius:14px;">🚀 Confirm & Place Order</button>
+        <button id="clearCartBtn" class="btn-clear-cart" type="button" onclick="saveCart([]); renderCart();" style="flex:1; padding:14px; font-size:13px; font-weight:700; border-radius:14px;">🗑️ Clear</button>
       </div>
     </article>
   </div>

@@ -562,12 +562,17 @@ function renderCart() {
   const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   badge.textContent = totalCount;
 
+  const headerCountEl = $('#cartHeaderItemCount');
+  if (headerCountEl) {
+    headerCountEl.textContent = `${totalCount} ${totalCount === 1 ? 'item' : 'items'}`;
+  }
+
   if (!cart.length) {
     list.innerHTML = `
-      <div style="text-align:center; padding:36px 20px; color:#64748B;">
-        <span style="font-size:36px; display:block; margin-bottom:8px;">🛒</span>
-        <div style="font-size:14px; font-weight:700; color:var(--text-main, #0F172A);">Your basket is empty</div>
-        <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Add delicious items from menu to start ordering!</div>
+      <div class="cart-empty-state">
+        <div class="cart-empty-icon">🛒</div>
+        <div class="cart-empty-title">Your basket is empty</div>
+        <div class="cart-empty-subtitle">Explore our delicious menu & add items to start ordering!</div>
       </div>
     `;
     subtotalEl.textContent = formatCurrency(0);
@@ -591,22 +596,34 @@ function renderCart() {
     const itemTotal = price * qty;
     subtotal += itemTotal;
 
+    const imageSrc = resolveImagePath(item.image || master?.image);
+    const isVeg = item.is_veg ?? item.isVeg ?? master?.isVeg ?? true;
+
     return `
       <div class="cart-item-card ${isSoldOut ? 'sold-out-card' : ''}">
-        <div style="flex:1; min-width:0; overflow:hidden;">
-          <div class="cart-item-name">
-            <span>${name}</span>
+        <img class="cart-item-thumb" src="${escapeHtml(imageSrc)}" alt="${name}" loading="lazy" onerror="this.onerror=null;this.src='/images/placeholder-food.svg';">
+        <div class="cart-item-details">
+          <div class="cart-item-header-row">
+            <span class="food-type ${isVeg ? 'veg' : 'nonveg'}" style="font-size:10px; padding:1px 5px; border-radius:4px;">${isVeg ? '● Veg' : '● Non-Veg'}</span>
             ${isSoldOut ? `<span class="cart-sold-out-badge">SOLD OUT</span>` : ''}
           </div>
-          <div class="cart-item-calc">${formatCurrency(price)} × ${qty} = <span class="cart-item-subtotal">${formatCurrency(itemTotal)}</span></div>
-        </div>
-        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-          <div class="cart-stepper-box">
-            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty - 1})">-</button>
-            <span class="cart-stepper-val">${qty}</span>
-            <button class="cart-stepper-btn" onclick="changeCartQty(${idx}, ${qty + 1})">+</button>
+          <div class="cart-item-name" title="${name}">
+            <span>${name}</span>
           </div>
-          <button data-remove-idx="${idx}" class="cart-remove" title="Remove item" onclick="changeCartQty(${idx}, 0)">✕</button>
+          <div class="cart-item-calc">
+            <span class="cart-item-unit-price">${formatCurrency(price)}</span>
+            <span class="cart-item-qty-x">× ${qty}</span>
+            <span class="cart-item-calc-sep">=</span>
+            <span class="cart-item-subtotal">${formatCurrency(itemTotal)}</span>
+          </div>
+        </div>
+        <div class="cart-item-actions">
+          <div class="cart-stepper-box">
+            <button class="cart-stepper-btn" type="button" aria-label="Decrease quantity" onclick="changeCartQty(${idx}, ${qty - 1})">-</button>
+            <span class="cart-stepper-val">${qty}</span>
+            <button class="cart-stepper-btn" type="button" aria-label="Increase quantity" onclick="changeCartQty(${idx}, ${qty + 1})" ${isSoldOut ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>+</button>
+          </div>
+          <button data-remove-idx="${idx}" class="cart-remove" type="button" title="Remove item from basket" onclick="changeCartQty(${idx}, 0)">✕</button>
         </div>
       </div>
     `;
@@ -621,11 +638,11 @@ function renderCart() {
 
   if (hasSoldOutItem) {
     const banner = `
-      <div style="background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3); border-radius:12px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-        <div style="font-size:12px; color:#EF4444; font-weight:700; display:flex; align-items:center; gap:6px;">
-          <span>⚠️</span> <span>Some items in basket are Sold Out!</span>
+      <div style="background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3); border-radius:14px; padding:12px 14px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <div style="font-size:12.5px; color:#EF4444; font-weight:700; display:flex; align-items:center; gap:8px;">
+          <span style="font-size:16px;">⚠️</span> <span>Some items in basket are Sold Out!</span>
         </div>
-        <button type="button" onclick="removeSoldOutCartItems()" style="background:#EF4444; border:none; color:#fff; font-size:11px; font-weight:800; padding:6px 12px; border-radius:8px; cursor:pointer; white-space:nowrap; box-shadow:0 2px 8px rgba(239,68,68,0.4);">
+        <button type="button" onclick="removeSoldOutCartItems()" style="background:#EF4444; border:none; color:#fff; font-size:11.5px; font-weight:800; padding:6px 12px; border-radius:8px; cursor:pointer; white-space:nowrap; box-shadow:0 2px 8px rgba(239,68,68,0.4);">
           Remove Sold Out
         </button>
       </div>
@@ -743,17 +760,12 @@ function selectCartPayMethod(method) {
   const upiLabel = $('#payMethodUpiLabel');
   
   if (cashLabel && upiLabel) {
-    if (method === 'upi') {
-      upiLabel.style.background = 'rgba(16,185,129,0.15)';
-      upiLabel.style.borderColor = '#10B981';
-      cashLabel.style.background = 'rgba(255,255,255,0.03)';
-      cashLabel.style.borderColor = 'rgba(255,255,255,0.1)';
-    } else {
-      cashLabel.style.background = 'rgba(99,102,241,0.15)';
-      cashLabel.style.borderColor = '#6366F1';
-      upiLabel.style.background = 'rgba(255,255,255,0.03)';
-      upiLabel.style.borderColor = 'rgba(255,255,255,0.1)';
-    }
+    cashLabel.classList.toggle('active', method === 'cash');
+    upiLabel.classList.toggle('active', method === 'upi');
+    cashLabel.style.background = '';
+    cashLabel.style.borderColor = '';
+    upiLabel.style.background = '';
+    upiLabel.style.borderColor = '';
   }
 }
 
