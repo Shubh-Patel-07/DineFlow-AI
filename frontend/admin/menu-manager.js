@@ -192,6 +192,7 @@ async function handleSaveItem(event) {
   event.preventDefault();
   const id = document.getElementById('itemId').value;
   const isVegSelected = document.getElementById('typeVegRadio')?.checked ?? true;
+  const isAvailableSelected = document.getElementById('itemIsAvailable')?.checked ?? true;
   const currentRestaurantId = window.AUTH_USER_RESTAURANT_ID || (typeof Auth !== 'undefined' && Auth.getUser()?.restaurant_id) || new URLSearchParams(window.location.search).get('restaurantId') || '1';
   const payload = {
     restaurant_id: currentRestaurantId,
@@ -203,8 +204,8 @@ async function handleSaveItem(event) {
     description: document.getElementById('itemDesc').value.trim(),
     is_veg: isVegSelected,
     isVeg: isVegSelected,
-    is_available: isAvailable,
-    isAvailable: isAvailable
+    is_available: isAvailableSelected,
+    isAvailable: isAvailableSelected
   };
 
   const isEdit = Boolean(id);
