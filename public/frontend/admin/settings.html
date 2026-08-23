@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="csrf-token" content="">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>System Settings | DineFlow AI</title>
@@ -244,6 +245,7 @@
           <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
           <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
           <a class="nav-item active" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+          <a class="nav-item" href="/admin/expenses"><span class="nav-icon">💰</span>Expenses</a>
           <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
         </div>
       </div>
@@ -299,23 +301,23 @@
 
             <div class="form-group">
               <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Restaurant Legal Name</label>
-              <input type="text" class="form-input" value="DineFlow AI Gourmet Restaurant" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+              <input type="text" id="settingRestaurantName" class="form-input" value="DineFlow AI Gourmet Restaurant" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
             </div>
 
             <div style="display:flex; gap:14px; flex-wrap:wrap;">
               <div class="form-group" style="flex:1; min-width:140px;">
                 <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">GSTIN Number</label>
-                <input type="text" class="form-input" value="24ABCDE1234F1Z5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700; text-transform:uppercase;">
+                <input type="text" id="settingGstin" class="form-input" value="24ABCDE1234F1Z5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700; text-transform:uppercase;">
               </div>
               <div class="form-group" style="flex:1; min-width:120px;">
                 <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">GST Tax Rate (%)</label>
-                <input type="number" class="form-input" value="18" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <input type="number" id="settingGstRate" class="form-input" value="18" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
               </div>
             </div>
 
             <div class="form-group">
               <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Service Charge (%)</label>
-              <input type="number" class="form-input" value="5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+              <input type="number" id="settingServiceCharge" class="form-input" value="5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
             </div>
           </div>
 

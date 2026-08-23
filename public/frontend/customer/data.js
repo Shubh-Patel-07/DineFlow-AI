@@ -112,20 +112,20 @@ window.foodItems = [
     isVeg: true
 },
 {
-    id: 8.5,
+    id: 85,
     name: "Soft Drink",
     category: "Drinks",
     price: 80,
     rating: 4.5,
-    badge: "Refresh",
-    popular: true,
+    badge: "Out of Stock",
+    popular: false,
     image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&q=75&auto=format",
     description: "Chilled soft drink served cold with your meal.",
-    available: true,
+    available: false,
     isVeg: true
 },
 {
-    id: 8.6,
+    id: 86,
     name: "French Fries",
     category: "Starters",
     price: 120,
@@ -138,16 +138,16 @@ window.foodItems = [
     isVeg: true
 },
 {
-    id: 8.7,
+    id: 87,
     name: "Mocktail",
     category: "Drinks",
     price: 140,
     rating: 4.7,
-    badge: "Fresh",
-    popular: true,
+    badge: "Sold Out",
+    popular: false,
     image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&q=75&auto=format",
     description: "Refreshing mocktail crafted with fruit and mint.",
-    available: true,
+    available: false,
     isVeg: true
 },
 {
@@ -172,7 +172,7 @@ window.foodItems = [
     badge: "Traditional",
     popular: true,
     image: "https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=400&q=75&auto=format",
-    description: "Soft milk-solid balls dipped in rose-flavored sugar syrup.",
+    description: "Delicious sweet pastry.",
     available: true,
     isVeg: true
 },

@@ -182,9 +182,111 @@ async function removeTable(tableId) {
 
 document.addEventListener('DOMContentLoaded', () => {
   Auth.checkAuth();
-  // Let's load the tables list
   loadTables();
+  loadReservations();
 });
+
+let allReservations = [];
+
+async function loadReservations() {
+  const tbody = document.getElementById('reservationsTableBody');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch('/api/reservations/restaurant/1', {
+      headers: { 'Accept': 'application/json' }
+    });
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      allReservations = data.data;
+    } else {
+      allReservations = [];
+    }
+  } catch (err) {
+    allReservations = JSON.parse(localStorage.getItem('dineflow_my_reservations') || '[]');
+  }
+
+  renderReservations();
+}
+
+function renderReservations() {
+  const tbody = document.getElementById('reservationsTableBody');
+  if (!tbody) return;
+
+  if (!allReservations.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 32px; color: var(--text-muted);">
+          <div style="font-size: 28px; opacity: 0.3; margin-bottom: 8px;">📅</div>
+          <p style="margin: 0;">No table reservations received yet.</p>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = allReservations.map(r => {
+    const statusMeta = {
+      pending:   { label: 'Pending',   color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+      confirmed: { label: 'Confirmed', color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
+      seated:    { label: 'Seated',    color: '#6366F1', bg: 'rgba(99,102,241,0.12)' },
+      cancelled: { label: 'Cancelled', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
+    }[r.status] || { label: r.status, color: '#94A3B8', bg: 'rgba(148,163,184,0.12)' };
+
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+        <td style="padding: 14px 16px; font-weight: 700; color: var(--text-primary);">${escapeHtml(r.customer_name)}</td>
+        <td style="padding: 14px 16px; color: var(--text-secondary);"><a href="tel:${r.customer_phone}" style="color:#818CF8; text-decoration:none;">${escapeHtml(r.customer_phone)}</a></td>
+        <td style="padding: 14px 16px; color: var(--text-primary);">${r.reservation_date} <span style="font-size: 11px; color: var(--text-muted);">(${r.time_slot})</span></td>
+        <td style="padding: 14px 16px; font-weight: 700; color: var(--text-primary);">${r.pax_count} PAX</td>
+        <td style="padding: 14px 16px; color: var(--text-muted); font-size: 12px;">${escapeHtml(r.special_requests || '—')}</td>
+        <td style="padding: 14px 16px;">
+          <span style="background: ${statusMeta.bg}; color: ${statusMeta.color}; border: 1px solid ${statusMeta.color}40; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;">
+            ${statusMeta.label}
+          </span>
+        </td>
+        <td style="padding: 14px 16px; text-align: right;">
+          <div style="display: inline-flex; gap: 6px;">
+            ${r.status === 'pending' ? `
+              <button onclick="updateReservationStatus(${r.id}, 'confirmed')" title="Confirm Booking" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">Confirm</button>
+              <button onclick="updateReservationStatus(${r.id}, 'cancelled')" title="Decline" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #F87171; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">✕</button>
+            ` : ''}
+            ${r.status === 'confirmed' ? `
+              <button onclick="updateReservationStatus(${r.id}, 'seated')" title="Seat Guest at Table" style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #A5B4FC; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">🪑 Seat Guest</button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function updateReservationStatus(id, newStatus) {
+  try {
+    const res = await fetch(`/api/reservations/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+      },
+      body: JSON.stringify({ status: newStatus })
+    });
+    if (res.ok) {
+      Toast.success(`Reservation marked as ${newStatus}!`);
+      loadReservations();
+    }
+  } catch (err) {
+    Toast.error('Failed to update reservation');
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');

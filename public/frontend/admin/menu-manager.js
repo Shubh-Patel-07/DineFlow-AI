@@ -19,8 +19,10 @@ async function loadMenuItems() {
   const loader = document.querySelector('[data-loader]');
   if (loader) loader.style.display = 'flex';
 
+  const currentRestaurantId = window.AUTH_USER_RESTAURANT_ID || (typeof Auth !== 'undefined' && Auth.getUser()?.restaurant_id) || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+
   try {
-    const res = await fetch('/api/menu?restaurantId=1');
+    const res = await fetch(`/api/menu?restaurantId=${currentRestaurantId}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data) && data.data.length > 0) {
       allMenuItems = data.data;
@@ -190,15 +192,19 @@ async function handleSaveItem(event) {
   event.preventDefault();
   const id = document.getElementById('itemId').value;
   const isVegSelected = document.getElementById('typeVegRadio')?.checked ?? true;
+  const currentRestaurantId = window.AUTH_USER_RESTAURANT_ID || (typeof Auth !== 'undefined' && Auth.getUser()?.restaurant_id) || new URLSearchParams(window.location.search).get('restaurantId') || '1';
   const payload = {
-    restaurant_id: 1,
+    restaurant_id: currentRestaurantId,
+    restaurantId: currentRestaurantId,
     name: document.getElementById('itemName').value.trim(),
     category: document.getElementById('itemCategory').value,
     price: parseFloat(document.getElementById('itemPrice').value),
     image: document.getElementById('itemImage').value.trim(),
     description: document.getElementById('itemDesc').value.trim(),
     is_veg: isVegSelected,
-    is_available: document.getElementById('itemIsAvailable').checked
+    isVeg: isVegSelected,
+    is_available: isAvailable,
+    isAvailable: isAvailable
   };
 
   const isEdit = Boolean(id);
@@ -210,7 +216,8 @@ async function handleSaveItem(event) {
       method: method,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
       },
       body: JSON.stringify(payload)
     });
@@ -234,22 +241,41 @@ async function toggleItemAvailability(id, isAvailable) {
   try {
     const res = await fetch(`/api/menu/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ is_available: isAvailable })
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      },
+      body: JSON.stringify({ is_available: isAvailable, isAvailable: isAvailable })
     });
     if (res.ok) {
       if (typeof Toast !== 'undefined') Toast.success(isAvailable ? 'Item marked Available!' : 'Item marked Out of Stock!');
-      const item = allMenuItems.find(i => String(i.id) === String(id));
-      if (item) item.is_available = isAvailable;
+      const item = allMenuItems.find(i => String(i.id || i._id) === String(id));
+      if (item) {
+        item.is_available = isAvailable;
+        item.isAvailable = isAvailable;
+      }
+      renderMenuItems();
+    } else {
+      if (typeof Toast !== 'undefined') Toast.error('Failed to update item availability.');
       renderMenuItems();
     }
-  } catch (_) {}
+  } catch (err) {
+    if (typeof Toast !== 'undefined') Toast.error('Network error updating item availability.');
+    renderMenuItems();
+  }
 }
 
 async function deleteMenuItem(id) {
   if (!confirm('Are you sure you want to delete this menu item?')) return;
   try {
-    const res = await fetch(`/api/menu/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
+    const res = await fetch(`/api/menu/${id}`, { 
+      method: 'DELETE', 
+      headers: { 
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      } 
+    });
     if (res.ok) {
       if (typeof Toast !== 'undefined') Toast.success('Menu item deleted.');
       else alert('Menu item deleted.');

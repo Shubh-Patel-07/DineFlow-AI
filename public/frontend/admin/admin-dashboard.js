@@ -62,7 +62,6 @@ function handleAddUser(event) {
     closeAddUserModal();
   })
   .catch(() => {
-    alert('User added successfully!');
-    closeAddUserModal();
+    alert('Failed to add user. Please try again.');
   });
 }

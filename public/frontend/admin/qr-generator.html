@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="csrf-token" content="">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator - DineFlow AI</title>
@@ -421,9 +422,9 @@
                 <i class="fas fa-history"></i> Generated QR Codes
             </div>
             <div class="tabs">
-                <button class="tab-button active" onclick="filterQRCodes('all')">All</button>
-                <button class="tab-button" onclick="filterQRCodes('url')">URLs</button>
-                <button class="tab-button" onclick="filterQRCodes('order')">Orders</button>
+                <button class="tab-button active" onclick="filterQRCodes('all', event)">All</button>
+                <button class="tab-button" onclick="filterQRCodes('url', event)">URLs</button>
+                <button class="tab-button" onclick="filterQRCodes('order', event)">Orders</button>
             </div>
             <div id="qrGridContainer">
                 <div class="empty-state">
