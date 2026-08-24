@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    public function index(Request $request)
+    {
+        $restaurantId = $request->query('restaurant_id', $request->query('restaurantId', 1));
+        $orders = Order::where('restaurant_id', $restaurantId)
+            ->with(['items.menuItem', 'table'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json(['success' => true, 'data' => $orders]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

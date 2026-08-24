@@ -161,13 +161,30 @@ Route::middleware('auth')->group(function () {
         return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
     })->name('pos.z-report');
 
-    // Helper to serve Admin HTML files with dynamic Auth User Role injection
+    // Helper to serve Admin HTML files with dynamic Auth User Role injection and multi-path fallbacks
     $serveAdminPage = function ($filename) {
-        $path = public_path($filename);
-        if (!file_exists($path)) {
-            return response("File not found", 404);
+        $baseName = basename($filename);
+        $candidates = [
+            public_path($filename),
+            public_path("frontend/admin/{$baseName}"),
+            public_path("admin/{$baseName}"),
+            base_path("frontend/admin/{$baseName}"),
+            base_path("public/frontend/admin/{$baseName}"),
+        ];
+
+        $targetPath = null;
+        foreach ($candidates as $candidate) {
+            if (file_exists($candidate)) {
+                $targetPath = $candidate;
+                break;
+            }
         }
-        $content = file_get_contents($path);
+
+        if (!$targetPath) {
+            return response("File not found: {$baseName}", 404);
+        }
+
+        $content = file_get_contents($targetPath);
         $userRole = auth()->check() ? (auth()->user()->role ?? auth()->user()->username ?? 'admin') : (session('active_role') ?? 'admin');
         $script = "<script>window.AUTH_USER_ROLE = " . json_encode($userRole) . ";</script>";
         $content = str_replace('<head>', "<head>\n  {$script}", $content);
@@ -175,49 +192,54 @@ Route::middleware('auth')->group(function () {
     };
 
     // Admin Page Routes (With RBAC Role Injection)
-    Route::get('/frontend/admin/menu-manager.html', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
-    Route::get('/admin/menu-manager', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
-    Route::get('/admin/menu', fn() => $serveAdminPage('frontend/admin/menu-manager.html'));
+    Route::get('/frontend/admin/menu-manager.html', fn() => $serveAdminPage('menu-manager.html'));
+    Route::get('/admin/menu-manager', fn() => $serveAdminPage('menu-manager.html'));
+    Route::get('/admin/menu', fn() => $serveAdminPage('menu-manager.html'));
 
-    Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('frontend/admin/inventory.html'));
-    Route::get('/admin/inventory', fn() => $serveAdminPage('frontend/admin/inventory.html'));
+    Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('inventory.html'));
+    Route::get('/admin/inventory', fn() => $serveAdminPage('inventory.html'));
 
-    Route::get('/frontend/admin/coupons.html', fn() => $serveAdminPage('frontend/admin/coupons.html'));
-    Route::get('/admin/coupons', fn() => $serveAdminPage('frontend/admin/coupons.html'));
+    Route::get('/frontend/admin/coupons.html', fn() => $serveAdminPage('coupons.html'));
+    Route::get('/admin/coupons', fn() => $serveAdminPage('coupons.html'));
 
-    Route::get('/frontend/admin/customers.html', fn() => $serveAdminPage('frontend/admin/customers.html'));
-    Route::get('/admin/customers', fn() => $serveAdminPage('frontend/admin/customers.html'));
+    Route::get('/frontend/admin/customers.html', fn() => $serveAdminPage('customers.html'));
+    Route::get('/admin/customers', fn() => $serveAdminPage('customers.html'));
 
-    Route::get('/frontend/admin/tables.html', fn() => $serveAdminPage('frontend/admin/tables.html'));
-    Route::get('/admin/tables', fn() => $serveAdminPage('frontend/admin/tables.html'));
+    Route::get('/frontend/admin/tables.html', fn() => $serveAdminPage('tables.html'));
+    Route::get('/admin/tables', fn() => $serveAdminPage('tables.html'));
 
-    Route::get('/frontend/admin/feedback.html', fn() => $serveAdminPage('frontend/admin/feedback.html'));
-    Route::get('/admin/feedback', fn() => $serveAdminPage('frontend/admin/feedback.html'));
+    Route::get('/frontend/admin/feedback.html', fn() => $serveAdminPage('feedback.html'));
+    Route::get('/admin/feedback', fn() => $serveAdminPage('feedback.html'));
 
-    Route::get('/frontend/admin/staff.html', fn() => $serveAdminPage('frontend/admin/staff.html'));
-    Route::get('/admin/staff', fn() => $serveAdminPage('frontend/admin/staff.html'));
+    Route::get('/frontend/admin/staff.html', fn() => $serveAdminPage('staff.html'));
+    Route::get('/admin/staff', fn() => $serveAdminPage('staff.html'));
 
-    Route::get('/frontend/admin/settings.html', fn() => $serveAdminPage('frontend/admin/settings.html'));
-    Route::get('/admin/settings', fn() => $serveAdminPage('frontend/admin/settings.html'));
+    Route::get('/frontend/admin/settings.html', fn() => $serveAdminPage('settings.html'));
+    Route::get('/admin/settings', fn() => $serveAdminPage('settings.html'));
 
-    Route::get('/frontend/admin/expenses.html', fn() => $serveAdminPage('frontend/admin/expenses.html'));
-    Route::get('/admin/expenses', fn() => $serveAdminPage('frontend/admin/expenses.html'));
+    Route::get('/frontend/admin/expenses.html', fn() => $serveAdminPage('expenses.html'));
+    Route::get('/admin/expenses', fn() => $serveAdminPage('expenses.html'));
 
-    Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('frontend/admin/qr-generator.html'));
-    Route::get('/admin/qr-generator', fn() => $serveAdminPage('frontend/admin/qr-generator.html'));
+    Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('qr-generator.html'));
+    Route::get('/admin/qr-generator', fn() => $serveAdminPage('qr-generator.html'));
 
-    Route::get('/frontend/admin/sales-report.html', fn() => $serveAdminPage('frontend/admin/sales-report.html'));
-    Route::get('/admin/sales-report', fn() => $serveAdminPage('frontend/admin/sales-report.html'));
-    Route::get('/admin/reports', fn() => $serveAdminPage('frontend/admin/sales-report.html'));
+    Route::get('/frontend/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/admin/sales-report', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/admin/sales', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/admin/reports', fn() => $serveAdminPage('sales-report.html'));
 
-    Route::get('/frontend/admin/admin-dashboard.html', fn() => $serveAdminPage('frontend/admin/admin-dashboard.html'));
-    Route::get('/admin/admin-dashboard', fn() => $serveAdminPage('frontend/admin/admin-dashboard.html'));
+    Route::get('/frontend/admin/admin-dashboard.html', fn() => $serveAdminPage('admin-dashboard.html'));
+    Route::get('/admin/admin-dashboard', fn() => $serveAdminPage('admin-dashboard.html'));
 });
 
-
-
-
 // Simple shortcuts for testing/presentations
+Route::get('/sales-report', fn() => $serveAdminPage('sales-report.html'));
+Route::get('/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
+Route::get('/reports', fn() => $serveAdminPage('sales-report.html'));
+Route::get('/sales', fn() => $serveAdminPage('sales-report.html'));
+Route::get('/report', fn() => $serveAdminPage('sales-report.html'));
+
 Route::get('/menu', function () {
     return redirect('/frontend/customer/menu.html?restaurantId=1&tableId=1');
 });
@@ -243,6 +265,7 @@ Route::prefix('api')->group(function () {
     Route::get('/menu', [MenuItemController::class, 'index']);
     Route::get('/menu/restaurant/{restaurantId}', [MenuItemController::class, 'index']);
     
+    Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::post('/orders/{id}/pay', [OrderController::class, 'pay'])->middleware('auth');
