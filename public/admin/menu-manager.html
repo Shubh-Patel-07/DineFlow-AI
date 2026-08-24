@@ -450,14 +450,15 @@
 
   <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
           <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         <div class="brand-text">
-          <h2>DineFlow AI</h2>
-          <span>Admin Suite</span>
+          <h2>DineFlow AI POS</h2>
+          <span>Restaurant Suite v2.0</span>
         </div>
         <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
       </div>
@@ -466,17 +467,47 @@
         <div class="sidebar-section">
           <div class="sidebar-section-label">Main</div>
           <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
-          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span></a>
-          <a class="nav-item active" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-          <a class="nav-item" href="/z-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
-          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory</span></a>
-          <a class="nav-item" href="/admin/expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
-          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
-          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
           <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item" href="/kitchen" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Menu & Catalog</div>
+          <a class="nav-item active" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Operations & Sales</div>
+          <a class="nav-item" href="/admin/sales-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
+          <a class="nav-item" href="/admin/expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
+          <a class="nav-item" href="/admin/qr-generator"><i class="fa-solid fa-qrcode"></i><span class="nav-label"> QR Generator</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Settings & Admin</div>
           <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
           <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
-          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Reviews &amp; Feedback</span></a>
+          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Feedback &amp; Reviews</span></a>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-card" style="display:flex; align-items:center; gap:10px; padding:8px; border-radius:12px;">
+          <div class="user-avatar" style="width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">A</div>
+          <div class="user-info" style="flex:1; overflow:hidden;">
+            <h4 style="font-size:13px; font-weight:700; margin:0; color:var(--text-primary);">Administrator</h4>
+            <p style="font-size:11px; margin:0; color:var(--text-muted);">Manager</p>
+          </div>
+          <form method="POST" action="/logout">
+            <input type="hidden" name="_token" value="">
+            <button type="submit" title="Logout" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px;">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </form>
         </div>
       </div>
     </aside>
@@ -485,12 +516,23 @@
     <div class="main">
       <header class="topbar">
         <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="sidebar-toggle topbar-mobile-menu" onclick="toggleAdminSidebar()" style="display: none; border: none; background: transparent; color: inherit; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
           <div class="topbar-title-group">
             <h2 class="topbar-title">Menu Items Management</h2>
             <p class="topbar-sub">Manage restaurant dishes, pricing, veg/non-veg tags, and live availability</p>
           </div>
         </div>
         <div class="topbar-spacer"></div>
+
+        <!-- Light/Dark Mode Switcher -->
+        <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer; display:flex; align-items:center;">
+          <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+          <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
+        </div>
+
+        <a href="/pos" class="topbar-btn" title="Open POS Terminal" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:6px; width:auto; padding:0 12px; font-size:12px; font-weight:700;">
+          <i class="fa-solid fa-cash-register"></i> POS
+        </a>
       </header>
 
       <div style="flex: 1; padding: 28px; overflow-y: auto;">

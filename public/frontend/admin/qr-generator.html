@@ -1,440 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="csrf-token" content="">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator - DineFlow AI</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+  <meta name="csrf-token" content="">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator | DineFlow AI</title>
+  <script>
+    (function() {
+      var t = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
+      if (t === 'light') {
+        document.documentElement.classList.add('light-theme');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if (t === 'light' && document.body) {
+          document.body.classList.add('light-theme');
         }
+      });
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="stylesheet" href="/frontend/admin/admin.css?v=2.0.0">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+  <style>
+    .qr-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .qr-content-grid { grid-template-columns: 1fr; }
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .qr-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .qr-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
 
-        .header {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            text-align: center;
-        }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #6366F1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
+    }
 
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+    #qrcode {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 260px;
+      background: var(--bg);
+      border-radius: 16px;
+      border: 2px dashed var(--border);
+      padding: 20px;
+    }
+    #qrcode canvas, #qrcode img {
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
 
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .qr-item {
+      background: var(--bg);
+      padding: 14px;
+      border-radius: 14px;
+      text-align: center;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .qr-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
+    .tab-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-title {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .btn {
-            background: #667eea;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background: #5568d3;
-        }
-
-        .btn-secondary {
-            background: #95a5a6;
-            margin-top: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
-
-        #qrcode {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 300px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 2px dashed #ddd;
-        }
-
-        #qrcode canvas {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .qr-info {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .qr-info.show {
-            display: block;
-        }
-
-        .qr-info strong {
-            color: #1976d2;
-        }
-
-        .generated-qr-codes {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30py rgba(0, 0, 0, 0.1);
-        }
-
-        .qr-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .qr-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #e9ecef;
-        }
-
-        .qr-item canvas {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .qr-item-name {
-            font-size: 12px;
-            color: #666;
-            word-break: break-word;
-            margin-bottom: 10px;
-        }
-
-        .qr-actions {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-
-        .btn-small {
-            padding: 5px 10px;
-            font-size: 11px;
-            flex: 1;
-        }
-
-        .btn-download {
-            background: #27ae60;
-        }
-
-        .btn-download:hover {
-            background: #229954;
-        }
-
-        .btn-delete {
-            background: #e74c3c;
-        }
-
-        .btn-delete:hover {
-            background: #c0392b;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-button {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            color: #666;
-            transition: 0.3s;
-        }
-
-        .tab-button.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .qr-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-        }
-    </style>
+    /* Light Theme */
+    html.light-theme .qr-card,
+    body.light-theme .qr-card {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05) !important;
+    }
+    html.light-theme .qr-item,
+    body.light-theme .qr-item {
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }
+    html.light-theme #qrcode,
+    body.light-theme #qrcode {
+      background: #F8FAFC !important;
+      border-color: #CBD5E1 !important;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-qrcode"></i> QR Code Generator</h1>
-            <p>Generate, manage, and download QR codes for your menu items and orders</p>
-        </div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleAdminSidebar()"></div>
 
-        <div class="content-grid">
-            <!-- QR Generator Card -->
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-plus-circle"></i> Generate QR Code
-                </div>
-
-                <div class="success-message" id="successMessage">
-                    <i class="fas fa-check-circle"></i> QR Code generated successfully!
-                </div>
-
-                <div class="form-group">
-                    <label>QR Type</label>
-                    <select id="qrType" onchange="updateQRForm()">
-                        <option value="url">URL/Menu Link</option>
-                        <option value="text">Text</option>
-                        <option value="vcard">Contact (vCard)</option>
-                        <option value="wifi">WiFi</option>
-                        <option value="order">Order ID</option>
-                    </select>
-                </div>
-
-                <div id="qrForm">
-                    <!-- URL Form -->
-                    <div id="urlForm" class="qr-form-section">
-                        <div class="form-group">
-                            <label>URL</label>
-                            <input type="url" id="qrUrl" placeholder="https://example.com/menu">
-                        </div>
-                        <div class="form-group">
-                            <label>Label (Optional)</label>
-                            <input type="text" id="qrLabel" placeholder="e.g., Menu QR">
-                        </div>
-                    </div>
-
-                    <!-- Text Form -->
-                    <div id="textForm" class="qr-form-section" style="display: none;">
-                        <div class="form-group">
-                            <label>Text</label>
-                            <textarea id="qrText" placeholder="Enter text for QR code"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Label (Optional)</label>
-                            <input type="text" id="qrTextLabel" placeholder="e.g., Special Text">
-                        </div>
-                    </div>
-
-                    <!-- vCard Form -->
-                    <div id="vcardForm" class="qr-form-section" style="display: none;">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" id="vcardName" placeholder="John Doe">
-                        </div>
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" id="vcardPhone" placeholder="+1-555-0100">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="vcardEmail" placeholder="john@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Organization</label>
-                            <input type="text" id="vcardOrg" placeholder="DineFlow">
-                        </div>
-                    </div>
-
-                    <!-- WiFi Form -->
-                    <div id="wifiForm" class="qr-form-section" style="display: none;">
-                        <div class="form-group">
-                            <label>SSID (Network Name)</label>
-                            <input type="text" id="wifiSSID" placeholder="RestaurantWiFi">
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" id="wifiPassword" placeholder="Password">
-                        </div>
-                        <div class="form-group">
-                            <label>Security Type</label>
-                            <select id="wifiSecurity">
-                                <option value="WPA">WPA/WPA2</option>
-                                <option value="WEP">WEP</option>
-                                <option value="nopass">No Password</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Order ID Form -->
-                    <div id="orderForm" class="qr-form-section" style="display: none;">
-                        <div class="form-group">
-                            <label>Order ID</label>
-                            <input type="text" id="orderId" placeholder="e.g., ORD-12345">
-                        </div>
-                        <div class="form-group">
-                            <label>Label (Optional)</label>
-                            <input type="text" id="orderLabel" placeholder="e.g., Table 5">
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn" onclick="generateQR()">
-                    <i class="fas fa-magic"></i> Generate QR Code
-                </button>
-            </div>
-
-            <!-- QR Preview Card -->
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-image"></i> Preview
-                </div>
-                <div id="qrcode" style="min-height: 300px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #ddd; display: flex; justify-content: center; align-items: center;">
-                    <div style="text-align: center; color: #999;">
-                        <i class="fas fa-qrcode" style="font-size: 48px; margin-bottom: 10px;"></i>
-                        <p>Generate a QR code to see preview</p>
-                    </div>
-                </div>
-                <div class="qr-info" id="qrInfo">
-                    <strong>QR Code Info:</strong>
-                    <p id="qrInfoText"></p>
-                </div>
-                <button class="btn btn-secondary" id="downloadBtn" style="display: none;" onclick="downloadQR()">
-                    <i class="fas fa-download"></i> Download QR Code
-                </button>
-            </div>
-        </div>
-
-        <!-- Generated QR Codes History -->
-        <div class="generated-qr-codes">
-            <div class="card-title">
-                <i class="fas fa-history"></i> Generated QR Codes
-            </div>
-            <div class="tabs">
-                <button class="tab-button active" onclick="filterQRCodes('all', event)">All</button>
-                <button class="tab-button" onclick="filterQRCodes('url', event)">URLs</button>
-                <button class="tab-button" onclick="filterQRCodes('order', event)">Orders</button>
-            </div>
-            <div id="qrGridContainer">
-                <div class="empty-state">
-                    <i class="fas fa-inbox"></i>
-                    <p>No QR codes generated yet</p>
-                </div>
-            </div>
-        </div>
+  <div class="admin-mobile-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="mobile-menu-btn" onclick="toggleAdminSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <h2 style="font-size:15px; font-weight:700; margin:0; color:var(--text-primary); font-family:'Outfit',sans-serif;">DineFlow AI</h2>
     </div>
+    <span style="font-size:11px; color:var(--text-muted); background:var(--primary-light); padding:4px 8px; border-radius:6px;">QR Generator</span>
+  </div>
 
-    <script src="qr-generator.js"></script>
+  <div style="display: flex; min-height: 100vh;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="brand-text">
+          <h2>DineFlow AI POS</h2>
+          <span>Restaurant Suite v2.0</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Main</div>
+          <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
+          <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item" href="/kitchen" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Menu & Catalog</div>
+          <a class="nav-item" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Operations & Sales</div>
+          <a class="nav-item" href="/admin/sales-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
+          <a class="nav-item" href="/admin/expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
+          <a class="nav-item active" href="/admin/qr-generator"><i class="fa-solid fa-qrcode"></i><span class="nav-label"> QR Generator</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Settings & Admin</div>
+          <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+          <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+          <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Feedback &amp; Reviews</span></a>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-card" style="display:flex; align-items:center; gap:10px; padding:8px; border-radius:12px;">
+          <div class="user-avatar" style="width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">A</div>
+          <div class="user-info" style="flex:1; overflow:hidden;">
+            <h4 style="font-size:13px; font-weight:700; margin:0; color:var(--text-primary);">Administrator</h4>
+            <p style="font-size:11px; margin:0; color:var(--text-muted);">Manager</p>
+          </div>
+          <form method="POST" action="/logout">
+            <input type="hidden" name="_token" value="">
+            <button type="submit" title="Logout" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px;">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <div class="main" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="sidebar-toggle topbar-mobile-menu" onclick="toggleAdminSidebar()" style="display: none; border: none; background: transparent; color: inherit; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+          <div class="topbar-title-group">
+            <h2 class="topbar-title">QR Code Generator</h2>
+            <p class="topbar-sub">Create, print, and export high-resolution QR codes for tables and menus</p>
+          </div>
+        </div>
+        <div class="topbar-spacer"></div>
+
+        <!-- Light/Dark Mode Switcher -->
+        <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 8px; cursor:pointer; display:flex; align-items:center;">
+          <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+          <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
+        </div>
+
+        <a href="/pos" class="topbar-btn" title="Open POS Terminal" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:6px; width:auto; padding:0 12px; font-size:12px; font-weight:700;">
+          <i class="fa-solid fa-cash-register"></i> POS
+        </a>
+      </header>
+
+      <!-- CONTENT -->
+      <div style="flex: 1; padding: 24px; overflow-y: auto;">
+        
+        <div class="qr-content-grid">
+          <!-- Generator Form -->
+          <div class="qr-card">
+            <h3 class="qr-card-title"><i class="fa-solid fa-qrcode" style="color:var(--primary);"></i> Generate Custom QR Code</h3>
+
+            <div class="form-group">
+              <label>QR Payload Type</label>
+              <select id="qrType" onchange="updateQRForm()">
+                <option value="url">Customer Digital Menu Link</option>
+                <option value="order">Order Tracking ID</option>
+                <option value="wifi">Restaurant Guest WiFi</option>
+                <option value="text">Custom Text / Instructions</option>
+              </select>
+            </div>
+
+            <div id="qrForm">
+              <!-- URL Form -->
+              <div id="urlForm" class="qr-form-section">
+                <div class="form-group">
+                  <label>Destination URL</label>
+                  <input type="url" id="qrUrl" placeholder="http://127.0.0.1:8000/customer/menu?tableId=1">
+                </div>
+                <div class="form-group">
+                  <label>Display Label (Optional)</label>
+                  <input type="text" id="qrLabel" placeholder="e.g. Table #1 QR Standee">
+                </div>
+              </div>
+
+              <!-- Text Form -->
+              <div id="textForm" class="qr-form-section" style="display: none;">
+                <div class="form-group">
+                  <label>Text Content</label>
+                  <textarea id="qrText" rows="3" placeholder="Enter custom message"></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Label</label>
+                  <input type="text" id="qrTextLabel" placeholder="e.g. Special Note">
+                </div>
+              </div>
+
+              <!-- WiFi Form -->
+              <div id="wifiForm" class="qr-form-section" style="display: none;">
+                <div class="form-group">
+                  <label>WiFi Network Name (SSID)</label>
+                  <input type="text" id="wifiSSID" placeholder="DineFlow_Guest_WiFi">
+                </div>
+                <div class="form-group">
+                  <label>WiFi Password</label>
+                  <input type="password" id="wifiPassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                  <label>Security</label>
+                  <select id="wifiSecurity">
+                    <option value="WPA">WPA/WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">None (Open)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Order ID Form -->
+              <div id="orderForm" class="qr-form-section" style="display: none;">
+                <div class="form-group">
+                  <label>Order Reference ID</label>
+                  <input type="text" id="orderId" placeholder="e.g. ORD-1042">
+                </div>
+                <div class="form-group">
+                  <label>Label</label>
+                  <input type="text" id="orderLabel" placeholder="e.g. Live Bill QR">
+                </div>
+              </div>
+            </div>
+
+            <button onclick="generateQR()" style="padding:12px 20px; background:linear-gradient(135deg, #6366F1, #4F46E5); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+              <i class="fa-solid fa-bolt"></i> Generate High-Res QR
+            </button>
+          </div>
+
+          <!-- Preview & Download -->
+          <div class="qr-card">
+            <h3 class="qr-card-title"><i class="fa-solid fa-eye" style="color:#10B981;"></i> Live Preview & Export</h3>
+
+            <div id="qrcode">
+              <div style="text-align: center; color: var(--text-muted);">
+                <i class="fa-solid fa-qrcode" style="font-size: 48px; margin-bottom: 10px; opacity:0.5;"></i>
+                <p style="font-size:13px; margin:0;">Enter details & generate QR code to preview</p>
+              </div>
+            </div>
+
+            <div class="qr-info" id="qrInfo" style="display:none; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.25); padding:12px 16px; border-radius:12px;">
+              <strong style="color:var(--primary); font-size:12px;">Payload Info:</strong>
+              <p id="qrInfoText" style="margin:4px 0 0; font-size:12.5px; color:var(--text-primary); word-break:break-all;"></p>
+            </div>
+
+            <button id="downloadBtn" onclick="downloadQR()" style="display:none; padding:12px 20px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:12px; color:#fff; font-weight:800; font-size:13.5px; cursor:pointer; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+              <i class="fa-solid fa-download"></i> Download PNG Standee
+            </button>
+          </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="qr-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+            <h3 class="qr-card-title" style="border:none; padding:0;"><i class="fa-solid fa-clock-rotate-left" style="color:#F59E0B;"></i> Generated QR Library</h3>
+            <div style="display:flex; gap:8px;">
+              <button class="tab-btn active" onclick="filterQRCodes('all', event)">All</button>
+              <button class="tab-btn" onclick="filterQRCodes('url', event)">Menu URLs</button>
+              <button class="tab-btn" onclick="filterQRCodes('order', event)">Orders</button>
+            </div>
+          </div>
+
+          <div id="qrGridContainer">
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+              <i class="fa-solid fa-inbox" style="font-size:36px; margin-bottom:8px; opacity:0.5;"></i>
+              <p style="margin:0; font-size:13px;">No saved QR codes in current session</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/frontend/admin/utils.js"></script>
+  <script src="/frontend/admin/qr-generator.js"></script>
 </body>
 </html>

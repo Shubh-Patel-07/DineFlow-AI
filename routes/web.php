@@ -206,6 +206,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('frontend/admin/qr-generator.html'));
     Route::get('/admin/qr-generator', fn() => $serveAdminPage('frontend/admin/qr-generator.html'));
 
+    Route::get('/frontend/admin/sales-report.html', fn() => $serveAdminPage('frontend/admin/sales-report.html'));
+    Route::get('/admin/sales-report', fn() => $serveAdminPage('frontend/admin/sales-report.html'));
+    Route::get('/admin/reports', fn() => $serveAdminPage('frontend/admin/sales-report.html'));
+
     Route::get('/frontend/admin/admin-dashboard.html', fn() => $serveAdminPage('frontend/admin/admin-dashboard.html'));
     Route::get('/admin/admin-dashboard', fn() => $serveAdminPage('frontend/admin/admin-dashboard.html'));
 });
