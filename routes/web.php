@@ -240,6 +240,7 @@ Route::prefix('api')->group(function () {
     Route::get('/menu/restaurant/{restaurantId}', [MenuItemController::class, 'index']);
     
     Route::post('/orders', [OrderController::class, 'store']);
+    Route::post('/sync/orders', [OrderController::class, 'syncStore']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::post('/orders/{id}/pay', [OrderController::class, 'pay'])->middleware('auth');
     

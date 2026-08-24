@@ -127,11 +127,83 @@ class OrderController extends Controller
                     'payment_status' => 'pending',
                     'payment_method' => $request->payment_method ?? 'cash',
                     'special_instructions' => $request->special_instructions ?? '',
+                    'client_order_id' => $request->client_order_id ?? null,
                 ]);
 
                 foreach ($itemsData as $itemData) {
                     $order->items()->create($itemData);
                 }
+            }
+
+            return response()->json(['success' => true, 'data' => $order->load('items')], 201);
+        });
+    }
+
+    public function syncStore(Request $request)
+    {
+        $request->validate([
+            'client_order_id' => 'required|string',
+            'restaurant_id' => 'required|string',
+            'table_id' => 'required|string',
+            'items' => 'required|array',
+        ]);
+
+        return DB::transaction(function () use ($request) {
+            $existingOrder = Order::where('client_order_id', $request->client_order_id)
+                ->with('items')
+                ->first();
+
+            if ($existingOrder) {
+                return response()->json(['success' => true, 'data' => $existingOrder], 200);
+            }
+
+            $totalAmount = 0;
+            $itemsData = [];
+
+            foreach ($request->items as $item) {
+                $menuItemId = $item['menu_item_id'];
+                $quantity = $item['quantity'];
+
+                $menuItem = MenuItem::find($menuItemId);
+                if (!$menuItem && !empty($item['name'])) {
+                    $menuItem = MenuItem::where('name', $item['name'])->first();
+                }
+
+                if (!$menuItem) {
+                    $menuItem = MenuItem::create([
+                        'restaurant_id' => $request->restaurant_id,
+                        'name' => $item['name'] ?? ('Item #' . $menuItemId),
+                        'price' => isset($item['price']) ? floatval($item['price']) : 100.00,
+                        'category' => 'Mains',
+                        'is_available' => true,
+                        'is_veg' => true
+                    ]);
+                }
+
+                $price = $menuItem->price;
+                $totalAmount += $price * $quantity;
+
+                $itemsData[] = [
+                    'menu_item_id' => $menuItem->id,
+                    'name' => $menuItem->name,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                ];
+            }
+
+            $order = Order::create([
+                'client_order_id' => $request->client_order_id,
+                'restaurant_id' => $request->restaurant_id,
+                'table_id' => $request->table_id,
+                'total_amount' => $totalAmount,
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'payment_method' => $request->payment_method ?? 'cash',
+                'special_instructions' => $request->special_instructions ?? '',
+            ]);
+
+            foreach ($itemsData as $itemData) {
+                $order->items()->create($itemData);
             }
 
             return response()->json(['success' => true, 'data' => $order->load('items')], 201);

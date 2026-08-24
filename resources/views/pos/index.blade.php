@@ -4338,18 +4338,72 @@
       }))
     };
 
-    fetch('/api/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
+    const localOrderPayload = {
+      ...payload
+    };
+
+    const sendLocalOrder = async () => {
+      if (window.localDb && window.localDb.createLocalOrder) {
+        const localResult = await window.localDb.createLocalOrder(localOrderPayload);
+        if (!localResult || !localResult.local_id) {
+          throw new Error('Local order save failed');
+        }
+        lastPlacedOrderId = localResult.local_id;
+        showToast('Order saved locally with client ID: ' + localResult.client_order_id, 'success');
+        if (navigator.onLine) {
+          try {
+            const response = await fetch('/api/sync/orders', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+              },
+              body: JSON.stringify({
+                client_order_id: localResult.client_order_id,
+                restaurant_id: localResult.restaurant_id,
+                table_id: localResult.table_id,
+                special_instructions: localResult.special_instructions || '',
+                items: localResult.items.map(item => ({
+                  menu_item_id: item.menu_item_id,
+                  name: item.name,
+                  quantity: item.quantity,
+                  price: item.price
+                }))
+              })
+            });
+            const data = await response.json();
+            if (data.success) {
+              showToast('Order synced to server successfully! Server ID: ' + (data.data.id || ''), 'success');
+            }
+          } catch (err) {
+            console.log('Background sync failed, will retry later', err);
+          }
+        }
+        cartItems.forEach(item => item.qty = 0);
+        clearCart();
+        if (typeof loadOrdersData === 'function') loadOrdersData();
+        if (typeof loadTablesData === 'function') loadTablesData();
+        if (activePayMethod.toLowerCase().includes('upi') || activePayMethod.toLowerCase().includes('qr') || activePayMethod.toLowerCase().includes('gpay')) {
+          const tableLabel = document.getElementById('selectedTableLabel')?.textContent || document.getElementById('selectedTableNo')?.textContent || 'Walk-In';
+          setTimeout(() => {
+            openUpiQrModal(calculatedOrderTotal, lastPlacedOrderId, tableLabel);
+          }, 150);
+        } else {
+          setTimeout(() => {
+            openPrintHub(lastPlacedOrderId);
+          }, 150);
+        }
+        return;
+      }
+
+      throw new Error('Local database is not available');
+    };
+
+    sendLocalOrder().catch(err => {
+      console.error(err);
+      showToast('Error placing local order: ' + err.message, 'error');
+    });
         const orderIdVal = (data.data && typeof data.data === 'object' && data.data.id) ? data.data.id : (data.data || lastPlacedOrderId);
         lastPlacedOrderId = orderIdVal;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
