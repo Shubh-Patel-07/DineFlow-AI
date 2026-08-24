@@ -487,7 +487,7 @@
         <button type="button" onclick="openDashOffersModal()" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-tags"></i> Offers</button>
         <a href="/admin/tables" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
         <a href="/admin/menu-manager" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
-        <a href="/z-report" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-chart-line"></i> Z-Report</a>
+        <a href="/admin/sales-report" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
       </div>
     </div>
 

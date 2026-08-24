@@ -1637,7 +1637,7 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Reports</div>
-      <a class="nav-item" href="/z-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
+      <a class="nav-item" href="/admin/sales-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
       <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
       <a class="nav-item" href="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
     </div>
@@ -2974,7 +2974,7 @@
     openAdminModule('/admin/customers', '<i class="fa-solid fa-users" style="color:var(--primary);"></i> 👥 Customer Directory');
   }
   function openZReport() {
-    openAdminModule('/z-report', '<i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> 📊 Daily Sales Z-Report');
+    openAdminModule('/admin/sales-report', '<i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> 📊 Sales Analytics & Reports');
   }
   function openFeedbackModule() {
     openAdminModule('/admin/feedback', '<i class="fa-solid fa-comment-dots" style="color:var(--primary);"></i> ⭐ Reviews & Feedback');
