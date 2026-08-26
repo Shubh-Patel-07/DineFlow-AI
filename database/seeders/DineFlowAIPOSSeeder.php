@@ -23,8 +23,7 @@ class DineFlowAIPOSSeeder extends Seeder
             ]
         );
 
-        $localIP = gethostbyname(gethostname());
-        $host = "http://" . $localIP . ":8000";
+        $host = rtrim(config('app.url') ?: url('/'), '/');
 
         // Seed 12 Tables (T-01 to T-12)
         for ($i = 1; $i <= 12; $i++) {

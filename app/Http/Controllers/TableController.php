@@ -36,9 +36,8 @@ class TableController extends Controller
             'status' => 'active',
         ]);
 
-        $localIP = gethostbyname(gethostname());
-        $host = "http://" . $localIP . ":8000";
-        $qrData = $host . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id;
+        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $qrData = $baseUrl . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id;
         $table->qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrData);
         $table->save();
 

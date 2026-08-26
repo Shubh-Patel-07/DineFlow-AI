@@ -1,2 +1,15 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /pos
+Disallow: /kitchen
+Disallow: /api/
+Allow: /
+Allow: /pricing
+Allow: /register
+Allow: /login
+Allow: /terms
+Allow: /privacy
+Allow: /contact
+
+Sitemap: /sitemap.xml
