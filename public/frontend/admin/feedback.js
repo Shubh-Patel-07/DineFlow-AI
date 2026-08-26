@@ -30,9 +30,10 @@ function getStars(rating) {
 
 async function loadFeedback() {
   showLoader();
-  const restaurantId = new URLSearchParams(window.location.search).get('restaurant_id')
+  const restaurantId = window.AUTH_USER_RESTAURANT_ID
+    || new URLSearchParams(window.location.search).get('restaurant_id')
     || window.APP_CONFIG?.restaurant_id
-    || 1;
+    || '1';
 
   try {
     const res = await fetch(`/api/feedback/restaurant/${restaurantId}`);

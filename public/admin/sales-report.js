@@ -6,7 +6,7 @@
 let revenueChartInstance = null;
 let categoryChartInstance = null;
 let currentFilter = 'today';
-const RESTAURANT_ID = '1';
+const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
 
 document.addEventListener('DOMContentLoaded', () => {
   initDateInput();

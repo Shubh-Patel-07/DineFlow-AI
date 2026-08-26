@@ -188,15 +188,14 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
     })->name('pos.z-report');
 
-    // Helper to serve Admin HTML files with dynamic Auth User Role injection and multi-path fallbacks
+    // Helper to serve Admin HTML files with canonical source prioritization, CSRF & RBAC Role Injection
     $serveAdminPage = function ($filename) {
         $baseName = basename($filename);
         $candidates = [
-            public_path($filename),
+            base_path("frontend/admin/{$baseName}"),
             public_path("frontend/admin/{$baseName}"),
             public_path("admin/{$baseName}"),
-            base_path("frontend/admin/{$baseName}"),
-            base_path("public/frontend/admin/{$baseName}"),
+            public_path($filename),
         ];
 
         $targetPath = null;
@@ -217,8 +216,13 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         $userName = $user ? $user->name : 'User';
         $userRole = $user ? ($user->role ?? $user->username ?? 'admin') : (session('active_role') ?? 'admin');
         $userRestaurantId = $user ? ($user->restaurant_id ?? null) : null;
+        $csrfToken = csrf_token();
 
-        $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n</script>";
+        // Inject CSRF token meta if empty
+        $content = preg_replace('/<meta\s+name=["\']csrf-token["\']\s+content=["\'][^"\']*["\']\s*\/?>/i', '<meta name="csrf-token" content="' . $csrfToken . '">', $content);
+        $content = str_replace('<input type="hidden" name="_token" value="">', '<input type="hidden" name="_token" value="' . $csrfToken . '">', $content);
+
+        $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n  window.CSRF_TOKEN = " . json_encode($csrfToken) . ";\n</script>";
         $content = str_replace('<head>', "<head>\n  {$script}", $content);
         return response($content)->header('Content-Type', 'text/html; charset=UTF-8');
     };

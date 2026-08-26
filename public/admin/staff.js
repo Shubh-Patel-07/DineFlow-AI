@@ -36,7 +36,7 @@ function closeAddStaffModal() {
   setTimeout(() => { modal.style.display = 'none'; }, 200);
 }
 
-const RESTAURANT_ID = new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
 
 async function saveNewStaffMember(event) {
   event.preventDefault();

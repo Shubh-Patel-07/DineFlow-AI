@@ -2,6 +2,10 @@
 
 let inventoryItems = [];
 
+function getCurrentRestaurantId() {
+  return window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+}
+
 function initInventory() {
   if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   loadInventory();
@@ -18,7 +22,7 @@ async function loadInventory() {
   if (loader) loader.style.display = 'flex';
 
   try {
-    const res = await fetch('/api/inventory?restaurantId=1');
+    const res = await fetch(`/api/inventory?restaurantId=${getCurrentRestaurantId()}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
       inventoryItems = data.data;
@@ -184,7 +188,7 @@ async function loadAiDemandForecast() {
   if (!grid) return;
 
   try {
-    const res = await fetch('/api/analytics/demand-forecast/1');
+    const res = await fetch(`/api/analytics/demand-forecast/${getCurrentRestaurantId()}`);
     const json = await res.json();
     if (json.success && json.data && json.data.items) {
       renderAiForecast(json.data);

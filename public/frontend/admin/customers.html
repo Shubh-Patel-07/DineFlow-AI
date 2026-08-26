@@ -65,6 +65,8 @@
   </div>
 
   <div style="display: flex; min-height: 100vh;">
+        <!-- Sidebar -->
+    <!-- Sidebar -->
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
@@ -83,27 +85,28 @@
           <div class="sidebar-section-label">Main</div>
           <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
           <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
+          <a class="nav-item" href="javascript:void(0)" onclick="openGlobalOrdersModal()" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge" id="globalOrdersNavBadge">0</span></a>
           <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
           <a class="nav-item" href="/kitchen" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
         </div>
 
         <div class="sidebar-section">
-          <div class="sidebar-section-label">Menu & Catalog</div>
+          <div class="sidebar-section-label">Menu &amp; Catalog</div>
           <a class="nav-item" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
           <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
           <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
         </div>
 
         <div class="sidebar-section">
-          <div class="sidebar-section-label">Operations & Sales</div>
+          <div class="sidebar-section-label">Operations &amp; Sales</div>
           <a class="nav-item" href="/admin/sales-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
           <a class="nav-item" href="/admin/expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
-          <a class="nav-item active" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
           <a class="nav-item" href="/admin/qr-generator"><i class="fa-solid fa-qrcode"></i><span class="nav-label"> QR Generator</span></a>
         </div>
 
         <div class="sidebar-section">
-          <div class="sidebar-section-label">Settings & Admin</div>
+          <div class="sidebar-section-label">Settings &amp; Admin</div>
           <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
           <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
           <a class="nav-item" href="/admin/feedback"><i class="fa-solid fa-star"></i><span class="nav-label"> Feedback &amp; Reviews</span></a>
@@ -184,23 +187,25 @@
           </div>
         </div>
 
-      <table class="cust-table">
-        <thead>
-          <tr>
-            <th>Customer Name</th>
-            <th>Phone Number</th>
-            <th>Total Visits</th>
-            <th>Total Spent</th>
-            <th>Loyalty Points</th>
-            <th>Last Visit</th>
-            <th>Status Tier</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="customerTableBody">
-          <!-- Rendered via JS -->
-        </tbody>
-      </table>
+      <div style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--border); background: var(--card);">
+        <table class="cust-table" style="width: 100%; border-collapse: collapse; min-width: 600px;">
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Phone Number</th>
+              <th>Total Visits</th>
+              <th>Total Spent</th>
+              <th>Loyalty Points</th>
+              <th>Last Visit</th>
+              <th>Status Tier</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="customerTableBody">
+            <!-- Rendered via JS -->
+          </tbody>
+        </table>
+      </div>
       </div>
     </div>
   </div>

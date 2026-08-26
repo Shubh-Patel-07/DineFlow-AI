@@ -20,10 +20,15 @@ function getAuthHeaders() {
   return headers;
 }
 
+function getCurrentRestaurantId() {
+  return window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+}
+
 const APIService = {
-  async getTables(restaurantId = '1') {
+  async getTables(restaurantId = null) {
+    const rId = restaurantId || getCurrentRestaurantId();
     try {
-      const response = await fetch(`${API_BASE}/tables/restaurant/${restaurantId}`, {
+      const response = await fetch(`${API_BASE}/tables/restaurant/${rId}`, {
         headers: getAuthHeaders()
       });
       if (!response.ok) throw new Error('Failed to fetch tables');
@@ -33,16 +38,15 @@ const APIService = {
     }
   },
 
-  async addTable(tableNumber, restaurantId = '1') {
+  async addTable(tableNumber, restaurantId = null) {
+    const rId = restaurantId || getCurrentRestaurantId();
     try {
       const response = await fetch(`${API_BASE}/tables`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({
-          restaurant_id: String(restaurantId),
-          restaurantId: String(restaurantId),
-          table_number: String(tableNumber),
-          tableNumber: String(tableNumber)
+          restaurant_id: String(rId),
+          table_number: String(tableNumber)
         })
       });
       if (!response.ok) throw new Error('Failed to add table');
@@ -68,9 +72,10 @@ const APIService = {
     }
   },
 
-  async getFeedback(restaurantId = '1') {
+  async getFeedback(restaurantId = null) {
+    const rId = restaurantId || getCurrentRestaurantId();
     try {
-      const response = await fetch(`${API_BASE}/feedback/restaurant/${restaurantId}`, {
+      const response = await fetch(`${API_BASE}/feedback/restaurant/${rId}`, {
         headers: getAuthHeaders()
       });
       if (!response.ok) throw new Error('Failed to fetch feedback');

@@ -2,6 +2,10 @@
 
 let couponsList = [];
 
+function getCurrentRestaurantId() {
+  return window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+}
+
 function initCoupons() {
   if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   loadCoupons();
@@ -18,7 +22,7 @@ async function loadCoupons() {
   if (loader) loader.style.display = 'flex';
 
   try {
-    const res = await fetch('/api/coupons?restaurantId=1');
+    const res = await fetch(`/api/coupons?restaurantId=${getCurrentRestaurantId()}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
       couponsList = data.data;
@@ -134,8 +138,8 @@ async function handleSaveCoupon(e) {
   if (!value || value <= 0) { Toast.error('Discount value must be > 0'); return; }
 
   const payload = {
-    restaurant_id: 1,
-    restaurantId: '1',
+    restaurant_id: getCurrentRestaurantId(),
+    restaurantId: getCurrentRestaurantId(),
     code, name,
     discount_type: type,
     discountType: type,
@@ -182,14 +186,21 @@ async function handleSaveCoupon(e) {
 
 async function toggleCoupon(id, newActive) {
   try {
+    const payload = { is_active: newActive ? 1 : 0, isActive: newActive ? 1 : 0 };
+    if (newActive) {
+      payload.expires_at = null; // Clear past expiration so manual activation takes immediate effect
+    }
     const res = await fetch(`/api/coupons/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
-      body: JSON.stringify({ is_active: newActive, isActive: newActive })
+      body: JSON.stringify(payload)
     });
     if (res.ok) {
       Toast.success(newActive ? 'Coupon activated!' : 'Coupon deactivated!');
       loadCoupons();
+    } else {
+      const err = await res.json();
+      Toast.error(err.message || 'Failed to update coupon status.');
     }
   } catch (_) { Toast.error('Network error.'); }
 }
