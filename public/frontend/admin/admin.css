@@ -1302,6 +1302,8 @@ body.light-theme .btn-secondary,
 html.light-theme .btn-secondary {
   background: #F1F5F9 !important;
   border-color: #CBD5E1 !important;
+}
+
 /* Responsive Table Wrappers & Mobile Container Safety */
 .table-responsive,
 .table-container,

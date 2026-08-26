@@ -1653,6 +1653,16 @@ body.light-theme .btn-clear-cart {
   .floating-cart-badge { bottom: 74px; right: 14px; font-size: 12.5px; padding: 10px 16px; }
 }
 
+@media (max-width: 380px) {
+  .menu-wrapper { padding: 8px 6px 140px; }
+  .food-card { padding: 8px; gap: 8px; }
+  .food-image { width: 84px; height: 84px; min-width: 84px; }
+  .food-content h3 { font-size: 13.5px; }
+  .food-price { font-size: 13px; }
+  .bottom-floating-actions { width: calc(100% - 12px); left: 6px; bottom: 8px; }
+  .dock-btn { font-size: 10.5px; }
+}
+
 /* ==========================================================================
    EXPLICIT LIGHT THEME OVERRIDES (CRISP CONTRAST GUARANTEE)
    ========================================================================== */
