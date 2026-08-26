@@ -428,6 +428,58 @@
     }
     input:checked + .slider { background-color: #10B981; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
     input:checked + .slider:before { transform: translateX(20px); }
+
+    /* ─── Menu Manager Mobile & Tablet Responsive Rules ─── */
+    @media (max-width: 768px) {
+      .menu-content-container {
+        padding: 14px 12px !important;
+      }
+      .menu-manager-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+      }
+      .menu-manager-header button {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+      .stat-card {
+        padding: 12px 14px !important;
+      }
+      .stat-info .stat-num {
+        font-size: 18px !important;
+      }
+      .menu-controls-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 10px 12px !important;
+        gap: 10px !important;
+      }
+      .search-input-wrap {
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+      .category-pills {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px !important;
+      }
+      .menu-items-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .stats-bar {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -535,7 +587,7 @@
         </a>
       </header>
 
-      <div style="flex: 1; padding: 28px; overflow-y: auto;">
+      <div class="menu-content-container" style="flex: 1; padding: 28px; overflow-y: auto;">
         <div class="menu-manager-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
           <div>
             <h1 style="font-family:'Outfit',sans-serif; font-size:24px; font-weight:800; margin:0 0 4px; color:var(--text-primary); display:flex; align-items:center; gap:10px;">
