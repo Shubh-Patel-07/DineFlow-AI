@@ -93,4 +93,25 @@ class RestaurantController extends Controller
             'message' => 'Restaurant settings updated successfully'
         ]);
     }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,svg|max:2048'
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = \Illuminate\Support\Str::random(32) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('uploads', $filename, 'public');
+
+            return response()->json([
+                'success' => true,
+                'url' => '/storage/' . $path,
+                'path' => $path
+            ], 201);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No image file uploaded'], 400);
+    }
 }

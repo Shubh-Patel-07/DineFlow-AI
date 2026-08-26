@@ -28,7 +28,10 @@ class InventoryController extends Controller
         ]);
 
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? 1);
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? $request->input('restaurant_id'));
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
 
         $item = Inventory::create([
             'restaurant_id'   => $restaurantId,

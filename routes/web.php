@@ -408,5 +408,8 @@ Route::prefix('api')->group(function () {
         Route::post('/staff', [StaffController::class, 'store'])->middleware('role:admin,manager');
         Route::put('/staff/{id}', [StaffController::class, 'update'])->middleware('role:admin,manager');
         Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->middleware('role:admin');
+
+        // File & Image Storage
+        Route::post('/upload/image', [RestaurantController::class, 'uploadImage'])->middleware('role:admin,manager');
     });
 });
