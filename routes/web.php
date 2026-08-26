@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\MenuItemController;
@@ -14,6 +16,10 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
+// Public SaaS Registration & Authentication Routes
+Route::get('/register', [RegisterController::class, 'showRegister'])->name('register')->middleware('guest');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.submit')->middleware('guest');
+
 // Traditional Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login')->middleware('guest');
@@ -21,6 +27,11 @@ Route::get('/pin-login', [AuthController::class, 'showPinLogin'])->name('auth.pi
 Route::post('/pin-login', [AuthController::class, 'loginWithPin'])->name('auth.login-with-pin')->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth');
 Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.switch-user')->middleware('auth');
+
+// Guided Onboarding Wizard
+Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index')->middleware(['auth', 'tenant']);
+Route::post('/api/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete')->middleware(['auth', 'tenant']);
+Route::get('/api/plan/usage', [OnboardingController::class, 'getUsageStats'])->name('plan.usage')->middleware(['auth', 'tenant']);
 
 // Protected UI Pages
 Route::middleware(['auth', 'tenant'])->group(function () {
@@ -95,6 +106,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
             'weeklySalesData' => $weeklySalesData,
             'categorySalesLabels' => array_keys($categorySales),
             'categorySalesData' => array_values($categorySales),
+            'usageStats' => \App\Services\PlanLimitService::getUsageStats($restaurantId),
         ]);
     })->name('dashboard');
     

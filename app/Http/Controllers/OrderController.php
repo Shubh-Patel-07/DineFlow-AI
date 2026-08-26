@@ -32,6 +32,16 @@ class OrderController extends Controller
             'special_instructions' => 'nullable|string',
         ]);
 
+        $limitCheck = \App\Services\PlanLimitService::canCreateOrder($request->restaurant_id);
+        if (!$limitCheck['allowed']) {
+            return response()->json([
+                'success' => false,
+                'message' => $limitCheck['message'],
+                'limit_exceeded' => true,
+                'details' => $limitCheck
+            ], 422);
+        }
+
         return DB::transaction(function () use ($request) {
             $totalAmount = 0;
             $itemsData = [];

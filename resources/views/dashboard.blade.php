@@ -480,6 +480,32 @@
       </div>
     </div>
 
+    @if(isset($usageStats))
+    <!-- SaaS Free Plan Usage Bar -->
+    <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #818CF8; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid fa-bolt"></i> {{ strtoupper($usageStats['plan_type'] ?? 'FREE') }} PLAN
+        </span>
+        <span style="font-size: 12.5px; color: var(--text-secondary); font-weight: 600;">Resource Quotas:</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['tables']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['tables']['limit'] ?? 10 }} Tables
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['staff']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['staff']['limit'] ?? 5 }} Staff
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['menu_items']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['menu_items']['limit'] ?? 100 }} Menu Items
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['monthly_orders']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['monthly_orders']['limit'] ?? 500 }} Monthly Orders
+        </div>
+      </div>
+    </div>
+    @endif
+
     <!-- 4 Stats Cards Grid -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px;">
       <!-- Card 1 -->

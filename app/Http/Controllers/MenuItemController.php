@@ -36,6 +36,16 @@ class MenuItemController extends Controller
             return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
         }
 
+        $limitCheck = \App\Services\PlanLimitService::canCreateMenuItem($restaurantId);
+        if (!$limitCheck['allowed']) {
+            return response()->json([
+                'success' => false,
+                'message' => $limitCheck['message'],
+                'limit_exceeded' => true,
+                'details' => $limitCheck
+            ], 422);
+        }
+
         $item = MenuItem::create([
             'restaurant_id' => $restaurantId,
             'name' => $request->name,

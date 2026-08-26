@@ -38,6 +38,16 @@ class StaffController extends Controller
         $user = auth()->user();
         $restaurantId = $user ? $user->restaurant_id : ($request->input('restaurant_id') ?? '1');
 
+        $limitCheck = \App\Services\PlanLimitService::canCreateStaff($restaurantId);
+        if (!$limitCheck['allowed']) {
+            return response()->json([
+                'success' => false,
+                'message' => $limitCheck['message'],
+                'limit_exceeded' => true,
+                'details' => $limitCheck
+            ], 422);
+        }
+
         $existingPin = User::where('restaurant_id', $restaurantId)
             ->where('numeric_pin', $validated['numeric_pin'])
             ->first();

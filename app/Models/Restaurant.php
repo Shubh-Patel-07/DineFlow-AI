@@ -14,13 +14,21 @@ class Restaurant extends Model
         'gstin',
         'gst_rate',
         'service_charge',
-        'settings'
+        'settings',
+        'plan_type',
+        'subscription_status',
+        'onboarding_completed',
+        'plan_limits',
+        'trial_ends_at'
     ];
 
     protected $casts = [
         'settings' => 'array',
         'gst_rate' => 'decimal:2',
-        'service_charge' => 'decimal:2'
+        'service_charge' => 'decimal:2',
+        'onboarding_completed' => 'boolean',
+        'plan_limits' => 'array',
+        'trial_ends_at' => 'datetime'
     ];
 
     public function tables()

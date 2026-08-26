@@ -543,6 +543,10 @@
                 <button type="submit" class="btn-submit">
                     <i class="fa-solid fa-right-to-bracket"></i> Login to POS
                 </button>
+
+                <div style="text-align:center; margin-top:16px; font-size:13px; color:var(--text-secondary);">
+                    New to DineFlow AI? <a href="/register" style="color:#818CF8; font-weight:700; text-decoration:none;">Start Free Restaurant Account →</a>
+                </div>
             </form>
         </div>
 

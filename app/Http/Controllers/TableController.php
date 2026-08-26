@@ -20,6 +20,16 @@ class TableController extends Controller
             return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
         }
 
+        $limitCheck = \App\Services\PlanLimitService::canCreateTable($restaurantId);
+        if (!$limitCheck['allowed']) {
+            return response()->json([
+                'success' => false,
+                'message' => $limitCheck['message'],
+                'limit_exceeded' => true,
+                'details' => $limitCheck
+            ], 422);
+        }
+
         $table = Table::create([
             'restaurant_id' => $restaurantId,
             'table_number' => $request->table_number,
