@@ -22,7 +22,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'restaurant_id'     => 'nullable|string',
+            'restaurant_id'     => 'nullable',
             'customer_name'     => 'required|string|max:255',
             'customer_phone'    => 'required|string|max:25',
             'pax_count'         => 'required|integer|min:1|max:50',
@@ -31,8 +31,11 @@ class ReservationController extends Controller
             'special_requests'  => 'nullable|string',
         ]);
 
+        $user = auth()->user();
+        $resId = $user ? $user->restaurant_id : ($validated['restaurant_id'] ?? $request->input('restaurant_id', '1'));
+
         $reservation = Reservation::create([
-            'restaurant_id'    => $validated['restaurant_id'] ?? '1',
+            'restaurant_id'    => $resId,
             'customer_name'    => $validated['customer_name'],
             'customer_phone'   => $validated['customer_phone'],
             'pax_count'        => $validated['pax_count'],

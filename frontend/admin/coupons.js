@@ -186,14 +186,21 @@ async function handleSaveCoupon(e) {
 
 async function toggleCoupon(id, newActive) {
   try {
+    const payload = { is_active: newActive ? 1 : 0, isActive: newActive ? 1 : 0 };
+    if (newActive) {
+      payload.expires_at = null; // Clear past expiration so manual activation takes immediate effect
+    }
     const res = await fetch(`/api/coupons/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '' },
-      body: JSON.stringify({ is_active: newActive, isActive: newActive })
+      body: JSON.stringify(payload)
     });
     if (res.ok) {
       Toast.success(newActive ? 'Coupon activated!' : 'Coupon deactivated!');
       loadCoupons();
+    } else {
+      const err = await res.json();
+      Toast.error(err.message || 'Failed to update coupon status.');
     }
   } catch (_) { Toast.error('Network error.'); }
 }

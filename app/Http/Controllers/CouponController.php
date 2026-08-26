@@ -81,8 +81,18 @@ class CouponController extends Controller
             'first_time_only'  => 'nullable|boolean',
             'category'         => 'nullable|string|max:100',
             'order_type'       => 'nullable|string',
-            'expires_at'       => 'nullable|date',
+            'expires_at'       => 'nullable',
         ]);
+
+        if (array_key_exists('expires_at', $validated)) {
+            $validated['expires_at'] = !empty($validated['expires_at']) ? date('Y-m-d H:i:s', strtotime($validated['expires_at'])) : null;
+        }
+
+        if (isset($validated['is_active']) && (bool)$validated['is_active']) {
+            if ($coupon->expires_at && $coupon->expires_at->isPast() && !array_key_exists('expires_at', $validated)) {
+                $coupon->expires_at = null;
+            }
+        }
 
         $coupon->fill($validated);
         $coupon->save();

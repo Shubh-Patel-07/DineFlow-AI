@@ -261,8 +261,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/admin/sales', fn() => $serveAdminPage('sales-report.html'));
     Route::get('/admin/reports', fn() => $serveAdminPage('sales-report.html'));
 
-    Route::get('/frontend/admin/admin-dashboard.html', fn() => $serveAdminPage('admin-dashboard.html'));
-    Route::get('/admin/admin-dashboard', fn() => $serveAdminPage('admin-dashboard.html'));
+    Route::get('/frontend/admin/admin-dashboard.html', fn() => redirect('/dashboard'));
+    Route::get('/admin/admin-dashboard', fn() => redirect('/dashboard'));
 });
 
 // Simple shortcuts for testing/presentations
