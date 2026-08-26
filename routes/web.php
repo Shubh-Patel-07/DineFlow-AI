@@ -100,7 +100,12 @@ Route::middleware('auth')->group(function () {
     })->name('pos.terminal');
 
     Route::get('/pos', function () {
-        return view('pos.index');
+        $user = auth()->user();
+        $restaurantId = ($user && strtolower(trim($user->role ?? '')) === 'admin')
+            ? request()->query('restaurantId', $user->restaurant_id ?? 1)
+            : ($user->restaurant_id ?? 1);
+        $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
+        return view('pos.index', compact('todayOrdersCount'));
     })->name('pos.index');
 
     Route::get('/kitchen', function () {

@@ -19,7 +19,7 @@
     }
   </script>
   <script src="/frontend/admin/utils.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
     :root {
@@ -385,7 +385,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
+    body { font-family: 'Outfit', 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
     /* ─── SIDEBAR ─────────────────────────────── */
     .sidebar {
@@ -1604,9 +1604,9 @@
       <h2>DineFlow AI POS</h2>
       <span>Restaurant Suite v2.0</span>
     </div>
-    <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
       <i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i>
-    </div>
+    </button>
   </div>
 
   <div class="sidebar-nav">
@@ -1614,7 +1614,7 @@
       <div class="sidebar-section-label">Main</div>
       <a class="nav-item" href="/dashboard" data-path="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
       <a class="nav-item active" href="/pos" data-path="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge">{{ $todayOrdersCount ?? 0 }}</span></a>
       <a class="nav-item" href="/admin/tables" data-path="/admin/tables" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
       <a class="nav-item" href="/kitchen" data-path="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
@@ -1683,7 +1683,7 @@
         <div id="liveClockBadge">--:--:-- --</div>
         <div id="localWeatherBadge"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
       </div>
-      <div class="topbar-sub" id="topbarDate">Loading date...</div>
+      <div class="topbar-sub" id="topbarDate">{{ now()->format('l, M d, Y') }} • Shift: {{ (now()->hour >= 6 && now()->hour < 16) ? 'Morning (06:00 - 16:00)' : 'Evening (16:00 - 24:00)' }}</div>
     </div>
     <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
       <i class="fa-solid fa-bars"></i>
@@ -1704,18 +1704,18 @@
     </div>
     <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
     <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
-    <div class="topbar-desktop-only" style="display:flex; align-items:center; gap:8px; background:var(--primary-light); border:1px solid rgba(99,102,241,0.25); padding:4px 10px 4px 6px; border-radius:30px; margin-left:4px;">
-      <div class="user-avatar" style="width:30px; height:30px; font-size:12px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0; box-shadow:0 2px 6px rgba(99,102,241,0.3);">{{ substr(auth()->user()->name, 0, 1) }}</div>
-      <div style="display:flex; flex-direction:column; line-height:1.2; white-space:nowrap;">
-        <span style="font-size:12px; font-weight:700; color:var(--text-primary);">{{ auth()->user()->name }}</span>
-        <span style="font-size:9.5px; font-weight:600; color:var(--text-muted); text-transform:capitalize;">{{ auth()->user()->role ?? 'staff' }}</span>
+    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
+      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+      <div style="display:flex;flex-direction:column;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()?->name ?? 'Administrator' }}</span>
+        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()?->role ?? 'staff' }}</span>
       </div>
       <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
         @csrf
         <button type="submit" title="Logout"
           style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
-                 width:26px; height:26px; border-radius:50%; cursor:pointer;
-                 display:flex; align-items:center; justify-content:center; font-size:11px; transition:all 0.18s;"
+                 width:30px; height:30px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:13px;"
           onmouseover="this.style.background='rgba(239,68,68,0.35)'"
           onmouseout="this.style.background='rgba(239,68,68,0.15)'">
           <i class="fa-solid fa-right-from-bracket"></i>
