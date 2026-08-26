@@ -2358,13 +2358,13 @@
 
 <!-- Delivery & Online Orders Modal -->
 <div class="modal-overlay" id="deliveryOrdersModal">
-  <div class="modal selection-popup-modal" style="width:860px; max-width:95%;">
-    <div class="modal-header" style="background:linear-gradient(135deg,#064E3B,#047857); border-bottom:1px solid rgba(255,255,255,0.1); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
-      <div class="modal-title" style="color:#34D399; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
-        <i class="fa-solid fa-motorcycle" style="color:#6EE7B7; font-size:18px;"></i>
+  <div class="modal selection-popup-modal" style="width:860px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-motorcycle" style="color:var(--primary);"></i>
         <span>Delivery &amp; Takeaway Dispatch Terminal</span>
       </div>
-      <button class="modal-close" onclick="closeModal('deliveryOrdersModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      <button class="modal-close" onclick="closeModal('deliveryOrdersModal')" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body" style="padding:18px;">
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:16px;">
