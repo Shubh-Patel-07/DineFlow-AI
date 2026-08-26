@@ -1,0 +1,16 @@
+{
+    "name": "DineFlow AI Customer Menu",
+    "short_name": "DineFlow Menu",
+    "description": "Smart Digital QR Restaurant Menu & Ordering System",
+    "start_url": "/frontend/customer/menu.html",
+    "display": "standalone",
+    "background_color": "#0B0F19",
+    "theme_color": "#6366F1",
+    "icons": [
+        {
+            "src": "/images/placeholder-food.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        }
+    ]
+}

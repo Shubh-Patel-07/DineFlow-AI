@@ -774,6 +774,36 @@ window.testSelectedPrinter = function() {
   }, 500);
 };
 
+window.connectBluetoothPrinter = async function() {
+  if (!navigator.bluetooth) {
+    if (typeof Toast !== 'undefined' && Toast.error) {
+      Toast.error('Web Bluetooth is not supported in this browser. Using standard print dialog.');
+    } else {
+      alert('ℹ️ Web Bluetooth is not supported in this browser. Standard ESC/POS Print Dialog will be used.');
+    }
+    return null;
+  }
+  try {
+    const device = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
+    });
+    if (device) {
+      localStorage.setItem('dineflow_printer_name', device.name || 'Bluetooth Thermal Printer');
+      if (document.getElementById('printerNameInput')) {
+        document.getElementById('printerNameInput').value = device.name || 'Bluetooth Thermal Printer';
+      }
+      if (typeof Toast !== 'undefined' && Toast.success) {
+        Toast.success(`Bluetooth Printer paired: ${device.name || 'Device'}`);
+      }
+      return device;
+    }
+  } catch (err) {
+    console.log('Bluetooth pairing skipped/cancelled:', err);
+  }
+  return null;
+};
+
 window.savePromoStrategySettings = function() {
   const pEarn = (document.getElementById('settingPointEarnRate')?.value || '100').trim();
   const pRedeem = (document.getElementById('settingPointRedeemValue')?.value || '1').trim();
