@@ -351,6 +351,19 @@
 
     <!-- Main Wizard -->
     <main class="wizard-container">
+        <!-- Progress Bar -->
+        <div style="margin-bottom: 24px; background: rgba(15,23,42,0.6); padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                    <span style="font-weight: 700; color: #A5B4FC;" id="progressStepTitle">Step 1 of 8: Restaurant Profile</span>
+                    <span style="font-weight: 800; color: #34D399;" id="progressPercentage">12.5% Completed</span>
+                </div>
+                <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden;">
+                    <div id="onboardingProgressBar" style="height: 100%; width: 12.5%; background: linear-gradient(90deg, #6366F1, #34D399); transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- 8-Step Navigation -->
         <div class="steps-nav" id="stepsNav">
             <div class="step-indicator active" onclick="jumpToStep(1)">
@@ -598,6 +611,25 @@
         const restaurantId = "{{ $restaurant->id }}";
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
+        const stepTitles = [
+            'Restaurant Profile',
+            'Branding & Logo',
+            'Tax & GST Settings',
+            'Dining Tables Setup',
+            'Menu Items Starter Pack',
+            'Staff Credentials & PINs',
+            'Table QR Code Preview',
+            'Finish & Launch'
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedStep = parseInt(localStorage.getItem('dineflow_onboarding_step') || '1');
+            if (savedStep >= 1 && savedStep <= totalSteps) {
+                currentStep = savedStep;
+            }
+            updateStepView();
+        });
+
         function jumpToStep(step) {
             if (step < 1 || step > totalSteps) return;
             currentStep = step;
@@ -625,6 +657,17 @@
         }
 
         function updateStepView() {
+            localStorage.setItem('dineflow_onboarding_step', currentStep);
+
+            // Update progress bar
+            const pct = Math.round((currentStep / totalSteps) * 100);
+            const titleElem = document.getElementById('progressStepTitle');
+            const pctElem = document.getElementById('progressPercentage');
+            const barElem = document.getElementById('onboardingProgressBar');
+            if (titleElem) titleElem.textContent = `Step ${currentStep} of ${totalSteps}: ${stepTitles[currentStep - 1] || ''}`;
+            if (pctElem) pctElem.textContent = `${pct}% Completed`;
+            if (barElem) barElem.style.width = `${pct}%`;
+
             // Update step panes
             document.querySelectorAll('.step-pane').forEach((p, idx) => {
                 p.classList.toggle('active', idx + 1 === currentStep);

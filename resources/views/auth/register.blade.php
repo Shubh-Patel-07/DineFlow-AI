@@ -393,7 +393,7 @@
                     <p class="form-sub">Start managing tables and live orders today</p>
                 </div>
 
-                @if ($errors->any())
+                @if (isset($errors) && $errors->any())
                     <div class="alert-box alert-danger">
                         <i class="fa-solid fa-circle-exclamation" style="margin-top:2px;"></i>
                         <div>
@@ -449,7 +449,8 @@
                             <label class="form-label" for="password">Password</label>
                             <div class="input-wrap">
                                 <i class="fa-solid fa-lock input-icon"></i>
-                                <input type="password" id="password" name="password" class="form-input" placeholder="Min. 6 chars" required>
+                                <input type="password" id="password" name="password" class="form-input" placeholder="Min. 6 chars" oninput="checkPasswordStrength(this.value)" required>
+                                <i class="fa-solid fa-eye" id="togglePassword" onclick="togglePasswordVisibility('password', this)" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#64748B; cursor:pointer; font-size:14px;"></i>
                             </div>
                         </div>
 
@@ -457,19 +458,33 @@
                             <label class="form-label" for="password_confirmation">Confirm Password</label>
                             <div class="input-wrap">
                                 <i class="fa-solid fa-shield-halved input-icon"></i>
-                                <input type="password" id="password_confirmation" name="password_confirmation" class="form-input" placeholder="Re-type password" required>
+                                <input type="password" id="password_confirmation" name="password_confirmation" class="form-input" placeholder="Re-type password" oninput="checkPasswordMatch()" required>
+                                <i class="fa-solid fa-eye" id="togglePasswordConf" onclick="togglePasswordVisibility('password_confirmation', this)" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#64748B; cursor:pointer; font-size:14px;"></i>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Password Strength Meter -->
+                    <div id="strengthWrapper" style="margin-top:-6px; margin-bottom:14px; display:none;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+                            <span style="color:var(--text-secondary);">Password Strength:</span>
+                            <span id="strengthLabel" style="font-weight:700; color:#EF4444;">Weak</span>
+                        </div>
+                        <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+                            <div id="strengthBar" style="height:100%; width:25%; background:#EF4444; transition:all 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div id="matchNotice" style="font-size:11.5px; margin-top:-6px; margin-bottom:12px; display:none;"></div>
+
                     <label class="checkbox-label">
                         <input type="checkbox" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} required>
-                        <span>I agree to the <a href="#" style="color:#818CF8;">Terms of Service</a> & <a href="#" style="color:#818CF8;">Privacy Policy</a>.</span>
+                        <span>I agree to the <a href="{{ route('terms') }}" target="_blank" style="color:#818CF8;">Terms of Service</a> & <a href="{{ route('privacy') }}" target="_blank" style="color:#818CF8;">Privacy Policy</a>.</span>
                     </label>
 
-                    <button type="submit" class="btn-submit">
-                        <span>Create Restaurant Account</span>
-                        <i class="fa-solid fa-arrow-right"></i>
+                    <button type="submit" id="btnSubmitReg" class="btn-submit">
+                        <span id="btnSubmitText">Create Restaurant Account</span>
+                        <i class="fa-solid fa-arrow-right" id="btnSubmitIcon"></i>
                     </button>
                 </form>
 
@@ -480,5 +495,87 @@
         </div>
     </div>
 
+    <script>
+        function togglePasswordVisibility(inputId, iconElem) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElem.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                iconElem.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function checkPasswordStrength(val) {
+            const wrap = document.getElementById('strengthWrapper');
+            const label = document.getElementById('strengthLabel');
+            const bar = document.getElementById('strengthBar');
+            if (!val) {
+                wrap.style.display = 'none';
+                return;
+            }
+            wrap.style.display = 'block';
+
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            if (score <= 1) {
+                label.textContent = 'Weak (min. 6 chars)';
+                label.style.color = '#EF4444';
+                bar.style.width = '25%';
+                bar.style.background = '#EF4444';
+            } else if (score === 2) {
+                label.textContent = 'Fair';
+                label.style.color = '#F59E0B';
+                bar.style.width = '50%';
+                bar.style.background = '#F59E0B';
+            } else if (score === 3) {
+                label.textContent = 'Good';
+                label.style.color = '#10B981';
+                bar.style.width = '75%';
+                bar.style.background = '#10B981';
+            } else {
+                label.textContent = 'Strong 🔒';
+                label.style.color = '#34D399';
+                bar.style.width = '100%';
+                bar.style.background = '#34D399';
+            }
+        }
+
+        function checkPasswordMatch() {
+            const pw = document.getElementById('password').value;
+            const pwConf = document.getElementById('password_confirmation').value;
+            const notice = document.getElementById('matchNotice');
+            if (!pwConf) {
+                notice.style.display = 'none';
+                return;
+            }
+            notice.style.display = 'block';
+            if (pw === pwConf) {
+                notice.textContent = '✓ Passwords match';
+                notice.style.color = '#34D399';
+            } else {
+                notice.textContent = '✗ Passwords do not match';
+                notice.style.color = '#EF4444';
+            }
+        }
+
+        document.querySelector('form')?.addEventListener('submit', function() {
+            const btn = document.getElementById('btnSubmitReg');
+            const txt = document.getElementById('btnSubmitText');
+            const icon = document.getElementById('btnSubmitIcon');
+            if (btn && txt) {
+                btn.disabled = true;
+                btn.style.opacity = '0.85';
+                txt.textContent = 'Provisioning Restaurant Tenant...';
+                if (icon) icon.className = 'fa-solid fa-spinner fa-spin';
+            }
+        });
+    </script>
 </body>
 </html>

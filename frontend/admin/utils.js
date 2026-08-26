@@ -880,3 +880,25 @@ window.saveAllSettings = function() {
     alert('✅ All System, Profile & Hardware Printer Settings saved successfully!');
   }
 };
+
+window.showPlanLimitModal = function(message) {
+  const existing = document.getElementById('planLimitExceededModal');
+  if (existing) existing.remove();
+
+  const modalHtml = `
+    <div id="planLimitExceededModal" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; z-index:99999;">
+      <div style="background:#131A35; border:1px solid rgba(99,102,241,0.4); border-radius:24px; padding:32px; max-width:440px; width:90%; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+        <div style="width:56px; height:56px; border-radius:50%; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 16px;">
+          ⚡
+        </div>
+        <h3 style="font-family:'Outfit',sans-serif; font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Free Plan Limit Reached</h3>
+        <p style="font-size:14px; color:#94A3B8; line-height:1.5; margin-bottom:24px;">${message || 'You have reached your Free Plan resource quota. Upgrade your plan to unlock higher limits.'}</p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+          <button onclick="document.getElementById('planLimitExceededModal').remove()" style="padding:10px 20px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#CBD5E1; font-weight:600; cursor:pointer;">Close</button>
+          <a href="/pricing" style="padding:10px 22px; background:linear-gradient(135deg,#6366F1,#4338CA); border:none; border-radius:10px; color:#fff; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 14px rgba(99,102,241,0.4);">View Plans →</a>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+};

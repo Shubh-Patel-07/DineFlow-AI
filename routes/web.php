@@ -282,9 +282,26 @@ Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
     return redirect("/frontend/customer/menu.html?restaurantId={$restaurantId}&tableId={$tableId}");
 });
 
+// Public SaaS Landing, Pricing & Legal Pages
 Route::get('/', function () {
-    return auth()->check() ? redirect()->route('pos.index') : redirect()->route('login');
-});
+    return view('landing');
+})->name('home');
+
+Route::get('/pricing', function () {
+    return view('pricing');
+})->name('pricing');
+
+Route::get('/terms', function () {
+    return view('pages.terms');
+})->name('terms');
+
+Route::get('/privacy', function () {
+    return view('pages.privacy');
+})->name('privacy');
+
+Route::get('/contact', function () {
+    return view('pages.contact');
+})->name('contact');
 
 
 // DineFlow AI API Endpoints (Phase 1-4)

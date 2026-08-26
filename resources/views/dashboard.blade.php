@@ -502,6 +502,9 @@
         <div style="font-size: 12px; color: var(--text-muted);">
           <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['monthly_orders']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['monthly_orders']['limit'] ?? 500 }} Monthly Orders
         </div>
+        <button type="button" onclick="alert('Pro & Enterprise paid plans are coming soon! View upcoming features on our pricing page.'); window.location.href='/pricing';" style="padding: 6px 14px; background: linear-gradient(135deg, #6366F1, #818CF8); color: #fff; border: none; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(99,102,241,0.3);">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Upgrade
+        </button>
       </div>
     </div>
     @endif
