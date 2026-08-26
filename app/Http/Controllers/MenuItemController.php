@@ -9,11 +9,15 @@ class MenuItemController extends Controller
 {
     public function index(Request $request, $restaurantId = null)
     {
-        $restaurantId = (string)($restaurantId ?? $request->query('restaurantId', '1'));
+        // For authenticated staff, enforce their own restaurant_id; for public QR, use the route/query param
+        $user = auth()->user();
+        if ($user && $user->restaurant_id) {
+            $restaurantId = (string)$user->restaurant_id;
+        } else {
+            $restaurantId = (string)($restaurantId ?? $request->query('restaurantId') ?? $request->query('restaurant_id') ?? '1');
+        }
 
         $items = MenuItem::where('restaurant_id', $restaurantId)->get();
-
-
 
         return response()->json(['success' => true, 'data' => $items]);
     }
@@ -22,12 +26,18 @@ class MenuItemController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
             'category' => 'required|string',
         ]);
 
+        $user = auth()->user();
+        $restaurantId = $user ? (string)$user->restaurant_id : (string)($request->restaurant_id ?? $request->restaurantId);
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
+
         $item = MenuItem::create([
-            'restaurant_id' => (string)($request->restaurant_id ?? 1),
+            'restaurant_id' => $restaurantId,
             'name' => $request->name,
             'description' => $request->description ?? '',
             'price' => $request->price,
@@ -42,10 +52,17 @@ class MenuItemController extends Controller
 
     public function update(Request $request, $id)
     {
-        $item = MenuItem::find($id);
+        $user = auth()->user();
+        $userTenantId = $user ? $user->restaurant_id : null;
+
+        $query = MenuItem::query();
+        if ($userTenantId) {
+            $query->where('restaurant_id', $userTenantId);
+        }
+        $item = $query->find($id);
 
         if (!$item) {
-            return response()->json(['success' => false, 'message' => 'Menu item not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Menu item not found in your restaurant'], 404);
         }
 
         $request->validate([
@@ -70,10 +87,17 @@ class MenuItemController extends Controller
 
     public function destroy($id)
     {
-        $item = MenuItem::find($id);
+        $user = auth()->user();
+        $userTenantId = $user ? $user->restaurant_id : null;
+
+        $query = MenuItem::query();
+        if ($userTenantId) {
+            $query->where('restaurant_id', $userTenantId);
+        }
+        $item = $query->find($id);
 
         if (!$item) {
-            return response()->json(['success' => false, 'message' => 'Menu item not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Menu item not found in your restaurant'], 404);
         }
 
         $item->delete();

@@ -829,7 +829,7 @@ window.saveProfileAndTaxSettings = function() {
   if (gstRate) localStorage.setItem('dineflow_gst_rate', gstRate);
   if (svcCharge) localStorage.setItem('dineflow_service_charge', svcCharge);
 
-  const restaurantId = new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+  const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
   const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
   const payload = {

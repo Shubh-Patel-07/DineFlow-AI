@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('waiter_calls', function (Blueprint $table) {
-            $table->string('reason')->nullable()->default('General Assistance')->after('table_id');
-        });
+        if (!Schema::hasColumn('waiter_calls', 'reason')) {
+            Schema::table('waiter_calls', function (Blueprint $table) {
+                $table->string('reason')->nullable()->default('General Assistance')->after('table_id');
+            });
+        }
     }
 
     public function down(): void

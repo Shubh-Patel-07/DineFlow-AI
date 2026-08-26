@@ -10,9 +10,10 @@ class InventoryService {
     this.apiBase = apiBase;
   }
 
-  async fetchAllStock(restaurantId = '1') {
+  async fetchAllStock(restaurantId = null) {
+    const rId = restaurantId || window.AUTH_USER_RESTAURANT_ID || '1';
     try {
-      const response = await fetch(`${this.apiBase}/restaurant/${restaurantId}`);
+      const response = await fetch(`${this.apiBase}?restaurantId=${rId}`);
       if (!response.ok) throw new Error('Failed to fetch stock records');
       return await response.json();
     } catch (err) {

@@ -12,34 +12,45 @@ class TenantMiddleware
     {
         $user = auth()->user();
         if (!$user) {
+            // Unauthenticated public request (e.g. customer QR endpoints)
             return $next($request);
         }
 
-        // Admin has access to all tenant data
-        if (strtolower(trim($user->role ?? '')) === 'admin') {
+        // Only a global superadmin can bypass tenant scoping
+        if (strtolower(trim($user->role ?? '')) === 'superadmin') {
             return $next($request);
         }
 
-        $restaurantId = $request->route('restaurantId') 
-            ?? $request->input('restaurant_id') 
+        $userTenantId = strval($user->restaurant_id ?? '');
+
+        // Extract requested tenant ID from route, query, input, or URI path
+        $requestedTenantId = $request->route('restaurantId')
+            ?? $request->route('restaurant_id')
             ?? $request->query('restaurantId')
-            ?? $request->query('restaurant_id');
+            ?? $request->query('restaurant_id')
+            ?? $request->input('restaurant_id')
+            ?? $request->input('restaurantId');
 
-        // If no restaurantId is provided in request, inject authenticated user's restaurant_id
-        if (!$restaurantId && $user->restaurant_id) {
-            $request->merge(['restaurant_id' => $user->restaurant_id]);
-            $request->query->set('restaurantId', $user->restaurant_id);
-            return $next($request);
+        if (($requestedTenantId === null || $requestedTenantId === '') && preg_match('#/(?:restaurants?|tables|orders|reservations|feedback|waiter-calls|expenses|staff|analytics)(?:/restaurant)?/(\d+)#', $request->path(), $matches)) {
+            $requestedTenantId = $matches[1];
         }
 
-        if ($restaurantId && $user->restaurant_id && strval($user->restaurant_id) !== strval($restaurantId)) {
-            if ($request->expectsJson()) {
+        // If a specific tenant was requested and doesn't match the user's restaurant, DENY access
+        if ($requestedTenantId !== null && $requestedTenantId !== '' && $userTenantId !== '' && strval($requestedTenantId) !== $userTenantId) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Forbidden: You do not have access to restaurant {$restaurantId}'s data."
+                    'message' => "Forbidden: You do not have access to restaurant {$requestedTenantId}'s data."
                 ], 403);
             }
-            abort(403, 'Tenant access denied.');
+            abort(403, 'Forbidden: Cross-tenant access denied.');
+        }
+
+        // Enforce authenticated user's restaurant_id on the request
+        if ($userTenantId !== '') {
+            $request->merge(['restaurant_id' => $user->restaurant_id]);
+            $request->query->set('restaurantId', $user->restaurant_id);
+            $request->query->set('restaurant_id', $user->restaurant_id);
         }
 
         return $next($request);

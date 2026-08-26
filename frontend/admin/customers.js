@@ -2,6 +2,10 @@
 
 let customerList = [];
 
+function getCurrentRestaurantId() {
+  return window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+}
+
 function initCustomers() {
   if (typeof Auth !== 'undefined' && Auth.checkAuth) Auth.checkAuth();
   loadCustomers();
@@ -18,7 +22,7 @@ async function loadCustomers() {
   if (loader) loader.style.display = 'flex';
 
   try {
-    const res = await fetch('/api/customers?restaurantId=1');
+    const res = await fetch(`/api/customers?restaurantId=${getCurrentRestaurantId()}`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
       customerList = data.data;
@@ -148,7 +152,7 @@ async function handleSaveCustomer(e) {
     return; 
   }
 
-  const payload = { restaurant_id: 1, name, phone, email, loyalty_points: points, notes };
+  const payload = { restaurant_id: getCurrentRestaurantId(), name, phone, email, loyalty_points: points, notes };
   const url = id ? `/api/customers/${id}` : '/api/customers';
   const method = id ? 'PUT' : 'POST';
 

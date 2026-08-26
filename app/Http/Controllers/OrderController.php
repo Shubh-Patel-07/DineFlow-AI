@@ -13,7 +13,8 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $restaurantId = $request->query('restaurant_id', $request->query('restaurantId', 1));
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurant_id', $request->query('restaurantId', 1));
         $orders = Order::where('restaurant_id', $restaurantId)
             ->with(['items.menuItem', 'table'])
             ->orderBy('created_at', 'desc')
@@ -154,10 +155,15 @@ class OrderController extends Controller
             'status' => 'required|in:pending,preparing,served,completed,cancelled',
         ]);
 
-        $order = Order::find($id);
+        $user = auth()->user();
+        $query = Order::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
 
         if (!$order) {
-            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Order not found in your restaurant'], 404);
         }
 
         $order->status = $request->status;
@@ -168,10 +174,15 @@ class OrderController extends Controller
 
     public function pay(Request $request, $id)
     {
-        $order = Order::find($id);
+        $user = auth()->user();
+        $query = Order::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
 
         if (!$order) {
-            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Order not found in your restaurant'], 404);
         }
 
         $order->payment_status = 'paid';

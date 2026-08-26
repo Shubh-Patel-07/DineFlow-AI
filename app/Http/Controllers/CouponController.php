@@ -9,23 +9,33 @@ class CouponController extends Controller
 {
     public function index(Request $request)
     {
-        $restaurantId = $request->query('restaurantId', 1);
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurantId', 1);
         $coupons = Coupon::where('restaurant_id', $restaurantId)->orderBy('created_at', 'desc')->get();
         return response()->json(['success' => true, 'data' => $coupons]);
     }
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? 1);
+
         $request->validate([
-            'code'           => 'required|string|unique:coupons,code',
+            'code'           => 'required|string',
             'name'           => 'required|string|max:255',
             'discount_type'  => 'required|in:percentage,fixed',
             'discount_value' => 'required|numeric|min:0',
         ]);
 
+        $code = strtoupper(trim($request->code));
+        $existing = Coupon::where('restaurant_id', $restaurantId)->where('code', $code)->first();
+        if ($existing) {
+            return response()->json(['success' => false, 'message' => 'Coupon code already exists in your restaurant.'], 422);
+        }
+
         $coupon = Coupon::create([
-            'restaurant_id'    => $request->restaurant_id ?? 1,
-            'code'             => strtoupper($request->code),
+            'restaurant_id'    => $restaurantId,
+            'code'             => $code,
             'name'             => $request->name,
             'discount_type'    => $request->discount_type,
             'discount_value'   => $request->discount_value,
@@ -45,9 +55,15 @@ class CouponController extends Controller
 
     public function update(Request $request, $id)
     {
-        $coupon = Coupon::find($id);
+        $user = auth()->user();
+        $query = Coupon::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $coupon = $query->find($id);
+
         if (!$coupon) {
-            return response()->json(['success' => false, 'message' => 'Coupon not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Coupon not found in your restaurant'], 404);
         }
 
         $validated = $request->validate([
@@ -72,9 +88,15 @@ class CouponController extends Controller
 
     public function destroy($id)
     {
-        $coupon = Coupon::find($id);
+        $user = auth()->user();
+        $query = Coupon::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $coupon = $query->find($id);
+
         if (!$coupon) {
-            return response()->json(['success' => false, 'message' => 'Coupon not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Coupon not found in your restaurant'], 404);
         }
         $coupon->delete();
         return response()->json(['success' => true, 'message' => 'Coupon deleted']);

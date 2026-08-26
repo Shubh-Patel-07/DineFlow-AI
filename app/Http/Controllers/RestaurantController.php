@@ -38,6 +38,11 @@ class RestaurantController extends Controller
 
     public function getSettings($id)
     {
+        $user = auth()->user();
+        if ($user && $user->restaurant_id && strval($user->restaurant_id) !== strval($id) && strtolower(trim($user->role ?? '')) !== 'superadmin') {
+            return response()->json(['success' => false, 'message' => 'Forbidden: You cannot access settings for another restaurant.'], 403);
+        }
+
         $restaurant = Restaurant::find($id);
         if (!$restaurant) {
             return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
@@ -60,6 +65,11 @@ class RestaurantController extends Controller
 
     public function updateSettings(Request $request, $id)
     {
+        $user = auth()->user();
+        if ($user && $user->restaurant_id && strval($user->restaurant_id) !== strval($id) && strtolower(trim($user->role ?? '')) !== 'superadmin') {
+            return response()->json(['success' => false, 'message' => 'Forbidden: You cannot modify settings for another restaurant.'], 403);
+        }
+
         $restaurant = Restaurant::find($id);
         if (!$restaurant) {
             return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);

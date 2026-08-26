@@ -13,7 +13,8 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        $restaurantId = $request->query('restaurantId', 1);
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurantId', 1);
         $customers = Customer::where('restaurant_id', $restaurantId)->orderBy('name')->get();
         return response()->json(['success' => true, 'data' => $customers]);
     }
@@ -22,14 +23,16 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'name'          => 'required|string|max:255',
-            'restaurant_id' => 'nullable',
             'phone'         => 'nullable|string|max:30',
             'email'         => 'nullable|email|max:255',
             'notes'         => 'nullable|string|max:1000',
         ]);
 
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? 1);
+
         $customer = Customer::create([
-            'restaurant_id' => $request->restaurant_id ?? auth()->user()?->restaurant_id ?? 1,
+            'restaurant_id' => $restaurantId,
             'name'          => $validated['name'],
             'phone'         => $validated['phone'] ?? null,
             'email'         => $validated['email'] ?? null,
@@ -41,9 +44,15 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $query = Customer::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $customer = $query->find($id);
+
         if (!$customer) {
-            return response()->json(['success' => false, 'message' => 'Customer not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Customer not found in your restaurant'], 404);
         }
 
         $validated = $request->validate([
@@ -70,7 +79,9 @@ class CustomerController extends Controller
             return response()->json(['success' => false, 'message' => 'No points earned']);
         }
 
-        $restaurantId = $request->input('restaurant_id', '1');
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->input('restaurant_id') ?? '1');
+
         $customer = null;
         if ($phone) {
             $customer = Customer::where('phone', $phone)->where('restaurant_id', $restaurantId)->first();
@@ -98,9 +109,15 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $query = Customer::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $customer = $query->find($id);
+
         if (!$customer) {
-            return response()->json(['success' => false, 'message' => 'Customer not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Customer not found in your restaurant'], 404);
         }
         $customer->delete();
         return response()->json(['success' => true, 'message' => 'Customer deleted']);
@@ -160,10 +177,15 @@ class CustomerController extends Controller
 
     public function resolveWaiterCall(Request $request, $id)
     {
-        $call = WaiterCall::find($id);
+        $user = auth()->user();
+        $query = WaiterCall::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $call = $query->find($id);
 
         if (!$call) {
-            return response()->json(['success' => false, 'message' => 'Call request not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Call request not found in your restaurant'], 404);
         }
 
         $call->status = 'resolved';

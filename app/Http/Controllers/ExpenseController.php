@@ -9,7 +9,8 @@ class ExpenseController extends Controller
 {
     public function index(Request $request, $restaurantId = null)
     {
-        $rId = $restaurantId ?? $request->query('restaurant_id', '1');
+        $user = auth()->user();
+        $rId = $user ? $user->restaurant_id : ($restaurantId ?? $request->query('restaurant_id', '1'));
         $expenses = Expense::where('restaurant_id', $rId)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
@@ -24,7 +25,6 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'restaurant_id' => 'nullable|string',
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'category' => 'nullable|string|max:100',
@@ -33,7 +33,10 @@ class ExpenseController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $validated['restaurant_id'] = $validated['restaurant_id'] ?? $request->input('restaurant_id', '1');
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->input('restaurant_id') ?? '1');
+
+        $validated['restaurant_id'] = $restaurantId;
         $validated['category'] = $validated['category'] ?? 'Other';
         $validated['payment_method'] = $validated['payment_method'] ?? 'Cash';
 
@@ -48,9 +51,15 @@ class ExpenseController extends Controller
 
     public function update(Request $request, $id)
     {
-        $expense = Expense::find($id);
+        $user = auth()->user();
+        $query = Expense::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $expense = $query->find($id);
+
         if (!$expense) {
-            return response()->json(['success' => false, 'message' => 'Expense not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Expense not found in your restaurant'], 404);
         }
 
         $validated = $request->validate([
@@ -73,9 +82,15 @@ class ExpenseController extends Controller
 
     public function destroy($id)
     {
-        $expense = Expense::find($id);
+        $user = auth()->user();
+        $query = Expense::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $expense = $query->find($id);
+
         if (!$expense) {
-            return response()->json(['success' => false, 'message' => 'Expense not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Expense not found in your restaurant'], 404);
         }
 
         $expense->delete();

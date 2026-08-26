@@ -9,20 +9,26 @@ class TableController extends Controller
 {
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $restaurantId = $user ? (string)$user->restaurant_id : (string)($request->restaurant_id ?? $request->restaurantId);
+
         $request->validate([
-            'restaurant_id' => 'required|string',
             'table_number' => 'required|string',
         ]);
 
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
+
         $table = Table::create([
-            'restaurant_id' => $request->restaurant_id,
+            'restaurant_id' => $restaurantId,
             'table_number' => $request->table_number,
             'status' => 'active',
         ]);
 
         $localIP = gethostbyname(gethostname());
         $host = "http://" . $localIP . ":8000";
-        $qrData = $host . "/customer/menu?restaurantId=" . $request->restaurant_id . "&tableId=" . $table->id;
+        $qrData = $host . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id;
         $table->qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrData);
         $table->save();
 
@@ -82,10 +88,15 @@ class TableController extends Controller
 
     public function destroy($id)
     {
-        $table = Table::find($id);
+        $user = auth()->user();
+        $query = Table::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $table = $query->find($id);
 
         if (!$table) {
-            return response()->json(['success' => false, 'message' => 'Table not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Table not found in your restaurant'], 404);
         }
 
         // Prevent deleting a table if it has active unpaid orders

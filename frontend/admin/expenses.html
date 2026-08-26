@@ -831,7 +831,7 @@
 
   function editExpense(idx) { openModal(idx); }
 
-  const RESTAURANT_ID = new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+  const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
 
   async function loadExpensesFromApi() {
     try {

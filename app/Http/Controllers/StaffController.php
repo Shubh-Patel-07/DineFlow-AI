@@ -11,7 +11,8 @@ class StaffController extends Controller
 {
     public function index(Request $request, $restaurantId = null)
     {
-        $rId = $restaurantId ?? $request->query('restaurant_id', '1');
+        $user = auth()->user();
+        $rId = $user ? $user->restaurant_id : ($restaurantId ?? $request->query('restaurant_id', '1'));
         $staff = User::where('restaurant_id', $rId)
             ->whereIn('role', ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'staff'])
             ->orderBy('id', 'desc')
@@ -27,7 +28,6 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'restaurant_id' => 'nullable|string',
             'name' => 'required|string|max:255',
             'role' => 'required|string|in:admin,manager,cashier,kitchen,waiter,staff',
             'numeric_pin' => 'required|string|min:4|max:8',
@@ -35,7 +35,8 @@ class StaffController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
-        $restaurantId = $validated['restaurant_id'] ?? $request->input('restaurant_id', '1');
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->input('restaurant_id') ?? '1');
 
         $existingPin = User::where('restaurant_id', $restaurantId)
             ->where('numeric_pin', $validated['numeric_pin'])
@@ -50,7 +51,7 @@ class StaffController extends Controller
         $username = Str::slug($validated['name']) . rand(100, 999);
         $email = $validated['email'] ?? ($username . '@dineflow.local');
 
-        $user = User::create([
+        $staffUser = User::create([
             'name' => $validated['name'],
             'username' => $username,
             'email' => $email,
@@ -62,16 +63,22 @@ class StaffController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $user->makeVisible(['numeric_pin']),
+            'data' => $staffUser->makeVisible(['numeric_pin']),
             'message' => 'Staff member created successfully'
         ], 201);
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Staff member not found'], 404);
+        $user = auth()->user();
+        $query = User::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $staffUser = $query->find($id);
+
+        if (!$staffUser) {
+            return response()->json(['success' => false, 'message' => 'Staff member not found in your restaurant'], 404);
         }
 
         $validated = $request->validate([
@@ -84,23 +91,33 @@ class StaffController extends Controller
             $validated['password'] = Hash::make($validated['numeric_pin']);
         }
 
-        $user->update($validated);
+        $staffUser->update($validated);
 
         return response()->json([
             'success' => true,
-            'data' => $user,
+            'data' => $staffUser,
             'message' => 'Staff member updated successfully'
         ]);
     }
 
     public function destroy($id)
     {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Staff member not found'], 404);
+        $user = auth()->user();
+        if ($user && strval($user->id) === strval($id)) {
+            return response()->json(['success' => false, 'message' => 'You cannot delete your own active administrator account.'], 400);
         }
 
-        $user->delete();
+        $query = User::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $staffUser = $query->find($id);
+
+        if (!$staffUser) {
+            return response()->json(['success' => false, 'message' => 'Staff member not found in your restaurant'], 404);
+        }
+
+        $staffUser->delete();
 
         return response()->json([
             'success' => true,

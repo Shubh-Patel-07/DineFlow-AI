@@ -9,7 +9,8 @@ class ReservationController extends Controller
 {
     public function index(Request $request, $restaurantId = null)
     {
-        $resId = $restaurantId ?? $request->input('restaurant_id', '1');
+        $user = auth()->user();
+        $resId = $user ? $user->restaurant_id : ($restaurantId ?? $request->input('restaurant_id', '1'));
         $reservations = Reservation::where('restaurant_id', $resId)
             ->orderBy('reservation_date', 'desc')
             ->orderBy('created_at', 'desc')
@@ -54,9 +55,15 @@ class ReservationController extends Controller
             'status' => 'required|in:pending,confirmed,seated,cancelled'
         ]);
 
-        $reservation = Reservation::find($id);
+        $user = auth()->user();
+        $query = Reservation::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $reservation = $query->find($id);
+
         if (!$reservation) {
-            return response()->json(['success' => false, 'message' => 'Reservation not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Reservation not found in your restaurant'], 404);
         }
 
         $reservation->status = $request->status;
@@ -71,9 +78,15 @@ class ReservationController extends Controller
 
     public function destroy($id)
     {
-        $reservation = Reservation::find($id);
+        $user = auth()->user();
+        $query = Reservation::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $reservation = $query->find($id);
+
         if (!$reservation) {
-            return response()->json(['success' => false, 'message' => 'Reservation not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Reservation not found in your restaurant'], 404);
         }
 
         $reservation->delete();

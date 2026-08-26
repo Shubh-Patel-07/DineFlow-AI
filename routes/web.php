@@ -23,12 +23,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout')->
 Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.switch-user')->middleware('auth');
 
 // Protected UI Pages
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        $restaurantId = ($user && strtolower(trim($user->role ?? '')) === 'admin')
-            ? request()->query('restaurantId', $user->restaurant_id ?? 1)
-            : ($user->restaurant_id ?? 1);
+        $restaurantId = $user->restaurant_id;
+        if (!$restaurantId) {
+            abort(403, 'No restaurant assigned to this account.');
+        }
 
         // Today's Orders
         $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
@@ -103,15 +104,21 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/pos', function () {
         $user = auth()->user();
-        $restaurantId = ($user && strtolower(trim($user->role ?? '')) === 'admin')
-            ? request()->query('restaurantId', $user->restaurant_id ?? 1)
-            : ($user->restaurant_id ?? 1);
+        $restaurantId = $user->restaurant_id;
+        if (!$restaurantId) {
+            abort(403, 'No restaurant assigned to this account.');
+        }
         $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
-        return view('pos.index', compact('todayOrdersCount'));
+        return view('pos.index', compact('todayOrdersCount', 'restaurantId'));
     })->name('pos.index');
 
     Route::get('/kitchen', function () {
-        return view('pos.kitchen');
+        $user = auth()->user();
+        $restaurantId = $user->restaurant_id;
+        if (!$restaurantId) {
+            abort(403, 'No restaurant assigned to this account.');
+        }
+        return view('pos.kitchen', compact('restaurantId'));
     })->name('pos.kitchen');
     Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
     Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4');
@@ -121,9 +128,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/z-report', function (Illuminate\Http\Request $request) {
         $user = auth()->user();
-        $restaurantId = ($user && strtolower(trim($user->role ?? '')) === 'admin')
-            ? $request->query('restaurant_id', $user->restaurant_id ?? 1)
-            : ($user->restaurant_id ?? 1);
+        $restaurantId = $user->restaurant_id;
+        if (!$restaurantId) {
+            abort(403, 'No restaurant assigned to this account.');
+        }
 
         $reportDate = $request->query('date', \Carbon\Carbon::today()->format('Y-m-d'));
         $orders = \App\Models\Order::where('restaurant_id', $restaurantId)
@@ -192,8 +200,13 @@ Route::middleware('auth')->group(function () {
         }
 
         $content = file_get_contents($targetPath);
-        $userRole = auth()->check() ? (auth()->user()->role ?? auth()->user()->username ?? 'admin') : (session('active_role') ?? 'admin');
-        $script = "<script>window.AUTH_USER_ROLE = " . json_encode($userRole) . ";</script>";
+        $user = auth()->user();
+        $userId = $user ? $user->id : null;
+        $userName = $user ? $user->name : 'User';
+        $userRole = $user ? ($user->role ?? $user->username ?? 'admin') : (session('active_role') ?? 'admin');
+        $userRestaurantId = $user ? ($user->restaurant_id ?? null) : null;
+
+        $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n</script>";
         $content = str_replace('<head>', "<head>\n  {$script}", $content);
         return response($content)->header('Content-Type', 'text/html; charset=UTF-8');
     };
@@ -286,7 +299,7 @@ Route::prefix('api')->group(function () {
     Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
 
     // --- PROTECTED & TENANT SECURED ENDPOINTS ---
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth', 'tenant'])->group(function () {
         
         // Restaurants
         Route::post('/restaurants', [RestaurantController::class, 'store'])->middleware('role:admin');

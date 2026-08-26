@@ -9,7 +9,8 @@ class InventoryController extends Controller
 {
     public function index(Request $request)
     {
-        $restaurantId = $request->query('restaurantId', 1);
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurantId', 1);
 
         $items = Inventory::where('restaurant_id', $restaurantId)->orderBy('item_name')->get();
         return response()->json(['success' => true, 'data' => $items]);
@@ -18,7 +19,6 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'restaurant_id' => 'sometimes|integer',
             'item_name'     => 'required|string|max:255',
             'category'      => 'sometimes|string|max:100',
             'quantity'      => 'required|numeric|min:0',
@@ -27,8 +27,11 @@ class InventoryController extends Controller
             'cost_per_unit'   => 'sometimes|numeric|min:0',
         ]);
 
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? 1);
+
         $item = Inventory::create([
-            'restaurant_id'   => $request->restaurant_id ?? 1,
+            'restaurant_id'   => $restaurantId,
             'item_name'       => $request->item_name,
             'category'        => $request->category ?? 'General',
             'quantity'        => $request->quantity,
@@ -43,10 +46,15 @@ class InventoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        $item = Inventory::find($id);
+        $user = auth()->user();
+        $query = Inventory::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $item = $query->find($id);
 
         if (!$item) {
-            return response()->json(['success' => false, 'message' => 'Inventory item not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Inventory item not found in your restaurant'], 404);
         }
 
         $request->validate([
@@ -64,9 +72,15 @@ class InventoryController extends Controller
 
     public function destroy($id)
     {
-        $item = Inventory::find($id);
+        $user = auth()->user();
+        $query = Inventory::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $item = $query->find($id);
+
         if (!$item) {
-            return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Item not found in your restaurant'], 404);
         }
         $item->delete();
         return response()->json(['success' => true, 'message' => 'Item deleted']);
