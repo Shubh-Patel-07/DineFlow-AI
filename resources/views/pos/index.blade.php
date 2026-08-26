@@ -2318,27 +2318,40 @@
 
 <!-- Orders Manager Modal -->
 <div class="modal-overlay" id="ordersModal">
-  <div class="modal selection-popup-modal" style="width:780px; max-width:95%;">
-    <div class="modal-header">
-      <div class="modal-title"><i class="fa-solid fa-receipt" style="color:var(--primary);"></i>&nbsp; Recent Orders History</div>
-      <button class="modal-close" onclick="closeModal('ordersModal')"><i class="fa-solid fa-xmark"></i></button>
+  <div class="modal selection-popup-modal" style="width:960px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
+        <span>Recent Restaurant Orders</span>
+        <span id="posOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="loadOrdersData()" title="Refresh Orders" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.2s;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeModal('ordersModal')" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
     </div>
-    <div class="modal-body" style="padding:15px; overflow-x:auto;">
-      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; color:var(--text-primary);">
-        <thead>
-          <tr style="border-bottom:2px solid var(--border); color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
-            <th style="padding:10px;">ID</th>
-            <th style="padding:10px;">Table</th>
-            <th style="padding:10px;">Items Summary</th>
-            <th style="padding:10px;">Amount</th>
-            <th style="padding:10px;">Payment</th>
-            <th style="padding:10px;">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="ordersModalTableBody">
-          <!-- Loaded dynamically from API -->
-        </tbody>
-      </table>
+    <div class="modal-body" id="posOrdersModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch;">
+        <table style="width:100%; min-width:620px; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border); color:var(--primary); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 12px;">Order ID</th>
+              <th style="padding:10px 12px;">Type / Table</th>
+              <th style="padding:10px 12px;">Amount</th>
+              <th style="padding:10px 12px;">Payment</th>
+              <th style="padding:10px 12px;">Status</th>
+              <th style="padding:10px 12px; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersModalTableBody">
+            <!-- Loaded dynamically from API -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">💡 Click any action button to open Receipts, Invoices, or Kitchen KOT</div>
+      <button onclick="closeModal('ordersModal')" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); transition:all 0.2s;">Close</button>
     </div>
   </div>
 </div>
@@ -3942,69 +3955,67 @@
   let allOrdersData = [];
 
   async function loadOrdersData() {
+    const tbody = document.getElementById('ordersModalTableBody');
+    const badge = document.getElementById('posOrdersCountBadge');
+    if (!tbody) return;
+
     try {
       const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
-      const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
-      if (data.success && Array.isArray(ordersList)) {
-        allOrdersData = ordersList;
-        const tbody = document.getElementById('ordersModalTableBody');
-        if (!tbody) return;
-        if (ordersList.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-secondary);">No orders found.</td></tr>`;
-          return;
-        }
-        
-        const sortedOrders = ordersList;
-        
-        tbody.innerHTML = sortedOrders.map(order => {
-          const itemsSummary = order.items ? order.items.map(item => `${item.name} (x${item.quantity})`).join(', ') : 'Order Items';
-          const tableNum = order.table ? order.table.table_number : 'Table #' + order.table_id;
-          
-          let grandTotal = parseFloat(order.total_amount || 0);
-          if (Array.isArray(order.items) && order.items.length > 0) {
-            const rawItemsSum = order.items.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
-            const serviceCharge = rawItemsSum * 0.05;
-            const gst = (rawItemsSum + serviceCharge) * 0.18;
-            grandTotal = Math.round(rawItemsSum + serviceCharge + gst);
-          } else {
-            grandTotal = Math.round(grandTotal);
-          }
+      const ordersList = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : (data.data?.data || []));
+      
+      allOrdersData = ordersList;
+      if (badge) badge.innerText = `${ordersList.length} Orders`;
 
-          const isPaid = (String(order.payment_status).toLowerCase() === 'paid');
-          
-          let payBadge = `<span style="background:rgba(239,68,68,0.1); color:#FCA5A5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Unpaid</span>`;
-          let actionBtns = `
-            <button onclick="payOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#38BDF8; border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.1); margin-right:4px; cursor:pointer;" title="Mark Paid">
-              <i class="fa-solid fa-money-bill-wave"></i>&nbsp;Pay
-            </button>
-          `;
-          
-          if (isPaid) {
-            payBadge = `<span style="background:rgba(16,185,129,0.1); color:#34D399; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700;">Paid</span>`;
-            actionBtns = '';
-          }
-          
-          actionBtns += `
-            <button onclick="reprintOrder(${order.id})" class="btn-outline" style="display:inline-flex; align-items:center; justify-content:center; flex:none; padding:4px 8px; height:26px; font-size:11px; color:#818CF8; border-color:rgba(99,102,241,0.4); background:rgba(99,102,241,0.1); cursor:pointer;">
-              <i class="fa-solid fa-print"></i>&nbsp;Print
-            </button>
-          `;
-
-          return `
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:12px 10px; font-weight:700;">#${order.id}</td>
-              <td style="padding:12px 10px; font-weight:600;">${tableNum}</td>
-              <td style="padding:12px 10px; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary);" title="${itemsSummary}">${itemsSummary}</td>
-              <td style="padding:12px 10px; font-weight:700; color:var(--primary);">₹${grandTotal}</td>
-              <td style="padding:12px 10px;">${payBadge}</td>
-              <td style="padding:12px 10px; white-space:nowrap;">${actionBtns}</td>
-            </tr>
-          `;
-        }).join('');
+      if (ordersList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding:36px 20px; color:var(--text-muted);">
+              <i class="fa-solid fa-receipt" style="font-size:36px; margin-bottom:10px; display:block; opacity:0.4;"></i>
+              <div style="font-size:14px; font-weight:700; color:var(--text-primary);">No Orders Recorded</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">New customer orders will appear here in real-time.</div>
+            </td>
+          </tr>
+        `;
+        return;
       }
+
+      tbody.innerHTML = ordersList.map(order => {
+        const isPaid = (String(order.payment_status).toLowerCase() === 'paid');
+        const payBg = isPaid ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
+        const payColor = isPaid ? '#34D399' : '#FBBF24';
+        const payBorder = isPaid ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)';
+        const payText = isPaid ? 'Paid' : 'Pending';
+
+        const statusColor = (order.status === 'completed') ? '#34D399' : ((order.status === 'cooking' || order.status === 'preparing') ? '#FBBF24' : '#818CF8');
+        const tableName = order.table ? `Table ${order.table.table_number || order.table_id}` : (order.table_id && order.table_id != '0' ? `Table ${order.table_id}` : '🛵 Takeaway / Delivery');
+
+        return `
+          <tr style="border-bottom:1px solid var(--border); transition:background 0.2s;" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background='transparent'">
+            <td style="padding:12px; font-weight:700; color:var(--text-primary);">
+              #${order.id}
+              <div style="font-size:10.5px; color:var(--text-muted); font-weight:400; margin-top:2px;">${new Date(order.created_at || Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+            </td>
+            <td style="padding:12px; color:var(--text-secondary); font-weight:600;">${tableName}</td>
+            <td style="padding:12px; font-weight:800; color:var(--text-primary);">₹${parseFloat(order.total_amount || 0).toFixed(2)}</td>
+            <td style="padding:12px;">
+              <span style="background:${payBg}; color:${payColor}; border:1px solid ${payBorder}; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px;">${payText}</span>
+            </td>
+            <td style="padding:12px; font-weight:700; color:${statusColor}; text-transform:capitalize;">${order.status || 'Received'}</td>
+            <td style="padding:12px; text-align:right;">
+              <div style="display:inline-flex; gap:6px; align-items:center;">
+                ${!isPaid ? `<button onclick="payOrder(${order.id})" style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); color:#38BDF8; padding:5px 10px; border-radius:8px; font-size:11.5px; font-weight:700; cursor:pointer;" title="Mark Paid"><i class="fa-solid fa-money-bill-wave"></i> Pay</button>` : ''}
+                <a href="/orders/${order.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
+                <a href="/orders/${order.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
+                <a href="/orders/${order.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     } catch (err) {
       console.log('Error loading orders:', err);
+      tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#F87171;"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px; margin-bottom:6px; display:block;"></i>Failed to load orders data.</td></tr>`;
     }
   }
 
