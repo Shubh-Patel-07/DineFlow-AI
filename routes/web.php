@@ -10,6 +10,8 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
 // Traditional Authentication Routes
@@ -265,6 +267,7 @@ Route::prefix('api')->group(function () {
 
     // --- PUBLIC ENDPOINTS ---
     Route::get('/restaurants/{id}', [RestaurantController::class, 'show']);
+    Route::get('/restaurants/{id}/settings', [RestaurantController::class, 'getSettings']);
     Route::get('/tables/restaurant/{restaurantId}', [TableController::class, 'getRestaurantTables']);
     Route::get('/tables/{id}', [TableController::class, 'show']);
     Route::get('/menu', [MenuItemController::class, 'index']);
@@ -287,6 +290,7 @@ Route::prefix('api')->group(function () {
         
         // Restaurants
         Route::post('/restaurants', [RestaurantController::class, 'store'])->middleware('role:admin');
+        Route::post('/restaurants/{id}/settings', [RestaurantController::class, 'updateSettings'])->middleware('role:admin,manager');
 
         // Tables
         Route::post('/tables', [TableController::class, 'store'])->middleware('role:admin');
@@ -346,5 +350,21 @@ Route::prefix('api')->group(function () {
             ->middleware(['role:admin,manager,cashier,waiter', 'tenant']);
         Route::put('/waiter-calls/{id}/resolve', [CustomerController::class, 'resolveWaiterCall'])
             ->middleware('role:admin,manager,cashier,waiter');
+
+        // Expenses Management
+        Route::get('/expenses/restaurant/{restaurantId}', [ExpenseController::class, 'index'])
+            ->middleware(['role:admin,manager,cashier', 'tenant']);
+        Route::get('/expenses', [ExpenseController::class, 'index'])->middleware('role:admin,manager,cashier');
+        Route::post('/expenses', [ExpenseController::class, 'store'])->middleware('role:admin,manager');
+        Route::put('/expenses/{id}', [ExpenseController::class, 'update'])->middleware('role:admin,manager');
+        Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->middleware('role:admin,manager');
+
+        // Staff & Roles Management
+        Route::get('/staff/restaurant/{restaurantId}', [StaffController::class, 'index'])
+            ->middleware(['role:admin,manager', 'tenant']);
+        Route::get('/staff', [StaffController::class, 'index'])->middleware('role:admin,manager');
+        Route::post('/staff', [StaffController::class, 'store'])->middleware('role:admin,manager');
+        Route::put('/staff/{id}', [StaffController::class, 'update'])->middleware('role:admin,manager');
+        Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->middleware('role:admin');
     });
 });

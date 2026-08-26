@@ -798,17 +798,47 @@ window.saveProfileAndTaxSettings = function() {
   if (gstin) localStorage.setItem('dineflow_gstin', gstin);
   if (gstRate) localStorage.setItem('dineflow_gst_rate', gstRate);
   if (svcCharge) localStorage.setItem('dineflow_service_charge', svcCharge);
+
+  const restaurantId = new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  const payload = {
+    name: rName || undefined,
+    gstin: gstin || undefined,
+    gst_rate: parseFloat(gstRate) || 5.0,
+    service_charge: parseFloat(svcCharge) || 5.0,
+    settings: {
+      currency: localStorage.getItem('dineflow_currency') || 'INR',
+      printer_type: localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT',
+      printer_name: localStorage.getItem('dineflow_printer_name') || '',
+      auto_print_kot: localStorage.getItem('dineflow_auto_print_kot') === 'true',
+      receipt_footer: localStorage.getItem('dineflow_receipt_footer') || '',
+      point_earn_rate: localStorage.getItem('dineflow_point_earn_rate') || '100',
+      welcome_discount: localStorage.getItem('dineflow_welcome_discount') || '15',
+      promo_banner: localStorage.getItem('dineflow_promo_banner_text') || ''
+    }
+  };
+
+  fetch(`/api/restaurants/${restaurantId}/settings`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-CSRF-TOKEN': csrfToken
+    },
+    body: JSON.stringify(payload)
+  }).catch(err => console.log('Settings server sync fallback:', err));
 };
 
 window.saveAllSettings = function() {
   if (typeof saveStoreCurrencySetting === 'function') {
     saveStoreCurrencySetting(true);
   }
+  window.savePrinterSettings();
+  window.savePromoStrategySettings();
   if (typeof window.saveProfileAndTaxSettings === 'function') {
     window.saveProfileAndTaxSettings();
   }
-  window.savePrinterSettings();
-  window.savePromoStrategySettings();
   if (typeof Toast !== 'undefined' && Toast.success) {
     Toast.success('All System, Profile & Hardware Printer Settings saved successfully!');
   } else {

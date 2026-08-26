@@ -6,7 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Restaurant extends Model
 {
-    protected $fillable = ['name', 'address', 'phone', 'logo'];
+    protected $fillable = [
+        'name',
+        'address',
+        'phone',
+        'logo',
+        'gstin',
+        'gst_rate',
+        'service_charge',
+        'settings'
+    ];
+
+    protected $casts = [
+        'settings' => 'array',
+        'gst_rate' => 'decimal:2',
+        'service_charge' => 'decimal:2'
+    ];
 
     public function tables()
     {

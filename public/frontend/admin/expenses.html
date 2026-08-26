@@ -831,11 +831,36 @@
 
   function editExpense(idx) { openModal(idx); }
 
-  function closeModal() {
-    document.getElementById('expenseModal').classList.remove('open');
+  const RESTAURANT_ID = new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+
+  async function loadExpensesFromApi() {
+    try {
+      const res = await fetch(`/api/expenses/restaurant/${RESTAURANT_ID}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        expenses = data.data.map(e => ({
+          id: e.id,
+          date: e.date,
+          title: e.title,
+          category: e.category,
+          amount: parseFloat(e.amount),
+          payment: e.payment_method,
+          notes: e.notes || ''
+        }));
+        save();
+        populateMonthFilter();
+        updateStats();
+        renderTable();
+      } else if (!expenses.length) {
+        seedData();
+      }
+    } catch (err) {
+      console.log('Server fetch fallback to local storage:', err);
+      if (!expenses.length) seedData();
+    }
   }
 
-  function saveExpense() {
+  async function saveExpense() {
     const date   = document.getElementById('expDate').value;
     const title  = document.getElementById('expTitle').value.trim();
     const amount = parseFloat(document.getElementById('expAmount').value);
@@ -845,25 +870,61 @@
     if (!amount||amount<=0){ showToast('Please enter a valid amount.','error'); return; }
 
     const entry = {
+      restaurant_id: RESTAURANT_ID,
       date, title, amount,
       category: document.getElementById('expCategory').value,
-      payment:  document.getElementById('expPayment').value,
-      notes:    document.getElementById('expNotes').value.trim(),
-      createdAt: new Date().toISOString()
+      payment_method: document.getElementById('expPayment').value,
+      payment: document.getElementById('expPayment').value,
+      notes: document.getElementById('expNotes').value.trim()
     };
 
-    if (editIndex >= 0) {
-      expenses[editIndex] = {...expenses[editIndex], ...entry};
-      showToast('Expense updated!','success');
-    } else {
-      expenses.unshift(entry);
-      showToast('Expense added!','success');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+    try {
+      if (editIndex >= 0 && expenses[editIndex]?.id) {
+        const expId = expenses[editIndex].id;
+        fetch(`/api/expenses/${expId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+          body: JSON.stringify(entry)
+        });
+        expenses[editIndex] = {...expenses[editIndex], ...entry, id: expId};
+        showToast('Expense updated!','success');
+      } else {
+        const res = await fetch('/api/expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+          body: JSON.stringify(entry)
+        });
+        const resData = await res.json();
+        if (resData.success && resData.data) {
+          entry.id = resData.data.id;
+        }
+        expenses.unshift(entry);
+        showToast('Expense added!','success');
+      }
+    } catch (err) {
+      if (editIndex >= 0) {
+        expenses[editIndex] = {...expenses[editIndex], ...entry};
+      } else {
+        expenses.unshift(entry);
+      }
+      showToast('Expense saved locally!','success');
     }
+
     save(); populateMonthFilter(); updateStats(); renderTable(); closeModal();
   }
 
-  function deleteExpense(idx) {
+  async function deleteExpense(idx) {
     if (!confirm('Delete this expense?')) return;
+    const exp = expenses[idx];
+    if (exp?.id) {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+      fetch(`/api/expenses/${exp.id}`, {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+      }).catch(() => {});
+    }
     expenses.splice(idx,1);
     save(); updateStats(); renderTable();
     showToast('Expense deleted.','info');
@@ -922,7 +983,7 @@
   }
 
   // Init
-  seedData();
+  loadExpensesFromApi();
   populateMonthFilter();
   updateStats();
   renderTable();
