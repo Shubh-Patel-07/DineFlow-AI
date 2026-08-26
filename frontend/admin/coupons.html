@@ -185,46 +185,46 @@
       </div>
 
       <form onsubmit="handleSaveCoupon(event)" style="display:flex; flex-direction:column; gap:14px;">
-        <div style="display:flex; gap:12px;">
-          <div style="flex:1;">
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Coupon Code *</label>
-            <input type="text" id="cpCode" required style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;" placeholder="e.g. WELCOME100">
+            <input type="text" id="cpCode" required style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;" placeholder="e.g. WELCOME100">
           </div>
-          <div style="flex:1;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Coupon Title / Offer Name</label>
-            <input type="text" id="cpName" style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;" placeholder="e.g. New Customer Discount">
+            <input type="text" id="cpName" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;" placeholder="e.g. New Customer Discount">
           </div>
         </div>
 
-        <div style="display:flex; gap:12px;">
-          <div style="flex:1;">
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Discount Type *</label>
-            <select id="cpType" style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:600;">
+            <select id="cpType" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:600;">
               <option value="percentage">Percentage (%)</option>
               <option value="fixed">Flat Amount (₹)</option>
             </select>
           </div>
-          <div style="flex:1;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Discount Value *</label>
-            <input type="number" id="cpValue" required step="0.01" style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700;" placeholder="10">
+            <input type="number" id="cpValue" required step="0.01" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:700;" placeholder="10">
           </div>
         </div>
 
-        <div style="display:flex; gap:12px;">
-          <div style="flex:1;">
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Min Order Amount (₹)</label>
-            <input type="number" id="cpMinAmount" value="200" style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;" placeholder="200">
+            <input type="number" id="cpMinAmount" value="200" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;" placeholder="200">
           </div>
-          <div style="flex:1;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Max Discount Cap (₹)</label>
-            <input type="number" id="cpMaxDiscount" style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;" placeholder="Optional (e.g. 150)">
+            <input type="number" id="cpMaxDiscount" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;" placeholder="Optional (e.g. 150)">
           </div>
         </div>
 
-        <div style="display:flex; gap:12px;">
-          <div style="flex:1;">
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <div style="flex:1; min-width:140px;">
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Order Type Limit</label>
-            <select id="cpOrderType" style="width:100%; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;">
+            <select id="cpOrderType" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px;">
               <option value="all">All Orders (Dine-in / Takeaway / Delivery)</option>
               <option value="dine_in">Dine-In Tables Only</option>
               <option value="takeaway">Takeaway Orders Only</option>
