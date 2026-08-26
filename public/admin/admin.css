@@ -1302,10 +1302,21 @@ body.light-theme .btn-secondary,
 html.light-theme .btn-secondary {
   background: #F1F5F9 !important;
   border-color: #CBD5E1 !important;
-  color: #334155 !important;
+/* Responsive Table Wrappers & Mobile Container Safety */
+.table-responsive,
+.table-container,
+.data-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-body.light-theme .btn-secondary:hover,
-html.light-theme .btn-secondary:hover {
-  background: #E2E8F0 !important;
-  color: #0F172A !important;
+
+@media (max-width: 768px) {
+  table {
+    min-width: 600px;
+  }
+  .main, .content {
+    overflow-x: hidden;
+  }
 }
+

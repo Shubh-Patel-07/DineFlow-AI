@@ -687,29 +687,33 @@
       if (box) box.style.display = val === 'CUSTOM' ? 'flex' : 'none';
     }
 
-    function saveStoreCurrencySetting() {
+    function saveStoreCurrencySetting(silent = false) {
       const sel = document.getElementById('settingCurrencySelect').value;
       if (sel === 'CUSTOM') {
         const code = (document.getElementById('settingCustomCode').value || 'CUSTOM').trim().toUpperCase();
         const symbol = (document.getElementById('settingCustomSymbol').value || '$').trim();
         if (!symbol) {
-          alert('Please enter custom currency symbol!');
+          if (!silent) alert('Please enter custom currency symbol!');
           return;
         }
         localStorage.setItem('dineflow_currency', 'CUSTOM');
         localStorage.setItem('dineflow_custom_currency_code', code);
         localStorage.setItem('dineflow_custom_currency_symbol', symbol);
-        if (typeof Toast !== 'undefined' && Toast.success) {
-          Toast.success(`System Currency saved: ${code} (${symbol})`);
-        } else {
-          alert(`✅ System Currency saved: ${code} (${symbol})`);
+        if (!silent) {
+          if (typeof Toast !== 'undefined' && Toast.success) {
+            Toast.success(`System Currency saved: ${code} (${symbol})`);
+          } else {
+            alert(`✅ System Currency saved: ${code} (${symbol})`);
+          }
         }
       } else {
         localStorage.setItem('dineflow_currency', sel);
-        if (typeof Toast !== 'undefined' && Toast.success) {
-          Toast.success(`System Currency saved: ${sel}`);
-        } else {
-          alert(`✅ System Currency saved: ${sel}`);
+        if (!silent) {
+          if (typeof Toast !== 'undefined' && Toast.success) {
+            Toast.success(`System Currency saved: ${sel}`);
+          } else {
+            alert(`✅ System Currency saved: ${sel}`);
+          }
         }
       }
     }

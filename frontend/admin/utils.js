@@ -145,6 +145,7 @@ class Toast {
     this.show(message, 'warning');
   }
 }
+window.Toast = Toast;
 
 /**
  * Loading spinner helper
@@ -747,7 +748,7 @@ window.saveProfileAndTaxSettings = function() {
 
 window.saveAllSettings = function() {
   if (typeof saveStoreCurrencySetting === 'function') {
-    saveStoreCurrencySetting();
+    saveStoreCurrencySetting(true);
   }
   if (typeof window.saveProfileAndTaxSettings === 'function') {
     window.saveProfileAndTaxSettings();
