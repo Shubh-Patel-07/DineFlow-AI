@@ -720,7 +720,116 @@
 
 
 
-    document.addEventListener('DOMContentLoaded', () => {
+    const RESTAURANT_ID = new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+
+    async function loadSystemSettingsFromApi() {
+      // 1. Initial populate from local cache if present
+      populateFormFromLocal();
+
+      // 2. Fetch from Database API (Source of Truth)
+      try {
+        const res = await fetch(`/api/restaurants/${RESTAURANT_ID}/settings`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const s = data.data;
+          const cfg = s.settings || {};
+
+          // Restaurant Legal & Tax Profile
+          if (s.name && document.getElementById('settingRestaurantName')) {
+            document.getElementById('settingRestaurantName').value = s.name;
+            localStorage.setItem('dineflow_restaurant_name', s.name);
+          }
+          if (s.gstin && document.getElementById('settingGstin')) {
+            document.getElementById('settingGstin').value = s.gstin;
+            localStorage.setItem('dineflow_gstin', s.gstin);
+          }
+          if (s.gst_rate !== undefined && s.gst_rate !== null && document.getElementById('settingGstRate')) {
+            document.getElementById('settingGstRate').value = s.gst_rate;
+            localStorage.setItem('dineflow_gst_rate', s.gst_rate);
+          }
+          if (s.service_charge !== undefined && s.service_charge !== null && document.getElementById('settingServiceCharge')) {
+            document.getElementById('settingServiceCharge').value = s.service_charge;
+            localStorage.setItem('dineflow_service_charge', s.service_charge);
+          }
+
+          // Hardware Printer
+          if (cfg.printer_type && document.getElementById('printerSelect')) {
+            document.getElementById('printerSelect').value = cfg.printer_type;
+            toggleCustomPrinterInput(cfg.printer_type);
+            localStorage.setItem('dineflow_printer_type', cfg.printer_type);
+          }
+          if (cfg.printer_name && document.getElementById('printerNameInput')) {
+            document.getElementById('printerNameInput').value = cfg.printer_name;
+            localStorage.setItem('dineflow_printer_name', cfg.printer_name);
+          }
+          if (cfg.auto_print_kot !== undefined && document.getElementById('autoPrintKotCheck')) {
+            document.getElementById('autoPrintKotCheck').checked = cfg.auto_print_kot === true || cfg.auto_print_kot === 'true';
+            localStorage.setItem('dineflow_auto_print_kot', cfg.auto_print_kot ? 'true' : 'false');
+          }
+          if (cfg.receipt_footer && document.getElementById('receiptFooterInput')) {
+            document.getElementById('receiptFooterInput').value = cfg.receipt_footer;
+            localStorage.setItem('dineflow_receipt_footer', cfg.receipt_footer);
+          }
+
+          // Soundbox Language
+          if (cfg.soundbox_lang && document.getElementById('soundboxLangSelect')) {
+            document.getElementById('soundboxLangSelect').value = cfg.soundbox_lang;
+            updateSoundboxUI(cfg.soundbox_lang);
+            localStorage.setItem('dineflow_soundbox_lang', cfg.soundbox_lang);
+          }
+
+          // Store Currency
+          if (cfg.currency && document.getElementById('settingCurrencySelect')) {
+            document.getElementById('settingCurrencySelect').value = cfg.currency;
+            toggleCustomCurrencyInput(cfg.currency);
+            localStorage.setItem('dineflow_currency', cfg.currency);
+          }
+          if (cfg.custom_currency_code && document.getElementById('settingCustomCode')) {
+            document.getElementById('settingCustomCode').value = cfg.custom_currency_code;
+            localStorage.setItem('dineflow_custom_currency_code', cfg.custom_currency_code);
+          }
+          if (cfg.custom_currency_symbol && document.getElementById('settingCustomSymbol')) {
+            document.getElementById('settingCustomSymbol').value = cfg.custom_currency_symbol;
+            localStorage.setItem('dineflow_custom_currency_symbol', cfg.custom_currency_symbol);
+          }
+
+          // Loyalty Rewards & Promo Offer Strategy
+          if (cfg.point_earn_rate && document.getElementById('settingPointEarnRate')) {
+            document.getElementById('settingPointEarnRate').value = cfg.point_earn_rate;
+            localStorage.setItem('dineflow_point_earn_rate', cfg.point_earn_rate);
+          }
+          if (cfg.point_redeem_value && document.getElementById('settingPointRedeemValue')) {
+            document.getElementById('settingPointRedeemValue').value = cfg.point_redeem_value;
+            localStorage.setItem('dineflow_point_redeem_value', cfg.point_redeem_value);
+          }
+          if (cfg.min_redeem_points && document.getElementById('settingMinRedeemPoints')) {
+            document.getElementById('settingMinRedeemPoints').value = cfg.min_redeem_points;
+            localStorage.setItem('dineflow_min_redeem_points', cfg.min_redeem_points);
+          }
+          if (cfg.welcome_discount && document.getElementById('settingWelcomeDiscount')) {
+            document.getElementById('settingWelcomeDiscount').value = cfg.welcome_discount;
+            localStorage.setItem('dineflow_welcome_discount', cfg.welcome_discount);
+          }
+          if (cfg.promo_banner_text && document.getElementById('settingPromoBannerText')) {
+            document.getElementById('settingPromoBannerText').value = cfg.promo_banner_text;
+            localStorage.setItem('dineflow_promo_banner_text', cfg.promo_banner_text);
+          }
+        }
+      } catch (err) {
+        console.log('Settings server fetch fallback to localStorage:', err);
+      }
+    }
+
+    function populateFormFromLocal() {
+      const rName = localStorage.getItem('dineflow_restaurant_name');
+      if (rName && document.getElementById('settingRestaurantName')) document.getElementById('settingRestaurantName').value = rName;
+      const gstin = localStorage.getItem('dineflow_gstin');
+      if (gstin && document.getElementById('settingGstin')) document.getElementById('settingGstin').value = gstin;
+      const gstRate = localStorage.getItem('dineflow_gst_rate');
+      if (gstRate && document.getElementById('settingGstRate')) document.getElementById('settingGstRate').value = gstRate;
+      const svcCharge = localStorage.getItem('dineflow_service_charge');
+      if (svcCharge && document.getElementById('settingServiceCharge')) document.getElementById('settingServiceCharge').value = svcCharge;
+
       const savedPrinterType = localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT';
       const pSel = document.getElementById('printerSelect');
       if (pSel) {
@@ -757,6 +866,21 @@
         if (cCode) cCode.value = localStorage.getItem('dineflow_custom_currency_code') || 'CUSTOM';
         if (cSym) cSym.value = localStorage.getItem('dineflow_custom_currency_symbol') || '$';
       }
+
+      const pEarn = localStorage.getItem('dineflow_point_earn_rate');
+      if (pEarn && document.getElementById('settingPointEarnRate')) document.getElementById('settingPointEarnRate').value = pEarn;
+      const pRedeem = localStorage.getItem('dineflow_point_redeem_value');
+      if (pRedeem && document.getElementById('settingPointRedeemValue')) document.getElementById('settingPointRedeemValue').value = pRedeem;
+      const minRedeem = localStorage.getItem('dineflow_min_redeem_points');
+      if (minRedeem && document.getElementById('settingMinRedeemPoints')) document.getElementById('settingMinRedeemPoints').value = minRedeem;
+      const wDisc = localStorage.getItem('dineflow_welcome_discount');
+      if (wDisc && document.getElementById('settingWelcomeDiscount')) document.getElementById('settingWelcomeDiscount').value = wDisc;
+      const banner = localStorage.getItem('dineflow_promo_banner_text');
+      if (banner && document.getElementById('settingPromoBannerText')) document.getElementById('settingPromoBannerText').value = banner;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSystemSettingsFromApi();
     });
   </script>
   <script src="/frontend/admin/utils.js"></script>

@@ -809,13 +809,18 @@ window.saveProfileAndTaxSettings = function() {
     service_charge: parseFloat(svcCharge) || 5.0,
     settings: {
       currency: localStorage.getItem('dineflow_currency') || 'INR',
+      custom_currency_code: localStorage.getItem('dineflow_custom_currency_code') || '',
+      custom_currency_symbol: localStorage.getItem('dineflow_custom_currency_symbol') || '',
+      soundbox_lang: localStorage.getItem('dineflow_soundbox_lang') || 'gu',
       printer_type: localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT',
       printer_name: localStorage.getItem('dineflow_printer_name') || '',
       auto_print_kot: localStorage.getItem('dineflow_auto_print_kot') === 'true',
       receipt_footer: localStorage.getItem('dineflow_receipt_footer') || '',
       point_earn_rate: localStorage.getItem('dineflow_point_earn_rate') || '100',
+      point_redeem_value: localStorage.getItem('dineflow_point_redeem_value') || '1',
+      min_redeem_points: localStorage.getItem('dineflow_min_redeem_points') || '50',
       welcome_discount: localStorage.getItem('dineflow_welcome_discount') || '15',
-      promo_banner: localStorage.getItem('dineflow_promo_banner_text') || ''
+      promo_banner_text: localStorage.getItem('dineflow_promo_banner_text') || ''
     }
   };
 
