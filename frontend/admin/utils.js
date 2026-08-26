@@ -102,11 +102,13 @@ if (document.readyState === 'loading') {
     window.initGlobalSystemTheme();
     window.injectAdminTopbarControls();
     window.initGlobalSidebarActiveState();
+    window.syncGlobalOrdersCount();
   });
 } else {
   window.initGlobalSystemTheme();
   window.injectAdminTopbarControls();
   window.initGlobalSidebarActiveState();
+  window.syncGlobalOrdersCount();
 }
 
 window.toggleAdminSidebar = function() {
@@ -902,3 +904,209 @@ window.showPlanLimitModal = function(message) {
   `;
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 };
+
+// ═══════════════════════════════════════════════════════════════
+// GLOBAL ORDERS MODAL & NAVIGATION SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+window.injectGlobalOrdersModal = function() {
+  if (document.getElementById('globalOrdersModal')) return;
+
+  const modalHtml = `
+  <div class="modal-overlay" id="globalOrdersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:opacity 0.25s ease-out;">
+    <div class="modal" style="width:960px; max-width:94vw; max-height:85vh; background:var(--card, #1E293B); border:1px solid var(--border, #334155); border-radius:24px; box-shadow:0 20px 40px rgba(0,0,0,0.4); overflow:hidden; display:flex; flex-direction:column;">
+      <div class="modal-header" style="background:var(--primary-light, rgba(99,102,241,0.15)); border-bottom:1px solid var(--border, #334155); padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+        <div class="modal-title" id="globalOrdersModalTitle" style="color:var(--primary, #6366F1); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-receipt" style="color:var(--primary, #6366F1);"></i>
+          <span>Recent Restaurant Orders</span>
+          <span id="globalOrdersCountBadge" style="background:var(--primary-light, rgba(99,102,241,0.15)); color:var(--primary, #6366F1); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border, #334155);">Loading...</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button onclick="window.loadGlobalOrdersModalData()" title="Refresh Orders" style="background:var(--bg, #0F172A); border:1px solid var(--border, #334155); color:var(--primary, #6366F1); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.2s;"><i class="fa-solid fa-arrows-rotate"></i></button>
+          <button class="modal-close" onclick="window.closeGlobalOrdersModal()" style="background:var(--bg, #0F172A); border:1px solid var(--border, #334155); color:var(--text-muted, #94A3B8); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="modal-body" id="globalOrdersModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+        <div style="text-align:center; padding:40px 20px; color:var(--text-muted, #94A3B8);">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary, #6366F1); display:block; margin-bottom:12px;"></i>
+          <div style="font-size:13px;">Fetching recent orders...</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:16px 24px; background:var(--bg, #0F172A); border-top:1px solid var(--border, #334155); display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+        <div style="color:var(--text-muted, #94A3B8); font-size:12px;">💡 Click action buttons to open Thermal Receipts, A4 PDF Invoices, or Kitchen KOT</div>
+        <button onclick="window.closeGlobalOrdersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); transition:all 0.2s;">Close</button>
+      </div>
+    </div>
+  </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  document.getElementById('globalOrdersModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'globalOrdersModal') window.closeGlobalOrdersModal();
+  });
+};
+
+window.openGlobalOrdersModal = function(filterType = 'all') {
+  if (typeof openDashOrdersModal === 'function' && document.getElementById('dashOrdersModal')) {
+    openDashOrdersModal(filterType);
+    return;
+  }
+  if (typeof openModal === 'function' && document.getElementById('ordersModal')) {
+    openModal('ordersModal');
+    if (typeof loadOrdersData === 'function') loadOrdersData();
+    return;
+  }
+
+  window.injectGlobalOrdersModal();
+  const modal = document.getElementById('globalOrdersModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  window.loadGlobalOrdersModalData(filterType);
+};
+
+window.closeGlobalOrdersModal = function() {
+  const modal = document.getElementById('globalOrdersModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
+};
+
+window.loadGlobalOrdersModalData = async function(filterType = 'all') {
+  const body = document.getElementById('globalOrdersModalBody');
+  const badge = document.getElementById('globalOrdersCountBadge');
+  if (!body) return;
+
+  body.innerHTML = `
+    <div style="text-align:center; padding:40px 20px; color:var(--text-muted, #94A3B8);">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary, #6366F1); display:block; margin-bottom:12px;"></i>
+      <div style="font-size:13px;">Loading orders...</div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/orders');
+    if (!res.ok) throw new Error('API request failed');
+    const rawData = await res.json();
+    let orders = Array.isArray(rawData) ? rawData : (Array.isArray(rawData.data) ? rawData.data : (rawData.data?.data || []));
+
+    if (filterType === 'delivery') {
+      orders = orders.filter(o => {
+        const isDeliveryType = (o.order_type === 'delivery' || o.order_type === 'takeaway');
+        const isNoTable = !o.table_id || o.table_id == '0';
+        const tableStr = o.table ? (o.table.table_number || '').toLowerCase() : '';
+        const isDeliveryTable = tableStr.includes('del') || tableStr.includes('take') || tableStr.includes('online');
+        return isDeliveryType || isNoTable || isDeliveryTable;
+      });
+    }
+
+    window.syncGlobalOrdersCount(orders.length);
+
+    if (orders.length === 0) {
+      if (badge) badge.innerText = '0 Orders';
+      body.innerHTML = `
+        <div style="text-align:center; padding:48px 20px; color:var(--text-muted, #94A3B8);">
+          <i class="fa-solid fa-receipt" style="font-size:42px; margin-bottom:14px; opacity:0.4; display:block;"></i>
+          <div style="font-size:15px; font-weight:700; color:var(--text-primary, #F8FAFC); margin-bottom:4px;">No Orders Found</div>
+          <div style="font-size:12.5px; color:var(--text-muted, #94A3B8);">There are no orders recorded yet.</div>
+        </div>
+      `;
+      return;
+    }
+
+    if (badge) badge.innerText = `${orders.length} Orders`;
+
+    let html = `
+      <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch;">
+        <table style="width:100%; min-width:640px; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border, #334155); color:var(--primary, #6366F1); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 12px;">Order ID</th>
+              <th style="padding:10px 12px;">Type / Table</th>
+              <th style="padding:10px 12px;">Amount</th>
+              <th style="padding:10px 12px;">Payment</th>
+              <th style="padding:10px 12px;">Status</th>
+              <th style="padding:10px 12px; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    orders.forEach(o => {
+      const isPaid = (o.payment_status === 'paid');
+      const payBg = isPaid ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
+      const payColor = isPaid ? '#34D399' : '#FBBF24';
+      const payBorder = isPaid ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)';
+      const payText = isPaid ? 'Paid' : 'Pending';
+
+      const statusColor = (o.status === 'completed') ? '#34D399' : ((o.status === 'cooking' || o.status === 'preparing') ? '#FBBF24' : '#818CF8');
+      const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id && o.table_id != '0' ? `Table ${o.table_id}` : '🛵 Takeaway / Delivery');
+
+      html += `
+        <tr style="border-bottom:1px solid var(--border, #334155); transition:background 0.2s;">
+          <td style="padding:12px; font-weight:700; color:var(--text-primary, #F8FAFC);">
+            #${o.id}
+            <div style="font-size:10.5px; color:var(--text-muted, #94A3B8); font-weight:400; margin-top:2px;">${new Date(o.created_at || Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+          </td>
+          <td style="padding:12px; color:var(--text-secondary, #CBD5E1); font-weight:600;">${tableName}</td>
+          <td style="padding:12px; font-weight:800; color:var(--text-primary, #F8FAFC);">₹${parseFloat(o.total_amount || 0).toFixed(2)}</td>
+          <td style="padding:12px;">
+            <span style="background:${payBg}; color:${payColor}; border:1px solid ${payBorder}; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px;">${payText}</span>
+          </td>
+          <td style="padding:12px; font-weight:700; color:${statusColor}; text-transform:capitalize;">${o.status || 'Received'}</td>
+          <td style="padding:12px; text-align:right;">
+            <div style="display:inline-flex; gap:6px;">
+              <a href="/orders/${o.id}/receipt" target="_blank" style="background:var(--primary-light, rgba(99,102,241,0.15)); border:1px solid var(--border, #334155); color:var(--primary, #6366F1); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
+              <a href="/orders/${o.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
+              <a href="/orders/${o.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    body.innerHTML = html;
+  } catch (err) {
+    console.error('Error loading global orders modal:', err);
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#F87171;">
+        <i class="fa-solid fa-circle-exclamation" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+        <div style="font-size:14px; font-weight:700;">Failed to load orders</div>
+        <div style="font-size:12px; color:#94A3B8; margin-top:4px;">Please check server connection or refresh.</div>
+      </div>
+    `;
+  }
+};
+
+window.syncGlobalOrdersCount = async function(count) {
+  let ordersCount = count;
+  if (typeof ordersCount !== 'number') {
+    try {
+      const res = await fetch('/api/orders');
+      if (res.ok) {
+        const raw = await res.json();
+        const list = Array.isArray(raw) ? raw : (Array.isArray(raw.data) ? raw.data : (raw.data?.data || []));
+        ordersCount = list.length;
+      }
+    } catch (_) {}
+  }
+  
+  if (typeof ordersCount === 'number') {
+    document.querySelectorAll('.sidebar .nav-item[data-tip="Orders"] .nav-badge, #globalOrdersNavBadge, #dashOrdersCountBadge, #posOrdersCountBadge').forEach(el => {
+      el.textContent = ordersCount;
+    });
+  }
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (typeof window.closeGlobalOrdersModal === 'function') window.closeGlobalOrdersModal();
+  }
+});
+

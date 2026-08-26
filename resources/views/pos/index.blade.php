@@ -1614,7 +1614,7 @@
       <div class="sidebar-section-label">Main</div>
       <a class="nav-item" href="/dashboard" data-path="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
       <a class="nav-item active" href="/pos" data-path="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge">{{ $todayOrdersCount ?? 0 }}</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openModal('ordersModal')" style="cursor:pointer;" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge" id="globalOrdersNavBadge">{{ $todayOrdersCount ?? 0 }}</span></a>
       <a class="nav-item" href="/admin/tables" data-path="/admin/tables" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
       <a class="nav-item" href="/kitchen" data-path="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
