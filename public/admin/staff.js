@@ -79,9 +79,24 @@ async function saveNewStaffMember(event) {
     const data = await res.json();
     if (data.success && data.data) {
       newStaff.id = data.data.id;
+      if (typeof Toast !== 'undefined') {
+        Toast.success(`New Staff Member "${name}" added successfully! PIN: ${pin}`);
+      } else {
+        alert(`New Staff Member "${name}" added successfully! Quick PIN: ${pin}`);
+      }
+    } else {
+      if (typeof Toast !== 'undefined') {
+        Toast.error(data.message || 'Failed to create staff member');
+      } else {
+        alert(data.message || 'Failed to create staff member');
+      }
+      return;
     }
   } catch (err) {
     console.log('Saved staff offline fallback:', err);
+    if (typeof Toast !== 'undefined') {
+      Toast.success(`Staff Member "${name}" saved locally! PIN: ${pin}`);
+    }
   }
   
   const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]');
@@ -91,12 +106,6 @@ async function saveNewStaffMember(event) {
   appendStaffCardToGrid(newStaff);
   closeAddStaffModal();
   document.getElementById('addStaffForm').reset();
-
-  if (typeof Toast !== 'undefined') {
-    Toast.success(`New Staff Member "${name}" added successfully! PIN: ${pin}`);
-  } else {
-    alert(`New Staff Member "${name}" added successfully! Quick PIN: ${pin}`);
-  }
 }
 
 function appendStaffCardToGrid(staff) {
@@ -114,13 +123,19 @@ function appendStaffCardToGrid(staff) {
   const card = document.createElement('div');
   card.className = 'staff-card';
   card.setAttribute('data-role-card', staff.role);
+  card.setAttribute('data-staff-id', staff.id || '');
   card.innerHTML = `
-    <div class="staff-header">
+    <div class="staff-header" style="position:relative;">
       <div class="staff-avatar" style="background:${roleMeta.gradient};"><i class="fa-solid ${roleMeta.icon}"></i></div>
-      <div>
+      <div style="flex:1;">
         <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">${staff.name}</h3>
         <span class="role-badge ${staff.role}">${roleMeta.badge}</span>
       </div>
+      ${staff.id ? `
+        <button onclick="deleteStaffMember(${staff.id}, this)" title="Remove Staff Member" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; width:28px; height:28px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      ` : ''}
     </div>
     <div class="pin-box">
       <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
@@ -129,6 +144,35 @@ function appendStaffCardToGrid(staff) {
     <p style="font-size:12px; color:var(--text-muted); margin:0;">${roleMeta.desc}</p>
   `;
   grid.appendChild(card);
+}
+
+async function deleteStaffMember(staffId, btn) {
+  if (!confirm('Are you sure you want to remove this staff member?')) return;
+  const card = btn.closest('.staff-card');
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const res = await fetch(`/api/staff/${staffId}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      }
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (card) card.remove();
+      const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]').filter(s => s.id !== staffId);
+      localStorage.setItem('dineflow_staff_members', JSON.stringify(savedStaff));
+      if (typeof Toast !== 'undefined') Toast.success('Staff member removed successfully');
+      else alert('Staff member removed successfully');
+    }
+  } catch (err) {
+    if (card) card.remove();
+    const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]').filter(s => s.id !== staffId);
+    localStorage.setItem('dineflow_staff_members', JSON.stringify(savedStaff));
+    if (typeof Toast !== 'undefined') Toast.success('Staff member removed locally');
+  }
 }
 
 async function loadSavedStaffMembers() {

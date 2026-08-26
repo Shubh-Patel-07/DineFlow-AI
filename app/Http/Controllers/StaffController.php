@@ -15,7 +15,8 @@ class StaffController extends Controller
         $staff = User::where('restaurant_id', $rId)
             ->whereIn('role', ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'staff'])
             ->orderBy('id', 'desc')
-            ->get();
+            ->get()
+            ->makeVisible(['numeric_pin']);
 
         return response()->json([
             'success' => true,
@@ -35,6 +36,17 @@ class StaffController extends Controller
         ]);
 
         $restaurantId = $validated['restaurant_id'] ?? $request->input('restaurant_id', '1');
+
+        $existingPin = User::where('restaurant_id', $restaurantId)
+            ->where('numeric_pin', $validated['numeric_pin'])
+            ->first();
+        if ($existingPin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This PIN is already assigned to another staff member in your restaurant.'
+            ], 422);
+        }
+
         $username = Str::slug($validated['name']) . rand(100, 999);
         $email = $validated['email'] ?? ($username . '@dineflow.local');
 
@@ -50,7 +62,7 @@ class StaffController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $user,
+            'data' => $user->makeVisible(['numeric_pin']),
             'message' => 'Staff member created successfully'
         ], 201);
     }
