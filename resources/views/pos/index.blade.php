@@ -855,7 +855,7 @@
     .modal-overlay.show { opacity: 1; pointer-events: all; }
     .modal {
       background: var(--card); border-radius: var(--radius-lg); padding: 0;
-      width: 460px; max-height: 90vh; overflow-y: auto;
+      width: 460px; max-width: calc(100vw - 24px); max-height: 90vh; overflow-y: auto;
       box-shadow: 0 24px 48px rgba(0,0,0,.18); transform: scale(.95); transition: transform .2s;
     }
     .modal-overlay.show .modal { transform: scale(1); }

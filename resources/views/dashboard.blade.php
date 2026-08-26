@@ -1339,18 +1339,19 @@ async function loadDashOrdersModalData() {
     if (badge) badge.innerText = `${orders.length} ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders`;
 
     let html = `
-      <table style="width:100%; border-collapse:collapse; font-size:13px;">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border); color:var(--primary); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
-            <th style="padding:10px 12px;">Order ID</th>
-            <th style="padding:10px 12px;">Type / Table</th>
-            <th style="padding:10px 12px;">Amount</th>
-            <th style="padding:10px 12px;">Payment</th>
-            <th style="padding:10px 12px;">Status</th>
-            <th style="padding:10px 12px; text-align:right;">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch;">
+        <table style="width:100%; min-width:620px; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border); color:var(--primary); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 12px;">Order ID</th>
+              <th style="padding:10px 12px;">Type / Table</th>
+              <th style="padding:10px 12px;">Amount</th>
+              <th style="padding:10px 12px;">Payment</th>
+              <th style="padding:10px 12px;">Status</th>
+              <th style="padding:10px 12px; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
 
     orders.forEach(o => {
@@ -1388,8 +1389,9 @@ async function loadDashOrdersModalData() {
     });
 
     html += `
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     `;
 
     body.innerHTML = html;
