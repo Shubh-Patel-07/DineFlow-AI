@@ -344,50 +344,39 @@
       <h2>DineFlow AI POS</h2>
       <span>Restaurant Suite v2.0</span>
     </div>
-    <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
-      <i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i>
-    </div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar"><i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i></button>
   </div>
 
   <div class="sidebar-nav">
     <div class="sidebar-section">
       <div class="sidebar-section-label">Main</div>
-      <a class="nav-item active" href="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
-      <a class="nav-item" href="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
+      <a class="nav-item active" href="/dashboard" data-path="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+      <a class="nav-item" href="/pos" data-path="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
       <a class="nav-item" href="javascript:void(0)" onclick="openDashOrdersModal()" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge">{{ $todayOrdersCount }}</span></a>
-      <a class="nav-item" href="/admin/tables" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
-      <a class="nav-item" href="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
+      <a class="nav-item" href="/admin/tables" data-path="/admin/tables" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+      <a class="nav-item" href="/kitchen" data-path="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-label">Menu</div>
-      <a class="nav-item" href="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/menu-manager', '📂 Categories Manager')" data-tip="Categories"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Categories</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/menu-manager', '🧩 Modifiers & Add-ons')" data-tip="Modifiers"><i class="fa-solid fa-puzzle-piece"></i><span class="nav-label"> Modifiers</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/menu-manager', '🏷️ Combos & Deals')" data-tip="Combos & Deals"><i class="fa-solid fa-tags"></i><span class="nav-label"> Combos &amp; Deals</span></a>
+      <div class="sidebar-section-label">Menu &amp; Catalog</div>
+      <a class="nav-item" href="/admin/menu-manager" data-path="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+      <a class="nav-item" href="/admin/inventory" data-path="/admin/inventory" data-tip="Inventory Stock"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
+      <a class="nav-item" href="/admin/coupons" data-path="/admin/coupons" data-tip="Offers &amp; Deals"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-label">Operations</div>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashDeliveryModal()" data-tip="Delivery Orders"><i class="fa-solid fa-motorcycle"></i><span class="nav-label"> Delivery Orders</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/customers', '👥 Customer Directory')" data-tip="Customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/customers', '⭐ Loyalty Program')" data-tip="Loyalty Program"><i class="fa-solid fa-star"></i><span class="nav-label"> Loyalty Program</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashOffersModal()" data-tip="Offers"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
+      <div class="sidebar-section-label">Operations &amp; Sales</div>
+      <a class="nav-item" href="/admin/sales-report" data-path="/admin/sales-report" data-tip="Sales Analytics"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
+      <a class="nav-item" href="/admin/expenses" data-path="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" href="/admin/customers" data-path="/admin/customers" data-tip="Customers &amp; CRM"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
+      <a class="nav-item" href="/admin/qr-generator" data-path="/admin/qr-generator" data-tip="QR Generator"><i class="fa-solid fa-qrcode"></i><span class="nav-label"> QR Generator</span></a>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-label">Reports</div>
-      <a class="nav-item" href="/admin/sales-report" data-tip="Sales Reports"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Reports</span></a>
-      <a class="nav-item" href="/admin/inventory" data-tip="Inventory"><i class="fa-solid fa-box-open"></i><span class="nav-label"> Inventory</span></a>
-      <a class="nav-item" href="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Settings & Admin</div>
-      <a class="nav-item" href="/admin/staff" data-tip="Staff & Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
-      <a class="nav-item" href="/admin/settings" data-tip="Settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> Settings</span></a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashAdminModule('/admin/settings', '🖨️ Printers & Print Hub')" data-tip="Printers"><i class="fa-solid fa-print"></i><span class="nav-label"> Printers</span></a>
-      <a class="nav-item" href="/admin/feedback" data-tip="Reviews & Feedback"><i class="fa-solid fa-comment-dots"></i><span class="nav-label"> Feedback</span></a>
+      <div class="sidebar-section-label">Settings &amp; Admin</div>
+      <a class="nav-item" href="/admin/staff" data-path="/admin/staff" data-tip="Staff &amp; Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+      <a class="nav-item" href="/admin/settings" data-path="/admin/settings" data-tip="System Settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+      <a class="nav-item" href="/admin/feedback" data-path="/admin/feedback" data-tip="Feedback &amp; Reviews"><i class="fa-solid fa-star"></i><span class="nav-label"> Feedback &amp; Reviews</span></a>
     </div>
   </div>
 

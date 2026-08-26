@@ -45,14 +45,68 @@ window.injectAdminTopbarControls = function() {
   }
 };
 
+window.initGlobalSidebarActiveState = function() {
+  const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '');
+  const navItems = document.querySelectorAll('.sidebar .nav-item');
+  if (!navItems.length) return;
+
+  let matched = false;
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    const href = (item.getAttribute('href') || '').toLowerCase().replace(/\/$/, '');
+    const dataPath = (item.getAttribute('data-path') || '').toLowerCase().replace(/\/$/, '');
+    
+    if (
+      (currentPath && href && (currentPath === href || currentPath.endsWith(href))) ||
+      (currentPath && dataPath && (currentPath === dataPath || currentPath.endsWith(dataPath))) ||
+      ((currentPath === '' || currentPath === '/') && (href === '/dashboard' || dataPath === '/dashboard'))
+    ) {
+      item.classList.add('active');
+      matched = true;
+    }
+  });
+
+  if (!matched) {
+    if (currentPath.includes('menu')) {
+      document.querySelector('.sidebar a[href*="menu-manager"]')?.classList.add('active');
+    } else if (currentPath.includes('inventory')) {
+      document.querySelector('.sidebar a[href*="inventory"]')?.classList.add('active');
+    } else if (currentPath.includes('customer')) {
+      document.querySelector('.sidebar a[href*="customers"]')?.classList.add('active');
+    } else if (currentPath.includes('coupon') || currentPath.includes('offer')) {
+      document.querySelector('.sidebar a[href*="coupons"]')?.classList.add('active');
+    } else if (currentPath.includes('table')) {
+      document.querySelector('.sidebar a[href*="tables"]')?.classList.add('active');
+    } else if (currentPath.includes('staff')) {
+      document.querySelector('.sidebar a[href*="staff"]')?.classList.add('active');
+    } else if (currentPath.includes('setting')) {
+      document.querySelector('.sidebar a[href*="settings"]')?.classList.add('active');
+    } else if (currentPath.includes('feedback')) {
+      document.querySelector('.sidebar a[href*="feedback"]')?.classList.add('active');
+    } else if (currentPath.includes('expense')) {
+      document.querySelector('.sidebar a[href*="expenses"]')?.classList.add('active');
+    } else if (currentPath.includes('qr')) {
+      document.querySelector('.sidebar a[href*="qr-generator"]')?.classList.add('active');
+    } else if (currentPath.includes('report') || currentPath.includes('sales')) {
+      document.querySelector('.sidebar a[href*="sales-report"]')?.classList.add('active');
+    } else if (currentPath.includes('pos')) {
+      document.querySelector('.sidebar a[href*="/pos"]')?.classList.add('active');
+    } else if (currentPath.includes('dashboard')) {
+      document.querySelector('.sidebar a[href*="/dashboard"]')?.classList.add('active');
+    }
+  }
+};
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     window.initGlobalSystemTheme();
     window.injectAdminTopbarControls();
+    window.initGlobalSidebarActiveState();
   });
 } else {
   window.initGlobalSystemTheme();
   window.injectAdminTopbarControls();
+  window.initGlobalSidebarActiveState();
 }
 
 window.toggleAdminSidebar = function() {

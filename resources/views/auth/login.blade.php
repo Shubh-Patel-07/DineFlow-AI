@@ -447,6 +447,9 @@
             .split-left { display: none; }
             .split-right { width: 100%; padding: 30px 20px; }
         }
+        @media (max-width: 480px) {
+            .split-right { padding: 20px 14px; }
+        }
     </style>
 </head>
 <body>
