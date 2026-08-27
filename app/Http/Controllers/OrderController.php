@@ -14,7 +14,10 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurant_id', $request->query('restaurantId', 1));
+        $restaurantId = $user ? $user->restaurant_id : ($request->query('restaurant_id') ?? $request->query('restaurantId'));
+        if (!$restaurantId) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
         $orders = Order::where('restaurant_id', $restaurantId)
             ->with(['items.menuItem', 'table'])
             ->orderBy('created_at', 'desc')

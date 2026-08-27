@@ -12,7 +12,10 @@ class StaffController extends Controller
     public function index(Request $request, $restaurantId = null)
     {
         $user = auth()->user();
-        $rId = $user ? $user->restaurant_id : ($restaurantId ?? $request->query('restaurant_id', '1'));
+        $rId = $user ? $user->restaurant_id : ($restaurantId ?? $request->query('restaurant_id'));
+        if (!$rId) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
         $staff = User::where('restaurant_id', $rId)
             ->whereIn('role', ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'staff'])
             ->orderBy('id', 'desc')
@@ -36,7 +39,10 @@ class StaffController extends Controller
         ]);
 
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : ($request->input('restaurant_id') ?? '1');
+        $restaurantId = $user ? $user->restaurant_id : $request->input('restaurant_id');
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
 
         $limitCheck = \App\Services\PlanLimitService::canCreateStaff($restaurantId);
         if (!$limitCheck['allowed']) {

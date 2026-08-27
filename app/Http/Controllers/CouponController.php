@@ -124,9 +124,15 @@ class CouponController extends Controller
         $isNewCustomer = (bool)$request->input('is_new_customer', false);
         $orderType = $request->input('order_type', 'all');
 
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? $request->input('restaurant_id'));
+        if (!$restaurantId) {
+            return response()->json(['success' => true, 'data' => null]);
+        }
+
         $coupons = Coupon::where('is_active', true)
             ->where('is_auto_apply', true)
-            ->where('restaurant_id', $request->restaurant_id ?? $request->input('restaurant_id', '1'))
+            ->where('restaurant_id', $restaurantId)
             ->get();
 
         $bestCoupon = null;
@@ -156,7 +162,7 @@ class CouponController extends Controller
         }
 
         if (!$bestCoupon) {
-            return response()->json(['success' => false, 'message' => 'No eligible auto-apply coupon found']);
+            return response()->json(['success' => true, 'data' => null]);
         }
 
         return response()->json([
@@ -170,18 +176,24 @@ class CouponController extends Controller
     }
 
     /**
-     * Validate a coupon code at POS checkout
+     * Validate a coupon code for POS / Customer Cart
      */
     public function validateCoupon(Request $request)
     {
-        $code = strtoupper($request->input('code'));
-        $orderAmount = $request->input('order_amount', 0);
+        $code = strtoupper(trim($request->input('code', '')));
+        $orderAmount = floatval($request->input('order_amount', 0));
         $isNewCustomer = (bool)$request->input('is_new_customer', false);
         $orderType = $request->input('order_type', 'all');
 
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? $request->input('restaurant_id'));
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required to validate coupon'], 422);
+        }
+
         $coupon = Coupon::where('code', $code)
             ->where('is_active', true)
-            ->where('restaurant_id', $request->restaurant_id ?? $request->input('restaurant_id', '1'))
+            ->where('restaurant_id', $restaurantId)
             ->first();
 
         if (!$coupon) {
