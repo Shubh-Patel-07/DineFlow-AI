@@ -851,6 +851,7 @@ window.addEventListener('themechange', () => {
 </script>
 
 <script>
+const DASHBOARD_RESTAURANT_ID = '{{ Auth::user()->restaurant_id ?? 1 }}';
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const backdrop = document.getElementById('sidebarBackdrop');
@@ -1028,7 +1029,7 @@ async function fetchLiveNotifications() {
 
   try {
     // 1. Waiter Calls (unresolved)
-    const wcRes = await fetch('/api/waiter-calls/restaurant/1');
+    const wcRes = await fetch(`/api/waiter-calls/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     const wcData = await wcRes.json();
     if (wcData.success && wcData.data) {
       wcData.data.forEach(call => {
@@ -1051,7 +1052,7 @@ async function fetchLiveNotifications() {
 
   try {
     // 2. Recent Orders (last 30 min, pending/preparing)
-    const orRes = await fetch('/api/orders/restaurant/1');
+    const orRes = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     const orData = await orRes.json();
     const orOrdersList = Array.isArray(orData.data) ? orData.data : (orData.data?.data || []);
     if (orData.success && Array.isArray(orOrdersList)) {
@@ -1106,7 +1107,7 @@ async function fetchLiveNotifications() {
 
   try {
     // 3. Low Stock Alerts
-    const invRes = await fetch('/api/inventory?restaurantId=1');
+    const invRes = await fetch(`/api/inventory?restaurantId=${DASHBOARD_RESTAURANT_ID}`);
     const invData = await invRes.json();
     if (invData.success && invData.data) {
       invData.data.forEach(item => {
@@ -1324,7 +1325,7 @@ async function loadDashOrdersModalData() {
   `;
 
   try {
-    const res = await fetch('/api/orders/restaurant/1');
+    const res = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     if (!res.ok) throw new Error('API request failed');
     const rawData = await res.json();
     
@@ -1493,7 +1494,7 @@ async function loadDashDeliveryData() {
   if (!body) return;
   body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...</div>';
   try {
-    const resp = await fetch('/api/orders/restaurant/1');
+    const resp = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     const rawData = await resp.json();
     const allOrders = Array.isArray(rawData) ? rawData : (rawData.data || []);
     const deliveryOrders = allOrders.filter(o => o.order_type === 'delivery' || o.order_type === 'takeaway');

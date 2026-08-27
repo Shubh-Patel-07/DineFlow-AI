@@ -31,7 +31,9 @@ class TenantMiddleware
             ?? $request->input('restaurant_id')
             ?? $request->input('restaurantId');
 
-        if (($requestedTenantId === null || $requestedTenantId === '') && preg_match('#/(?:restaurants?|tables|orders|reservations|feedback|waiter-calls|expenses|staff|analytics)(?:/restaurant)?/(\d+)#', $request->path(), $matches)) {
+        if (($requestedTenantId === null || $requestedTenantId === '') && preg_match('#/(?:restaurants?|tables|orders|reservations|feedback|waiter-calls|expenses|staff|analytics)/restaurant/(\d+)#', $request->path(), $matches)) {
+            $requestedTenantId = $matches[1];
+        } elseif (($requestedTenantId === null || $requestedTenantId === '') && preg_match('#^/?api/restaurants/(\d+)(?:/settings)?#', $request->path(), $matches)) {
             $requestedTenantId = $matches[1];
         }
 
