@@ -328,12 +328,44 @@ Route::prefix('api')->group(function () {
     Route::post('/waiter-calls', [CustomerController::class, 'callWaiter']);
     Route::post('/reservations', [ReservationController::class, 'store']);
 
+    Route::get('/health', function () {
+        return response()->json([
+            'status' => 'online',
+            'timestamp' => now()->toIso8601String(),
+            'version' => '2.4.0',
+        ]);
+    });
+
     // Coupon validation (public - used at POS checkout)
     Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
 
     // --- PROTECTED & TENANT SECURED ENDPOINTS ---
     Route::middleware(['auth', 'tenant'])->group(function () {
         
+        // Offline Sync Gateway Endpoints
+        Route::post('/sync/orders', function (Illuminate\Http\Request $request, \App\Services\OfflineSyncQueueService $syncService) {
+            $user = auth()->user();
+            $restaurantId = $user ? $user->restaurant_id : null;
+            if (!$restaurantId) {
+                return response()->json(['success' => false, 'message' => 'No authenticated restaurant tenant found.'], 403);
+            }
+            $result = $syncService->syncIncomingOrder($request->all(), $restaurantId);
+            $statusCode = $result['success'] ? 200 : 422;
+            return response()->json($result, $statusCode);
+        })->middleware('role:admin,manager,cashier');
+
+        Route::get('/sync/orders/since', function (Illuminate\Http\Request $request, \App\Services\OfflineSyncQueueService $syncService) {
+            $user = auth()->user();
+            $restaurantId = $user ? $user->restaurant_id : null;
+            if (!$restaurantId) {
+                return response()->json(['success' => false, 'message' => 'No authenticated restaurant tenant found.'], 403);
+            }
+            $since = $request->query('since');
+            $limit = min(100, intval($request->query('limit', 50)));
+            $result = $syncService->getOrdersSince($restaurantId, $since, $limit);
+            return response()->json($result, 200);
+        })->middleware('role:admin,manager,cashier');
+
         // Restaurants
         Route::post('/restaurants', [RestaurantController::class, 'store'])->middleware('role:admin');
         Route::post('/restaurants/{id}/settings', [RestaurantController::class, 'updateSettings'])->middleware('role:admin,manager');

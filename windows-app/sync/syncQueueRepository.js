@@ -1,7 +1,5 @@
 import { randomUUID } from 'crypto';
-
 import * as database from '../database.js';
-import { randomUUID } from 'crypto';
 
 export function createSyncQueueItem(db, item) {
   const now = new Date().toISOString();
