@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Restaurant extends Model
 {
@@ -19,7 +20,18 @@ class Restaurant extends Model
         'subscription_status',
         'onboarding_completed',
         'plan_limits',
-        'trial_ends_at'
+        'trial_ends_at',
+        'subscription_starts_at',
+        'subscription_expires_at',
+        'grace_period_days',
+        'last_payment_date',
+        'next_renewal_date',
+        'payment_status',
+        'payment_method',
+        'payment_reference',
+        'billing_amount',
+        'currency',
+        'suspension_reason'
     ];
 
     protected $casts = [
@@ -28,7 +40,13 @@ class Restaurant extends Model
         'service_charge' => 'decimal:2',
         'onboarding_completed' => 'boolean',
         'plan_limits' => 'array',
-        'trial_ends_at' => 'datetime'
+        'trial_ends_at' => 'datetime',
+        'subscription_starts_at' => 'datetime',
+        'subscription_expires_at' => 'datetime',
+        'last_payment_date' => 'datetime',
+        'next_renewal_date' => 'datetime',
+        'billing_amount' => 'decimal:2',
+        'grace_period_days' => 'integer'
     ];
 
     public function tables()
@@ -74,5 +92,29 @@ class Restaurant extends Model
     public function waiterCalls()
     {
         return $this->hasMany(WaiterCall::class, 'restaurant_id');
+    }
+
+    public function subscriptionHistories()
+    {
+        return $this->hasMany(SubscriptionHistory::class, 'restaurant_id')->orderBy('created_at', 'desc');
+    }
+
+    public function isOperational(): bool
+    {
+        $status = strtolower(trim($this->subscription_status ?? 'active'));
+        if (in_array($status, ['suspended', 'expired', 'cancelled'])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function isSuspended(): bool
+    {
+        return strtolower(trim($this->subscription_status ?? '')) === 'suspended';
+    }
+
+    public function isInGracePeriod(): bool
+    {
+        return strtolower(trim($this->subscription_status ?? '')) === 'grace_period';
     }
 }

@@ -13,7 +13,25 @@ class PlanLimitService
 {
     public static function getDefaultPlanLimits(string $planType = 'free'): array
     {
-        if ($planType === 'pro' || $planType === 'enterprise') {
+        if ($planType === 'enterprise') {
+            return [
+                'tables' => 200,
+                'staff' => 100,
+                'menu_items' => 2000,
+                'monthly_orders' => 25000,
+            ];
+        }
+
+        if ($planType === 'pro') {
+            return [
+                'tables' => 50,
+                'staff' => 25,
+                'menu_items' => 500,
+                'monthly_orders' => 5000,
+            ];
+        }
+
+        if ($planType === 'custom') {
             return [
                 'tables' => 100,
                 'staff' => 50,

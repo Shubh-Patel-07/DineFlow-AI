@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Table;
 use App\Models\MenuItem;
 use App\Models\AuditLog;
+use App\Models\SubscriptionHistory;
 use App\Services\PlanLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -71,6 +72,13 @@ class SuperAdminController extends Controller
                 'onboarding_completed' => (bool)$restaurant->onboarding_completed,
                 'plan_limits' => PlanLimitService::getLimits($restaurant->id),
                 'trial_ends_at' => $restaurant->trial_ends_at ? $restaurant->trial_ends_at->toISOString() : null,
+                'subscription_starts_at' => $restaurant->subscription_starts_at ? $restaurant->subscription_starts_at->toISOString() : null,
+                'subscription_expires_at' => $restaurant->subscription_expires_at ? $restaurant->subscription_expires_at->toISOString() : null,
+                'grace_period_days' => $restaurant->grace_period_days ?: 7,
+                'payment_status' => $restaurant->payment_status ?: 'paid',
+                'payment_reference' => $restaurant->payment_reference,
+                'billing_amount' => (float)($restaurant->billing_amount ?: 0.00),
+                'suspension_reason' => $restaurant->suspension_reason,
                 'created_at' => $restaurant->created_at ? $restaurant->created_at->toISOString() : null,
                 'owner' => $owner ? [
                     'id' => $owner->id,
@@ -96,7 +104,7 @@ class SuperAdminController extends Controller
     }
 
     /**
-     * Detailed single restaurant view including full usage statistics
+     * Detailed single restaurant view including full usage statistics, subscription history, and audit log
      */
     public function restaurantDetails($id)
     {
@@ -108,7 +116,9 @@ class SuperAdminController extends Controller
         $usage = PlanLimitService::getUsageStats($id);
         $totalOrders = Order::where('restaurant_id', $id)->count();
         $totalRevenue = Order::where('restaurant_id', $id)->where('payment_status', 'paid')->sum('total_amount');
-        $recentOrders = Order::where('restaurant_id', $id)->orderBy('created_at', 'desc')->limit(5)->get();
+        $recentOrders = Order::where('restaurant_id', $id)->orderBy('created_at', 'desc')->limit(10)->get();
+        $subscriptionHistories = SubscriptionHistory::where('restaurant_id', $id)->with('user')->orderBy('created_at', 'desc')->limit(15)->get();
+        $auditLogs = AuditLog::where('restaurant_id', $id)->with('user')->orderBy('created_at', 'desc')->limit(15)->get();
 
         return response()->json([
             'success' => true,
@@ -118,6 +128,8 @@ class SuperAdminController extends Controller
                 'total_orders' => $totalOrders,
                 'total_revenue' => round($totalRevenue, 2),
                 'recent_orders' => $recentOrders,
+                'subscription_histories' => $subscriptionHistories,
+                'audit_logs' => $auditLogs,
                 'users' => $restaurant->users->map(fn($u) => [
                     'id' => $u->id,
                     'name' => $u->name,
@@ -142,12 +154,15 @@ class SuperAdminController extends Controller
             'owner_password' => 'required|string|min:6',
             'phone' => 'required|string|max:30',
             'address' => 'required|string|max:500',
-            'plan_type' => 'nullable|string|in:free,pro,enterprise',
+            'plan_type' => 'nullable|string|in:free,pro,enterprise,custom',
         ]);
 
         return DB::transaction(function() use ($request) {
             $planType = $request->input('plan_type', 'free');
             $limits = PlanLimitService::getDefaultPlanLimits($planType);
+
+            $startsAt = Carbon::now();
+            $expiresAt = ($planType === 'free') ? null : Carbon::now()->addMonth();
 
             $restaurant = Restaurant::create([
                 'name' => $request->restaurant_name,
@@ -157,6 +172,10 @@ class SuperAdminController extends Controller
                 'subscription_status' => 'active',
                 'onboarding_completed' => true,
                 'plan_limits' => $limits,
+                'subscription_starts_at' => $startsAt,
+                'subscription_expires_at' => $expiresAt,
+                'grace_period_days' => 7,
+                'payment_status' => 'paid',
                 'gst_rate' => 5.00,
                 'service_charge' => 5.00,
                 'settings' => [
@@ -174,6 +193,12 @@ class SuperAdminController extends Controller
                 'role' => 'admin',
                 'restaurant_id' => $restaurant->id,
                 'numeric_pin' => (string)rand(1000, 9999),
+            ]);
+
+            SubscriptionHistory::record($restaurant, $planType, 'active', [
+                'starts_at' => $startsAt,
+                'expires_at' => $expiresAt,
+                'reason' => 'Initial restaurant creation by Super Admin',
             ]);
 
             AuditLog::record('restaurant_created', $restaurant->id, 'restaurant', $restaurant->id, [
@@ -196,7 +221,7 @@ class SuperAdminController extends Controller
     }
 
     /**
-     * Update restaurant details
+     * Update restaurant profile details
      */
     public function updateRestaurant(Request $request, $id)
     {
@@ -226,19 +251,29 @@ class SuperAdminController extends Controller
     }
 
     /**
-     * Activate a suspended or trial restaurant
+     * Activate / Reactivate a restaurant
      */
-    public function activateRestaurant($id)
+    public function activateRestaurant(Request $request, $id)
     {
         $restaurant = Restaurant::find($id);
         if (!$restaurant) {
             return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
         }
 
-        $restaurant->update(['subscription_status' => 'active']);
+        $oldStatus = $restaurant->subscription_status;
+        $restaurant->update([
+            'subscription_status' => 'active',
+            'suspension_reason' => null
+        ]);
+
+        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'active', [
+            'previous_status' => $oldStatus,
+            'reason' => $request->input('reason', 'Super Admin restored/activated access'),
+        ]);
 
         AuditLog::record('restaurant_activated', $restaurant->id, 'restaurant', $restaurant->id, [
-            'previous_status' => $restaurant->getOriginal('subscription_status')
+            'previous_status' => $oldStatus,
+            'reason' => $request->input('reason')
         ]);
 
         return response()->json([
@@ -248,19 +283,31 @@ class SuperAdminController extends Controller
     }
 
     /**
-     * Suspend a restaurant
+     * Suspend a restaurant with required/optional reason
      */
-    public function suspendRestaurant($id)
+    public function suspendRestaurant(Request $request, $id)
     {
         $restaurant = Restaurant::find($id);
         if (!$restaurant) {
             return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
         }
 
-        $restaurant->update(['subscription_status' => 'suspended']);
+        $reason = $request->input('reason', 'Administrative suspension');
+        $oldStatus = $restaurant->subscription_status;
+
+        $restaurant->update([
+            'subscription_status' => 'suspended',
+            'suspension_reason' => $reason
+        ]);
+
+        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'suspended', [
+            'previous_status' => $oldStatus,
+            'reason' => $reason,
+        ]);
 
         AuditLog::record('restaurant_suspended', $restaurant->id, 'restaurant', $restaurant->id, [
-            'previous_status' => $restaurant->getOriginal('subscription_status')
+            'previous_status' => $oldStatus,
+            'reason' => $reason
         ]);
 
         return response()->json([
@@ -275,7 +322,8 @@ class SuperAdminController extends Controller
     public function updatePlan(Request $request, $id)
     {
         $request->validate([
-            'plan_type' => 'required|string|in:free,pro,enterprise',
+            'plan_type' => 'required|string|in:free,pro,enterprise,custom',
+            'billing_amount' => 'nullable|numeric|min:0',
         ]);
 
         $restaurant = Restaurant::find($id);
@@ -287,16 +335,31 @@ class SuperAdminController extends Controller
         $oldPlan = $restaurant->plan_type ?? 'free';
         $newLimits = PlanLimitService::getDefaultPlanLimits($newPlan);
 
+        $startsAt = Carbon::now();
+        $expiresAt = ($newPlan === 'free') ? null : Carbon::now()->addMonth();
+
         $restaurant->update([
             'plan_type' => $newPlan,
             'plan_limits' => $newLimits,
-            'subscription_status' => 'active'
+            'subscription_status' => 'active',
+            'subscription_starts_at' => $startsAt,
+            'subscription_expires_at' => $expiresAt,
+            'billing_amount' => $request->filled('billing_amount') ? (float)$request->billing_amount : $restaurant->billing_amount,
+        ]);
+
+        SubscriptionHistory::record($restaurant, $newPlan, 'active', [
+            'previous_plan' => $oldPlan,
+            'starts_at' => $startsAt,
+            'expires_at' => $expiresAt,
+            'billing_amount' => $restaurant->billing_amount,
+            'reason' => $request->input('reason', "Plan changed to " . strtoupper($newPlan)),
         ]);
 
         AuditLog::record('plan_changed', $restaurant->id, 'plan', $restaurant->id, [
             'old_plan' => $oldPlan,
             'new_plan' => $newPlan,
-            'limits' => $newLimits
+            'limits' => $newLimits,
+            'reason' => $request->input('reason')
         ]);
 
         return response()->json([
@@ -304,7 +367,8 @@ class SuperAdminController extends Controller
             'message' => "Plan updated to " . strtoupper($newPlan) . " for '{$restaurant->name}'.",
             'data' => [
                 'plan_type' => $restaurant->plan_type,
-                'plan_limits' => $restaurant->plan_limits
+                'plan_limits' => $restaurant->plan_limits,
+                'subscription_expires_at' => $restaurant->subscription_expires_at ? $restaurant->subscription_expires_at->toISOString() : null
             ]
         ]);
     }
@@ -333,7 +397,15 @@ class SuperAdminController extends Controller
             'monthly_orders' => (int)$request->monthly_orders,
         ];
 
-        $restaurant->update(['plan_limits' => $customLimits]);
+        $restaurant->update([
+            'plan_type' => 'custom',
+            'plan_limits' => $customLimits
+        ]);
+
+        SubscriptionHistory::record($restaurant, 'custom', $restaurant->subscription_status ?? 'active', [
+            'reason' => 'Custom quota limits applied by Super Admin',
+            'metadata' => $customLimits
+        ]);
 
         AuditLog::record('limits_changed', $restaurant->id, 'plan', $restaurant->id, [
             'custom_limits' => $customLimits
@@ -343,6 +415,129 @@ class SuperAdminController extends Controller
             'success' => true,
             'message' => "Custom quota limits updated for '{$restaurant->name}'.",
             'data' => $customLimits
+        ]);
+    }
+
+    /**
+     * Full subscription lifecycle override (dates, trial, grace period, status)
+     */
+    public function updateSubscription(Request $request, $id)
+    {
+        $request->validate([
+            'subscription_status' => 'required|string|in:trial,active,expiring,grace_period,expired,suspended,cancelled',
+            'plan_type' => 'nullable|string|in:free,pro,enterprise,custom',
+            'subscription_starts_at' => 'nullable|date',
+            'subscription_expires_at' => 'nullable|date',
+            'grace_period_days' => 'nullable|integer|min:0|max:60',
+            'trial_ends_at' => 'nullable|date',
+            'billing_amount' => 'nullable|numeric|min:0',
+            'payment_status' => 'nullable|string|in:paid,unpaid,pending,waived',
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
+            return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
+        }
+
+        $oldStatus = $restaurant->subscription_status;
+        $oldPlan = $restaurant->plan_type;
+
+        $updateData = [
+            'subscription_status' => $request->subscription_status,
+            'grace_period_days' => $request->filled('grace_period_days') ? (int)$request->grace_period_days : $restaurant->grace_period_days,
+        ];
+
+        if ($request->filled('plan_type')) $updateData['plan_type'] = $request->plan_type;
+        if ($request->filled('subscription_starts_at')) $updateData['subscription_starts_at'] = Carbon::parse($request->subscription_starts_at);
+        if ($request->filled('subscription_expires_at')) $updateData['subscription_expires_at'] = Carbon::parse($request->subscription_expires_at);
+        if ($request->filled('trial_ends_at')) $updateData['trial_ends_at'] = Carbon::parse($request->trial_ends_at);
+        if ($request->filled('billing_amount')) $updateData['billing_amount'] = (float)$request->billing_amount;
+        if ($request->filled('payment_status')) $updateData['payment_status'] = $request->payment_status;
+
+        $restaurant->update($updateData);
+
+        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', $restaurant->subscription_status, [
+            'previous_plan' => $oldPlan,
+            'previous_status' => $oldStatus,
+            'starts_at' => $restaurant->subscription_starts_at,
+            'expires_at' => $restaurant->subscription_expires_at,
+            'billing_amount' => $restaurant->billing_amount,
+            'payment_status' => $restaurant->payment_status,
+            'reason' => $request->input('reason', 'Super Admin subscription override'),
+        ]);
+
+        AuditLog::record('subscription_override', $restaurant->id, 'subscription', $restaurant->id, [
+            'previous_status' => $oldStatus,
+            'new_status' => $restaurant->subscription_status,
+            'update_data' => $updateData,
+            'reason' => $request->input('reason')
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Subscription updated for '{$restaurant->name}'.",
+            'data' => $restaurant
+        ]);
+    }
+
+    /**
+     * Manually mark a subscription as paid and extend renewal
+     */
+    public function recordPayment(Request $request, $id)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'payment_method' => 'required|string|max:50',
+            'payment_reference' => 'nullable|string|max:100',
+            'extend_months' => 'nullable|integer|min:1|max:36',
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
+            return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
+        }
+
+        $extendMonths = $request->input('extend_months', 1);
+        $baseDate = ($restaurant->subscription_expires_at && Carbon::parse($restaurant->subscription_expires_at)->isFuture())
+            ? Carbon::parse($restaurant->subscription_expires_at)
+            : Carbon::now();
+
+        $newExpiresAt = $baseDate->addMonths($extendMonths);
+
+        $restaurant->update([
+            'subscription_status' => 'active',
+            'payment_status' => 'paid',
+            'payment_method' => $request->payment_method,
+            'payment_reference' => $request->payment_reference,
+            'billing_amount' => (float)$request->amount,
+            'last_payment_date' => Carbon::now(),
+            'subscription_expires_at' => $newExpiresAt,
+            'next_renewal_date' => $newExpiresAt,
+        ]);
+
+        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'active', [
+            'starts_at' => $restaurant->subscription_starts_at ?: Carbon::now(),
+            'expires_at' => $newExpiresAt,
+            'billing_amount' => (float)$request->amount,
+            'payment_status' => 'paid',
+            'payment_method' => $request->payment_method,
+            'payment_reference' => $request->payment_reference,
+            'reason' => $request->input('reason', "Payment recorded ({$request->payment_method}). Subscription extended by {$extendMonths} month(s)."),
+        ]);
+
+        AuditLog::record('payment_recorded', $restaurant->id, 'payment', $restaurant->id, [
+            'amount' => (float)$request->amount,
+            'method' => $request->payment_method,
+            'reference' => $request->payment_reference,
+            'new_expires_at' => $newExpiresAt->toDateTimeString()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Payment recorded and subscription extended until {$newExpiresAt->toDateString()}.",
+            'data' => $restaurant
         ]);
     }
 
@@ -415,10 +610,14 @@ class SuperAdminController extends Controller
         $activeRestaurants = Restaurant::where('subscription_status', 'active')->count();
         $suspendedRestaurants = Restaurant::where('subscription_status', 'suspended')->count();
         $trialRestaurants = Restaurant::where('subscription_status', 'trial')->count();
+        $expiringRestaurants = Restaurant::where('subscription_status', 'expiring')->count();
+        $graceRestaurants = Restaurant::where('subscription_status', 'grace_period')->count();
+        $expiredRestaurants = Restaurant::where('subscription_status', 'expired')->count();
 
         $freePlanCount = Restaurant::where('plan_type', 'free')->count();
         $proPlanCount = Restaurant::where('plan_type', 'pro')->count();
         $enterprisePlanCount = Restaurant::where('plan_type', 'enterprise')->count();
+        $customPlanCount = Restaurant::where('plan_type', 'custom')->count();
 
         $totalOrders = Order::count();
         $todayOrders = Order::whereDate('created_at', Carbon::today())->count();
@@ -436,6 +635,7 @@ class SuperAdminController extends Controller
                 'id' => $r->id,
                 'name' => $r->name,
                 'plan_type' => $r->plan_type ?? 'free',
+                'subscription_status' => $r->subscription_status ?? 'active',
                 'orders_count' => $r->orders_count,
                 'revenue' => (float)Order::where('restaurant_id', $r->id)->where('payment_status', 'paid')->sum('total_amount')
             ]);
@@ -445,10 +645,14 @@ class SuperAdminController extends Controller
             'active_restaurants' => $activeRestaurants,
             'suspended_restaurants' => $suspendedRestaurants,
             'trial_restaurants' => $trialRestaurants,
+            'expiring_restaurants' => $expiringRestaurants,
+            'grace_restaurants' => $graceRestaurants,
+            'expired_restaurants' => $expiredRestaurants,
             'plans' => [
                 'free' => $freePlanCount,
                 'pro' => $proPlanCount,
                 'enterprise' => $enterprisePlanCount,
+                'custom' => $customPlanCount,
             ],
             'orders' => [
                 'total' => $totalOrders,

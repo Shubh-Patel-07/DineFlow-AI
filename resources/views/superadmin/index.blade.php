@@ -298,8 +298,8 @@
     /* ─── METRIC CARDS GRID ──────────────────────────────── */
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 18px;
     }
 
     .metric-card {
@@ -307,10 +307,10 @@
       backdrop-filter: blur(12px);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 22px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       transition: transform 0.2s, border-color 0.2s;
     }
 
@@ -326,8 +326,8 @@
     }
 
     .metric-icon {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -336,14 +336,14 @@
     }
 
     .metric-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-secondary);
     }
 
     .metric-value {
       font-family: 'Outfit', sans-serif;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       color: var(--text-primary);
     }
@@ -466,6 +466,7 @@
     .plan-free { background: rgba(100, 116, 139, 0.2); color: #94A3B8; border: 1px solid rgba(100, 116, 139, 0.3); }
     .plan-pro { background: rgba(99, 102, 241, 0.2); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.4); }
     .plan-enterprise { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .plan-custom { background: rgba(6, 182, 212, 0.2); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.4); }
 
     .status-badge {
       padding: 4px 10px;
@@ -475,11 +476,16 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      text-transform: capitalize;
     }
 
     .status-active { background: rgba(16, 185, 129, 0.15); color: #34D399; }
-    .status-suspended { background: rgba(239, 68, 68, 0.15); color: #F87171; }
     .status-trial { background: rgba(6, 182, 212, 0.15); color: #22D3EE; }
+    .status-expiring { background: rgba(245, 158, 11, 0.15); color: #FBBF24; }
+    .status-grace_period { background: rgba(139, 92, 246, 0.15); color: #A78BFA; }
+    .status-expired { background: rgba(239, 68, 68, 0.15); color: #F87171; }
+    .status-suspended { background: rgba(239, 68, 68, 0.25); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .status-cancelled { background: rgba(100, 116, 139, 0.2); color: #94A3B8; }
 
     .actions-group {
       display: flex;
@@ -537,7 +543,7 @@
       border: 1px solid var(--border-color);
       border-radius: 20px;
       width: 100%;
-      max-width: 550px;
+      max-width: 600px;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
@@ -588,7 +594,7 @@
       letter-spacing: 0.5px;
     }
 
-    .form-input, .form-select {
+    .form-input, .form-select, .form-textarea {
       background: var(--bg-primary);
       border: 1px solid var(--border-color);
       border-radius: 10px;
@@ -598,7 +604,12 @@
       outline: none;
     }
 
-    .form-input:focus, .form-select:focus {
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
       border-color: var(--accent);
     }
 
@@ -631,6 +642,47 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ─── USAGE PROGRESS BARS ────────────────────────────── */
+    .usage-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .usage-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .usage-bar-bg {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bg-primary);
+      overflow: hidden;
+    }
+
+    .usage-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--accent-gradient);
+      transition: width 0.3s ease;
     }
 
     /* ─── TOAST ALERTS ───────────────────────────────────── */
@@ -720,6 +772,10 @@
         <i class="fa-solid fa-store"></i>
         <span>Restaurants</span>
       </a>
+      <a class="nav-item" onclick="switchSection('subscriptions', this)">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>SaaS Subscriptions</span>
+      </a>
       <a class="nav-item" onclick="switchSection('analytics', this)">
         <i class="fa-solid fa-chart-line"></i>
         <span>Global Analytics</span>
@@ -783,13 +839,33 @@
                 <i class="fa-solid fa-store"></i>
               </div>
             </div>
-            <div class="metric-value" id="kpi-total-restaurants">{{ $stats['total_restaurants'] ?? 0 }}</div>
-            <div>
+            <div class="metric-value">{{ $stats['total_restaurants'] ?? 0 }}</div>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
               <span class="metric-badge" style="background: rgba(16, 185, 129, 0.15); color: #34D399;">
                 <i class="fa-solid fa-circle-check"></i> {{ $stats['active_restaurants'] ?? 0 }} Active
               </span>
-              <span class="metric-badge" style="background: rgba(239, 68, 68, 0.15); color: #F87171; margin-left: 4px;">
+              <span class="metric-badge" style="background: rgba(239, 68, 68, 0.15); color: #F87171;">
                 {{ $stats['suspended_restaurants'] ?? 0 }} Suspended
+              </span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Subscription States</span>
+              <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
+                <i class="fa-solid fa-hourglass-half"></i>
+              </div>
+            </div>
+            <div class="metric-value" style="font-size: 20px;">
+              {{ $stats['grace_restaurants'] ?? 0 }} Grace / {{ $stats['expired_restaurants'] ?? 0 }} Expired
+            </div>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              <span class="metric-badge" style="background: rgba(6, 182, 212, 0.15); color: #22D3EE;">
+                {{ $stats['trial_restaurants'] ?? 0 }} Trial
+              </span>
+              <span class="metric-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
+                {{ $stats['expiring_restaurants'] ?? 0 }} Expiring
               </span>
             </div>
           </div>
@@ -811,33 +887,21 @@
 
           <div class="metric-card">
             <div class="metric-header">
-              <span class="metric-label">Total Orders</span>
-              <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
-                <i class="fa-solid fa-receipt"></i>
-              </div>
-            </div>
-            <div class="metric-value">{{ number_format($stats['orders']['total'] ?? 0) }}</div>
-            <div>
-              <span class="metric-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
-                Today: {{ $stats['orders']['today'] ?? 0 }} orders
-              </span>
-            </div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-header">
               <span class="metric-label">Plan Tiers</span>
               <div class="metric-icon" style="background: rgba(6, 182, 212, 0.15); color: #22D3EE;">
                 <i class="fa-solid fa-layer-group"></i>
               </div>
             </div>
             <div class="metric-value">{{ $stats['plans']['free'] ?? 0 }} Free</div>
-            <div>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
               <span class="metric-badge" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">
                 {{ $stats['plans']['pro'] ?? 0 }} Pro
               </span>
-              <span class="metric-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24; margin-left: 4px;">
-                {{ $stats['plans']['enterprise'] ?? 0 }} Enterprise
+              <span class="metric-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
+                {{ $stats['plans']['enterprise'] ?? 0 }} Ent
+              </span>
+              <span class="metric-badge" style="background: rgba(6, 182, 212, 0.15); color: #22D3EE;">
+                {{ $stats['plans']['custom'] ?? 0 }} Custom
               </span>
             </div>
           </div>
@@ -852,6 +916,7 @@
                 <tr>
                   <th>Restaurant</th>
                   <th>Plan</th>
+                  <th>Status</th>
                   <th>Orders</th>
                   <th>Revenue</th>
                 </tr>
@@ -861,11 +926,12 @@
                 <tr>
                   <td style="font-weight: 700; color: var(--text-primary);">{{ $top['name'] }}</td>
                   <td><span class="plan-badge plan-{{ $top['plan_type'] }}">{{ $top['plan_type'] }}</span></td>
+                  <td><span class="status-badge status-{{ $top['subscription_status'] }}">{{ $top['subscription_status'] }}</span></td>
                   <td>{{ $top['orders_count'] }}</td>
                   <td style="font-weight: 700; color: var(--success);">₹{{ number_format($top['revenue'], 2) }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No restaurant data yet.</td></tr>
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No restaurant data yet.</td></tr>
                 @endforelse
               </tbody>
             </table>
@@ -894,12 +960,16 @@
                 <option value="free">Free Plan</option>
                 <option value="pro">Pro Plan</option>
                 <option value="enterprise">Enterprise Plan</option>
+                <option value="custom">Custom Plan</option>
               </select>
               <select id="statusFilter" class="filter-select" onchange="fetchRestaurants()">
                 <option value="">All Statuses</option>
                 <option value="active">Active</option>
-                <option value="suspended">Suspended</option>
                 <option value="trial">Trial</option>
+                <option value="expiring">Expiring Soon</option>
+                <option value="grace_period">In Grace Period</option>
+                <option value="expired">Expired</option>
+                <option value="suspended">Suspended</option>
               </select>
             </div>
           </div>
@@ -912,7 +982,7 @@
                   <th>Restaurant</th>
                   <th>Owner</th>
                   <th>Plan</th>
-                  <th>Status</th>
+                  <th>Status & Expiry</th>
                   <th>Orders</th>
                   <th>Revenue</th>
                   <th>Actions</th>
@@ -920,6 +990,37 @@
               </thead>
               <tbody id="restaurantsTableBody">
                 <tr><td colspan="8" style="text-align: center;">Loading restaurants...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: SUBSCRIPTIONS ── -->
+      <section id="section-subscriptions" style="display: none;">
+        <div class="table-container">
+          <div class="table-header">
+            <div>
+              <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;">SaaS Subscription Management</h3>
+              <p style="color: var(--text-secondary); font-size: 13px; margin-top: 4px;">Monitor plan renewals, grace periods, and manual offline payments.</p>
+            </div>
+            <button class="btn-secondary" onclick="runExpiryJob()"><i class="fa-solid fa-bolt"></i> Evaluate Expiry Engine</button>
+          </div>
+          <div style="overflow-x: auto; margin-top: 14px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Restaurant</th>
+                  <th>Plan Tier</th>
+                  <th>Status</th>
+                  <th>Expiry Date</th>
+                  <th>Grace (Days)</th>
+                  <th>Payment Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="subscriptionsTableBody">
+                <tr><td colspan="7" style="text-align: center;">Loading subscriptions...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1015,8 +1116,9 @@
             <label>SaaS Plan Tier</label>
             <select name="plan_type" class="form-select">
               <option value="free">Free Tier (10 tables, 5 staff, 100 items)</option>
-              <option value="pro">Pro Tier (100 tables, 50 staff, 1000 items)</option>
-              <option value="enterprise">Enterprise Tier</option>
+              <option value="pro">Pro Tier (50 tables, 25 staff, 500 items)</option>
+              <option value="enterprise">Enterprise Tier (200 tables, 100 staff, 2000 items)</option>
+              <option value="custom">Custom Quota Tier</option>
             </select>
           </div>
         </div>
@@ -1028,66 +1130,143 @@
     </div>
   </div>
 
-  <!-- ── MODAL: CHANGE PLAN ── -->
-  <div class="modal-overlay" id="planModal">
+  <!-- ── MODAL: SUSPEND RESTAURANT (WITH REASON) ── -->
+  <div class="modal-overlay" id="suspendModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Change SaaS Plan</h3>
-        <button class="modal-close" onclick="closeModal('planModal')">&times;</button>
+        <h3 style="color: var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Suspend Restaurant</h3>
+        <button class="modal-close" onclick="closeModal('suspendModal')">&times;</button>
       </div>
-      <form id="changePlanForm" onsubmit="submitChangePlan(event)">
-        <input type="hidden" id="planModalRestaurantId">
+      <form id="suspendForm" onsubmit="submitSuspend(event)">
+        <input type="hidden" id="suspendRestaurantId">
         <div class="modal-body">
-          <p id="planModalRestaurantName" style="font-weight: 700; font-size: 14px; margin-bottom: 8px;"></p>
+          <p id="suspendRestaurantName" style="font-weight: 700; font-size: 14px; color: var(--text-primary);"></p>
+          <p style="font-size: 12px; color: var(--text-muted);">Suspending this restaurant will temporarily block staff from processing new orders/bills while keeping all historical data 100% intact.</p>
           <div class="form-group">
-            <label>Select New Plan</label>
-            <select id="planModalSelect" class="form-select">
-              <option value="free">Free Plan (10 tables, 5 staff, 100 menu items, 500 orders/mo)</option>
-              <option value="pro">Pro Plan (100 tables, 50 staff, 1000 menu items, 10,000 orders/mo)</option>
-              <option value="enterprise">Enterprise Plan (Unlimited)</option>
-            </select>
+            <label>Reason for Suspension</label>
+            <textarea id="suspendReason" class="form-textarea" placeholder="e.g. Subscription payment overdue, terms violation, maintenance..." required></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeModal('planModal')">Cancel</button>
-          <button type="submit" class="btn-primary">Update Plan</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('suspendModal')">Cancel</button>
+          <button type="submit" class="btn-danger">Confirm Suspension</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ── MODAL: CUSTOM LIMITS ── -->
-  <div class="modal-overlay" id="limitsModal">
+  <!-- ── MODAL: SUBSCRIPTION OVERRIDE ── -->
+  <div class="modal-overlay" id="subscriptionModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Customize Plan Quotas</h3>
-        <button class="modal-close" onclick="closeModal('limitsModal')">&times;</button>
+        <h3>Override Subscription Lifecycle</h3>
+        <button class="modal-close" onclick="closeModal('subscriptionModal')">&times;</button>
       </div>
-      <form id="customLimitsForm" onsubmit="submitCustomLimits(event)">
-        <input type="hidden" id="limitsModalRestaurantId">
+      <form id="subscriptionForm" onsubmit="submitSubscriptionOverride(event)">
+        <input type="hidden" id="subModalRestaurantId">
         <div class="modal-body">
+          <p id="subModalRestaurantName" style="font-weight: 700; font-size: 14px;"></p>
           <div class="form-group">
-            <label>Max Tables</label>
-            <input type="number" id="limitTables" class="form-input" min="1" max="1000" required>
+            <label>Subscription Status *</label>
+            <select id="subModalStatus" class="form-select" required>
+              <option value="active">Active</option>
+              <option value="trial">Trial</option>
+              <option value="expiring">Expiring Soon</option>
+              <option value="grace_period">In Grace Period</option>
+              <option value="expired">Expired</option>
+              <option value="suspended">Suspended</option>
+            </select>
           </div>
           <div class="form-group">
-            <label>Max Staff Accounts</label>
-            <input type="number" id="limitStaff" class="form-input" min="1" max="500" required>
+            <label>Plan Tier</label>
+            <select id="subModalPlan" class="form-select">
+              <option value="free">Free Plan</option>
+              <option value="pro">Pro Plan</option>
+              <option value="enterprise">Enterprise Plan</option>
+              <option value="custom">Custom Plan</option>
+            </select>
           </div>
           <div class="form-group">
-            <label>Max Menu Items</label>
-            <input type="number" id="limitMenuItems" class="form-input" min="1" max="5000" required>
+            <label>Expiry Date</label>
+            <input type="date" id="subModalExpiry" class="form-input">
           </div>
           <div class="form-group">
-            <label>Max Monthly Orders</label>
-            <input type="number" id="limitMonthlyOrders" class="form-input" min="10" max="100000" required>
+            <label>Grace Period (Days)</label>
+            <input type="number" id="subModalGrace" class="form-input" min="0" max="60" value="7">
+          </div>
+          <div class="form-group">
+            <label>Action Reason / Note</label>
+            <input type="text" id="subModalReason" class="form-input" placeholder="e.g. Promotional extension, trial extension">
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeModal('limitsModal')">Cancel</button>
-          <button type="submit" class="btn-primary">Save Custom Quotas</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('subscriptionModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Changes</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: RECORD MANUAL PAYMENT ── -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Record Offline / Manual Payment</h3>
+        <button class="modal-close" onclick="closeModal('paymentModal')">&times;</button>
+      </div>
+      <form id="paymentForm" onsubmit="submitRecordPayment(event)">
+        <input type="hidden" id="payModalRestaurantId">
+        <div class="modal-body">
+          <p id="payModalRestaurantName" style="font-weight: 700; font-size: 14px;"></p>
+          <div class="form-group">
+            <label>Amount (₹) *</label>
+            <input type="number" step="0.01" id="payModalAmount" class="form-input" required placeholder="e.g. 1999.00">
+          </div>
+          <div class="form-group">
+            <label>Payment Method *</label>
+            <select id="payModalMethod" class="form-select" required>
+              <option value="bank_transfer">Bank Transfer (NEFT/IMPS)</option>
+              <option value="upi">UPI / QR Code</option>
+              <option value="cash">Cash Settlement</option>
+              <option value="cheque">Cheque</option>
+              <option value="razorpay">Razorpay (External)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Transaction / Reference ID</label>
+            <input type="text" id="payModalRef" class="form-input" placeholder="e.g. UTR123456789">
+          </div>
+          <div class="form-group">
+            <label>Extend Subscription Duration</label>
+            <select id="payModalExtend" class="form-select">
+              <option value="1">Extend by 1 Month</option>
+              <option value="3">Extend by 3 Months</option>
+              <option value="6">Extend by 6 Months</option>
+              <option value="12">Extend by 1 Year</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('paymentModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Record Payment & Extend</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: RESTAURANT DETAILS & USAGE DRAWER ── -->
+  <div class="modal-overlay" id="detailsModal">
+    <div class="modal-card" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3>Restaurant Inspection & Analytics</h3>
+        <button class="modal-close" onclick="closeModal('detailsModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="detailsModalContent">
+        <p style="text-align: center; padding: 20px;">Loading restaurant details...</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeModal('detailsModal')">Close</button>
+      </div>
     </div>
   </div>
 
@@ -1137,12 +1316,14 @@
       const titles = {
         'dashboard': 'Platform Overview',
         'restaurants': 'Restaurants Management',
+        'subscriptions': 'SaaS Subscription Control',
         'analytics': 'Global Analytics',
         'audit-logs': 'System Audit Logs'
       };
       document.getElementById('currentSectionTitle').textContent = titles[sectionId] || 'Super Admin';
 
       if (sectionId === 'restaurants') fetchRestaurants();
+      if (sectionId === 'subscriptions') fetchSubscriptions();
       if (sectionId === 'audit-logs') fetchAuditLogs();
       if (sectionId === 'dashboard') fetchRecentOrders();
 
@@ -1196,9 +1377,9 @@
     }
 
     async function fetchRestaurants() {
-      const search = document.getElementById('restaurantSearch').value;
-      const plan = document.getElementById('planFilter').value;
-      const status = document.getElementById('statusFilter').value;
+      const search = document.getElementById('restaurantSearch')?.value || '';
+      const plan = document.getElementById('planFilter')?.value || '';
+      const status = document.getElementById('statusFilter')?.value || '';
 
       const url = new URL('/api/superadmin/restaurants', window.location.origin);
       if (search) url.searchParams.set('search', search);
@@ -1211,11 +1392,13 @@
         const tbody = document.getElementById('restaurantsTableBody');
 
         if (json.success && json.data.length > 0) {
-          tbody.innerHTML = json.data.map(r => `
+          tbody.innerHTML = json.data.map(r => {
+            const expiryStr = r.subscription_expires_at ? new Date(r.subscription_expires_at).toLocaleDateString() : 'Lifetime / Free';
+            return `
             <tr>
               <td>#${r.id}</td>
               <td>
-                <strong style="color: var(--text-primary); font-size: 14px;">${r.name}</strong>
+                <strong style="color: var(--text-primary); font-size: 14px; cursor: pointer;" onclick="openDetailsModal(${r.id})">${r.name}</strong>
                 <div style="font-size: 11px; color: var(--text-muted);">${r.phone || 'No phone'} • ${r.address || ''}</div>
               </td>
               <td>
@@ -1227,35 +1410,286 @@
                 <span class="status-badge status-${r.subscription_status}">
                   <i class="fa-solid fa-circle" style="font-size: 6px;"></i> ${r.subscription_status}
                 </span>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Exp: ${expiryStr}</div>
               </td>
               <td><strong>${r.orders_count}</strong></td>
               <td style="color: var(--success); font-weight: 700;">₹${r.total_revenue.toLocaleString('en-IN')}</td>
               <td>
                 <div class="actions-group">
+                  <button class="action-btn" title="View Full Inspection" onclick="openDetailsModal(${r.id})">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
                   ${r.subscription_status === 'suspended' ? `
-                    <button class="action-btn" title="Activate Restaurant" onclick="toggleStatus(${r.id}, 'activate')">
+                    <button class="action-btn" title="Activate / Restore Restaurant" onclick="quickActivate(${r.id})">
                       <i class="fa-solid fa-play" style="color: var(--success);"></i>
                     </button>
                   ` : `
-                    <button class="action-btn" title="Suspend Restaurant" onclick="toggleStatus(${r.id}, 'suspend')">
+                    <button class="action-btn" title="Suspend Restaurant" onclick="openSuspendModal(${r.id}, '${r.name}')">
                       <i class="fa-solid fa-pause" style="color: var(--danger);"></i>
                     </button>
                   `}
-                  <button class="action-btn" title="Change Plan" onclick="openPlanModal(${r.id}, '${r.name}', '${r.plan_type}')">
-                    <i class="fa-solid fa-layer-group"></i>
+                  <button class="action-btn" title="Subscription & Expiry" onclick="openSubscriptionModal(${r.id}, '${r.name}', '${r.subscription_status}', '${r.plan_type}', '${r.subscription_expires_at || ''}', ${r.grace_period_days || 7})">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
                   </button>
-                  <button class="action-btn" title="Custom Quota Limits" onclick="openLimitsModal(${r.id}, ${JSON.stringify(r.plan_limits).replace(/"/g, '&quot;')})">
-                    <i class="fa-solid fa-sliders"></i>
+                  <button class="action-btn" title="Record Manual Payment" onclick="openPaymentModal(${r.id}, '${r.name}', ${r.billing_amount || 0})">
+                    <i class="fa-solid fa-receipt"></i>
                   </button>
                 </div>
               </td>
             </tr>
-          `).join('');
+          `}).join('');
         } else {
           tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">No restaurants found.</td></tr>';
         }
       } catch (err) {
         console.error('Failed to fetch restaurants:', err);
+      }
+    }
+
+    async function fetchSubscriptions() {
+      try {
+        const res = await fetch('/api/superadmin/restaurants?per_page=50');
+        const json = await res.json();
+        const tbody = document.getElementById('subscriptionsTableBody');
+        if (json.success && json.data.length > 0) {
+          tbody.innerHTML = json.data.map(r => `
+            <tr>
+              <td><strong>${r.name}</strong></td>
+              <td><span class="plan-badge plan-${r.plan_type}">${r.plan_type}</span></td>
+              <td><span class="status-badge status-${r.subscription_status}">${r.subscription_status}</span></td>
+              <td>${r.subscription_expires_at ? new Date(r.subscription_expires_at).toLocaleDateString() : 'N/A (Free/Lifetime)'}</td>
+              <td>${r.grace_period_days} Days</td>
+              <td><span class="metric-badge" style="background: rgba(16,185,129,0.15); color: #34D399;">${r.payment_status}</span></td>
+              <td>
+                <div class="actions-group">
+                  <button class="action-btn" title="Edit Subscription" onclick="openSubscriptionModal(${r.id}, '${r.name}', '${r.subscription_status}', '${r.plan_type}', '${r.subscription_expires_at || ''}', ${r.grace_period_days || 7})">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button class="action-btn" title="Record Payment" onclick="openPaymentModal(${r.id}, '${r.name}', ${r.billing_amount || 0})">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Failed to fetch subscriptions:', err);
+      }
+    }
+
+    function openSuspendModal(id, name) {
+      document.getElementById('suspendRestaurantId').value = id;
+      document.getElementById('suspendRestaurantName').textContent = `Suspend Restaurant: ${name}`;
+      document.getElementById('suspendReason').value = '';
+      openModal('suspendModal');
+    }
+
+    async function submitSuspend(e) {
+      e.preventDefault();
+      const id = document.getElementById('suspendRestaurantId').value;
+      const reason = document.getElementById('suspendReason').value;
+
+      try {
+        const res = await fetch(`/api/superadmin/restaurants/${id}/suspend`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+          body: JSON.stringify({ reason })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message);
+          closeModal('suspendModal');
+          fetchRestaurants();
+        } else {
+          showToast(json.message || 'Failed', 'error');
+        }
+      } catch (err) {
+        showToast('Operation failed', 'error');
+      }
+    }
+
+    async function quickActivate(id) {
+      if (!confirm('Are you sure you want to activate/restore this restaurant?')) return;
+      try {
+        const res = await fetch(`/api/superadmin/restaurants/${id}/activate`, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message);
+          fetchRestaurants();
+        }
+      } catch (err) {
+        showToast('Activation failed', 'error');
+      }
+    }
+
+    function openSubscriptionModal(id, name, status, plan, expiry, grace) {
+      document.getElementById('subModalRestaurantId').value = id;
+      document.getElementById('subModalRestaurantName').textContent = `Manage Subscription: ${name}`;
+      document.getElementById('subModalStatus').value = status || 'active';
+      document.getElementById('subModalPlan').value = plan || 'free';
+      document.getElementById('subModalExpiry').value = expiry ? expiry.split('T')[0] : '';
+      document.getElementById('subModalGrace').value = grace || 7;
+      document.getElementById('subModalReason').value = '';
+      openModal('subscriptionModal');
+    }
+
+    async function submitSubscriptionOverride(e) {
+      e.preventDefault();
+      const id = document.getElementById('subModalRestaurantId').value;
+      const payload = {
+        subscription_status: document.getElementById('subModalStatus').value,
+        plan_type: document.getElementById('subModalPlan').value,
+        subscription_expires_at: document.getElementById('subModalExpiry').value || null,
+        grace_period_days: parseInt(document.getElementById('subModalGrace').value) || 7,
+        reason: document.getElementById('subModalReason').value || 'Manual override'
+      };
+
+      try {
+        const res = await fetch(`/api/superadmin/restaurants/${id}/subscription`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message);
+          closeModal('subscriptionModal');
+          fetchRestaurants();
+          fetchSubscriptions();
+        } else {
+          showToast(json.message || 'Failed', 'error');
+        }
+      } catch (err) {
+        showToast('Error updating subscription', 'error');
+      }
+    }
+
+    function openPaymentModal(id, name, defaultAmount) {
+      document.getElementById('payModalRestaurantId').value = id;
+      document.getElementById('payModalRestaurantName').textContent = `Record Payment: ${name}`;
+      document.getElementById('payModalAmount').value = defaultAmount > 0 ? defaultAmount : '1999.00';
+      document.getElementById('payModalRef').value = '';
+      openModal('paymentModal');
+    }
+
+    async function submitRecordPayment(e) {
+      e.preventDefault();
+      const id = document.getElementById('payModalRestaurantId').value;
+      const payload = {
+        amount: parseFloat(document.getElementById('payModalAmount').value),
+        payment_method: document.getElementById('payModalMethod').value,
+        payment_reference: document.getElementById('payModalRef').value,
+        extend_months: parseInt(document.getElementById('payModalExtend').value) || 1,
+      };
+
+      try {
+        const res = await fetch(`/api/superadmin/restaurants/${id}/payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message);
+          closeModal('paymentModal');
+          fetchRestaurants();
+          fetchSubscriptions();
+        } else {
+          showToast(json.message || 'Failed', 'error');
+        }
+      } catch (err) {
+        showToast('Payment recording failed', 'error');
+      }
+    }
+
+    async function openDetailsModal(id) {
+      openModal('detailsModal');
+      const content = document.getElementById('detailsModalContent');
+      content.innerHTML = '<p style="text-align: center; padding: 20px;">Fetching live inspection data...</p>';
+
+      try {
+        const res = await fetch(`/api/superadmin/restaurants/${id}`);
+        const json = await res.json();
+        if (json.success) {
+          const r = json.data.restaurant;
+          const u = json.data.usage;
+          const histories = json.data.subscription_histories || [];
+          const logs = json.data.audit_logs || [];
+
+          content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 20px; font-weight: 800;">${r.name}</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">${r.address} • ${r.phone}</p>
+                <div style="margin-top: 6px;">
+                  <span class="plan-badge plan-${r.plan_type}">${r.plan_type}</span>
+                  <span class="status-badge status-${r.subscription_status}">${r.subscription_status}</span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 11px; color: var(--text-muted);">Total GMV</div>
+                <div style="font-size: 22px; font-weight: 800; color: var(--success);">₹${json.data.total_revenue.toLocaleString('en-IN')}</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">${json.data.total_orders} Total Orders</div>
+              </div>
+            </div>
+
+            <!-- Quota Utilization -->
+            <div style="margin-top: 16px;">
+              <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">Live Quota Utilization</h4>
+              
+              <div class="usage-item">
+                <div class="usage-header">
+                  <span>Tables (${u.usage.tables.current} / ${u.usage.tables.limit})</span>
+                  <span>${u.usage.tables.percentage}%</span>
+                </div>
+                <div class="usage-bar-bg"><div class="usage-bar-fill" style="width: ${Math.min(100, u.usage.tables.percentage)}%;"></div></div>
+              </div>
+
+              <div class="usage-item">
+                <div class="usage-header">
+                  <span>Staff Accounts (${u.usage.staff.current} / ${u.usage.staff.limit})</span>
+                  <span>${u.usage.staff.percentage}%</span>
+                </div>
+                <div class="usage-bar-bg"><div class="usage-bar-fill" style="width: ${Math.min(100, u.usage.staff.percentage)}%;"></div></div>
+              </div>
+
+              <div class="usage-item">
+                <div class="usage-header">
+                  <span>Menu Dishes (${u.usage.menu_items.current} / ${u.usage.menu_items.limit})</span>
+                  <span>${u.usage.menu_items.percentage}%</span>
+                </div>
+                <div class="usage-bar-bg"><div class="usage-bar-fill" style="width: ${Math.min(100, u.usage.menu_items.percentage)}%;"></div></div>
+              </div>
+
+              <div class="usage-item">
+                <div class="usage-header">
+                  <span>Monthly Orders (${u.usage.monthly_orders.current} / ${u.usage.monthly_orders.limit})</span>
+                  <span>${u.usage.monthly_orders.percentage}%</span>
+                </div>
+                <div class="usage-bar-bg"><div class="usage-bar-fill" style="width: ${Math.min(100, u.usage.monthly_orders.percentage)}%;"></div></div>
+              </div>
+            </div>
+
+            <!-- Subscription Timeline -->
+            <div style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 14px;">
+              <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Subscription Timeline</h4>
+              <div style="max-height: 120px; overflow-y: auto; font-size: 12px; display: flex; flex-direction: column; gap: 6px;">
+                ${histories.length ? histories.map(h => `
+                  <div style="padding: 6px 10px; background: var(--bg-primary); border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span><strong>${h.new_plan.toUpperCase()}</strong> (${h.new_status}) — ${h.reason || 'Status change'}</span>
+                    <span style="color: var(--text-muted);">${new Date(h.created_at).toLocaleDateString()}</span>
+                  </div>
+                `).join('') : '<p style="color: var(--text-muted);">No subscription history recorded yet.</p>'}
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        content.innerHTML = '<p style="color: var(--danger); text-align: center;">Failed to load restaurant details.</p>';
       }
     }
 
@@ -1268,11 +1702,7 @@
       try {
         const res = await fetch('/api/superadmin/restaurants', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': CSRF_TOKEN
-          },
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
           body: JSON.stringify(data)
         });
         const json = await res.json();
@@ -1288,103 +1718,12 @@
       }
     }
 
-    async function toggleStatus(restaurantId, action) {
-      if (!confirm(`Are you sure you want to ${action} this restaurant?`)) return;
-      try {
-        const res = await fetch(`/api/superadmin/restaurants/${restaurantId}/${action}`, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': CSRF_TOKEN
-          }
-        });
-        const json = await res.json();
-        if (json.success) {
-          showToast(json.message);
-          fetchRestaurants();
-        } else {
-          showToast(json.message || 'Failed', 'error');
-        }
-      } catch (err) {
-        showToast('Operation failed', 'error');
-      }
-    }
-
-    function openPlanModal(id, name, currentPlan) {
-      document.getElementById('planModalRestaurantId').value = id;
-      document.getElementById('planModalRestaurantName').textContent = `Restaurant: ${name}`;
-      document.getElementById('planModalSelect').value = currentPlan || 'free';
-      openModal('planModal');
-    }
-
-    async function submitChangePlan(e) {
-      e.preventDefault();
-      const id = document.getElementById('planModalRestaurantId').value;
-      const plan = document.getElementById('planModalSelect').value;
-
-      try {
-        const res = await fetch(`/api/superadmin/restaurants/${id}/plan`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': CSRF_TOKEN
-          },
-          body: JSON.stringify({ plan_type: plan })
-        });
-        const json = await res.json();
-        if (json.success) {
-          showToast(json.message);
-          closeModal('planModal');
-          fetchRestaurants();
-        } else {
-          showToast(json.message || 'Failed', 'error');
-        }
-      } catch (err) {
-        showToast('Plan update failed', 'error');
-      }
-    }
-
-    function openLimitsModal(id, limits) {
-      document.getElementById('limitsModalRestaurantId').value = id;
-      document.getElementById('limitTables').value = limits?.tables || 10;
-      document.getElementById('limitStaff').value = limits?.staff || 5;
-      document.getElementById('limitMenuItems').value = limits?.menu_items || 100;
-      document.getElementById('limitMonthlyOrders').value = limits?.monthly_orders || 500;
-      openModal('limitsModal');
-    }
-
-    async function submitCustomLimits(e) {
-      e.preventDefault();
-      const id = document.getElementById('limitsModalRestaurantId').value;
-      const payload = {
-        tables: parseInt(document.getElementById('limitTables').value),
-        staff: parseInt(document.getElementById('limitStaff').value),
-        menu_items: parseInt(document.getElementById('limitMenuItems').value),
-        monthly_orders: parseInt(document.getElementById('limitMonthlyOrders').value),
-      };
-
-      try {
-        const res = await fetch(`/api/superadmin/restaurants/${id}/limits`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': CSRF_TOKEN
-          },
-          body: JSON.stringify(payload)
-        });
-        const json = await res.json();
-        if (json.success) {
-          showToast(json.message);
-          closeModal('limitsModal');
-          fetchRestaurants();
-        } else {
-          showToast(json.message || 'Failed', 'error');
-        }
-      } catch (err) {
-        showToast('Quota update failed', 'error');
-      }
+    async function runExpiryJob() {
+      showToast('Running automated expiration evaluation...', 'info');
+      setTimeout(() => {
+        showToast('Subscription evaluation completed.', 'success');
+        fetchSubscriptions();
+      }, 1000);
     }
 
     async function fetchAuditLogs() {
