@@ -124,11 +124,11 @@ class AnalyticsController extends Controller
             $dailyBurn = max(1, round($item->quantity * 0.18, 1));
             $predictedDemand3Days = round($dailyBurn * 3 * $demandMultiplier, 1);
             $remainingAfter3Days = round($item->quantity - $predictedDemand3Days, 1);
-            $isCritical = $remainingAfter3Days <= ($item->min_quantity ?? 5);
+            $isCritical = $remainingAfter3Days <= ($item->low_stock_alert ?? 5);
 
             $forecast[] = [
                 'id'                   => $item->id,
-                'name'                 => $item->name,
+                'name'                 => $item->item_name,
                 'current_stock'        => (float)$item->quantity,
                 'unit'                 => $item->unit ?? 'kg',
                 'predicted_3day_need'  => $predictedDemand3Days,

@@ -53,7 +53,10 @@ class AuthController extends Controller
         if ($role === 'superadmin') {
             return redirect('/superadmin');
         } elseif ($role === 'customer') {
-            $restId = $user->restaurant_id ?: 1;
+            $restId = $user->restaurant_id;
+            if (!$restId) {
+                return redirect('/');
+            }
             return redirect("/customer/menu?restaurantId={$restId}&tableId=1");
         } elseif ($role === 'kitchen' || $role === 'chef') {
             return redirect('/kitchen');
@@ -101,17 +104,11 @@ class AuthController extends Controller
                 ->withErrors(['numeric_pin' => 'User not found']);
         }
 
-        // Auto-seed default PIN if empty in database
+        // Reject login if PIN is not set for this user
         if (empty($user->numeric_pin)) {
-            $defaultPins = [
-                'admin' => '1234',
-                'manager' => '5678',
-                'cashier' => '9999',
-                'kitchen' => '2580',
-                'waiter' => '3690',
-            ];
-            $user->numeric_pin = $defaultPins[$user->username] ?? '1234';
-            $user->save();
+            return back()
+                ->withInput($request->only('username'))
+                ->withErrors(['numeric_pin' => 'PIN not set for this account. Please ask your restaurant admin to set your PIN.']);
         }
 
         $inputPin = trim((string)$request->numeric_pin);
@@ -133,7 +130,10 @@ class AuthController extends Controller
         if ($role === 'superadmin') {
             return redirect('/superadmin');
         } elseif ($role === 'customer') {
-            $restId = $user->restaurant_id ?: 1;
+            $restId = $user->restaurant_id;
+            if (!$restId) {
+                return redirect('/');
+            }
             return redirect("/customer/menu?restaurantId={$restId}&tableId=1");
         } elseif ($role === 'kitchen' || $role === 'chef') {
             return redirect('/kitchen');

@@ -10,7 +10,10 @@ class ReservationController extends Controller
     public function index(Request $request, $restaurantId = null)
     {
         $user = auth()->user();
-        $resId = $user ? $user->restaurant_id : ($restaurantId ?? $request->input('restaurant_id', '1'));
+        $resId = $user ? $user->restaurant_id : ($restaurantId ?? $request->input('restaurant_id'));
+        if (!$resId) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
         $reservations = Reservation::where('restaurant_id', $resId)
             ->orderBy('reservation_date', 'desc')
             ->orderBy('created_at', 'desc')
@@ -32,7 +35,11 @@ class ReservationController extends Controller
         ]);
 
         $user = auth()->user();
-        $resId = $user ? $user->restaurant_id : ($validated['restaurant_id'] ?? $request->input('restaurant_id', '1'));
+        $resId = $user ? $user->restaurant_id : ($validated['restaurant_id'] ?? $request->input('restaurant_id'));
+
+        if (!$resId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
 
         $reservation = Reservation::create([
             'restaurant_id'    => $resId,

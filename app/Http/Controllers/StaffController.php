@@ -25,8 +25,7 @@ class StaffController extends Controller
         $staff = User::where('restaurant_id', $rId)
             ->whereIn('role', ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'staff'])
             ->orderBy('id', 'desc')
-            ->get()
-            ->makeVisible(['numeric_pin']);
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -48,6 +47,10 @@ class StaffController extends Controller
         $restaurantId = $user ? $user->restaurant_id : $request->input('restaurant_id');
         if (!$restaurantId) {
             return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
+        
+        if ($user && $user->role === 'manager' && $validated['role'] === 'admin') {
+            return response()->json(['success' => false, 'message' => 'Managers cannot create admin users.'], 403);
         }
 
         $limitCheck = \App\Services\PlanLimitService::canCreateStaff($restaurantId);
@@ -85,7 +88,7 @@ class StaffController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $staffUser->makeVisible(['numeric_pin']),
+            'data' => $staffUser,
             'message' => 'Staff member created successfully'
         ], 201);
     }
@@ -101,6 +104,10 @@ class StaffController extends Controller
 
         if (!$staffUser) {
             return response()->json(['success' => false, 'message' => 'Staff member not found in your restaurant'], 404);
+        }
+        
+        if ($user && $user->role === 'manager' && $staffUser->role === 'admin') {
+            return response()->json(['success' => false, 'message' => 'Managers cannot modify admin users.'], 403);
         }
 
         $validated = $request->validate([

@@ -61,7 +61,10 @@ class RoleMiddleware
             } elseif ($userRole === 'kitchen') {
                 return redirect('/kitchen');
             } elseif ($userRole === 'customer') {
-                $restId = $user->restaurant_id ?: 1;
+                $restId = $user->restaurant_id;
+                if (!$restId) {
+                    return redirect('/');
+                }
                 return redirect("/customer/menu?restaurantId={$restId}&tableId=1")->with('error', 'Access restricted to customer digital menu.');
             } elseif ($userRole === 'superadmin') {
                 return redirect('/superadmin');

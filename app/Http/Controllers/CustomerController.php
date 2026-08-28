@@ -198,7 +198,10 @@ class CustomerController extends Controller
         if (!$restaurantId) {
             return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
         }
-        $tableId = $request->input('table_id') ?? $request->input('tableId') ?? '1';
+        $tableId = $request->input('table_id') ?? $request->input('tableId');
+        if (!$tableId) {
+            return response()->json(['success' => false, 'message' => 'Table ID is required'], 422);
+        }
 
         $call = WaiterCall::create([
             'restaurant_id' => (string) $restaurantId,

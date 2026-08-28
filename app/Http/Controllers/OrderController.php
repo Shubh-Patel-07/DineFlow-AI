@@ -35,7 +35,19 @@ class OrderController extends Controller
             'special_instructions' => 'nullable|string',
         ]);
 
-        $limitCheck = \App\Services\PlanLimitService::canCreateOrder($request->restaurant_id);
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : $request->restaurant_id;
+
+        if (!$restaurantId || !\App\Models\Restaurant::find($restaurantId)) {
+            return response()->json(['success' => false, 'message' => 'Invalid or missing restaurant ID.'], 422);
+        }
+        
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        if (!$restaurant->isOperational()) {
+            return response()->json(['success' => false, 'message' => 'This restaurant is currently not accepting orders.'], 403);
+        }
+
+        $limitCheck = \App\Services\PlanLimitService::canCreateOrder($restaurantId);
         if (!$limitCheck['allowed']) {
             return response()->json([
                 'success' => false,
@@ -45,7 +57,7 @@ class OrderController extends Controller
             ], 422);
         }
 
-        return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request, $restaurantId) {
             $totalAmount = 0;
             $itemsData = [];
 
@@ -54,7 +66,7 @@ class OrderController extends Controller
                 $quantity = max(1, intval($item['quantity'] ?? 1));
 
                 if (!$menuItemId && !empty($item['name'])) {
-                    $menuItem = MenuItem::where('name', $item['name'])->first();
+                    $menuItem = MenuItem::where('name', $item['name'])->where('restaurant_id', $restaurantId)->first();
                 } else {
                     $menuItem = MenuItem::find($menuItemId);
                 }
@@ -69,6 +81,8 @@ class OrderController extends Controller
                             'quantity' => $quantity,
                             'price' => $price,
                         ];
+                    } else if (!empty($item['name'])) {
+                        return response()->json(['success' => false, 'message' => 'Custom item price must be greater than 0.'], 422);
                     }
                     continue;
                 }
@@ -89,7 +103,7 @@ class OrderController extends Controller
                 ];
 
                 try {
-                    $inventory = Inventory::where('restaurant_id', $request->restaurant_id)
+                    $inventory = Inventory::where('restaurant_id', $restaurantId)
                         ->where('item_name', 'LIKE', '%' . $menuItem->name . '%')
                         ->first();
 
@@ -114,7 +128,7 @@ class OrderController extends Controller
 
             // Check if there is already an active (unpaid) order for this table
             $order = Order::where('table_id', $request->table_id)
-                ->where('restaurant_id', $request->restaurant_id)
+                ->where('restaurant_id', $restaurantId)
                 ->where('payment_status', 'pending')
                 ->first();
 
@@ -144,7 +158,7 @@ class OrderController extends Controller
             } else {
                 // Create new order
                 $order = Order::create([
-                    'restaurant_id' => $request->restaurant_id,
+                    'restaurant_id' => $restaurantId,
                     'table_id' => $request->table_id,
                     'total_amount' => $totalAmount,
                     'status' => 'pending',
@@ -224,7 +238,12 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::with('items')->find($id);
+        $user = auth()->user();
+        $query = Order::with('items');
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
 
         if (!$order) {
             return response()->json(['success' => false, 'message' => 'Order not found'], 404);
@@ -237,7 +256,12 @@ class OrderController extends Controller
 
     public function showReceipt($id)
     {
-        $order = Order::with('items')->find($id);
+        $user = auth()->user();
+        $query = Order::with('items');
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
 
         if (!$order) {
             abort(404, 'Order not found');
@@ -259,7 +283,12 @@ class OrderController extends Controller
     {
         $order = null;
         if (is_numeric($id) && $id > 0) {
-            $order = Order::with('items.menuItem')->find($id);
+            $user = auth()->user();
+            $query = Order::with('items.menuItem');
+            if ($user && $user->restaurant_id) {
+                $query->where('restaurant_id', $user->restaurant_id);
+            }
+            $order = $query->find($id);
         }
 
         if (!$order) {
@@ -282,7 +311,12 @@ class OrderController extends Controller
 
     public function showKitchenKOT($id)
     {
-        $order = Order::with('items.menuItem')->find($id);
+        $user = auth()->user();
+        $query = Order::with('items.menuItem');
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
         if (!$order) {
             abort(404, 'Order not found');
         }
@@ -300,7 +334,12 @@ class OrderController extends Controller
 
     public function showBarKOT($id)
     {
-        $order = Order::with('items.menuItem')->find($id);
+        $user = auth()->user();
+        $query = Order::with('items.menuItem');
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
         if (!$order) {
             abort(404, 'Order not found');
         }
@@ -318,7 +357,12 @@ class OrderController extends Controller
 
     public function showCombinedKOT($id)
     {
-        $order = Order::with('items.menuItem')->find($id);
+        $user = auth()->user();
+        $query = Order::with('items.menuItem');
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $order = $query->find($id);
         if (!$order) {
             abort(404, 'Order not found');
         }

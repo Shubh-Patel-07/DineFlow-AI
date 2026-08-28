@@ -351,7 +351,7 @@
         statusBadge.style.color = '#F59E0B';
         statusBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
 
-        const response = await fetch('/api/orders/restaurant/{{ Auth::user()?->restaurant_id ?? 1 }}');
+        const response = await fetch('/api/orders/restaurant/{{ Auth::user()?->restaurant_id ?? '' }}');
         const data = await response.json();
         
         statusBadge.style.color = 'var(--success)';

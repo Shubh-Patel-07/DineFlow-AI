@@ -97,7 +97,7 @@ class RestaurantController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp,svg|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
         if ($request->hasFile('image')) {

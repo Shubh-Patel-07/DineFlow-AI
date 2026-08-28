@@ -2798,7 +2798,7 @@
 <div class="cart-backdrop" id="cartBackdrop" onclick="toggleMobileCart()"></div>
 
 <script>
-  const RESTAURANT_ID = '{{ Auth::user()?->restaurant_id ?? 1 }}';
+  const RESTAURANT_ID = '{{ Auth::user()?->restaurant_id ?? '' }}';
 
   function escapeHtml(str) {
       if (!str) return '';

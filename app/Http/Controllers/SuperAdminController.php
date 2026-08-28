@@ -380,10 +380,15 @@ class SuperAdminController extends Controller
         }
 
         $oldStatus = $restaurant->subscription_status;
-        $restaurant->update([
+        
+        $updateData = [
             'subscription_status' => 'active',
             'suspension_reason' => null
-        ]);
+        ];
+        if ($restaurant->subscription_expires_at && Carbon::parse($restaurant->subscription_expires_at)->isPast()) {
+            $updateData['subscription_expires_at'] = Carbon::now()->addDays(30);
+        }
+        $restaurant->update($updateData);
 
         SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'active', [
             'previous_status' => $oldStatus,
@@ -676,7 +681,9 @@ class SuperAdminController extends Controller
      */
     public function recentOrders()
     {
-        $orders = Order::with('restaurant')->orderBy('created_at', 'desc')->limit(20)->get()->map(function($order) {
+        $orders = Order::with('restaurant')
+            ->whereHas('restaurant', fn($q) => $q->where('is_demo', false))
+            ->orderBy('created_at', 'desc')->limit(20)->get()->map(function($order) {
             return [
                 'id' => $order->id,
                 'restaurant_name' => $order->restaurant?->name ?? 'Unknown',

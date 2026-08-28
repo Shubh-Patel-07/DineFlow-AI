@@ -868,7 +868,7 @@ window.addEventListener('themechange', () => {
 </script>
 
 <script>
-const DASHBOARD_RESTAURANT_ID = '{{ Auth::user()->restaurant_id ?? 1 }}';
+const DASHBOARD_RESTAURANT_ID = '{{ Auth::user()->restaurant_id ?? '' }}';
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const backdrop = document.getElementById('sidebarBackdrop');

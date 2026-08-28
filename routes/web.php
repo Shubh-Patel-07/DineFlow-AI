@@ -26,7 +26,7 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::get('/pin-login', [AuthController::class, 'showPinLogin'])->name('auth.pin-login');
-Route::post('/pin-login', [AuthController::class, 'loginWithPin'])->name('auth.login-with-pin');
+Route::post('/pin-login', [AuthController::class, 'loginWithPin'])->middleware('throttle:5,1')->name('auth.login-with-pin');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.switch-user');
 
@@ -40,7 +40,10 @@ $serveAdminPage = function ($filename) {
     $user = auth()->user();
     $userRole = $user ? strtolower(trim($user->role ?? $user->username ?? 'admin')) : strtolower(trim(session('active_role') ?? 'admin'));
     if ($userRole === 'customer') {
-        $restId = $user ? ($user->restaurant_id ?: 1) : 1;
+        $restId = $user ? $user->restaurant_id : null;
+        if (!$restId) {
+            return redirect('/');
+        }
         return redirect("/customer/menu?restaurantId={$restId}&tableId=1")->with('error', 'Access restricted to customer digital menu.');
     }
 
@@ -303,6 +306,10 @@ Route::get('/menu', function () {
 Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
     $restaurantId = $request->query('restaurantId', '1');
     $tableId = $request->query('tableId', '1');
+    $restaurant = \App\Models\Restaurant::find($restaurantId);
+    if ($restaurant && !$restaurant->isOperational()) {
+        return response('<h2>This restaurant is temporarily closed.</h2><p>Please check back later.</p>', 403)->header('Content-Type', 'text/html');
+    }
     return redirect("/frontend/customer/menu.html?restaurantId={$restaurantId}&tableId={$tableId}");
 });
 
@@ -354,13 +361,13 @@ Route::prefix('api')->group(function () {
     Route::get('/menu/restaurant/{restaurantId}', [MenuItemController::class, 'index']);
     
     Route::get('/orders', [OrderController::class, 'index']);
-    Route::post('/orders', [OrderController::class, 'store']);
+    Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:15,1');
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::post('/orders/{id}/pay', [OrderController::class, 'pay'])->middleware('auth');
     
-    Route::post('/feedback', [CustomerController::class, 'placeFeedback']);
-    Route::post('/waiter-calls', [CustomerController::class, 'callWaiter']);
-    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::post('/feedback', [CustomerController::class, 'placeFeedback'])->middleware('throttle:15,1');
+    Route::post('/waiter-calls', [CustomerController::class, 'callWaiter'])->middleware('throttle:15,1');
+    Route::post('/reservations', [ReservationController::class, 'store'])->middleware('throttle:15,1');
 
     Route::get('/health', function () {
         return response()->json([

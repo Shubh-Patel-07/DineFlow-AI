@@ -1501,7 +1501,7 @@ function selectTable(el, table) {
     closeModal('tableModal');
 }
 
-const TERMINAL_RESTAURANT_ID = "{{ Auth::user()->restaurant_id ?? 1 }}";
+const TERMINAL_RESTAURANT_ID = "{{ Auth::user()->restaurant_id ?? '' }}";
 
 async function loadTerminalCustomers() {
     try {

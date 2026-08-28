@@ -90,7 +90,12 @@ class TableController extends Controller
 
     public function show($id)
     {
-        $table = Table::find($id);
+        $user = auth()->user();
+        $query = Table::query();
+        if ($user && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $table = $query->find($id);
 
         if (!$table) {
             return response()->json(['success' => false, 'message' => 'Table not found'], 404);

@@ -544,7 +544,7 @@
                     <label>Username</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" name="username" class="form-control" placeholder="Enter username (e.g. admin)" value="{{ old('username') }}" required>
+                        <input type="text" name="username" class="form-control" placeholder="Enter your username or email" value="{{ old('username') }}" required>
                     </div>
                 </div>
 
@@ -552,7 +552,7 @@
                     <label>Password</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" class="form-control" placeholder="Enter password (e.g. password)" required>
+                        <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
                     </div>
                 </div>
 
@@ -577,11 +577,11 @@
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
                         <select name="username" id="pinUsername" class="form-control" onchange="onRoleSelectDropdownChange(this.value)" style="padding-left:42px; appearance:none; -webkit-appearance:none; background:var(--card); font-weight:600; cursor:pointer;">
-                            <option value="admin">👑 admin (Admin User — PIN: 1234)</option>
-                            <option value="manager">👔 manager (Store Manager — PIN: 5678)</option>
-                            <option value="cashier">💳 cashier (POS Cashier — PIN: 9999)</option>
-                            <option value="kitchen">👨‍🍳 kitchen (Head Chef — PIN: 2580)</option>
-                            <option value="waiter">🛎️ waiter (Table Staff — PIN: 3690)</option>
+                            <option value="admin">👑 Admin</option>
+                            <option value="manager">👔 Manager</option>
+                            <option value="cashier">💳 Cashier</option>
+                            <option value="kitchen">👨‍🍳 Kitchen</option>
+                            <option value="waiter">🛎️ Waiter</option>
                         </select>
                         <i class="fa-solid fa-chevron-down" style="left:auto; right:14px; pointer-events:none; font-size:12px;"></i>
                     </div>
@@ -625,16 +625,10 @@
             </form>
         </div>
 
-        <!-- 1-Click Demo Drawer -->
-        <div class="credentials-box">
-            <div style="font-weight:700; color:#fff; font-size:12px; display:flex; align-items:center; gap:6px;">
-                <i class="fa-solid fa-bolt" style="color:var(--success);"></i> 1-Click Quick Demo Login:
-            </div>
-            <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                <button type="button" onclick="quickFillPassword('admin', 'password')" class="demo-chip">🔑 Admin</button>
-                <button type="button" onclick="quickFillPin('admin', '1234')" class="demo-chip">👑 Admin PIN (1234)</button>
-                <button type="button" onclick="quickFillPin('manager', '5678')" class="demo-chip">👔 Manager PIN (5678)</button>
-                <button type="button" onclick="quickFillPin('cashier', '9999')" class="demo-chip">💳 Cashier PIN (9999)</button>
+        <!-- Login help text -->
+        <div class="credentials-box" style="text-align:center;">
+            <div style="font-weight:600; color:var(--text-secondary); font-size:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> Enter your staff username and PIN to sign in quickly
             </div>
         </div>
     </div>
@@ -719,7 +713,7 @@
                 hiddenPinInput.value = enteredPin;
                 pinSubmitForm.submit();
             } else {
-                alert('Please enter a 4-digit PIN (e.g. 1234 for Admin) to login.');
+                alert('Please enter your 4-digit PIN to login.');
             }
         }
 
