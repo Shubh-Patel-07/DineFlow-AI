@@ -12,7 +12,13 @@ class StaffController extends Controller
     public function index(Request $request, $restaurantId = null)
     {
         $user = auth()->user();
-        $rId = $user ? $user->restaurant_id : ($restaurantId ?? $request->query('restaurant_id'));
+        if ($user && $user->role !== 'superadmin' && $restaurantId && (int)$restaurantId !== (int)$user->restaurant_id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized tenant staff access.'], 403);
+        }
+        $rId = ($user && $user->role === 'superadmin')
+            ? ($restaurantId ?? $request->query('restaurant_id') ?? $user->restaurant_id)
+            : ($user ? $user->restaurant_id : ($restaurantId ?? $request->query('restaurant_id')));
+
         if (!$rId) {
             return response()->json(['success' => true, 'data' => []]);
         }

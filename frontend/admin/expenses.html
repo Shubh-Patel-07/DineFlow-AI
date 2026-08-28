@@ -636,7 +636,7 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-  const STORAGE_KEY = 'dineflow_expenses';
+  const STORAGE_KEY = 'dineflow_expenses_' + (window.AUTH_USER_RESTAURANT_ID || 'default');
   let expenses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
   let editIndex = -1;
 

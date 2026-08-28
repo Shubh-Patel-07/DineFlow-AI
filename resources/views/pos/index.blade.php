@@ -1809,7 +1809,7 @@
           <button type="button" class="meta-select meta-picker-btn" style="min-width:140px;" onclick="openMetaPopup('waiter')">
             <span class="meta-picker-inline">
               <i class="fa-solid fa-user-tie"></i>
-              <span class="meta-picker-value" id="waiterValue">Ravi M.</span>
+              <span class="meta-picker-value" id="waiterValue">{{ Auth::user()->name ?? 'Staff' }}</span>
             </span>
             <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
           </button>
@@ -1828,7 +1828,7 @@
 
         <!-- Priority -->
         <div class="meta-group">
-          <button type="button" class="meta-select meta-picker-btn" style="min-width:120px;" onclick="openMetaPopup('priority')">
+          <button type="button" class="meta-select meta-picker-btn" style="min-width:110px;" onclick="openMetaPopup('priority')">
             <span class="meta-picker-inline">
               <i class="fa-solid fa-bolt"></i>
               <span class="meta-picker-value" id="priorityValue">Normal</span>
@@ -1899,10 +1899,10 @@
 
       <!-- Customer Strip -->
       <div class="customer-strip">
-        <div class="cust-avatar">RK</div>
+        <div class="cust-avatar">WC</div>
         <div class="cust-info">
-          <h5>Rahul Kumar</h5>
-          <p>+91 98765 43210 &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ 0 pts</span></p>
+          <h5>Walk-in Customer</h5>
+          <p>+91 — &nbsp;·&nbsp; <span style="color:var(--primary);">Walk-in</span></p>
         </div>
         <span class="cust-change" onclick="openModal('customerModal')">Change</span>
       </div>
@@ -2025,45 +2025,24 @@
     <div class="modal-header">
       <div class="modal-title"><i class="fa-solid fa-user" style="color:var(--primary);"></i>&nbsp; Select Customer</div>
       <div style="display:flex; align-items:center; gap:8px;">
-        <button onclick="openModal('newCustomerModal')" style="padding:6px 14px; background:linear-gradient(135deg,#10B981,#059669); border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        <button type="button" onclick="openModal('newCustomerModal')" style="padding:6px 14px; background:linear-gradient(135deg,#10B981,#059669); border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
           <i class="fa-solid fa-user-plus"></i> + New Customer
         </button>
-        <button class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
     <div class="modal-body">
       <input class="cust-search" id="custSearchInput" placeholder="Search by name, phone, or email…" onkeyup="filterCustomerModalList()" />
       <div class="cust-list" id="custModalList">
-        <div class="cust-row selected" onclick="selectCustomerItem(this, 'Rahul Kumar', '+91 98765 43210', 420, 'RK', false, 18)">
-          <div class="cr-avatar" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">RK</div>
-          <div class="cr-info"><h5>Rahul Kumar</h5><p>+91 98765 43210 &nbsp;·&nbsp; rahul@gmail.com</p></div>
-          <span class="cr-tag loyal">Loyal</span>
-        </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Priya Sharma', '+91 87654 32109', 290, 'PS', false, 12)">
-          <div class="cr-avatar" style="background:linear-gradient(135deg,#7C3AED,#EC4899);">PS</div>
-          <div class="cr-info"><h5>Priya Sharma</h5><p>+91 87654 32109 &nbsp;·&nbsp; priya@gmail.com</p></div>
-          <span class="cr-tag vip">VIP</span>
-        </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Anil Mehta', '+91 76543 21098', 0, 'AM', true, 0)">
-          <div class="cr-avatar" style="background:linear-gradient(135deg,#0891B2,#06B6D4);">AM</div>
-          <div class="cr-info"><h5>Anil Mehta</h5><p>+91 76543 21098 &nbsp;·&nbsp; anil@gmail.com</p></div>
-          <span class="cr-tag new">New</span>
-        </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Neha Gupta', '+91 96345 67890', 145, 'NG', false, 7)">
-          <div class="cr-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">NG</div>
-          <div class="cr-info"><h5>Neha Gupta</h5><p>+91 96345 67890 &nbsp;·&nbsp; neha@yahoo.com</p></div>
-          <span class="cr-tag loyal">Loyal</span>
-        </div>
-        <div class="cust-row" onclick="selectCustomerItem(this, 'Virendra Singh', '+91 95456 78901', 410, 'VS', false, 24)">
-          <div class="cr-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">VS</div>
-          <div class="cr-info"><h5>Virendra Singh</h5><p>+91 95456 78901 &nbsp;·&nbsp; vsingh@gmail.com</p></div>
-          <span class="cr-tag vip">VIP Gold</span>
+        <div style="text-align:center; padding:28px 16px; color:var(--text-muted); font-size:13px;">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size:22px; margin-bottom:10px; display:block; color:var(--primary);"></i>
+          Loading customers…
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-outline" style="flex:none;padding:0 16px;height:36px;" onclick="closeModal('customerModal')"><i class="fa-solid fa-times"></i>&nbsp; Close</button>
-      <button class="btn-checkout" style="flex:none;padding:0 20px;height:36px;" onclick="confirmCustomerSelection()"><i class="fa-solid fa-check"></i>&nbsp; Confirm</button>
+    <div class="modal-footer" style="padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; align-items:center;">
+      <button type="button" class="btn-outline" style="flex:none; padding:0 16px; height:38px; border-radius:10px;" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i>&nbsp; Cancel</button>
+      <button type="button" style="flex:none; padding:0 20px; height:38px; border-radius:10px; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; font-weight:700; font-size:13px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(99,102,241,0.3);" onclick="confirmCustomerSelection()"><i class="fa-solid fa-check"></i>&nbsp; Confirm</button>
     </div>
   </div>
 </div>
@@ -3244,12 +3223,13 @@
     }
   }
 
+  const DEFAULT_WAITER_NAME = @json(Auth::user()->name ?? 'Staff');
   const META_PICKERS = {
     waiter: {
       title: 'Select Waiter',
       icon: 'fa-user-tie',
       label: 'Waiter',
-      options: ['Ravi M.', 'Sunita K.', 'Priya L.', 'Manoj T.'],
+      options: [DEFAULT_WAITER_NAME, 'Counter Staff'],
     },
     covers: {
       title: 'Select Covers',
@@ -3266,7 +3246,7 @@
   };
 
   const metaSelections = {
-    waiter: 'Ravi M.',
+    waiter: DEFAULT_WAITER_NAME,
     covers: '2',
     priority: 'Normal',
   };
@@ -4989,24 +4969,24 @@
   // Background polling for payment soundbox announcements (optimized to 45s to eliminate server lag)
   setInterval(() => { if (document.visibilityState === 'hidden') return; checkNewPayments(); }, 45000);
 
-    // Customer Modal Selection & Filter Logic
-    selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
+  // Customer Modal Selection & Filter Logic (Tenant-Scoped)
+  selectedCustomerData = { name: 'Walk-in Customer', phone: '', points: 0, avatar: 'WC', isNew: true, ordersCount: 0 };
 
-    async function fetchAndRenderPosCustomers() {
-      try {
-        const res = await fetch(`/api/customers?restaurantId=${RESTAURANT_ID}`);
-        const data = await res.json();
+  async function fetchAndRenderPosCustomers() {
+    try {
+      const listEl = document.getElementById('custModalList');
+      if (!listEl) return;
+
+      const res = await fetch(`/api/customers?restaurantId=${RESTAURANT_ID}`);
+      const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        const listEl = document.getElementById('custModalList');
-        if (!listEl) return;
-        
         listEl.innerHTML = data.data.map((c, idx) => {
           const initials = c.name ? c.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : '?';
           const points = parseInt(c.loyalty_points || 0);
           const visits = parseInt(c.total_visits || 0);
           const isSelected = idx === 0 ? 'selected' : '';
           
-          if (idx === 0) {
+          if (idx === 0 && selectedCustomerData.name === 'Walk-in Customer') {
             selectedCustomerData = { name: c.name, phone: c.phone || '', points: points, avatar: initials, isNew: visits === 0, ordersCount: visits };
             const strip = document.querySelector('.customer-strip');
             if (strip) {
@@ -5035,13 +5015,49 @@
             </div>
           `;
         }).join('');
+      } else {
+        listEl.innerHTML = `
+          <div style="text-align:center; padding:32px 16px; color:var(--text-muted); font-size:13px;">
+            <i class="fa-solid fa-user-plus" style="font-size:28px; margin-bottom:10px; display:block; color:var(--primary); opacity:0.6;"></i>
+            No registered customers found.<br>
+            <span style="font-size:12px; opacity:0.8;">Click <b>+ New Customer</b> above to register one for this restaurant.</span>
+          </div>
+        `;
       }
     } catch (e) {
-      console.log('Using default POS customers', e);
+      console.log('Error loading POS customers:', e);
     }
   }
 
-  document.addEventListener('DOMContentLoaded', fetchAndRenderPosCustomers);
+  async function fetchAndRenderPosWaiters() {
+    try {
+      const res = await fetch(`/api/staff/restaurant/${RESTAURANT_ID}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        const waiterNames = data.data
+          .filter(s => ['waiter', 'staff', 'cashier', 'admin', 'manager'].includes(s.role))
+          .map(s => s.name.trim())
+          .filter(Boolean);
+        if (waiterNames.length > 0) {
+          META_PICKERS.waiter.options = Array.from(new Set(waiterNames));
+          if (!META_PICKERS.waiter.options.includes(metaSelections.waiter)) {
+            metaSelections.waiter = META_PICKERS.waiter.options[0];
+            const wVal = document.getElementById('waiterValue');
+            if (wVal) wVal.textContent = metaSelections.waiter;
+            const kotW = document.getElementById('kotWaiterName');
+            if (kotW) kotW.textContent = metaSelections.waiter;
+          }
+        }
+      }
+    } catch (e) {
+      console.log('Error loading POS waiters:', e);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchAndRenderPosCustomers();
+    fetchAndRenderPosWaiters();
+  });
 
   function selectCustomerItem(el, name, phone, points, avatar, isNew = false, ordersCount = null) {
     document.querySelectorAll('#custModalList .cust-row').forEach(r => r.classList.remove('selected'));
@@ -5058,7 +5074,7 @@
       const subEl = strip.querySelector('.cust-info p');
       if (avatarEl) avatarEl.textContent = selectedCustomerData.avatar;
       if (nameEl) nameEl.textContent = selectedCustomerData.name;
-      if (subEl) subEl.innerHTML = `${selectedCustomerData.phone} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points} pts</span>`;
+      if (subEl) subEl.innerHTML = `${selectedCustomerData.phone || 'Walk-in'} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points} pts</span>`;
     }
     showToast(`✅ Customer selected: ${selectedCustomerData.name}`, 'success');
     closeModal('customerModal');
@@ -5066,34 +5082,60 @@
     autoDetectCustomerDiscount(selectedCustomerData);
   }
 
-  function saveNewCustomer() {
+  async function saveNewCustomer() {
     const nameInput = document.getElementById('newCustNameInput');
     const phoneInput = document.getElementById('newCustPhoneInput');
     const emailInput = document.getElementById('newCustEmailInput');
     const name = nameInput ? nameInput.value.trim() : '';
     const phone = phoneInput ? phoneInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
     if (!name || !phone) {
       showToast('Name and Mobile Number are required!', 'error');
       return;
     }
     const avatar = name.charAt(0).toUpperCase();
-    selectedCustomerData = { name, phone, email: emailInput ? emailInput.value.trim() : '', points: 0, avatar, isNew: true, ordersCount: 0 };
-    const strip = document.querySelector('.customer-strip');
-    if (strip) {
-      const avatarEl = strip.querySelector('.cust-avatar');
-      const nameEl = strip.querySelector('.cust-info h5');
-      const subEl = strip.querySelector('.cust-info p');
-      if (avatarEl) avatarEl.textContent = avatar;
-      if (nameEl) nameEl.textContent = name;
-      if (subEl) subEl.innerHTML = `${phone} &nbsp;·&nbsp; <span style="color:#6366F1;">🆕 New Customer</span>`;
+
+    try {
+      const res = await fetch('/api/customers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': CSRF_TOKEN
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          name: name,
+          phone: phone,
+          email: email
+        })
+      });
+      const resData = await res.json();
+      if (resData.success) {
+        selectedCustomerData = { name, phone, email, points: 0, avatar, isNew: true, ordersCount: 0 };
+        const strip = document.querySelector('.customer-strip');
+        if (strip) {
+          const avatarEl = strip.querySelector('.cust-avatar');
+          const nameEl = strip.querySelector('.cust-info h5');
+          const subEl = strip.querySelector('.cust-info p');
+          if (avatarEl) avatarEl.textContent = avatar;
+          if (nameEl) nameEl.textContent = name;
+          if (subEl) subEl.innerHTML = `${phone} &nbsp;·&nbsp; <span style="color:#6366F1;">🆕 New Customer</span>`;
+        }
+        if (nameInput) nameInput.value = '';
+        if (phoneInput) phoneInput.value = '';
+        if (emailInput) emailInput.value = '';
+        closeModal('newCustomerModal');
+        closeModal('customerModal');
+        showToast(`🎉 Customer ${name} registered successfully!`, 'success');
+        fetchAndRenderPosCustomers();
+        autoDetectCustomerDiscount(selectedCustomerData);
+      } else {
+        showToast(resData.message || 'Failed to save customer', 'error');
+      }
+    } catch (err) {
+      showToast('Network error while saving customer', 'error');
     }
-    if (nameInput) nameInput.value = '';
-    if (phoneInput) phoneInput.value = '';
-    if (emailInput) emailInput.value = '';
-    closeModal('newCustomerModal');
-    closeModal('customerModal');
-    showToast(`🎉 New customer ${name} added!`, 'success');
-    autoDetectCustomerDiscount(selectedCustomerData);
   }
 
   function autoDetectCustomerDiscount(customer) {

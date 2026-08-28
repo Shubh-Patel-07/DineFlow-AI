@@ -10,7 +10,14 @@ class CouponController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurantId', 1);
+        $restaurantId = ($user && $user->role === 'superadmin')
+            ? ($request->query('restaurantId') ?: $request->query('restaurant_id') ?: $user->restaurant_id)
+            : ($user ? $user->restaurant_id : ($request->query('restaurantId') ?: $request->query('restaurant_id')));
+
+        if (!$restaurantId) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
+
         $coupons = Coupon::where('restaurant_id', $restaurantId)->orderBy('created_at', 'desc')->get();
         return response()->json(['success' => true, 'data' => $coupons]);
     }

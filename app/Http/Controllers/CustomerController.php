@@ -14,9 +14,32 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : $request->query('restaurantId', 1);
+        $restaurantId = ($user && $user->role === 'superadmin')
+            ? ($request->query('restaurantId') ?: $request->query('restaurant_id') ?: $user->restaurant_id)
+            : ($user ? $user->restaurant_id : ($request->query('restaurantId') ?: $request->query('restaurant_id')));
+
+        if (!$restaurantId) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
+
         $customers = Customer::where('restaurant_id', $restaurantId)->orderBy('name')->get();
         return response()->json(['success' => true, 'data' => $customers]);
+    }
+
+    public function show($id)
+    {
+        $user = auth()->user();
+        $query = Customer::query();
+        if ($user && $user->role !== 'superadmin' && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $customer = $query->find($id);
+
+        if (!$customer) {
+            return response()->json(['success' => false, 'message' => 'Customer not found in your restaurant'], 404);
+        }
+
+        return response()->json(['success' => true, 'data' => $customer]);
     }
 
     public function store(Request $request)
@@ -29,7 +52,10 @@ class CustomerController extends Controller
         ]);
 
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? $request->input('restaurant_id'));
+        $restaurantId = ($user && $user->role === 'superadmin')
+            ? ($request->restaurant_id ?? $request->input('restaurant_id') ?? $user->restaurant_id)
+            : ($user ? $user->restaurant_id : ($request->restaurant_id ?? $request->input('restaurant_id')));
+
         if (!$restaurantId) {
             return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
         }
@@ -49,7 +75,7 @@ class CustomerController extends Controller
     {
         $user = auth()->user();
         $query = Customer::query();
-        if ($user && $user->restaurant_id) {
+        if ($user && $user->role !== 'superadmin' && $user->restaurant_id) {
             $query->where('restaurant_id', $user->restaurant_id);
         }
         $customer = $query->find($id);
@@ -83,7 +109,13 @@ class CustomerController extends Controller
         }
 
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : ($request->input('restaurant_id') ?? '1');
+        $restaurantId = ($user && $user->role === 'superadmin')
+            ? ($request->input('restaurant_id') ?? $request->input('restaurantId') ?? $user->restaurant_id)
+            : ($user ? $user->restaurant_id : ($request->input('restaurant_id') ?? $request->input('restaurantId')));
+
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
 
         $customer = null;
         if ($phone) {
@@ -114,7 +146,7 @@ class CustomerController extends Controller
     {
         $user = auth()->user();
         $query = Customer::query();
-        if ($user && $user->restaurant_id) {
+        if ($user && $user->role !== 'superadmin' && $user->restaurant_id) {
             $query->where('restaurant_id', $user->restaurant_id);
         }
         $customer = $query->find($id);

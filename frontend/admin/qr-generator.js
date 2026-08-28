@@ -4,28 +4,15 @@ let qrInstance = null;
 let generatedQRCodes = [];
 let currentQRData = null;
 
+function getQRStorageKey() {
+    return 'dineflow_qr_codes_' + (window.AUTH_USER_RESTAURANT_ID || 'default');
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    initializeMockData();
     loadGeneratedQRCodes();
     renderQRHistory();
 });
-
-// Initialize mock data
-function initializeMockData() {
-    if (!localStorage.getItem('generatedQRCodes')) {
-        const mockQRCodes = [
-            {
-                id: 1,
-                content: 'https://dineflow.com/menu',
-                label: 'Main Menu',
-                type: 'url',
-                createdAt: new Date().toISOString()
-            }
-        ];
-        localStorage.setItem('generatedQRCodes', JSON.stringify(mockQRCodes));
-    }
-}
 
 // Update QR form based on type selection
 function updateQRForm() {
@@ -193,14 +180,14 @@ function saveQRCodeToHistory(qrData) {
         ...qrData
     });
 
-    localStorage.setItem('generatedQRCodes', JSON.stringify(generatedQRCodes));
+    localStorage.setItem(getQRStorageKey(), JSON.stringify(generatedQRCodes));
     renderQRHistory();
 }
 
 // Load generated QR codes from localStorage
 function loadGeneratedQRCodes() {
     try {
-        generatedQRCodes = JSON.parse(localStorage.getItem('generatedQRCodes')) || [];
+        generatedQRCodes = JSON.parse(localStorage.getItem(getQRStorageKey())) || [];
     } catch (error) {
         console.error('Error loading QR codes:', error);
     }
@@ -226,32 +213,35 @@ function renderQRHistory(filter = 'all') {
 
     container.innerHTML = '<div class="qr-grid">' + filteredCodes.map(qr => `
         <div class="qr-item">
-            <div id="qr-${qr.id}"></div>
-            <div class="qr-item-name">${qr.label}</div>
-            <div class="qr-actions">
-                <button class="btn-small btn-download" onclick="regenerateQR(${qr.id})">
+            <div class="qr-item-header">
+                <h4>${qr.label}</h4>
+                <span class="qr-type-badge ${qr.type}">${qr.type.toUpperCase()}</span>
+            </div>
+            <div class="qr-item-preview">
+                <div id="qr-preview-${qr.id}"></div>
+            </div>
+            <div class="qr-item-actions">
+                <button class="btn btn-sm btn-outline" onclick="downloadSingleQR(${qr.id})">
                     <i class="fas fa-download"></i>
                 </button>
-                <button class="btn-small btn-delete" onclick="deleteQRCode(${qr.id})">
+                <button class="btn btn-sm btn-outline" onclick="deleteQRCode(${qr.id})">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
         </div>
     `).join('') + '</div>';
 
-    // Generate QR codes for history items
+    // Generate previews
     filteredCodes.forEach(qr => {
-        try {
-            new QRCode(document.getElementById(`qr-${qr.id}`), {
+        const previewElement = document.getElementById(`qr-preview-${qr.id}`);
+        if (previewElement) {
+            new QRCode(previewElement, {
                 text: qr.content,
                 width: 120,
                 height: 120,
                 colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
+                colorLight: '#ffffff'
             });
-        } catch (error) {
-            console.error(`Error generating QR ${qr.id}:`, error);
         }
     });
 }
@@ -263,12 +253,12 @@ function filterQRCodes(filter, event) {
     renderQRHistory(filter);
 }
 
-// Regenerate and download QR
-function regenerateQR(id) {
+// Download single QR code
+function downloadSingleQR(id) {
     const qr = generatedQRCodes.find(q => q.id === id);
     if (qr) {
-        const qrElement = document.querySelector(`#qr-${id}`);
-        const canvas = qrElement.querySelector('canvas');
+        const previewElement = document.getElementById(`qr-preview-${id}`);
+        const canvas = previewElement ? previewElement.querySelector('canvas') : null;
         if (canvas) {
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
@@ -283,7 +273,7 @@ function regenerateQR(id) {
 function deleteQRCode(id) {
     if (confirm('Are you sure you want to delete this QR code?')) {
         generatedQRCodes = generatedQRCodes.filter(qr => qr.id !== id);
-        localStorage.setItem('generatedQRCodes', JSON.stringify(generatedQRCodes));
+        localStorage.setItem(getQRStorageKey(), JSON.stringify(generatedQRCodes));
         renderQRHistory();
         console.log('QR Code deleted successfully');
     }

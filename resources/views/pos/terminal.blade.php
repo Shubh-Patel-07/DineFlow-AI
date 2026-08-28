@@ -271,11 +271,11 @@
             <button class="modal-close" onclick="closeModal('customerModal')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
-            <input class="cust-search" placeholder="Search by name or phone…" />
+            <input class="cust-search" id="terminalCustSearch" placeholder="Search by name or phone…" oninput="filterTerminalCustomers(this.value)" />
             <div class="cust-list" id="custList">
-                <div class="cust-row" onclick="selectCustomer(this)">
-                    <div class="cr-avatar">RK</div>
-                    <div class="cr-info"><h5>Rahul Kumar</h5><p>+91 98765 43210</p></div>
+                <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:20px; margin-bottom:8px; display:block; color:var(--primary);"></i>
+                    Loading customers…
                 </div>
             </div>
         </div>
@@ -1501,9 +1501,58 @@ function selectTable(el, table) {
     closeModal('tableModal');
 }
 
-function selectCustomer(el) {
+const TERMINAL_RESTAURANT_ID = "{{ Auth::user()->restaurant_id ?? 1 }}";
+
+async function loadTerminalCustomers() {
+    try {
+        const res = await fetch(`/api/customers?restaurantId=${TERMINAL_RESTAURANT_ID}`);
+        const data = await res.json();
+        const listEl = document.getElementById('custList');
+        if (!listEl) return;
+
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            listEl.innerHTML = data.data.map(c => {
+                const initials = c.name ? c.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : '?';
+                const safeName = (c.name || '').replace(/'/g, "\\'");
+                const safePhone = (c.phone || '').replace(/'/g, "\\'");
+                return `
+                    <div class="cust-row" onclick="selectCustomer(this, '${safeName}', '${safePhone}')">
+                        <div class="cr-avatar">${initials}</div>
+                        <div class="cr-info"><h5>${c.name}</h5><p>${c.phone || '—'}</p></div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            listEl.innerHTML = `
+                <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
+                    <i class="fa-solid fa-users" style="font-size:24px; margin-bottom:8px; display:block; opacity:0.4;"></i>
+                    No customers found for this restaurant.
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.log('Error loading terminal customers:', e);
+    }
+}
+
+function filterTerminalCustomers(query) {
+    const q = (query || '').toLowerCase();
+    document.querySelectorAll('#custList .cust-row').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadTerminalCustomers);
+
+function selectCustomer(el, name, phone) {
     document.querySelectorAll('.cust-row').forEach(e => e.classList.remove('selected'));
-    el.classList.add('selected');
+    if (el) el.classList.add('selected');
+    if (name) {
+        const stripName = document.querySelector('.customer-strip h5');
+        const stripPhone = document.querySelector('.customer-strip p');
+        if (stripName) stripName.textContent = name;
+        if (stripPhone) stripPhone.textContent = phone || '—';
+    }
     closeModal('customerModal');
 }
 
@@ -1536,7 +1585,7 @@ async function checkout() {
     activeOrderHasBar = menuItemsForKeys.some(id => [6,7,12].includes(parseInt(id)));
 
     const payload = {
-        restaurant_id: "1",
+        restaurant_id: TERMINAL_RESTAURANT_ID,
         table_id: (typeof selectedTableId !== 'undefined' && selectedTableId) ? String(selectedTableId) : "1",
         items: Object.keys(cart).map(itemId => ({
             menu_item_id: itemId,
