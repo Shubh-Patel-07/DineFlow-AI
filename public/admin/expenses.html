@@ -853,13 +853,16 @@
         save();
         populateMonthFilter();
         updateStats();
+      } else {
+        expenses = [];
+        populateMonthFilter();
+        updateStats();
         renderTable();
-      } else if (!expenses.length) {
-        seedData();
       }
     } catch (err) {
       console.log('Server fetch fallback to local storage:', err);
-      if (!expenses.length) seedData();
+      updateStats();
+      renderTable();
     }
   }
 
@@ -962,28 +965,6 @@
     if (e.key==='Escape') closeModal();
     if ((e.ctrlKey||e.metaKey) && e.key==='n') { e.preventDefault(); openModal(); }
   });
-
-  /* ── SEED SAMPLE DATA ── */
-  function seedData() {
-    if (expenses.length) return;
-    const today = new Date();
-    const d = n => { const dt = new Date(today); dt.setDate(dt.getDate()-n); return dt.toISOString().substring(0,10); };
-    expenses = [
-      {date:d(1), title:'Vegetable & Dal Purchase',      category:'Groceries',    amount:4200,  payment:'Cash',          notes:'Daily sabzi mandi'},
-      {date:d(2), title:'Electricity Bill — July',       category:'Utilities',    amount:8500,  payment:'UPI',           notes:'PGVCL bill paid online'},
-      {date:d(4), title:'Head Chef Salary — Ramesh',     category:'Staff',        amount:18000, payment:'Bank Transfer', notes:'July monthly salary'},
-      {date:d(5), title:'Cooking Oil 20L',               category:'Groceries',    amount:2400,  payment:'Cash',          notes:''},
-      {date:d(6), title:'LPG Gas Cylinder x 3',          category:'Utilities',    amount:2850,  payment:'Cash',          notes:'3 cylinder refill'},
-      {date:d(7), title:'Monthly Restaurant Rent',        category:'Rent',         amount:25000, payment:'Cheque',        notes:'July 2026 rent'},
-      {date:d(9), title:'Refrigerator Compressor Repair', category:'Maintenance',  amount:1800,  payment:'Cash',          notes:'Local technician'},
-      {date:d(11),title:'Waiter Staff Salary x 2',        category:'Staff',        amount:14000, payment:'Bank Transfer', notes:''},
-      {date:d(13),title:'Instagram Ads Campaign',         category:'Marketing',    amount:3000,  payment:'Card',          notes:'Meta ads July'},
-      {date:d(15),title:'Ceramic Dinner Set 20 pcs',      category:'Equipment',    amount:5600,  payment:'Card',          notes:'New crockery'},
-      {date:d(18),title:'Internet & WiFi Bill',           category:'Utilities',    amount:1200,  payment:'UPI',           notes:'Monthly broadband'},
-      {date:d(20),title:'Paneer & Cheese Stock',          category:'Groceries',    amount:3800,  payment:'Cash',          notes:'Weekly dairy'},
-    ];
-    save();
-  }
 
   // Init
   loadExpensesFromApi();

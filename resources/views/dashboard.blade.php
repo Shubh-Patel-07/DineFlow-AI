@@ -594,6 +594,11 @@
         </h3>
         <div style="height: 280px; position: relative;">
           <canvas id="categorySalesChart"></canvas>
+          <div id="dashCatEmptyState" style="display:none; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:var(--text-muted); gap:8px;">
+            <i class="fa-solid fa-chart-pie" style="font-size:36px; opacity:0.3; color:#34D399;"></i>
+            <span style="font-weight:700; font-size:13.5px; color:var(--text-primary);">No sales data yet</span>
+            <span style="font-size:11.5px; max-width:220px; line-height:1.4;">Sales category distribution will appear once orders are completed.</span>
+          </div>
         </div>
       </div>
     </div>
@@ -669,7 +674,7 @@ function initDashboardCharts() {
     const gridColor = isLight ? '#E2E8F0' : 'rgba(255, 255, 255, 0.06)';
     const legendColor = isLight ? '#0F172A' : '#F8FAFC';
 
-    // 1. Sales Trend Chart
+    // 1. Sales Trend Chart (Authoritative & Zero-Start)
     const trendEl = document.getElementById('salesTrendChart');
     if (trendEl) {
       const ctxTrend = trendEl.getContext('2d');
@@ -680,9 +685,8 @@ function initDashboardCharts() {
       const weeklyLabels = {!! json_encode($weeklySalesLabels) !!};
       let weeklyData = {!! json_encode($weeklySalesData) !!};
 
-      const totalSales = (weeklyData || []).reduce((a, b) => a + Number(b || 0), 0);
-      if (totalSales === 0) {
-        weeklyData = [2400, 3200, 2800, 4500, 3900, 5600, 6800];
+      if (!weeklyData || !Array.isArray(weeklyData) || weeklyData.length === 0) {
+        weeklyData = [0, 0, 0, 0, 0, 0, 0];
       }
 
       if (salesTrendChartInstance) {
@@ -745,64 +749,70 @@ function initDashboardCharts() {
       });
     }
 
-    // 2. Category Sales Chart
+    // 2. Category Sales Chart (Authoritative & Zero-Start)
     const catEl = document.getElementById('categorySalesChart');
+    const dashCatEmpty = document.getElementById('dashCatEmptyState');
     if (catEl) {
-      const ctxCat = catEl.getContext('2d');
       const catLabels = {!! json_encode($categorySalesLabels) !!};
       let catData = {!! json_encode($categorySalesData) !!};
-
       const totalCatSales = (catData || []).reduce((a, b) => a + Number(b || 0), 0);
-      if (totalCatSales === 0 || !catLabels || !catLabels.length) {
-        catData = [3500, 2400, 1800, 1200, 950];
-      }
 
       if (categorySalesChartInstance) {
         categorySalesChartInstance.destroy();
+        categorySalesChartInstance = null;
       }
 
-      categorySalesChartInstance = new Chart(ctxCat, {
-        type: 'doughnut',
-        data: {
-          labels: catLabels && catLabels.length ? catLabels : ['Mains', 'Starters', 'Drinks', 'Desserts', 'Breads'],
-          datasets: [{
-            data: catData,
-            backgroundColor: ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#8B5CF6'],
-            borderColor: isLight ? '#FFFFFF' : '#1E293B',
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'right',
-              labels: {
-                color: legendColor,
-                font: { family: 'Outfit', size: 12, weight: '700' },
-                padding: 12,
-                usePointStyle: true,
-                pointStyle: 'circle'
-              }
-            },
-            tooltip: {
-              backgroundColor: isLight ? '#FFFFFF' : '#1E293B',
-              titleColor: isLight ? '#0F172A' : '#F8FAFC',
-              bodyColor: isLight ? '#475569' : '#94A3B8',
-              borderColor: isLight ? '#CBD5E1' : '#334155',
-              borderWidth: 1,
-              padding: 10,
-              callbacks: {
-                label: function(context) {
-                  return ' ' + context.label + ': ₹' + Number(context.parsed).toLocaleString('en-IN');
+      if (totalCatSales === 0 || !catLabels || !catLabels.length) {
+        catEl.style.display = 'none';
+        if (dashCatEmpty) dashCatEmpty.style.display = 'flex';
+      } else {
+        catEl.style.display = 'block';
+        if (dashCatEmpty) dashCatEmpty.style.display = 'none';
+        const ctxCat = catEl.getContext('2d');
+
+        categorySalesChartInstance = new Chart(ctxCat, {
+          type: 'doughnut',
+          data: {
+            labels: catLabels,
+            datasets: [{
+              data: catData,
+              backgroundColor: ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#8B5CF6'],
+              borderColor: isLight ? '#FFFFFF' : '#1E293B',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  color: legendColor,
+                  font: { family: 'Outfit', size: 12, weight: '700' },
+                  padding: 12,
+                  usePointStyle: true,
+                  pointStyle: 'circle'
+                }
+              },
+              tooltip: {
+                backgroundColor: isLight ? '#FFFFFF' : '#1E293B',
+                titleColor: isLight ? '#0F172A' : '#F8FAFC',
+                bodyColor: isLight ? '#475569' : '#94A3B8',
+                borderColor: isLight ? '#CBD5E1' : '#334155',
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: function(context) {
+                    return ' ' + context.label + ': ₹' + Number(context.parsed).toLocaleString('en-IN');
+                  }
                 }
               }
-            }
-          },
-          cutout: '68%'
-        }
-      });
+            },
+            cutout: '68%'
+          }
+        });
+      }
     }
   } catch (err) {
     console.error('Error initializing charts:', err);

@@ -141,9 +141,9 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
             ->pluck('total', 'category')
             ->toArray();
 
-        // Default categories if empty to keep charts beautiful
+        // Empty category sales if none recorded (clean zero-start)
         if (empty($categorySales)) {
-            $categorySales = ['Mains' => 1200, 'Starters' => 800, 'Beverages' => 450, 'Desserts' => 300];
+            $categorySales = [];
         }
 
         return view('dashboard', [
@@ -473,6 +473,10 @@ Route::prefix('api')->group(function () {
         Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->middleware('role:admin');
 
         // Sales & AI Analytics
+        Route::get('/analytics/sales-report', [AnalyticsController::class, 'getSalesReport'])
+            ->middleware(['role:admin,manager,cashier', 'tenant']);
+        Route::get('/analytics/restaurant/{restaurantId}/sales-report', [AnalyticsController::class, 'getSalesReport'])
+            ->middleware(['role:admin,manager,cashier', 'tenant']);
         Route::get('/analytics/restaurant/{restaurantId}', [AnalyticsController::class, 'getSalesAnalytics'])
             ->middleware(['role:admin,manager,cashier', 'tenant']);
         Route::get('/analytics/menu-engineering/{restaurantId}', [AnalyticsController::class, 'getMenuEngineeringMatrix'])

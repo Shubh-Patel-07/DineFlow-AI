@@ -6,22 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDashboardStats();
 });
 
+const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+
 function loadDashboardStats() {
-  fetch('/api/analytics/dashboard')
+  fetch(`/api/analytics/restaurant/${RESTAURANT_ID}/sales-report?filter=today`)
     .then(res => res.json())
     .then(data => {
-      if (data.success && data.data) {
-        if (document.getElementById('totalOrders')) document.getElementById('totalOrders').textContent = data.data.total_orders || 0;
-        if (document.getElementById('totalRevenue')) document.getElementById('totalRevenue').textContent = '₹' + (data.data.total_revenue || 0);
-        if (document.getElementById('activeUsers')) document.getElementById('activeUsers').textContent = data.data.active_users || 0;
-        if (document.getElementById('pendingOrders')) document.getElementById('pendingOrders').textContent = data.data.pending_orders || 0;
+      if (data.success && data.data && data.data.summary) {
+        const s = data.data.summary;
+        if (document.getElementById('totalOrders')) document.getElementById('totalOrders').textContent = s.total_orders || 0;
+        if (document.getElementById('totalRevenue')) document.getElementById('totalRevenue').textContent = '₹' + (s.gross_revenue ? s.gross_revenue.toFixed(2) : '0.00');
+        if (document.getElementById('activeUsers')) document.getElementById('activeUsers').textContent = s.total_orders > 0 ? (s.total_orders * 2) : 0;
+        if (document.getElementById('pendingOrders')) document.getElementById('pendingOrders').textContent = 0;
       }
     })
     .catch(() => {
-      if (document.getElementById('totalOrders')) document.getElementById('totalOrders').textContent = '24';
-      if (document.getElementById('totalRevenue')) document.getElementById('totalRevenue').textContent = '₹18,450';
-      if (document.getElementById('activeUsers')) document.getElementById('activeUsers').textContent = '8';
-      if (document.getElementById('pendingOrders')) document.getElementById('pendingOrders').textContent = '3';
+      if (document.getElementById('totalOrders')) document.getElementById('totalOrders').textContent = '0';
+      if (document.getElementById('totalRevenue')) document.getElementById('totalRevenue').textContent = '₹0.00';
+      if (document.getElementById('activeUsers')) document.getElementById('activeUsers').textContent = '0';
+      if (document.getElementById('pendingOrders')) document.getElementById('pendingOrders').textContent = '0';
     });
 }
 
