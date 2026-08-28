@@ -302,6 +302,35 @@ function escapeHtml(str) {
 
 let parsedCsvItems = [];
 
+function downloadSampleMenuCsv() {
+  const rows = [
+    ["Name", "Category", "Price", "Is_Veg", "Description", "Is_Available"],
+    ["Paneer Butter Masala", "Main Course", "240", "Yes", "Rich tomato and cashew butter gravy", "Yes"],
+    ["Butter Naan", "Breads", "45", "Yes", "Crispy tandoori baked bread with butter", "Yes"],
+    ["Veg Biryani", "Rice & Biryani", "190", "Yes", "Aromatic basmati rice with spices", "Yes"],
+    ["Masala Dosa", "South Indian", "120", "Yes", "Crispy crepe with spiced potato masala", "Yes"],
+    ["Cold Coffee with Ice Cream", "Beverages", "90", "Yes", "Chilled brewed coffee with vanilla ice cream", "Yes"],
+    ["Chicken Tikka Masala", "Non-Veg", "280", "No", "Tandoor roasted chicken in spicy gravy", "Yes"],
+    ["Margherita Pizza", "Pizza", "220", "Yes", "Classic cheese and herb pizza", "Yes"],
+    ["Gulab Jamun (2 Pcs)", "Desserts", "60", "Yes", "Hot sweet syrup dumplings", "Yes"]
+  ];
+
+  let csvContent = "\uFEFF"; // UTF-8 BOM
+  rows.forEach(row => {
+    csvContent += row.map(val => `"${val.replace(/"/g, '""')}"`).join(",") + "\r\n";
+  });
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "sample_menu_template.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 function openBulkImportModal() {
   parsedCsvItems = [];
   const modal = document.getElementById('bulkImportModal');
