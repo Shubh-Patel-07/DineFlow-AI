@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Tendorabuy — Restaurant POS, QR Ordering & Kitchen Management</title>
-    <meta name="description" content="Tendorabuy is the complete all-in-one restaurant management platform. Streamline table QR digital menus, lightning-fast POS billing, real-time Kitchen Display (KDS), inventory control, offline desktop sync, and staff management.">
+    <title>Tendorabuy — Modern Restaurant POS, QR Ordering & Kitchen Management</title>
+    <meta name="description" content="Tendorabuy is the all-in-one restaurant platform. Table QR digital ordering, fast POS billing, real-time Kitchen Display (KDS), inventory control, and offline desktop sync.">
     
     <!-- Open Graph / SEO Metadata -->
-    <meta property="og:title" content="Tendorabuy — Restaurant POS, QR Ordering & Kitchen Management">
+    <meta property="og:title" content="Tendorabuy — Modern Restaurant POS, QR Ordering & Kitchen Management">
     <meta property="og:description" content="Complete restaurant operating system. Streamline QR table ordering, fast POS billing, real-time KDS, offline desktop sync, and staff management.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
@@ -25,11 +25,14 @@
             --primary-glow: rgba(99, 102, 241, 0.35);
             --primary-dark: #4338CA;
             --success: #10B981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --whatsapp: #25D366;
+            --whatsapp-dark: #128C7E;
             --accent: #EC4899;
             --bg: #090D1A;
             --bg-alt: #0D1326;
             --card: #131A35;
-            --card-glass: rgba(19, 26, 53, 0.75);
+            --card-glass: rgba(19, 26, 53, 0.85);
             --border: rgba(255, 255, 255, 0.08);
             --border-glow: rgba(99, 102, 241, 0.3);
             --text-primary: #F8FAFC;
@@ -46,14 +49,16 @@
             overflow-x: hidden;
             width: 100%;
             line-height: 1.6;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
         }
 
         /* ─── CONTAINER & SHARED ─── */
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1180px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 20px;
         }
 
         .section-tag {
@@ -69,24 +74,26 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .section-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 38px;
+            font-size: clamp(26px, 3.5vw, 36px);
             font-weight: 800;
             letter-spacing: -0.5px;
-            margin-bottom: 16px;
-            line-height: 1.2;
+            margin-bottom: 14px;
+            line-height: 1.25;
+            color: #fff;
         }
 
         .section-subtitle {
-            font-size: 16px;
+            font-size: clamp(14.5px, 1.6vw, 16px);
             color: var(--text-secondary);
-            max-width: 650px;
-            margin: 0 auto 48px;
+            max-width: 620px;
+            margin: 0 auto 44px;
             text-align: center;
+            line-height: 1.55;
         }
 
         /* ─── NAVBAR ─── */
@@ -95,9 +102,10 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 76px;
-            background: rgba(9, 13, 26, 0.85);
+            height: 72px;
+            background: rgba(9, 13, 26, 0.9);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
             z-index: 1000;
             display: flex;
@@ -109,49 +117,66 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
+            gap: 16px;
         }
 
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
+            flex-shrink: 0;
         }
 
         .brand-icon {
-            width: 42px;
-            height: 42px;
+            width: 36px;
+            height: 36px;
             background: linear-gradient(135deg, #6366F1, #818CF8);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 17px;
             color: #fff;
-            box-shadow: 0 0 16px var(--primary-glow);
+            box-shadow: 0 0 12px var(--primary-glow);
         }
 
         .brand-name {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #fff;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand-name .brand-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(99, 102, 241, 0.2);
+            color: #818CF8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            text-transform: uppercase;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 30px;
+            gap: 24px;
             list-style: none;
         }
 
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 500;
             transition: color 0.2s ease;
+            white-space: nowrap;
         }
 
         .nav-links a:hover {
@@ -161,116 +186,243 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-header-demo {
+            padding: 7px 14px;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: #A5B4FC;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-header-demo:hover {
+            background: rgba(99, 102, 241, 0.22);
+            border-color: #6366F1;
+            color: #fff;
+        }
+
+        .btn-wa-header {
+            padding: 7px 12px;
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            color: #4ADE80;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-wa-header:hover {
+            background: rgba(37, 211, 102, 0.2);
+            border-color: #25D366;
+            color: #fff;
         }
 
         .btn-ghost {
-            padding: 10px 20px;
+            padding: 7px 14px;
             color: #CBD5E1;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
-            border-radius: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
             color: #fff;
         }
 
         .btn-primary {
-            padding: 11px 24px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #fff;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px var(--primary-glow);
+            border-radius: 8px;
+            box-shadow: 0 4px 14px var(--primary-glow);
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             border: none;
             cursor: pointer;
             justify-content: center;
+            white-space: nowrap;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
         .mobile-menu-btn {
             display: none;
-            background: transparent;
-            border: none;
+            width: 36px;
+            height: 36px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             color: #fff;
-            font-size: 22px;
+            font-size: 16px;
             cursor: pointer;
-            padding: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ─── MOBILE DRAWER ─── */
+        .mobile-drawer-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 13, 26, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            pointer-events: none;
+        }
+
+        .mobile-drawer-backdrop.active {
+            display: block;
+            pointer-events: auto;
+        }
+
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: #0D1326;
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            z-index: 999;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+            max-height: calc(100vh - 72px);
+            overflow-y: auto;
+        }
+
+        .mobile-drawer.active {
+            display: block;
+        }
+
+        .mobile-drawer ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mobile-drawer ul li a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .mobile-drawer ul li a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
         }
 
         /* ─── 1. HERO SECTION ─── */
         .hero-section {
-            padding: 140px 0 80px;
-            background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.15) 0%, rgba(9, 13, 26, 0) 70%);
+            padding: 120px 0 70px;
+            background: radial-gradient(circle at 50% 25%, rgba(99, 102, 241, 0.14) 0%, rgba(9, 13, 26, 0) 70%);
             position: relative;
         }
 
         .hero-content {
             text-align: center;
-            max-width: 920px;
+            max-width: 880px;
             margin: 0 auto;
         }
 
         .hero-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 48px;
+            font-size: clamp(28px, 4.2vw, 44px);
             font-weight: 900;
-            line-height: 1.15;
-            letter-spacing: -1px;
-            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -0.6px;
+            margin-bottom: 16px;
             background: linear-gradient(135deg, #FFFFFF 30%, #A5B4FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero-desc {
-            font-size: 18px;
+            font-size: clamp(15px, 1.7vw, 17px);
             color: var(--text-secondary);
-            margin-bottom: 36px;
-            max-width: 720px;
+            margin-bottom: 32px;
+            max-width: 660px;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.6;
         }
 
         .hero-ctas {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 40px;
+            gap: 12px;
+            margin-bottom: 32px;
             flex-wrap: wrap;
+        }
+
+        .hero-ctas .btn-primary {
+            padding: 12px 28px;
+            font-size: 15px;
+            border-radius: 10px;
+        }
+
+        .hero-ctas .btn-ghost {
+            padding: 12px 24px;
+            font-size: 15px;
+            border-radius: 10px;
         }
 
         .hero-pill-badge {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 20px;
+            gap: 8px;
+            padding: 7px 18px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.25);
             border-radius: 30px;
             color: #34D399;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
-            margin-bottom: 48px;
+            margin-bottom: 40px;
         }
 
         /* ─── SHOWCASE MOCKUP ─── */
@@ -283,44 +435,44 @@
             background: var(--card-glass);
             border: 1px solid var(--border-glow);
             border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(99, 102, 241, 0.15);
+            padding: 22px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.12);
             backdrop-filter: blur(12px);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 16px;
         }
 
         .mock-card {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.65);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 20px;
+            padding: 18px;
             text-align: left;
         }
 
         .mock-icon {
-            font-size: 28px;
-            margin-bottom: 12px;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
 
         .mock-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
             color: #fff;
             margin-bottom: 6px;
         }
 
         .mock-sub {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
         /* ─── TRUST STATS ─── */
         .trust-section {
-            padding: 40px 0;
+            padding: 36px 0;
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
             background: var(--bg-alt);
@@ -329,109 +481,65 @@
         .trust-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
+            gap: 16px;
             text-align: center;
         }
 
         .trust-item h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #fff;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .trust-item p {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text-secondary);
             font-weight: 500;
         }
 
         /* ─── FEATURES ─── */
         .features-section {
-            padding: 90px 0;
+            padding: 80px 0;
             text-align: center;
         }
 
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            gap: 20px;
             text-align: left;
         }
 
         .feature-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px;
+            border-radius: 16px;
+            padding: 24px;
             transition: all 0.25s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             border-color: var(--border-glow);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
         }
 
         .feat-icon-wrap {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             background: rgba(99, 102, 241, 0.12);
             color: #818CF8;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 19px;
+            margin-bottom: 16px;
         }
 
         .feature-card h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 19px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .feature-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* ─── HOW IT WORKS ─── */
-        .steps-section {
-            padding: 90px 0;
-            background: var(--bg-alt);
-            text-align: center;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            text-align: left;
-        }
-
-        .step-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            position: relative;
-        }
-
-        .step-num {
-            font-family: 'Outfit', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            color: rgba(99, 102, 241, 0.3);
-            margin-bottom: 12px;
-        }
-
-        .step-card h3 {
             font-family: 'Outfit', sans-serif;
             font-size: 18px;
             font-weight: 700;
@@ -439,30 +547,74 @@
             margin-bottom: 8px;
         }
 
-        .step-card p {
+        .feature-card p {
             font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        .steps-section {
+            padding: 80px 0;
+            background: var(--bg-alt);
+            text-align: center;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: left;
+        }
+
+        .step-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .step-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: rgba(99, 102, 241, 0.35);
+            margin-bottom: 10px;
+        }
+
+        .step-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .step-card p {
+            font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
         /* ─── ONLINE + OFFLINE WORKFLOW ─── */
         .sync-section {
-            padding: 90px 0;
+            padding: 80px 0;
             text-align: center;
         }
 
         .sync-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
+            gap: 24px;
             text-align: left;
         }
 
         .sync-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 36px;
+            border-radius: 18px;
+            padding: 30px;
         }
 
         .sync-card.cloud { border-left: 4px solid #6366F1; }
@@ -470,12 +622,12 @@
 
         .sync-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .sync-card.cloud .sync-badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; }
@@ -483,28 +635,34 @@
 
         .sync-card h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #fff;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+        }
+
+        .sync-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            margin-bottom: 16px;
         }
 
         .sync-flow {
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 12px;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
             font-family: monospace;
-            font-size: 13.5px;
+            font-size: 13px;
             color: #A5B4FC;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         /* ─── BENEFITS ─── */
         .benefits-section {
-            padding: 90px 0;
+            padding: 80px 0;
             background: var(--bg-alt);
             text-align: center;
         }
@@ -512,7 +670,7 @@
         .benefits-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 18px;
+            gap: 16px;
             text-align: left;
         }
 
@@ -520,12 +678,12 @@
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 22px;
+            padding: 20px;
         }
 
         .benefit-card h4 {
             font-family: 'Outfit', sans-serif;
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 700;
             color: #fff;
             margin-bottom: 6px;
@@ -539,22 +697,22 @@
 
         /* ─── PRICING PREVIEW ─── */
         .pricing-section {
-            padding: 90px 0;
+            padding: 80px 0;
             text-align: center;
         }
 
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 28px;
+            gap: 24px;
             text-align: left;
         }
 
         .price-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 36px;
+            border-radius: 18px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -562,57 +720,57 @@
 
         .price-card.featured {
             border-color: #6366F1;
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.25);
+            box-shadow: 0 0 24px rgba(99, 102, 241, 0.25);
             background: linear-gradient(180deg, #18224B 0%, #131A35 100%);
         }
 
         .featured-tag {
             position: absolute;
-            top: -12px;
+            top: -11px;
             left: 50%;
             transform: translateX(-50%);
             background: #6366F1;
             color: #fff;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 4px 14px;
+            padding: 3px 12px;
             border-radius: 20px;
             letter-spacing: 0.5px;
         }
 
         .plan-name {
             font-family: 'Outfit', sans-serif;
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 800;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .plan-price {
             font-family: 'Outfit', sans-serif;
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 900;
             color: #fff;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .plan-price span {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
             font-weight: 500;
         }
 
         .plan-features {
             list-style: none;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             flex: 1;
         }
 
         .plan-features li {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--text-secondary);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -620,82 +778,82 @@
 
         .plan-features li i {
             color: #10B981;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         /* ─── FAQ ─── */
         .faq-section {
-            padding: 90px 0;
+            padding: 80px 0;
             background: var(--bg-alt);
             text-align: center;
         }
 
         .faq-list {
-            max-width: 800px;
+            max-width: 760px;
             margin: 0 auto;
             text-align: left;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
         .faq-item {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 22px;
+            padding: 20px;
         }
 
         .faq-item h4 {
             font-family: 'Outfit', sans-serif;
-            font-size: 16.5px;
+            font-size: 16px;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .faq-item p {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.55;
         }
 
         /* ─── CTA BANNER ─── */
         .cta-banner {
-            padding: 80px 0;
+            padding: 70px 0;
             text-align: center;
-            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.2) 0%, rgba(9, 13, 26, 0) 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.16) 0%, rgba(9, 13, 26, 0) 70%);
         }
 
         .cta-box {
             background: linear-gradient(135deg, #18224B, #131A35);
             border: 1px solid var(--border-glow);
-            border-radius: 24px;
-            padding: 60px 40px;
-            max-width: 900px;
+            border-radius: 20px;
+            padding: 48px 30px;
+            max-width: 860px;
             margin: 0 auto;
         }
 
         .cta-box h2 {
             font-family: 'Outfit', sans-serif;
-            font-size: 38px;
+            font-size: clamp(24px, 3.2vw, 34px);
             font-weight: 900;
             color: #fff;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .cta-box p {
-            font-size: 16px;
+            font-size: 15px;
             color: var(--text-secondary);
-            margin-bottom: 32px;
-            max-width: 600px;
+            margin-bottom: 28px;
+            max-width: 560px;
             margin-left: auto;
             margin-right: auto;
         }
 
         /* ─── FOOTER ─── */
         .footer {
-            padding: 60px 0 30px;
+            padding: 50px 0 24px;
             background: #060913;
             border-top: 1px solid var(--border);
         }
@@ -703,36 +861,37 @@
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 48px;
+            gap: 32px;
+            margin-bottom: 40px;
         }
 
         .footer-brand p {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--text-muted);
-            margin-top: 12px;
-            max-width: 320px;
+            margin-top: 10px;
+            max-width: 300px;
+            line-height: 1.5;
         }
 
         .footer-col h5 {
             font-family: 'Outfit', sans-serif;
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .footer-col ul {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .footer-col a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 13px;
             transition: color 0.2s ease;
         }
 
@@ -741,39 +900,51 @@
         }
 
         .footer-bottom {
-            padding-top: 24px;
+            padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        /* ─── RESPONSIVE BREAKPOINTS (320px - 1024px) ─── */
-        @media (max-width: 1024px) {
+        /* ─── RESPONSIVE BREAKPOINTS (320px - 1100px) ─── */
+        @media (max-width: 1100px) {
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 13.5px; }
+            .wa-text { display: none; }
+        }
+
+        @media (max-width: 960px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .btn-header-demo { display: none; }
             .hero-mockup { grid-template-columns: 1fr; }
             .features-grid { grid-template-columns: repeat(2, 1fr); }
             .steps-grid { grid-template-columns: repeat(2, 1fr); }
             .benefits-grid { grid-template-columns: repeat(3, 1fr); }
             .trust-grid { grid-template-columns: repeat(3, 1fr); }
-            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
         }
 
-        @media (max-width: 768px) {
-            .nav-links, .nav-actions .btn-ghost { display: none; }
-            .mobile-menu-btn { display: block; }
-            .hero-title { font-size: 34px; }
-            .hero-desc { font-size: 15.5px; }
-            .section-title { font-size: 28px; }
+        @media (max-width: 640px) {
+            .navbar { height: 64px; }
+            .mobile-drawer { top: 64px; }
+            .hero-section { padding: 90px 0 50px; }
             .features-grid { grid-template-columns: 1fr; }
             .steps-grid { grid-template-columns: 1fr; }
             .sync-grid { grid-template-columns: 1fr; }
             .benefits-grid { grid-template-columns: 1fr; }
             .trust-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-grid { grid-template-columns: 1fr; }
-            .cta-box { padding: 40px 20px; }
-            .cta-box h2 { font-size: 28px; }
+            .hero-ctas { flex-direction: column; width: 100%; }
+            .hero-ctas .btn-primary,
+            .hero-ctas .btn-ghost { width: 100%; justify-content: center; }
+            .cta-box { padding: 36px 18px; }
         }
     </style>
 </head>
@@ -782,13 +953,17 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container nav-inner">
+            <!-- Brand Logo -->
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
-                <div class="brand-name">Tendorabuy</div>
+                <div class="brand-name">
+                    <span>Tendorabuy</span>
+                    <span class="brand-badge">POS</span>
+                </div>
             </a>
 
+            <!-- Desktop Navigation Links -->
             <ul class="nav-links">
-                <li><a href="/demo" style="color:#A5B4FC; font-weight:700;"><i class="fa-solid fa-play" style="font-size:11px; margin-right:4px; color:#6366F1;"></i> Live Demo</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#workflow">Online + Offline</a></li>
@@ -797,24 +972,32 @@
                 <li><a href="/contact">Contact</a></li>
             </ul>
 
+            <!-- Header Actions -->
             <div class="nav-actions">
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-ghost" style="color:#4ADE80; font-weight:700; display:inline-flex; align-items:center; gap:6px;" title="Chat on WhatsApp">
-                    <i class="fa-brands fa-whatsapp" style="font-size:17px; color:#25D366;"></i>
-                    <span class="desktop-only">+91 7777938338</span>
+                <!-- Live Demo Pill -->
+                <a href="/demo" class="btn-header-demo" title="Try Live Sandbox Demo">
+                    <i class="fa-solid fa-play" style="font-size: 11px; color: #818CF8;"></i>
+                    <span>Live Demo</span>
                 </a>
+
+                <!-- WhatsApp Click to Chat -->
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp (+91 7777938338)">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 16px; color: #25D366;"></i>
+                    <span class="wa-text">+91 7777938338</span>
+                </a>
+
                 @auth
                     @if(Auth::user()->role === 'superadmin')
-                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right:6px;"></i> Super Admin</a>
+                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i> Super Admin</a>
                     @elseif(Auth::user()->role === 'kitchen')
-                        <a href="/kitchen" class="btn-ghost"><i class="fa-solid fa-fire-burner" style="margin-right:6px;"></i> Kitchen KDS</a>
+                        <a href="/kitchen" class="btn-ghost"><i class="fa-solid fa-fire-burner" style="margin-right: 6px;"></i> Kitchen KDS</a>
                     @elseif(in_array(Auth::user()->role, ['cashier', 'waiter']))
-                        <a href="/pos" class="btn-ghost"><i class="fa-solid fa-cash-register" style="margin-right:6px;"></i> POS</a>
+                        <a href="/pos" class="btn-ghost"><i class="fa-solid fa-cash-register" style="margin-right: 6px;"></i> POS</a>
                     @else
-                        <a href="/dashboard" class="btn-ghost"><i class="fa-solid fa-gauge" style="margin-right:6px;"></i> Dashboard</a>
+                        <a href="/dashboard" class="btn-ghost"><i class="fa-solid fa-gauge" style="margin-right: 6px;"></i> Dashboard</a>
                     @endif
                     <a href="{{ route('register') }}" class="btn-primary">
-                        <span>+ Register Restaurant</span>
-                        <i class="fa-solid fa-plus"></i>
+                        <span>+ Register</span>
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="btn-ghost">Login</a>
@@ -823,31 +1006,42 @@
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 @endauth
-                <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fa-solid fa-bars"></i></button>
+
+                <!-- Mobile Hamburger Button -->
+                <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu">
+                    <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
+                </button>
             </div>
         </div>
     </nav>
 
-    <!-- MOBILE MENU DRAWER -->
-    <div id="mobileDrawer" style="display:none; position:fixed; top:76px; left:0; right:0; background:#090D1A; border-bottom:1px solid var(--border); padding:20px; z-index:999;">
-        <ul style="list-style:none; display:flex; flex-direction:column; gap:16px;">
-            <li><a href="#features" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">Features</a></li>
-            <li><a href="#how-it-works" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">How It Works</a></li>
-            <li><a href="#workflow" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">Online + Offline</a></li>
-            <li><a href="/pricing" style="color:#fff; text-decoration:none; font-size:16px;">Pricing</a></li>
-            <li><a href="#faq" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">FAQ</a></li>
-            <li><a href="/contact" style="color:#fff; text-decoration:none; font-size:16px;">Contact</a></li>
-            <li style="padding-top:10px; display:flex; gap:10px;">
+    <!-- MOBILE MENU DRAWER & BACKDROP -->
+    <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="toggleMobileNav()"></div>
+    <div class="mobile-drawer" id="mobileDrawer">
+        <ul>
+            <li><a href="/demo" onclick="toggleMobileNav()" style="color: #A5B4FC; font-weight: 700;"><i class="fa-solid fa-play" style="color: #818CF8;"></i> Live Sandbox Demo</a></li>
+            <li><a href="#features" onclick="toggleMobileNav()"><i class="fa-solid fa-wand-magic-sparkles"></i> Features</a></li>
+            <li><a href="#how-it-works" onclick="toggleMobileNav()"><i class="fa-solid fa-compass"></i> How It Works</a></li>
+            <li><a href="#workflow" onclick="toggleMobileNav()"><i class="fa-solid fa-arrows-rotate"></i> Online + Offline</a></li>
+            <li><a href="/pricing"><i class="fa-solid fa-gem"></i> Pricing Plans</a></li>
+            <li><a href="#faq" onclick="toggleMobileNav()"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
+            <li><a href="/contact"><i class="fa-solid fa-headset"></i> Contact Support</a></li>
+            <li>
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" style="color: #4ADE80; font-weight: 700;">
+                    <i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 18px;"></i> WhatsApp (+91 7777938338)
+                </a>
+            </li>
+            <li style="padding-top: 8px; display: flex; gap: 10px;">
                 @auth
                     @if(Auth::user()->role === 'superadmin')
-                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Super Admin</a>
+                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost" style="flex: 1; justify-content: center;">Super Admin</a>
                     @else
-                        <a href="/dashboard" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Dashboard</a>
+                        <a href="/dashboard" class="btn-ghost" style="flex: 1; justify-content: center;">Dashboard</a>
                     @endif
-                    <a href="{{ route('register') }}" class="btn-primary" style="flex:1; justify-content:center;">+ Register</a>
+                    <a href="{{ route('register') }}" class="btn-primary" style="flex: 1; justify-content: center;">+ Register</a>
                 @else
-                    <a href="{{ route('login') }}" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Login</a>
-                    <a href="{{ route('register') }}" class="btn-primary" style="flex:1; justify-content:center;">Start Free</a>
+                    <a href="{{ route('login') }}" class="btn-ghost" style="flex: 1; justify-content: center;">Login</a>
+                    <a href="{{ route('register') }}" class="btn-primary" style="flex: 1; justify-content: center;">Start Free</a>
                 @endauth
             </li>
         </ul>
@@ -863,37 +1057,37 @@
             </p>
 
             <div class="hero-ctas">
-                <a href="{{ route('register') }}" class="btn-primary" style="padding: 14px 32px; font-size: 16px;">
+                <a href="{{ route('register') }}" class="btn-primary">
                     <span>START FREE</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <a href="/demo" class="btn-ghost" style="padding: 14px 28px; font-size: 15px; border:1px solid #6366F1; color:#A5B4FC; background:rgba(99,102,241,0.1);">
-                    <i class="fa-solid fa-play" style="margin-right:8px; color:#818CF8;"></i> Try Live Demo
+                <a href="/demo" class="btn-ghost" style="border: 1px solid #6366F1; color: #A5B4FC; background: rgba(99, 102, 241, 0.1);">
+                    <i class="fa-solid fa-play" style="margin-right: 6px; color: #818CF8;"></i> Try Live Demo
                 </a>
-                <a href="{{ route('login') }}" class="btn-ghost" style="padding: 14px 24px; font-size: 15px; border:1px solid var(--border);">
-                    <i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i> Login
+                <a href="{{ route('login') }}" class="btn-ghost">
+                    <i class="fa-solid fa-right-to-bracket" style="margin-right: 6px;"></i> Login
                 </a>
             </div>
 
             <div class="hero-pill-badge">
-                <i class="fa-solid fa-circle-check" style="color:#10B981;"></i> Free Starter Plan • No Credit Card Required • Setup in 2 Minutes
+                <i class="fa-solid fa-circle-check" style="color: #10B981;"></i> Free Starter Plan • No Credit Card Required • Setup in 2 Minutes
             </div>
 
             <!-- Visual Showcase Mockup -->
             <div class="hero-mockup-wrapper">
                 <div class="hero-mockup">
                     <div class="mock-card">
-                        <div class="mock-icon" style="color:#818CF8;"><i class="fa-solid fa-qrcode"></i></div>
+                        <div class="mock-icon" style="color: #818CF8;"><i class="fa-solid fa-qrcode"></i></div>
                         <div class="mock-title">Smart QR Ordering</div>
                         <div class="mock-sub">Instant contactless guest ordering from dining tables with multi-language voice search and UPI QR payments.</div>
                     </div>
                     <div class="mock-card">
-                        <div class="mock-icon" style="color:#34D399;"><i class="fa-solid fa-fire-burner"></i></div>
+                        <div class="mock-icon" style="color: #34D399;"><i class="fa-solid fa-fire-burner"></i></div>
                         <div class="mock-title">Live Kitchen Display (KDS)</div>
                         <div class="mock-sub">Zero lost tickets. Color-coded order aging, audio chime alerts, and instant chef completion transitions.</div>
                     </div>
                     <div class="mock-card">
-                        <div class="mock-icon" style="color:#F472B6;"><i class="fa-solid fa-cash-register"></i></div>
+                        <div class="mock-icon" style="color: #F472B6;"><i class="fa-solid fa-cash-register"></i></div>
                         <div class="mock-title">POS Billing & Soundbox</div>
                         <div class="mock-sub">Dynamic UPI QR payments, split bills, multi-language soundbox announcements, and thermal receipt printing.</div>
                     </div>
@@ -945,49 +1139,49 @@
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(16,185,129,0.12); color:#34D399;"><i class="fa-solid fa-qrcode"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(16, 185, 129, 0.12); color: #34D399;"><i class="fa-solid fa-qrcode"></i></div>
                     <h3>QR Digital Menu</h3>
                     <p>Dynamic contactless menu ordering with veg/non-veg filters, dietary badges, live order tracking, and voice recognition.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(236,72,153,0.12); color:#F472B6;"><i class="fa-solid fa-utensils"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(236, 72, 153, 0.12); color: #F472B6;"><i class="fa-solid fa-utensils"></i></div>
                     <h3>Kitchen KDS</h3>
                     <p>Paperless kitchen display system with order aging timers, sound alerts, preparation stages, and single-tap item completions.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(245,158,11,0.12); color:#FBBF24;"><i class="fa-solid fa-chair"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(245, 158, 11, 0.12); color: #FBBF24;"><i class="fa-solid fa-chair"></i></div>
                     <h3>Table Management</h3>
                     <p>Real-time visual table floor layout with live occupancy status, occupied order amounts, bill settlement, and auto-release.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(59,130,246,0.12); color:#60A5FA;"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(59, 130, 246, 0.12); color: #60A5FA;"><i class="fa-solid fa-user-shield"></i></div>
                     <h3>Staff & Roles (RBAC)</h3>
                     <p>Strict role boundaries for Admin, Manager, Cashier, Kitchen Chef, Waiter, and Customer with fast numeric PIN switching.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(139,92,246,0.12); color:#A78BFA;"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(139, 92, 246, 0.12); color: #A78BFA;"><i class="fa-solid fa-boxes-stacked"></i></div>
                     <h3>Inventory Control</h3>
                     <p>Real-time stock deduction on menu item orders, reorder level alerts, supplier tracking, and waste management.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(20,184,166,0.12); color:#2DD4BF;"><i class="fa-solid fa-receipt"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(20, 184, 166, 0.12); color: #2DD4BF;"><i class="fa-solid fa-receipt"></i></div>
                     <h3>Expense Management</h3>
                     <p>Record daily operational expenses (groceries, utilities, salaries, maintenance) categorized per restaurant tenant.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(244,63,94,0.12); color:#FB7185;"><i class="fa-solid fa-tags"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(244, 63, 94, 0.12); color: #FB7185;"><i class="fa-solid fa-tags"></i></div>
                     <h3>Offers & Coupons</h3>
                     <p>Create percentage and flat discount coupons with expiry dates, minimum bill thresholds, and auto-apply logic.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(16,185,129,0.12); color:#10B981;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <div class="feat-icon-wrap" style="background: rgba(16, 185, 129, 0.12); color: #10B981;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                     <h3>Offline Desktop Sync</h3>
                     <p>Windows Desktop POS continues running offline during internet outages and auto-syncs with cloud MySQL when reconnected.</p>
                 </div>
@@ -1074,27 +1268,27 @@
 
             <div class="benefits-grid">
                 <div class="benefit-card">
-                    <div style="font-size:24px; margin-bottom:10px;">👔</div>
+                    <div style="font-size: 22px; margin-bottom: 8px;">👔</div>
                     <h4>Restaurant Owner</h4>
                     <p>Live sales analytics, expense tracking, menu engineering matrix, and multi-branch control.</p>
                 </div>
                 <div class="benefit-card">
-                    <div style="font-size:24px; margin-bottom:10px;">💳</div>
+                    <div style="font-size: 22px; margin-bottom: 8px;">💳</div>
                     <h4>Cashier</h4>
                     <p>Speedy billing, split bills, UPI QR soundbox confirmation, and instant thermal receipt printing.</p>
                 </div>
                 <div class="benefit-card">
-                    <div style="font-size:24px; margin-bottom:10px;">🏃</div>
+                    <div style="font-size: 22px; margin-bottom: 8px;">🏃</div>
                     <h4>Waiter</h4>
                     <p>Digital waiter calls with table numbers, mobile table ordering, and instant dish ready notifications.</p>
                 </div>
                 <div class="benefit-card">
-                    <div style="font-size:24px; margin-bottom:10px;">👨‍🍳</div>
+                    <div style="font-size: 22px; margin-bottom: 8px;">👨‍🍳</div>
                     <h4>Kitchen Chef</h4>
                     <p>Color-coded KDS screen, zero missed paper tickets, preparation countdown, and single-click completion.</p>
                 </div>
                 <div class="benefit-card">
-                    <div style="font-size:24px; margin-bottom:10px;">📱</div>
+                    <div style="font-size: 22px; margin-bottom: 8px;">📱</div>
                     <h4>Customer</h4>
                     <p>Zero wait time, contactless digital menu with voice ordering, live order tracker, and easy UPI payment.</p>
                 </div>
@@ -1122,7 +1316,7 @@
                         <li><i class="fa-solid fa-check"></i> QR Code Menus &amp; KDS</li>
                         <li><i class="fa-solid fa-check"></i> Standard POS Billing</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">Get Started Free</a>
+                    <a href="{{ route('register') }}" class="btn-primary" style="width: 100%;">Get Started Free</a>
                 </div>
 
                 <!-- Pro Plan -->
@@ -1136,9 +1330,9 @@
                         <li><i class="fa-solid fa-check"></i> Up to 500 Menu Items</li>
                         <li><i class="fa-solid fa-check"></i> 5,000 Orders / Month</li>
                         <li><i class="fa-solid fa-check"></i> Offline Desktop Sync</li>
-                        <li><i class="fa-solid fa-check"></i> Advanced Sales &amp; Matrix Analytics</li>
+                        <li><i class="fa-solid fa-check"></i> Advanced Sales Analytics</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">Start 14-Day Trial</a>
+                    <a href="{{ route('register') }}" class="btn-primary" style="width: 100%;">Start 14-Day Trial</a>
                 </div>
 
                 <!-- Enterprise Plan -->
@@ -1153,7 +1347,7 @@
                         <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
                         <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone Support</li>
                     </ul>
-                    <a href="/contact" class="btn-ghost" style="width:100%; border:1px solid var(--border); text-align:center;">Contact Sales</a>
+                    <a href="/contact" class="btn-ghost" style="width: 100%; justify-content: center;">Contact Sales</a>
                 </div>
             </div>
         </div>
@@ -1201,13 +1395,13 @@
             <div class="cta-box">
                 <h2>Start Your Restaurant Free Today</h2>
                 <p>Join hundreds of modern restaurants accelerating their table turnover and kitchen speed with Tendorabuy.</p>
-                <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
-                    <a href="{{ route('register') }}" class="btn-primary" style="padding: 15px 32px; font-size: 16px;">
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <a href="{{ route('register') }}" class="btn-primary" style="padding: 13px 28px; font-size: 15px; border-radius: 10px;">
                         <span>START FREE TODAY</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-primary" style="padding: 15px 28px; font-size: 16px; background:linear-gradient(135deg, #25D366, #128C7E); box-shadow:0 4px 16px rgba(37,211,102,0.4);">
-                        <i class="fa-brands fa-whatsapp" style="font-size: 19px;"></i>
+                    <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-primary" style="padding: 13px 24px; font-size: 15px; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i>
                         <span>Chat on WhatsApp</span>
                     </a>
                 </div>
@@ -1222,7 +1416,10 @@
                 <div class="footer-brand">
                     <a href="/" class="brand-logo">
                         <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
-                        <div class="brand-name">Tendorabuy</div>
+                        <div class="brand-name">
+                            <span>Tendorabuy</span>
+                            <span class="brand-badge">POS</span>
+                        </div>
                     </a>
                     <p>Complete restaurant management platform, smart table QR ordering, kitchen display system, and POS billing.</p>
                 </div>
@@ -1267,8 +1464,20 @@
     <script>
         function toggleMobileNav() {
             const drawer = document.getElementById('mobileDrawer');
-            if (drawer) {
-                drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            const backdrop = document.getElementById('mobileDrawerBackdrop');
+            const icon = document.getElementById('mobileMenuIcon');
+            
+            if (drawer && backdrop) {
+                const isActive = drawer.classList.contains('active');
+                if (isActive) {
+                    drawer.classList.remove('active');
+                    backdrop.classList.remove('active');
+                    if (icon) icon.className = 'fa-solid fa-bars';
+                } else {
+                    drawer.classList.add('active');
+                    backdrop.classList.add('active');
+                    if (icon) icon.className = 'fa-solid fa-xmark';
+                }
             }
         }
     </script>
