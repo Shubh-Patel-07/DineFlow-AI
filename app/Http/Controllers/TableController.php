@@ -46,23 +46,24 @@ class TableController extends Controller
 
     public function getRestaurantTables($restaurantId)
     {
-        $tables = Table::where('restaurant_id', $restaurantId)->get();
-        
-        $serverIp = request()->server('SERVER_ADDR') ?: gethostbyname(gethostname());
-        if (!$serverIp || $serverIp === '127.0.0.1') {
-            $serverIp = request()->ip();
+        $user = auth()->user();
+        if ($user && $user->role !== 'superadmin' && $user->restaurant_id && strval($user->restaurant_id) !== strval($restaurantId)) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to another restaurant\'s tables.'], 403);
         }
 
+        $tables = Table::where('restaurant_id', $restaurantId)->get();
+        
+        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
         $restaurant = \App\Models\Restaurant::find($restaurantId);
+        $restaurantName = $restaurant ? $restaurant->name : 'DineFlow Restaurant';
         $gstRate = $restaurant ? (float)$restaurant->gst_rate / 100 : 0.05;
         $serviceRate = $restaurant ? (float)$restaurant->service_charge / 100 : 0.05;
 
         // Map tables to include dynamic occupancy status and live dynamic QR code URL
-        $tables = $tables->map(function($table) use ($serverIp, $gstRate, $serviceRate) {
-            // Dynamically replace any local IP address in qr_code_url with current active server IP
-            if ($table->qr_code_url) {
-                $table->qr_code_url = preg_replace('/(?:192\.168|10|172\.(?:1[6-9]|2\d|3[01]))\.[\d.]+|127\.0\.0\.1/', $serverIp, $table->qr_code_url);
-            }
+        $tables = $tables->map(function($table) use ($baseUrl, $restaurantId, $restaurantName, $gstRate, $serviceRate) {
+            $table->qr_data_url = $baseUrl . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id;
+            $table->restaurant_name = $restaurantName;
+            $table->qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($table->qr_data_url);
 
             $activeOrder = \App\Models\Order::where('table_id', $table->id)
                 ->where('payment_status', 'pending')

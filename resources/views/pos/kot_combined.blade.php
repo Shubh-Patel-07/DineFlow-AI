@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ $lang ?? 'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined KOT - Order #{{ $order->id }}</title>
+    <title>{{ $kotDict['order_kot'] ?? 'Order KOT' }} - Order #{{ $order->id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Gujarati:wght@500;700;800&family=Noto+Sans+Devanagari:wght@500;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Courier Prime', 'Noto Sans Gujarati', 'Noto Sans Devanagari', 'Courier New', monospace;
             width: 58mm;
             margin: 0 auto;
             padding: 10px;
@@ -27,6 +28,7 @@
             text-transform: uppercase;
             border: 2px solid #000;
             padding: 4px;
+            letter-spacing: 0.5px;
         }
 
         .divider {
@@ -48,12 +50,14 @@
             border-bottom: 1px dashed #000;
             text-align: left;
             padding: 4px 0;
+            font-size: 11px;
+            text-transform: uppercase;
         }
 
         .items-table td {
             padding: 6px 0;
-            vertical-align: middle;
-            font-size: 13.5px;
+            vertical-align: top;
+            font-size: 14px;
             font-weight: bold;
         }
 
@@ -61,7 +65,6 @@
             text-align: right;
         }
 
-        /* Hide screen elements during print */
         @media print {
             .no-print {
                 display: none;
@@ -94,27 +97,27 @@
 <body>
 
     <div class="print-btn-container no-print">
-        <button class="print-btn" onclick="window.print()">🖨️ Print Combined KOT</button>
+        <button class="print-btn" onclick="window.print()">{{ $kotDict['print_btn_combined'] ?? '🖨️ Print Combined KOT' }}</button>
     </div>
 
     <div class="header">
-        <h2>COMBINED KOT</h2>
-        <p style="margin-top: 5px; font-weight: bold; font-size: 10px;">*** KITCHEN + BAR ITEMS ***</p>
+        <h2>{{ $kotDict['order_kot'] ?? 'ORDER KOT' }}</h2>
+        <p style="margin-top: 5px; font-weight: bold; font-size: 11px;">{{ $kotDict['all_items'] ?? '*** ALL ITEMS ***' }}</p>
     </div>
 
     <div class="divider"></div>
 
     <table class="info-table">
         <tr>
-            <td><strong>Order ID:</strong></td>
+            <td><strong>{{ $kotDict['order_id'] ?? 'Order ID' }}:</strong></td>
             <td class="text-right">#{{ $order->id }}</td>
         </tr>
         <tr>
-            <td><strong>Table:</strong></td>
+            <td><strong>{{ $kotDict['table'] ?? 'Table' }}:</strong></td>
             <td class="text-right" style="font-size: 16px; font-weight: 800;">{{ $tableName }}</td>
         </tr>
         <tr>
-            <td><strong>Time:</strong></td>
+            <td><strong>{{ $kotDict['time'] ?? 'Time' }}:</strong></td>
             <td class="text-right">{{ $order->created_at->format('H:i') }}</td>
         </tr>
     </table>
@@ -124,37 +127,36 @@
     <table class="items-table">
         <thead>
             <tr>
-                <th>Item Name</th>
-                <th class="text-right">Qty</th>
+                <th>{{ $kotDict['item_name'] ?? 'Item Name' }}</th>
+                <th class="text-right">{{ $kotDict['qty'] ?? 'Qty' }}</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($order->items as $item)
+            @forelse($order->items as $item)
             <tr>
-                <td>
-                    {{ $item->name }}
-                    <span style="font-size: 9px; font-weight: normal; color: #555; text-transform: uppercase;">
-                        ({{ $item->menuItem?->category ?? 'item' }})
-                    </span>
-                </td>
+                <td>{{ $item->name }}</td>
                 <td class="text-right" style="font-size: 16px;">{{ $item->quantity }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="2" style="text-align: center; font-weight: normal; font-size: 11px;">{{ $kotDict['no_items'] ?? 'No items in order' }}</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
     <div class="divider"></div>
 
     @if($order->special_instructions)
-    <div style="border: 1px solid #000; padding: 6px; margin-top: 10px;">
-        <strong>INSTRUCTIONS:</strong><br>
-        <span style="font-size: 12px;">{{ $order->special_instructions }}</span>
+    <div style="border: 1px solid #000; padding: 6px; margin-top: 8px;">
+        <strong style="font-size: 11px;">{{ $kotDict['instructions'] ?? 'INSTRUCTIONS' }}:</strong><br>
+        <span style="font-size: 12px; font-weight: bold;">{{ $order->special_instructions }}</span>
     </div>
     <div class="divider"></div>
     @endif
 
-    <div class="header" style="margin-top: 15px;">
-        <p style="font-size: 9px; opacity: 0.7;">DineFlow AI POS - KOT Master Copy</p>
+    <div class="header" style="margin-top: 12px;">
+        <p style="font-size: 9px; opacity: 0.7;">DineFlow AI POS - Combined Order Slip</p>
     </div>
 
     <script>

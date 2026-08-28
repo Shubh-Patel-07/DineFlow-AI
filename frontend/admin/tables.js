@@ -112,9 +112,12 @@ function renderTables() {
   }).join('');
 }
 
-function showQrModal(tableNumber, qrCodeUrl) {
+function showQrModal(tableNumber, qrCodeUrl, tableId = null) {
   document.getElementById('qrModalTitle').textContent = `QR Code for Table ${tableNumber}`;
-  document.getElementById('qrModalImage').src = qrCodeUrl;
+  const imgEl = document.getElementById('qrModalImage');
+  if (imgEl) {
+    imgEl.src = qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin + '/customer/menu?tableId=' + (tableId || '1'))}`;
+  }
   document.getElementById('qrModal').hidden = false;
 }
 
@@ -127,8 +130,10 @@ function printQrCode() {
   const tableTitle = document.getElementById('qrModalTitle').textContent;
   const tableNumber = tableTitle.replace('QR Code for Table ', '');
 
-  document.getElementById('qrPrintImage').src = qrUrl;
-  document.getElementById('qrPrintTableNumber').textContent = tableNumber;
+  const printImage = document.getElementById('qrPrintImage');
+  if (printImage) printImage.src = qrUrl;
+  const printTableNum = document.getElementById('qrPrintTableNumber');
+  if (printTableNum) printTableNum.textContent = tableNumber;
 
   window.print();
 }

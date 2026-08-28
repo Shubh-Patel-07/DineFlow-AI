@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ $lang ?? 'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bar KOT - Order #{{ $order->id }}</title>
+    <title>{{ $kotDict['bar_kot'] ?? 'Bar KOT' }} - Order #{{ $order->id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Gujarati:wght@500;700;800&family=Noto+Sans+Devanagari:wght@500;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Courier Prime', 'Noto Sans Gujarati', 'Noto Sans Devanagari', 'Courier New', monospace;
             width: 58mm;
             margin: 0 auto;
             padding: 10px;
@@ -23,10 +24,11 @@
 
         .header h2 {
             margin: 0;
-            font-size: 18px;
+            font-size: 16px;
             text-transform: uppercase;
             border: 2px solid #000;
             padding: 4px;
+            letter-spacing: 0.5px;
         }
 
         .divider {
@@ -48,6 +50,8 @@
             border-bottom: 1px dashed #000;
             text-align: left;
             padding: 4px 0;
+            font-size: 11px;
+            text-transform: uppercase;
         }
 
         .items-table td {
@@ -61,7 +65,6 @@
             text-align: right;
         }
 
-        /* Hide screen elements during print */
         @media print {
             .no-print {
                 display: none;
@@ -94,27 +97,27 @@
 <body>
 
     <div class="print-btn-container no-print">
-        <button class="print-btn" onclick="window.print()">🖨️ Print Bar KOT</button>
+        <button class="print-btn" onclick="window.print()">{{ $kotDict['print_btn_bar'] ?? '🖨️ Print Bar KOT' }}</button>
     </div>
 
     <div class="header">
-        <h2>BAR KOT</h2>
-        <p style="margin-top: 5px; font-weight: bold;">*** DRINKS & DESSERTS ***</p>
+        <h2>{{ $kotDict['bar_kot'] ?? 'BAR KOT' }}</h2>
+        <p style="margin-top: 5px; font-weight: bold; font-size: 11px;">{{ $kotDict['drinks_only'] ?? '*** DRINKS & DESSERTS ONLY ***' }}</p>
     </div>
 
     <div class="divider"></div>
 
     <table class="info-table">
         <tr>
-            <td><strong>Order ID:</strong></td>
+            <td><strong>{{ $kotDict['order_id'] ?? 'Order ID' }}:</strong></td>
             <td class="text-right">#{{ $order->id }}</td>
         </tr>
         <tr>
-            <td><strong>Table:</strong></td>
+            <td><strong>{{ $kotDict['table'] ?? 'Table' }}:</strong></td>
             <td class="text-right" style="font-size: 16px; font-weight: 800;">{{ $tableName }}</td>
         </tr>
         <tr>
-            <td><strong>Time:</strong></td>
+            <td><strong>{{ $kotDict['time'] ?? 'Time' }}:</strong></td>
             <td class="text-right">{{ $order->created_at->format('H:i') }}</td>
         </tr>
     </table>
@@ -124,8 +127,8 @@
     <table class="items-table">
         <thead>
             <tr>
-                <th>Item Name</th>
-                <th class="text-right">Qty</th>
+                <th>{{ $kotDict['item_name'] ?? 'Item Name' }}</th>
+                <th class="text-right">{{ $kotDict['qty'] ?? 'Qty' }}</th>
             </tr>
         </thead>
         <tbody>
@@ -136,7 +139,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="2" style="text-align: center; font-weight: normal; font-size: 11px;">No drink/dessert items for Bar</td>
+                <td colspan="2" style="text-align: center; font-weight: normal; font-size: 11px;">{{ $kotDict['no_items'] ?? 'No drinks/dessert items' }}</td>
             </tr>
             @endforelse
         </tbody>
@@ -144,8 +147,16 @@
 
     <div class="divider"></div>
 
-    <div class="header" style="margin-top: 15px;">
-        <p style="font-size: 9px; opacity: 0.7;">DineFlow AI POS - Bar Copy</p>
+    @if($order->special_instructions)
+    <div style="border: 1px solid #000; padding: 6px; margin-top: 8px;">
+        <strong style="font-size: 11px;">{{ $kotDict['instructions'] ?? 'INSTRUCTIONS' }}:</strong><br>
+        <span style="font-size: 12px; font-weight: bold;">{{ $order->special_instructions }}</span>
+    </div>
+    <div class="divider"></div>
+    @endif
+
+    <div class="header" style="margin-top: 12px;">
+        <p style="font-size: 9px; opacity: 0.7;">DineFlow AI POS - Bar Slip</p>
     </div>
 
     <script>

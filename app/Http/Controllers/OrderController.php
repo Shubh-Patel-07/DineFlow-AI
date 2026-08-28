@@ -156,6 +156,9 @@ class OrderController extends Controller
                 $order->total_amount = $newTotal;
                 $order->save();
             } else {
+                // Resolve current authoritative restaurant language for KOT snapshot
+                $kotLang = \App\Services\KotLanguageService::getRestaurantLanguage($restaurantId);
+
                 // Create new order
                 $order = Order::create([
                     'restaurant_id' => $restaurantId,
@@ -165,6 +168,7 @@ class OrderController extends Controller
                     'payment_status' => 'pending',
                     'payment_method' => $request->payment_method ?? 'cash',
                     'special_instructions' => $request->special_instructions ?? '',
+                    'kot_language' => $kotLang,
                 ]);
 
                 foreach ($itemsData as $itemData) {
@@ -329,7 +333,10 @@ class OrderController extends Controller
             return in_array($cat, ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup', 'main course', 'food']);
         });
 
-        return view('pos.kot_kitchen', compact('order', 'kitchenItems', 'tableName'));
+        $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);
+        $kotDict = \App\Services\KotLanguageService::getKotDictionary($lang);
+
+        return view('pos.kot_kitchen', compact('order', 'kitchenItems', 'tableName', 'lang', 'kotDict'));
     }
 
     public function showBarKOT($id)
@@ -352,7 +359,10 @@ class OrderController extends Controller
             return in_array($cat, ['beverages', 'desserts', 'drinks', 'dessert']);
         });
 
-        return view('pos.kot_bar', compact('order', 'barItems', 'tableName'));
+        $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);
+        $kotDict = \App\Services\KotLanguageService::getKotDictionary($lang);
+
+        return view('pos.kot_bar', compact('order', 'barItems', 'tableName', 'lang', 'kotDict'));
     }
 
     public function showCombinedKOT($id)
@@ -370,6 +380,9 @@ class OrderController extends Controller
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
-        return view('pos.kot_combined', compact('order', 'tableName'));
+        $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);
+        $kotDict = \App\Services\KotLanguageService::getKotDictionary($lang);
+
+        return view('pos.kot_combined', compact('order', 'tableName', 'lang', 'kotDict'));
     }
 }

@@ -842,8 +842,8 @@ window.saveProfileAndTaxSettings = function() {
     settings: {
       currency: localStorage.getItem('dineflow_currency') || 'INR',
       custom_currency_code: localStorage.getItem('dineflow_custom_currency_code') || '',
-      custom_currency_symbol: localStorage.getItem('dineflow_custom_currency_symbol') || '',
-      soundbox_lang: localStorage.getItem('dineflow_soundbox_lang') || 'gu',
+      language: localStorage.getItem('dineflow_restaurant_lang') || localStorage.getItem('dineflow_soundbox_lang') || 'gu',
+      soundbox_lang: localStorage.getItem('dineflow_restaurant_lang') || localStorage.getItem('dineflow_soundbox_lang') || 'gu',
       printer_type: localStorage.getItem('dineflow_printer_type') || 'SYSTEM_DEFAULT',
       printer_name: localStorage.getItem('dineflow_printer_name') || '',
       auto_print_kot: localStorage.getItem('dineflow_auto_print_kot') === 'true',

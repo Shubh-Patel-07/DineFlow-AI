@@ -304,8 +304,22 @@ Route::get('/menu', function () {
 });
 
 Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
-    $restaurantId = $request->query('restaurantId', '1');
-    $tableId = $request->query('tableId', '1');
+    $tableParam = $request->query('tableId') ?? $request->query('table_id') ?? $request->query('table');
+    $restaurantParam = $request->query('restaurantId') ?? $request->query('restaurant_id') ?? $request->query('restaurant');
+
+    $table = null;
+    if ($tableParam) {
+        $table = \App\Models\Table::find($tableParam);
+    }
+
+    if ($table && !$restaurantParam) {
+        $restaurantId = $table->restaurant_id;
+        $tableId = $table->id;
+    } else {
+        $restaurantId = $restaurantParam ?: ($table ? $table->restaurant_id : '1');
+        $tableId = $table ? $table->id : ($tableParam ?: '1');
+    }
+
     $restaurant = \App\Models\Restaurant::find($restaurantId);
     if ($restaurant && !$restaurant->isOperational()) {
         return response('<h2>This restaurant is temporarily closed.</h2><p>Please check back later.</p>', 403)->header('Content-Type', 'text/html');

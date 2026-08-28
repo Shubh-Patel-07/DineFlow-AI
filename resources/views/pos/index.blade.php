@@ -3100,7 +3100,7 @@
     let cleanTableNum = String(tableNumber).replace(/table/gi, '').replace(/#/g, '').replace(/T-/gi, '').trim();
     if (!cleanTableNum || cleanTableNum === 'Walk-In') cleanTableNum = '1';
 
-    const lang = localStorage.getItem('dineflow_soundbox_lang') || 'gu';
+    const lang = localStorage.getItem('dineflow_restaurant_lang') || localStorage.getItem('dineflow_soundbox_lang') || 'gu';
     let msgText = "";
     let langTag = "gu-IN";
 
@@ -5071,7 +5071,25 @@
     }
   }
 
+  async function syncPosRestaurantSettings() {
+    try {
+      const res = await fetch(`/api/restaurants/${RESTAURANT_ID}/settings`);
+      const data = await res.json();
+      if (data.success && data.data) {
+        const s = data.data;
+        const cfg = s.settings || {};
+        if (cfg.language) localStorage.setItem('dineflow_restaurant_lang', cfg.language);
+        if (cfg.soundbox_lang) localStorage.setItem('dineflow_soundbox_lang', cfg.soundbox_lang);
+        if (cfg.printer_type) localStorage.setItem('dineflow_printer_type', cfg.printer_type);
+        if (s.name) localStorage.setItem('dineflow_restaurant_name', s.name);
+      }
+    } catch(e) {
+      console.log('POS settings sync fallback:', e);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    syncPosRestaurantSettings();
     fetchAndRenderPosCustomers();
     fetchAndRenderPosWaiters();
   });
