@@ -1,0 +1,13 @@
+[Unit]
+Description=Tendorabuy Laravel Queue Worker
+After=network.target mysql.service
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=5s
+ExecStart=/usr/bin/php /var/www/tendorabuy/artisan queue:work database --sleep=3 --tries=3 --max-time=3600
+
+[Install]
+WantedBy=multi-user.target
