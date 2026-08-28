@@ -32,10 +32,54 @@ Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.sw
 // Guided Onboarding Wizard
 Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index')->middleware(['auth', 'tenant']);
 Route::post('/api/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete')->middleware(['auth', 'tenant']);
-Route::get('/api/plan/usage', [OnboardingController::class, 'getUsageStats'])->name('plan.usage')->middleware(['auth', 'tenant']);
+Route::get('/api/plan/usage', [OnboardingController::class, 'getUsageStats'])->name('plan.usage')->middleware(['auth', 'tenant', 'role:admin,manager,owner']);
+
+// Helper to serve Admin HTML files with canonical source prioritization, CSRF & RBAC Role Injection
+$serveAdminPage = function ($filename) {
+    $user = auth()->user();
+    $userRole = $user ? strtolower(trim($user->role ?? $user->username ?? 'admin')) : strtolower(trim(session('active_role') ?? 'admin'));
+    if ($userRole === 'customer') {
+        $restId = $user ? ($user->restaurant_id ?: 1) : 1;
+        return redirect("/customer/menu?restaurantId={$restId}&tableId=1")->with('error', 'Access restricted to customer digital menu.');
+    }
+
+    $baseName = basename($filename);
+    $candidates = [
+        base_path("frontend/admin/{$baseName}"),
+        public_path("frontend/admin/{$baseName}"),
+        public_path("admin/{$baseName}"),
+        public_path($filename),
+    ];
+
+    $targetPath = null;
+    foreach ($candidates as $candidate) {
+        if (file_exists($candidate)) {
+            $targetPath = $candidate;
+            break;
+        }
+    }
+
+    if (!$targetPath) {
+        return response("File not found: {$baseName}", 404);
+    }
+
+    $content = file_get_contents($targetPath);
+    $userId = $user ? $user->id : null;
+    $userName = $user ? $user->name : 'User';
+    $userRestaurantId = $user ? ($user->restaurant_id ?? null) : null;
+    $csrfToken = csrf_token();
+
+    // Inject CSRF token meta if empty
+    $content = preg_replace('/<meta\s+name=["\']csrf-token["\']\s+content=["\'][^"\']*["\']\s*\/?>/i', '<meta name="csrf-token" content="' . $csrfToken . '">', $content);
+    $content = str_replace('<input type="hidden" name="_token" value="">', '<input type="hidden" name="_token" value="' . $csrfToken . '">', $content);
+
+    $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n  window.CSRF_TOKEN = " . json_encode($csrfToken) . ";\n</script>";
+    $content = str_replace('<head>', "<head>\n  {$script}", $content);
+    return response($content)->header('Content-Type', 'text/html; charset=UTF-8');
+};
 
 // Protected UI Pages
-Route::middleware(['auth', 'tenant'])->group(function () {
+Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
     Route::get('/dashboard', function () {
         $user = auth()->user();
         $restaurantId = $user->restaurant_id;
@@ -109,11 +153,11 @@ Route::middleware(['auth', 'tenant'])->group(function () {
             'categorySalesData' => array_values($categorySales),
             'usageStats' => \App\Services\PlanLimitService::getUsageStats($restaurantId),
         ]);
-    })->name('dashboard');
+    })->name('dashboard')->middleware('role:admin,manager,owner');
     
     Route::get('/pos-terminal', function () {
         return view('pos.terminal');
-    })->name('pos.terminal');
+    })->name('pos.terminal')->middleware('role:admin,manager,cashier,waiter');
 
     Route::get('/pos', function () {
         $user = auth()->user();
@@ -123,7 +167,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         }
         $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
         return view('pos.index', compact('todayOrdersCount', 'restaurantId'));
-    })->name('pos.index');
+    })->name('pos.index')->middleware('role:admin,manager,cashier,waiter');
 
     Route::get('/kitchen', function () {
         $user = auth()->user();
@@ -132,12 +176,12 @@ Route::middleware(['auth', 'tenant'])->group(function () {
             abort(403, 'No restaurant assigned to this account.');
         }
         return view('pos.kitchen', compact('restaurantId'));
-    })->name('pos.kitchen');
-    Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
-    Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4');
-    Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen');
-    Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar');
-    Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined');
+    })->name('pos.kitchen')->middleware('role:admin,manager,kitchen,chef');
+    Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt')->middleware('role:admin,manager,cashier,waiter');
+    Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4')->middleware('role:admin,manager,cashier,waiter');
+    Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen')->middleware('role:admin,manager,cashier,kitchen,waiter');
+    Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar')->middleware('role:admin,manager,cashier,kitchen,waiter');
+    Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined')->middleware('role:admin,manager,cashier,kitchen,waiter');
 
     Route::get('/z-report', function (Illuminate\Http\Request $request) {
         $user = auth()->user();
@@ -189,93 +233,58 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
     })->name('pos.z-report');
 
-    // Helper to serve Admin HTML files with canonical source prioritization, CSRF & RBAC Role Injection
-    $serveAdminPage = function ($filename) {
-        $baseName = basename($filename);
-        $candidates = [
-            base_path("frontend/admin/{$baseName}"),
-            public_path("frontend/admin/{$baseName}"),
-            public_path("admin/{$baseName}"),
-            public_path($filename),
-        ];
+    // Admin Page Routes (With RBAC Role Injection & Role Protection)
+    Route::middleware('role:admin,manager,cashier,kitchen,waiter')->group(function () use ($serveAdminPage) {
+        Route::get('/frontend/admin/menu-manager.html', fn() => $serveAdminPage('menu-manager.html'));
+        Route::get('/admin/menu-manager', fn() => $serveAdminPage('menu-manager.html'));
+        Route::get('/admin/menu', fn() => $serveAdminPage('menu-manager.html'));
 
-        $targetPath = null;
-        foreach ($candidates as $candidate) {
-            if (file_exists($candidate)) {
-                $targetPath = $candidate;
-                break;
-            }
-        }
+        Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('inventory.html'));
+        Route::get('/admin/inventory', fn() => $serveAdminPage('inventory.html'));
 
-        if (!$targetPath) {
-            return response("File not found: {$baseName}", 404);
-        }
+        Route::get('/frontend/admin/coupons.html', fn() => $serveAdminPage('coupons.html'));
+        Route::get('/admin/coupons', fn() => $serveAdminPage('coupons.html'));
 
-        $content = file_get_contents($targetPath);
-        $user = auth()->user();
-        $userId = $user ? $user->id : null;
-        $userName = $user ? $user->name : 'User';
-        $userRole = $user ? ($user->role ?? $user->username ?? 'admin') : (session('active_role') ?? 'admin');
-        $userRestaurantId = $user ? ($user->restaurant_id ?? null) : null;
-        $csrfToken = csrf_token();
+        Route::get('/frontend/admin/customers.html', fn() => $serveAdminPage('customers.html'));
+        Route::get('/admin/customers', fn() => $serveAdminPage('customers.html'));
 
-        // Inject CSRF token meta if empty
-        $content = preg_replace('/<meta\s+name=["\']csrf-token["\']\s+content=["\'][^"\']*["\']\s*\/?>/i', '<meta name="csrf-token" content="' . $csrfToken . '">', $content);
-        $content = str_replace('<input type="hidden" name="_token" value="">', '<input type="hidden" name="_token" value="' . $csrfToken . '">', $content);
+        Route::get('/frontend/admin/tables.html', fn() => $serveAdminPage('tables.html'));
+        Route::get('/admin/tables', fn() => $serveAdminPage('tables.html'));
 
-        $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n  window.CSRF_TOKEN = " . json_encode($csrfToken) . ";\n</script>";
-        $content = str_replace('<head>', "<head>\n  {$script}", $content);
-        return response($content)->header('Content-Type', 'text/html; charset=UTF-8');
-    };
+        Route::get('/frontend/admin/feedback.html', fn() => $serveAdminPage('feedback.html'));
+        Route::get('/admin/feedback', fn() => $serveAdminPage('feedback.html'));
 
-    // Admin Page Routes (With RBAC Role Injection)
-    Route::get('/frontend/admin/menu-manager.html', fn() => $serveAdminPage('menu-manager.html'));
-    Route::get('/admin/menu-manager', fn() => $serveAdminPage('menu-manager.html'));
-    Route::get('/admin/menu', fn() => $serveAdminPage('menu-manager.html'));
+        Route::get('/frontend/admin/staff.html', fn() => $serveAdminPage('staff.html'))->middleware('role:admin,manager');
+        Route::get('/admin/staff', fn() => $serveAdminPage('staff.html'))->middleware('role:admin,manager');
 
-    Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('inventory.html'));
-    Route::get('/admin/inventory', fn() => $serveAdminPage('inventory.html'));
+        Route::get('/frontend/admin/settings.html', fn() => $serveAdminPage('settings.html'))->middleware('role:admin,manager');
+        Route::get('/admin/settings', fn() => $serveAdminPage('settings.html'))->middleware('role:admin,manager');
 
-    Route::get('/frontend/admin/coupons.html', fn() => $serveAdminPage('coupons.html'));
-    Route::get('/admin/coupons', fn() => $serveAdminPage('coupons.html'));
+        Route::get('/frontend/admin/expenses.html', fn() => $serveAdminPage('expenses.html'))->middleware('role:admin,manager');
+        Route::get('/admin/expenses', fn() => $serveAdminPage('expenses.html'))->middleware('role:admin,manager');
 
-    Route::get('/frontend/admin/customers.html', fn() => $serveAdminPage('customers.html'));
-    Route::get('/admin/customers', fn() => $serveAdminPage('customers.html'));
+        Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('qr-generator.html'))->middleware('role:admin,manager');
+        Route::get('/admin/qr-generator', fn() => $serveAdminPage('qr-generator.html'))->middleware('role:admin,manager');
 
-    Route::get('/frontend/admin/tables.html', fn() => $serveAdminPage('tables.html'));
-    Route::get('/admin/tables', fn() => $serveAdminPage('tables.html'));
+        Route::get('/frontend/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
+        Route::get('/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
+        Route::get('/admin/sales-report', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
+        Route::get('/admin/sales', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
+        Route::get('/admin/reports', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
 
-    Route::get('/frontend/admin/feedback.html', fn() => $serveAdminPage('feedback.html'));
-    Route::get('/admin/feedback', fn() => $serveAdminPage('feedback.html'));
-
-    Route::get('/frontend/admin/staff.html', fn() => $serveAdminPage('staff.html'));
-    Route::get('/admin/staff', fn() => $serveAdminPage('staff.html'));
-
-    Route::get('/frontend/admin/settings.html', fn() => $serveAdminPage('settings.html'));
-    Route::get('/admin/settings', fn() => $serveAdminPage('settings.html'));
-
-    Route::get('/frontend/admin/expenses.html', fn() => $serveAdminPage('expenses.html'));
-    Route::get('/admin/expenses', fn() => $serveAdminPage('expenses.html'));
-
-    Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('qr-generator.html'));
-    Route::get('/admin/qr-generator', fn() => $serveAdminPage('qr-generator.html'));
-
-    Route::get('/frontend/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
-    Route::get('/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
-    Route::get('/admin/sales-report', fn() => $serveAdminPage('sales-report.html'));
-    Route::get('/admin/sales', fn() => $serveAdminPage('sales-report.html'));
-    Route::get('/admin/reports', fn() => $serveAdminPage('sales-report.html'));
-
-    Route::get('/frontend/admin/admin-dashboard.html', fn() => redirect('/dashboard'));
-    Route::get('/admin/admin-dashboard', fn() => redirect('/dashboard'));
+        Route::get('/frontend/admin/admin-dashboard.html', fn() => redirect('/dashboard'));
+        Route::get('/admin/admin-dashboard', fn() => redirect('/dashboard'));
+    });
 });
 
-// Simple shortcuts for testing/presentations
-Route::get('/sales-report', fn() => $serveAdminPage('sales-report.html'));
-Route::get('/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
-Route::get('/reports', fn() => $serveAdminPage('sales-report.html'));
-Route::get('/sales', fn() => $serveAdminPage('sales-report.html'));
-Route::get('/report', fn() => $serveAdminPage('sales-report.html'));
+// Protected shortcuts with auth, tenant and admin role
+Route::middleware(['auth', 'tenant', 'role:admin,manager'])->group(function () use ($serveAdminPage) {
+    Route::get('/sales-report', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/sales-report.html', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/reports', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/sales', fn() => $serveAdminPage('sales-report.html'));
+    Route::get('/report', fn() => $serveAdminPage('sales-report.html'));
+});
 
 Route::get('/menu', function () {
     return redirect('/frontend/customer/menu.html?restaurantId=1&tableId=1');

@@ -45,11 +45,19 @@ class AuthController extends Controller
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 
-        if (strtolower(trim($user->role ?? '')) === 'superadmin') {
+        $role = strtolower(trim($user->role ?? $user->username ?? ''));
+        if ($role === 'superadmin') {
             return redirect('/superadmin');
+        } elseif ($role === 'customer') {
+            $restId = $user->restaurant_id ?: 1;
+            return redirect("/customer/menu?restaurantId={$restId}&tableId=1");
+        } elseif ($role === 'kitchen' || $role === 'chef') {
+            return redirect('/kitchen');
+        } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
+            return redirect('/dashboard');
         }
 
-        return redirect()->route('pos.index')->with('success', 'Welcome to DineFlow AI POS!');
+        return redirect('/pos')->with('success', 'Welcome to DineFlow AI POS!');
     }
 
     /**
@@ -115,7 +123,19 @@ class AuthController extends Controller
         Auth::login($user, remember: true);
         $request->session()->regenerate();
         
-        return redirect()->intended(route('pos.index'))->with('success', 'Login successful!');
+        $role = strtolower(trim($user->role ?? $user->username ?? ''));
+        if ($role === 'superadmin') {
+            return redirect('/superadmin');
+        } elseif ($role === 'customer') {
+            $restId = $user->restaurant_id ?: 1;
+            return redirect("/customer/menu?restaurantId={$restId}&tableId=1");
+        } elseif ($role === 'kitchen' || $role === 'chef') {
+            return redirect('/kitchen');
+        } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
+            return redirect('/dashboard');
+        }
+
+        return redirect('/pos')->with('success', 'Login successful!');
     }
 
 
