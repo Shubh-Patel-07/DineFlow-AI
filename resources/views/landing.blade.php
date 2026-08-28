@@ -788,6 +788,7 @@
             </a>
 
             <ul class="nav-links">
+                <li><a href="/demo" style="color:#A5B4FC; font-weight:700;"><i class="fa-solid fa-play" style="font-size:11px; margin-right:4px; color:#6366F1;"></i> Live Demo</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#workflow">Online + Offline</a></li>
@@ -862,8 +863,11 @@
                     <span>START FREE</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <a href="{{ route('login') }}" class="btn-ghost" style="padding: 14px 28px; font-size: 15px; border:1px solid var(--border);">
-                    <i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i> LOGIN
+                <a href="/demo" class="btn-ghost" style="padding: 14px 28px; font-size: 15px; border:1px solid #6366F1; color:#A5B4FC; background:rgba(99,102,241,0.1);">
+                    <i class="fa-solid fa-play" style="margin-right:8px; color:#818CF8;"></i> Try Live Demo
+                </a>
+                <a href="{{ route('login') }}" class="btn-ghost" style="padding: 14px 24px; font-size: 15px; border:1px solid var(--border);">
+                    <i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i> Login
                 </a>
             </div>
 
