@@ -94,12 +94,13 @@ class RegisterController extends Controller
             ]);
 
             // 4. Auto Login & Session Setup
-            Auth::login($user, remember: true);
-            session([
-                'last_username' => $user->username,
-                'active_role'   => 'admin'
-            ]);
-            $request->session()->regenerate();
+            if ($request->hasSession()) {
+                session([
+                    'last_username' => $user->username,
+                    'active_role'   => 'admin'
+                ]);
+                $request->session()->regenerate();
+            }
 
             if ($request->expectsJson()) {
                 return response()->json([

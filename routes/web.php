@@ -160,14 +160,17 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
     })->name('dashboard')->middleware('role:admin,manager,owner');
     
     Route::get('/pos-terminal', function () {
-        return view('pos.terminal');
-    })->name('pos.terminal')->middleware('role:admin,manager,cashier,waiter');
+        return redirect('/pos');
+    })->name('pos.terminal');
 
     Route::get('/pos', function () {
         $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
         $restaurantId = $user->restaurant_id;
         if (!$restaurantId) {
-            abort(403, 'No restaurant assigned to this account.');
+            return redirect()->route('onboarding.index');
         }
         $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
         return view('pos.index', compact('todayOrdersCount', 'restaurantId'));
@@ -175,9 +178,12 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
 
     Route::get('/kitchen', function () {
         $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
         $restaurantId = $user->restaurant_id;
         if (!$restaurantId) {
-            abort(403, 'No restaurant assigned to this account.');
+            return redirect()->route('onboarding.index');
         }
         return view('pos.kitchen', compact('restaurantId'));
     })->name('pos.kitchen')->middleware('role:admin,manager,kitchen,chef');

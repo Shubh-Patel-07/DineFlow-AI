@@ -30,8 +30,10 @@ class AuthController extends Controller
             'password.required' => 'Password is required',
         ]);
 
-        // Find user by username
-        $user = User::where('username', $request->username)->first();
+        // Find user by username or email
+        $user = User::where('username', $request->username)
+            ->orWhere('email', $request->username)
+            ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return back()
@@ -40,10 +42,12 @@ class AuthController extends Controller
         }
 
         // Store username and role in session for RBAC
-        session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
+        if ($request->hasSession()) {
+            session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
+            $request->session()->regenerate();
+        }
         
         Auth::login($user, $request->boolean('remember'));
-        $request->session()->regenerate();
 
         $role = strtolower(trim($user->role ?? $user->username ?? ''));
         if ($role === 'superadmin') {
@@ -119,9 +123,11 @@ class AuthController extends Controller
                 ->withErrors(['numeric_pin' => 'Invalid PIN.']);
         }
 
-        session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
+        if ($request->hasSession()) {
+            session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
+            $request->session()->regenerate();
+        }
         Auth::login($user, remember: true);
-        $request->session()->regenerate();
         
         $role = strtolower(trim($user->role ?? $user->username ?? ''));
         if ($role === 'superadmin') {
