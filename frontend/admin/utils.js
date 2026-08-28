@@ -559,26 +559,31 @@ const DEFAULT_ROLE_PERMISSIONS = {
 };
 
 window.DineFlowRBAC = {
+  getStorageKey(key) {
+    const rId = window.AUTH_USER_RESTAURANT_ID || 'default';
+    return `dineflow_${key}_${rId}`;
+  },
+
   getPermissions() {
     try {
-      const stored = localStorage.getItem('dineflow_role_permissions');
+      const stored = localStorage.getItem(this.getStorageKey('role_permissions'));
       if (stored) return JSON.parse(stored);
     } catch(e) {}
     return JSON.parse(JSON.stringify(DEFAULT_ROLE_PERMISSIONS));
   },
 
   savePermissions(perms) {
-    localStorage.setItem('dineflow_role_permissions', JSON.stringify(perms));
+    localStorage.setItem(this.getStorageKey('role_permissions'), JSON.stringify(perms));
   },
 
   getActiveRole() {
     if (typeof window !== 'undefined' && window.AUTH_USER_ROLE && window.AUTH_USER_ROLE !== '' && window.AUTH_USER_ROLE !== 'undefined') {
       const roleLower = String(window.AUTH_USER_ROLE).toLowerCase().trim();
-      localStorage.setItem('dineflow_active_role', roleLower);
+      localStorage.setItem(this.getStorageKey('active_role'), roleLower);
       return roleLower;
     }
     try {
-      const stored = localStorage.getItem('dineflow_active_role');
+      const stored = localStorage.getItem(this.getStorageKey('active_role'));
       if (stored) return stored.toLowerCase();
     } catch(e) {}
     return 'admin';
@@ -586,7 +591,7 @@ window.DineFlowRBAC = {
 
   setActiveRole(role) {
     window.AUTH_USER_ROLE = role;
-    localStorage.setItem('dineflow_active_role', role);
+    localStorage.setItem(this.getStorageKey('active_role'), role);
     location.reload();
   },
 

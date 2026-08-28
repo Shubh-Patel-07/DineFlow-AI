@@ -1,32 +1,164 @@
 /**
- * STAFF & ROLES PERMISSION MANAGER
+ * DineFlow AI — Staff & Access Roles Controller v2.1.0
+ * 100% Dynamic Database Scoped & Zero-Start Tenant Architecture.
  */
 
+const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || new URLSearchParams(window.location.search).get('restaurantId') || '1';
+
 const MODULE_DEFINITIONS = [
-  { key: 'pos',       name: 'POS Terminal',       icon: 'fa-cash-register' },
-  { key: 'menu',      name: 'Menu Items',         icon: 'fa-utensils' },
-  { key: 'reports',   name: 'Sales Reports',      icon: 'fa-chart-line' },
-  { key: 'expenses',  name: 'Expenses & Overhead',icon: 'fa-file-invoice-dollar' },
-  { key: 'inventory', name: 'Inventory',          icon: 'fa-boxes-stacked' },
-  { key: 'coupons',   name: 'Offers & Discounts', icon: 'fa-gift' },
-  { key: 'customers', name: 'Customers',          icon: 'fa-users' },
-  { key: 'tables',    name: 'Table Manager',      icon: 'fa-table-cells-large' },
-  { key: 'staff',     name: 'Staff & Roles',      icon: 'fa-user-shield' },
-  { key: 'settings',  name: 'System Settings',    icon: 'fa-gear' },
-  { key: 'feedback',  name: 'Reviews & Feedback', icon: 'fa-star' }
+  { key: 'pos',       name: 'POS Terminal',        icon: 'fa-cash-register' },
+  { key: 'menu',      name: 'Menu Items',          icon: 'fa-utensils' },
+  { key: 'reports',   name: 'Sales Reports',       icon: 'fa-chart-line' },
+  { key: 'expenses',  name: 'Expenses & Overhead', icon: 'fa-file-invoice-dollar' },
+  { key: 'inventory', name: 'Inventory Stock',     icon: 'fa-boxes-stacked' },
+  { key: 'coupons',   name: 'Offers & Deals',      icon: 'fa-gift' },
+  { key: 'customers', name: 'Customers & CRM',     icon: 'fa-users' },
+  { key: 'tables',    name: 'Table Manager',       icon: 'fa-table-cells-large' },
+  { key: 'staff',     name: 'Staff & Roles',       icon: 'fa-user-shield' },
+  { key: 'settings',  name: 'System Settings',     icon: 'fa-gear' },
+  { key: 'feedback',  name: 'Reviews & Feedback',  icon: 'fa-star' }
 ];
+
+let allStaffList = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   renderActiveRoleSwitcherBar();
-  renderRolePermissionToggles();
-  loadSavedStaffMembers();
+  loadStaffMembers();
 });
 
+function getCsrfToken() {
+  return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+
+function showToast(msg, type = 'info') {
+  if (typeof Toast !== 'undefined') {
+    if (type === 'success' && Toast.success) Toast.success(msg);
+    else if (type === 'error' && Toast.error) Toast.error(msg);
+    else if (Toast.show) Toast.show(msg, type);
+  } else {
+    alert(msg);
+  }
+}
+
+async function loadStaffMembers() {
+  const grid = document.getElementById('staffGrid');
+  const emptyState = document.getElementById('staffEmptyState');
+
+  try {
+    const res = await fetch(`/api/staff/restaurant/${RESTAURANT_ID}`);
+    const result = await res.json();
+
+    if (result.success && Array.isArray(result.data)) {
+      allStaffList = result.data;
+    } else {
+      allStaffList = [];
+    }
+  } catch (err) {
+    console.error('Error fetching staff list from server:', err);
+    allStaffList = [];
+  }
+
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  if (allStaffList.length === 0) {
+    if (emptyState) emptyState.style.display = 'block';
+    return;
+  }
+
+  if (emptyState) emptyState.style.display = 'none';
+  allStaffList.forEach(staff => {
+    grid.appendChild(createStaffCardElement(staff));
+  });
+
+  renderRolePermissionToggles();
+}
+
+function createStaffCardElement(staff) {
+  const role = String(staff.role || 'staff').toLowerCase();
+  const roleMeta = {
+    admin:   { title: 'System Administrator', badge: 'Full Control', gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', icon: 'fa-crown', desc: 'Full access to billing, catalog, staff, financial reports, and settings.' },
+    owner:   { title: 'Restaurant Owner', badge: 'Owner Access', gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', icon: 'fa-crown', desc: 'Full administrative ownership and restaurant control.' },
+    manager: { title: 'Store Manager', badge: 'Managerial Access', gradient: 'linear-gradient(135deg, #10B981, #059669)', icon: 'fa-user-tie', desc: 'Access to menu catalog, stock inventory, discount approvals, and POS.' },
+    cashier: { title: 'Head Cashier', badge: 'POS & Billing', gradient: 'linear-gradient(135deg, #F59E0B, #D97706)', icon: 'fa-calculator', desc: 'Access to live billing, customer payments, receipt printing, and floor table status.' },
+    kitchen: { title: 'Kitchen Master Chef', badge: 'KOT & Kitchen Display', gradient: 'linear-gradient(135deg, #EF4444, #DC2626)', icon: 'fa-fire-burner', desc: 'Access to live Kitchen Display System (KDS), KOT tickets, and prep status.' },
+    chef:    { title: 'Kitchen Chef', badge: 'KOT & Kitchen Display', gradient: 'linear-gradient(135deg, #EF4444, #DC2626)', icon: 'fa-fire-burner', desc: 'Access to live Kitchen Display System (KDS), KOT tickets, and prep status.' },
+    waiter:  { title: 'Table Captain / Waiter', badge: 'Floor & Table Orders', gradient: 'linear-gradient(135deg, #06B6D4, #0891B2)', icon: 'fa-bell', desc: 'Access to table ordering, waiter call alerts, and table occupancy management.' },
+  }[role] || { title: 'Staff Member', badge: staff.role, gradient: 'linear-gradient(135deg, #64748B, #475569)', icon: 'fa-user', desc: 'Standard staff access credentials.' };
+
+  const isDeactivated = staff.is_active === false;
+  const isPinConfigured = staff.has_pin !== false;
+
+  const card = document.createElement('div');
+  card.className = `staff-card ${isDeactivated ? 'deactivated' : ''}`;
+  card.setAttribute('data-role-card', role);
+  card.setAttribute('data-staff-id', staff.id);
+
+  const contactDetails = [
+    staff.username ? `@${escapeHtml(staff.username)}` : null,
+    staff.phone ? escapeHtml(staff.phone) : null,
+    staff.email && !staff.email.endsWith('@dineflow.local') ? escapeHtml(staff.email) : null
+  ].filter(Boolean).join(' • ');
+
+  card.innerHTML = `
+    <div class="staff-header" style="position:relative;">
+      <div class="staff-avatar" style="background:${roleMeta.gradient};"><i class="fa-solid ${roleMeta.icon}"></i></div>
+      <div style="flex:1; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+          <h3 style="font-family:'Outfit',sans-serif; font-size:16.5px; font-weight:700; color:var(--text-primary); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${escapeHtml(staff.name || 'Staff Member')}
+          </h3>
+          ${isDeactivated ? '<span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:10px; font-weight:800; padding:2px 6px; border-radius:6px; text-transform:uppercase;">Inactive</span>' : ''}
+        </div>
+        <span class="role-badge ${role}">${roleMeta.badge}</span>
+      </div>
+    </div>
+
+    ${contactDetails ? `<div style="font-size:12px; color:var(--text-muted);">${contactDetails}</div>` : ''}
+
+    <div class="pin-status-box">
+      <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">AUTHENTICATION</span>
+      ${isPinConfigured ? `
+        <span class="pin-status-pill configured">
+          <i class="fa-solid fa-circle-check"></i> Quick PIN Set
+        </span>
+      ` : `
+        <span class="pin-status-pill missing">
+          <i class="fa-solid fa-circle-xmark"></i> PIN Not Set
+        </span>
+      `}
+    </div>
+
+    <p style="font-size:12px; color:var(--text-secondary); margin:0; line-height:1.4;">${roleMeta.desc}</p>
+
+    <div class="card-actions">
+      <button class="card-btn" onclick="openEditStaffModal(${staff.id})">
+        <i class="fa-solid fa-pen-to-square"></i> Edit
+      </button>
+      <button class="card-btn" onclick="openResetPinModal(${staff.id}, '${escapeHtml(staff.name)}')">
+        <i class="fa-solid fa-key"></i> Reset PIN
+      </button>
+      <button class="card-btn" onclick="toggleStaffStatus(${staff.id})">
+        <i class="fa-solid ${isDeactivated ? 'fa-toggle-off' : 'fa-toggle-on'}"></i> ${isDeactivated ? 'Activate' : 'Deactivate'}
+      </button>
+      <button class="card-btn danger" onclick="deleteStaffMember(${staff.id}, '${escapeHtml(staff.name)}')">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+  `;
+
+  return card;
+}
+
+/* =========================================================
+ * ADD STAFF MODAL
+ * ========================================================= */
 function openAddStaffModal() {
   const modal = document.getElementById('addStaffModal');
   if (!modal) return;
   modal.style.display = 'flex';
   setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  document.getElementById('addStaffForm')?.reset();
 }
 
 function closeAddStaffModal() {
@@ -36,30 +168,30 @@ function closeAddStaffModal() {
   setTimeout(() => { modal.style.display = 'none'; }, 200);
 }
 
-const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
-
 async function saveNewStaffMember(event) {
   event.preventDefault();
-  const name = document.getElementById('staffNameInput').value.trim();
-  const role = document.getElementById('staffRoleSelect').value;
-  const pin = document.getElementById('staffPinInput').value.trim();
+  const name = document.getElementById('staffNameInput')?.value.trim();
+  const role = document.getElementById('staffRoleSelect')?.value;
+  const pin = document.getElementById('staffPinInput')?.value.trim();
+  const pinConfirm = document.getElementById('staffPinConfirmInput')?.value.trim();
+  const phone = document.getElementById('staffPhoneInput')?.value.trim();
+  const email = document.getElementById('staffEmailInput')?.value.trim();
+  const submitBtn = document.getElementById('saveStaffSubmitBtn');
 
-  if (!name || !pin) {
-    if (typeof Toast !== 'undefined') Toast.error('Please fill in Staff Name and PIN');
+  if (!name) {
+    showToast('Please enter the staff member full name.', 'error');
+    return;
+  }
+  if (!pin || pin.length < 4 || pin.length > 8 || !/^[0-9]+$/.test(pin)) {
+    showToast('Quick PIN must be 4 to 8 numeric digits.', 'error');
+    return;
+  }
+  if (pin !== pinConfirm) {
+    showToast('Quick PIN and Confirm PIN do not match.', 'error');
     return;
   }
 
-  const roleMeta = {
-    admin:   { title: 'System Administrator', badge: 'Full Control', gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', icon: 'fa-crown', desc: 'Full access to financial analytics, inventory, and POS.' },
-    manager: { title: 'Store Manager', badge: 'Managerial Access', gradient: 'linear-gradient(135deg, #10B981, #059669)', icon: 'fa-user-tie', desc: 'Access to menu manager, stock inventory, and Z-Reports.' },
-    cashier: { title: 'Head Cashier', badge: 'POS & Billing', gradient: 'linear-gradient(135deg, #F59E0B, #D97706)', icon: 'fa-calculator', desc: 'Access to real-time billing, thermal receipt printing, and WhatsApp invoice.' },
-    kitchen: { title: 'Kitchen Master Chef', badge: 'KOT & Kitchen Display', gradient: 'linear-gradient(135deg, #EF4444, #DC2626)', icon: 'fa-fire-burner', desc: 'Access to live KDS, KOT tickets, and dish prep status.' },
-    waiter:  { title: 'Table Captain / Waiter', badge: 'Floor & Table Orders', gradient: 'linear-gradient(135deg, #06B6D4, #0891B2)', icon: 'fa-person-walking', desc: 'Access to table ordering, waiter call response, and status updates.' }
-  }[role] || { title: name, badge: role, gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', icon: 'fa-user', desc: 'Custom staff access credentials.' };
-
-  const newStaff = { id: Date.now(), name, role, pin, meta: roleMeta };
-
-  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving...'; }
 
   try {
     const res = await fetch('/api/staff', {
@@ -67,137 +199,207 @@ async function saveNewStaffMember(event) {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-CSRF-TOKEN': csrfToken
+        'X-CSRF-TOKEN': getCsrfToken()
       },
       body: JSON.stringify({
         restaurant_id: RESTAURANT_ID,
         name: name,
         role: role,
-        numeric_pin: pin
+        numeric_pin: pin,
+        phone: phone || null,
+        email: email || null
       })
     });
+
     const data = await res.json();
-    if (data.success && data.data) {
-      newStaff.id = data.data.id;
-      if (typeof Toast !== 'undefined') {
-        Toast.success(`New Staff Member "${name}" added successfully! PIN: ${pin}`);
-      } else {
-        alert(`New Staff Member "${name}" added successfully! Quick PIN: ${pin}`);
-      }
+    if (data.success) {
+      showToast(data.message || `Staff member "${name}" added successfully!`, 'success');
+      closeAddStaffModal();
+      loadStaffMembers();
     } else {
-      if (typeof Toast !== 'undefined') {
-        Toast.error(data.message || 'Failed to create staff member');
-      } else {
-        alert(data.message || 'Failed to create staff member');
-      }
-      return;
+      showToast(data.message || 'Failed to create staff member.', 'error');
     }
   } catch (err) {
-    console.log('Saved staff offline fallback:', err);
-    if (typeof Toast !== 'undefined') {
-      Toast.success(`Staff Member "${name}" saved locally! PIN: ${pin}`);
-    }
+    console.error('Error creating staff member:', err);
+    showToast('Network error while creating staff member.', 'error');
+  } finally {
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save Staff Member'; }
   }
-  
-  const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]');
-  savedStaff.push(newStaff);
-  localStorage.setItem('dineflow_staff_members', JSON.stringify(savedStaff));
-
-  appendStaffCardToGrid(newStaff);
-  closeAddStaffModal();
-  document.getElementById('addStaffForm').reset();
 }
 
-function appendStaffCardToGrid(staff) {
-  const grid = document.getElementById('staffGrid');
-  if (!grid) return;
+/* =========================================================
+ * EDIT STAFF MODAL
+ * ========================================================= */
+function openEditStaffModal(staffId) {
+  const staff = allStaffList.find(s => String(s.id) === String(staffId));
+  if (!staff) return;
 
-  const roleMeta = staff.meta || {
-    admin:   { title: 'System Administrator', badge: 'Full Control', gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', icon: 'fa-crown', desc: 'Full access to financial analytics, inventory, and POS.' },
-    manager: { title: 'Store Manager', badge: 'Managerial Access', gradient: 'linear-gradient(135deg, #10B981, #059669)', icon: 'fa-user-tie', desc: 'Access to menu manager, stock inventory, and Z-Reports.' },
-    cashier: { title: 'Head Cashier', badge: 'POS & Billing', gradient: 'linear-gradient(135deg, #F59E0B, #D97706)', icon: 'fa-calculator', desc: 'Access to real-time billing, thermal receipt printing, and WhatsApp invoice.' },
-    kitchen: { title: 'Kitchen Master Chef', badge: 'KOT & Kitchen Display', gradient: 'linear-gradient(135deg, #EF4444, #DC2626)', icon: 'fa-fire-burner', desc: 'Access to live KDS, KOT tickets, and dish prep status.' },
-    waiter:  { title: 'Table Captain / Waiter', badge: 'Floor & Table Orders', gradient: 'linear-gradient(135deg, #06B6D4, #0891B2)', icon: 'fa-person-walking', desc: 'Access to table ordering, waiter call response, and status updates.' }
-  }[staff.role] || { title: staff.name, badge: staff.role, gradient: 'linear-gradient(135deg, #6366F1, #4F46E5)', icon: 'fa-user', desc: 'Custom staff credentials.' };
+  const modal = document.getElementById('editStaffModal');
+  if (!modal) return;
 
-  const card = document.createElement('div');
-  card.className = 'staff-card';
-  card.setAttribute('data-role-card', staff.role);
-  card.setAttribute('data-staff-id', staff.id || '');
-  card.innerHTML = `
-    <div class="staff-header" style="position:relative;">
-      <div class="staff-avatar" style="background:${roleMeta.gradient};"><i class="fa-solid ${roleMeta.icon}"></i></div>
-      <div style="flex:1;">
-        <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:700; color:var(--text-primary); margin:0 0 4px;">${staff.name}</h3>
-        <span class="role-badge ${staff.role}">${roleMeta.badge}</span>
-      </div>
-      ${staff.id ? `
-        <button onclick="deleteStaffMember(${staff.id}, this)" title="Remove Staff Member" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; width:28px; height:28px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
-          <i class="fa-solid fa-trash-can"></i>
-        </button>
-      ` : ''}
-    </div>
-    <div class="pin-box">
-      <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">QUICK LOGIN PIN</span>
-      <span class="pin-code">${staff.pin || staff.numeric_pin || '****'}</span>
-    </div>
-    <p style="font-size:12px; color:var(--text-muted); margin:0;">${roleMeta.desc}</p>
-  `;
-  grid.appendChild(card);
+  document.getElementById('editStaffId').value = staff.id;
+  document.getElementById('editStaffName').value = staff.name || '';
+  document.getElementById('editStaffRole').value = staff.role || 'cashier';
+  document.getElementById('editStaffPhone').value = staff.phone || '';
+  document.getElementById('editStaffEmail').value = (staff.email && !staff.email.endsWith('@dineflow.local')) ? staff.email : '';
+
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
 }
 
-async function deleteStaffMember(staffId, btn) {
-  if (!confirm('Are you sure you want to remove this staff member?')) return;
-  const card = btn.closest('.staff-card');
-  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+function closeEditStaffModal() {
+  const modal = document.getElementById('editStaffModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 200);
+}
+
+async function submitEditStaff(event) {
+  event.preventDefault();
+  const id = document.getElementById('editStaffId')?.value;
+  const name = document.getElementById('editStaffName')?.value.trim();
+  const role = document.getElementById('editStaffRole')?.value;
+  const phone = document.getElementById('editStaffPhone')?.value.trim();
+  const email = document.getElementById('editStaffEmail')?.value.trim();
+
+  try {
+    const res = await fetch(`/api/staff/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': getCsrfToken()
+      },
+      body: JSON.stringify({ name, role, phone, email })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast('Staff member updated successfully.', 'success');
+      closeEditStaffModal();
+      loadStaffMembers();
+    } else {
+      showToast(data.message || 'Failed to update staff member.', 'error');
+    }
+  } catch (err) {
+    showToast('Network error while updating staff member.', 'error');
+  }
+}
+
+/* =========================================================
+ * RESET PIN MODAL
+ * ========================================================= */
+function openResetPinModal(staffId, staffName) {
+  const modal = document.getElementById('resetPinModal');
+  if (!modal) return;
+
+  document.getElementById('resetPinStaffId').value = staffId;
+  const label = document.getElementById('resetPinStaffLabel');
+  if (label) label.textContent = `Set a new 4-6 digit Quick PIN for ${staffName}.`;
+
+  document.getElementById('resetPinForm')?.reset();
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+}
+
+function closeResetPinModal() {
+  const modal = document.getElementById('resetPinModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 200);
+}
+
+async function submitResetPin(event) {
+  event.preventDefault();
+  const id = document.getElementById('resetPinStaffId')?.value;
+  const pin = document.getElementById('newPinInput')?.value.trim();
+  const pinConfirm = document.getElementById('confirmNewPinInput')?.value.trim();
+
+  if (!pin || pin.length < 4 || pin.length > 8 || !/^[0-9]+$/.test(pin)) {
+    showToast('Quick PIN must be 4 to 8 numeric digits.', 'error');
+    return;
+  }
+  if (pin !== pinConfirm) {
+    showToast('PIN and Confirm PIN do not match.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/staff/${id}/reset-pin`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': getCsrfToken()
+      },
+      body: JSON.stringify({ numeric_pin: pin })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || 'Quick PIN reset successfully.', 'success');
+      closeResetPinModal();
+      loadStaffMembers();
+    } else {
+      showToast(data.message || 'Failed to reset PIN.', 'error');
+    }
+  } catch (err) {
+    showToast('Network error while resetting PIN.', 'error');
+  }
+}
+
+/* =========================================================
+ * TOGGLE STATUS & DELETE
+ * ========================================================= */
+async function toggleStaffStatus(staffId) {
+  try {
+    const res = await fetch(`/api/staff/${staffId}/toggle-status`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': getCsrfToken()
+      }
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || 'Staff status updated.', 'success');
+      loadStaffMembers();
+    } else {
+      showToast(data.message || 'Failed to update staff status.', 'error');
+    }
+  } catch (err) {
+    showToast('Network error while updating status.', 'error');
+  }
+}
+
+async function deleteStaffMember(staffId, staffName) {
+  if (!confirm(`Are you sure you want to permanently remove "${staffName}" from your restaurant staff?`)) return;
 
   try {
     const res = await fetch(`/api/staff/${staffId}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
-        'X-CSRF-TOKEN': csrfToken
+        'X-CSRF-TOKEN': getCsrfToken()
       }
     });
+
     const data = await res.json();
     if (data.success) {
-      if (card) card.remove();
-      const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]').filter(s => s.id !== staffId);
-      localStorage.setItem('dineflow_staff_members', JSON.stringify(savedStaff));
-      if (typeof Toast !== 'undefined') Toast.success('Staff member removed successfully');
-      else alert('Staff member removed successfully');
+      showToast(data.message || 'Staff member removed successfully.', 'success');
+      loadStaffMembers();
+    } else {
+      showToast(data.message || 'Failed to remove staff member.', 'error');
     }
   } catch (err) {
-    if (card) card.remove();
-    const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]').filter(s => s.id !== staffId);
-    localStorage.setItem('dineflow_staff_members', JSON.stringify(savedStaff));
-    if (typeof Toast !== 'undefined') Toast.success('Staff member removed locally');
+    showToast('Network error while deleting staff member.', 'error');
   }
 }
 
-async function loadSavedStaffMembers() {
-  try {
-    const res = await fetch(`/api/staff/restaurant/${RESTAURANT_ID}`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-      const serverStaff = data.data.map(u => ({
-        id: u.id,
-        name: u.name,
-        role: u.role,
-        pin: u.numeric_pin,
-        numeric_pin: u.numeric_pin
-      }));
-      serverStaff.forEach(appendStaffCardToGrid);
-      return;
-    }
-  } catch (err) {
-    console.log('Server staff fetch fallback to local:', err);
-  }
-
-  const savedStaff = JSON.parse(localStorage.getItem('dineflow_staff_members') || '[]');
-  savedStaff.forEach(appendStaffCardToGrid);
-}
-
+/* =========================================================
+ * RBAC SIMULATION & PERMISSION TOGGLES
+ * ========================================================= */
 function renderActiveRoleSwitcherBar() {
   const container = document.getElementById('roleSwitcherBarContainer');
   if (!container) return;
@@ -209,7 +411,7 @@ function renderActiveRoleSwitcherBar() {
     { key: 'manager', label: 'Manager',       icon: 'fa-user-tie', color: '#34D399' },
     { key: 'cashier', label: 'Cashier',       icon: 'fa-calculator', color: '#FBBF24' },
     { key: 'kitchen', label: 'Kitchen Chef',   icon: 'fa-fire-burner', color: '#F87171' },
-    { key: 'waiter',  label: 'Waiter',        icon: 'fa-person-walking', color: '#22D3EE' }
+    { key: 'waiter',  label: 'Waiter',        icon: 'fa-bell', color: '#22D3EE' }
   ];
 
   container.innerHTML = `
@@ -217,8 +419,8 @@ function renderActiveRoleSwitcherBar() {
       <div style="display:flex; align-items:center; gap:10px;">
         <i class="fa-solid fa-user-lock" style="color:#6366F1; font-size:18px;"></i>
         <div>
-          <h4 style="margin:0; font-size:13.5px; font-weight:700; color:var(--text-primary);">Simulate Logged-In User Role:</h4>
-          <span style="font-size:11px; color:var(--text-muted);">Test how different staff roles experience page access and sidebar limits</span>
+          <h4 style="margin:0; font-size:13.5px; font-weight:700; color:var(--text-primary);">Simulate Active Staff Role:</h4>
+          <span style="font-size:11px; color:var(--text-muted);">Preview how different staff access levels experience POS & Admin navigation</span>
         </div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -240,10 +442,13 @@ function renderRolePermissionToggles() {
     const cardEl = document.querySelector(`[data-role-card="${role}"]`);
     if (!cardEl) return;
 
+    const existingToggles = cardEl.querySelector('.perm-toggles-section');
+    if (existingToggles) existingToggles.remove();
+
     const rolePerms = perms[role] || {};
 
     const toggleHTML = `
-      <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+      <div class="perm-toggles-section" style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
           <span style="font-size:11.5px; font-weight:700; color:#818CF8; text-transform:uppercase; letter-spacing:0.5px;">⚙️ Access Permissions</span>
           <span style="font-size:10.5px; color:var(--text-muted);">Toggle ON/OFF</span>
@@ -274,4 +479,11 @@ function toggleModulePermission(role, moduleKey, isEnabled) {
   if (typeof Toast !== 'undefined' && Toast.success) {
     Toast.success(`Permission updated: [${role.toUpperCase()}] -> ${moduleKey.toUpperCase()} = ${isEnabled ? 'ON' : 'OFF'}`);
   }
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+  });
 }

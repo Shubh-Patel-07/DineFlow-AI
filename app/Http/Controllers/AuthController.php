@@ -82,66 +82,97 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle PIN login
+     * Handle PIN login (Tenant-Aware and Hash-Secure)
      */
     public function loginWithPin(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|exists:users,username',
-            'numeric_pin' => 'required|digits_between:4,6',
+            'username' => 'required|string',
+            'numeric_pin' => 'required|string|min:4|max:8',
         ], [
-            'username.required' => 'Username is required',
-            'username.exists' => 'User account not found',
-            'numeric_pin.required' => 'PIN is required',
-            'numeric_pin.digits_between' => 'PIN must be between 4-6 digits',
+            'username.required' => 'Username or identifier is required',
+            'numeric_pin.required' => 'Quick PIN is required',
         ]);
 
-        $user = User::where('username', $request->username)->first();
+        $query = User::where(function ($q) use ($request) {
+            $q->where('username', $request->username)
+              ->orWhere('email', $request->username)
+              ->orWhere('phone', $request->username);
+        });
+
+        if ($request->filled('restaurant_id')) {
+            $query->where('restaurant_id', $request->restaurant_id);
+        }
+
+        $user = $query->first();
 
         if (!$user) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['success' => false, 'message' => 'Staff account not found.'], 404);
+            }
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors(['numeric_pin' => 'User not found']);
+                ->withErrors(['numeric_pin' => 'User account not found.']);
         }
 
-        // Reject login if PIN is not set for this user
-        if (empty($user->numeric_pin)) {
+        if ($user->is_active === false) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['success' => false, 'message' => 'This staff account is deactivated.'], 403);
+            }
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors(['numeric_pin' => 'PIN not set for this account. Please ask your restaurant admin to set your PIN.']);
+                ->withErrors(['numeric_pin' => 'This staff account has been deactivated. Please contact your administrator.']);
         }
 
-        $inputPin = trim((string)$request->numeric_pin);
-        $dbPin = trim((string)$user->numeric_pin);
-
-        if ($dbPin !== $inputPin) {
+        // Verify PIN securely using User::verifyPin (handles bcrypt & legacy)
+        if (!$user->verifyPin($request->numeric_pin)) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['success' => false, 'message' => 'Invalid Quick PIN.'], 401);
+            }
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors(['numeric_pin' => 'Invalid PIN.']);
+                ->withErrors(['numeric_pin' => 'Invalid Quick PIN.']);
         }
 
         if ($request->hasSession()) {
-            session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
+            session([
+                'last_username' => $user->username,
+                'active_role' => $user->role ?? $user->username,
+                'restaurant_id' => $user->restaurant_id,
+            ]);
             $request->session()->regenerate();
         }
+
         Auth::login($user, remember: true);
         
         $role = strtolower(trim($user->role ?? $user->username ?? ''));
+        $targetUrl = '/pos';
         if ($role === 'superadmin') {
-            return redirect('/superadmin');
+            $targetUrl = '/superadmin';
         } elseif ($role === 'customer') {
             $restId = $user->restaurant_id;
-            if (!$restId) {
-                return redirect('/');
-            }
-            return redirect("/customer/menu?restaurantId={$restId}&tableId=1");
+            $targetUrl = $restId ? "/customer/menu?restaurantId={$restId}&tableId=1" : '/';
         } elseif ($role === 'kitchen' || $role === 'chef') {
-            return redirect('/kitchen');
+            $targetUrl = '/kitchen';
         } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
-            return redirect('/dashboard');
+            $targetUrl = '/dashboard';
         }
 
-        return redirect('/pos')->with('success', 'Login successful!');
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'redirect' => $targetUrl,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role,
+                    'restaurant_id' => $user->restaurant_id,
+                ],
+                'message' => 'Login successful!'
+            ]);
+        }
+
+        return redirect($targetUrl)->with('success', 'Login successful!');
     }
 
 

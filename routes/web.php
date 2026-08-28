@@ -506,6 +506,9 @@ Route::prefix('api')->group(function () {
         Route::get('/staff', [StaffController::class, 'index'])->middleware('role:admin,manager');
         Route::post('/staff', [StaffController::class, 'store'])->middleware('role:admin,manager');
         Route::put('/staff/{id}', [StaffController::class, 'update'])->middleware('role:admin,manager');
+        Route::put('/staff/{id}/reset-pin', [StaffController::class, 'resetPin'])->middleware('role:admin,manager');
+        Route::put('/staff/{id}/toggle-status', [StaffController::class, 'toggleStatus'])->middleware('role:admin,manager');
+        Route::post('/staff/verify-pin', [StaffController::class, 'verifyStaffPin']);
         Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->middleware('role:admin');
 
         // File & Image Storage

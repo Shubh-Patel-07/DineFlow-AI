@@ -86,11 +86,12 @@ class RegisterController extends Controller
                 'name'          => $validated['name'],
                 'username'      => $username,
                 'email'         => $validated['email'],
-                'phone'         => $validated['phone'],
+                'phone'         => $validated['phone'] ?? null,
                 'password'      => Hash::make($validated['password']),
-                'numeric_pin'   => $pin,
+                'numeric_pin'   => Hash::make($pin),
                 'role'          => 'admin',
                 'restaurant_id' => $restaurant->id,
+                'is_active'     => true,
             ]);
 
             // 4. Auto Login & Session Setup

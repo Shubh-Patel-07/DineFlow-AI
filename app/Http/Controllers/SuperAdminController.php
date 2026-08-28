@@ -310,8 +310,8 @@ class SuperAdminController extends Controller
                 'username' => strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $request->owner_name)) . rand(100, 999),
                 'password' => Hash::make($request->owner_password),
                 'role' => 'admin',
-                'restaurant_id' => $restaurant->id,
-                'numeric_pin' => (string)rand(1000, 9999),
+                'numeric_pin' => Hash::make((string)rand(1000, 9999)),
+                'is_active' => true,
             ]);
 
             SubscriptionHistory::record($restaurant, $planType, 'active', [
