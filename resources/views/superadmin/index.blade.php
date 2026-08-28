@@ -716,8 +716,29 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
+    .superadmin-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 95;
+      pointer-events: none;
+    }
+    .superadmin-backdrop.active {
+      display: block;
+      pointer-events: auto;
+    }
+
     /* ─── RESPONSIVE BREAKPOINTS ─────────────────────────── */
     @media (max-width: 1024px) {
+      body {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+      }
       .sidebar {
         transform: translateX(-100%);
       }
@@ -726,30 +747,54 @@
       }
       .main-wrapper {
         margin-left: 0;
+        width: 100% !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch !important;
       }
       .menu-toggle {
         display: block;
       }
       .content-area {
-        padding: 20px;
+        padding: 16px 12px;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+      }
+      .data-table-container {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+      table {
+        min-width: 580px;
       }
     }
 
     @media (max-width: 640px) {
       .topbar {
-        padding: 0 16px;
+        padding: 0 14px;
       }
       .content-area {
-        padding: 16px;
-        gap: 20px;
+        padding: 14px 10px;
+        gap: 16px;
       }
       .metrics-grid {
         grid-template-columns: 1fr;
+      }
+      .header-actions {
+        flex-wrap: wrap;
+        width: 100%;
+      }
+      .search-box {
+        width: 100% !important;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- Mobile Backdrop Overlay -->
+  <div class="superadmin-backdrop" id="superadminBackdrop" onclick="toggleSidebar()"></div>
 
   <!-- ─── SIDEBAR ────────────────────────────────────────── -->
   <aside class="sidebar" id="sidebar">
@@ -1290,7 +1335,12 @@
     }
 
     function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('superadminBackdrop');
+      if (sidebar) {
+        sidebar.classList.toggle('open');
+        if (backdrop) backdrop.classList.toggle('active', sidebar.classList.contains('open'));
+      }
     }
 
     function toggleTheme() {
@@ -1306,6 +1356,13 @@
     }
 
     function switchSection(sectionId, navEl) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('superadminBackdrop');
+      if (sidebar && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('active');
+      }
+
       document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
 

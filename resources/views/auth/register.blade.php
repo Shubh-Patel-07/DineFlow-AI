@@ -335,11 +335,23 @@
         }
 
         @media (max-width: 960px) {
-            body { flex-direction: column; }
-            .split-left { padding: 40px 24px; }
-            .split-right { padding: 32px 16px; }
-            .hero-title { font-size: 28px; }
+            body {
+                flex-direction: column;
+                height: auto !important;
+                min-height: 100vh !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y !important;
+            }
+            .split-left { padding: 36px 20px; }
+            .split-right { padding: 32px 16px; overflow-y: visible !important; }
+            .hero-title { font-size: 26px; }
             .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .split-left { padding: 24px 14px; }
+            .split-right { padding: 24px 14px; }
         }
     </style>
 </head>

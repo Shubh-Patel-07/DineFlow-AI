@@ -947,19 +947,30 @@ body > div[style*="display: flex"] {
 }
 
 .sidebar-backdrop {
-  display: none;
+  display: none !important;
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 300;
+  pointer-events: none !important;
 }
 .sidebar-backdrop.active {
   display: block !important;
+  pointer-events: auto !important;
 }
 
 /* ─── FULL MULTI-DEVICE RESPONSIVE ENGINE (320px – 1920px) ─── */
 @media (max-width: 768px) {
+  html, body {
+    height: 100% !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+  }
   .sidebar {
     position: fixed !important;
     top: 0;
@@ -990,9 +1001,18 @@ body > div[style*="display: flex"] {
   .main {
     margin-left: 0 !important;
     width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
   }
-  .admin-container, .menu-content-container, .staff-container, .settings-container, .tables-container {
+  .admin-container, .menu-content-container, .staff-container, .settings-container, .tables-container, .content, .feedback-container {
     padding: 14px 12px !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
   }
   .tables-grid, .feedback-grid, .menu-items-grid, .coupon-grid, .staff-grid, .metrics-grid, #aiForecastGrid {
     grid-template-columns: 1fr !important;

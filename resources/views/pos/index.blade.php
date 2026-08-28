@@ -1398,25 +1398,33 @@
     }
 
     /* ═════════════════════════════════════════════════════════════
-       POS MOBILE RESPONSIVE ENGINE (320px to 480px)
+       POS MOBILE RESPONSIVE ENGINE (320px to 768px)
        ═════════════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
       /* Main Container & Layout */
       body {
         overflow-x: hidden !important;
-        width: 100vw !important;
+        overflow-y: auto !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100vh !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
       }
       .pos-wrapper {
         flex-direction: column !important;
         width: 100% !important;
         overflow-x: hidden !important;
+        overflow-y: visible !important;
+        min-height: 100% !important;
       }
       .pos-left {
         width: 100% !important;
         flex: 1 !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 80px !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+        padding-bottom: 90px !important;
       }
 
       /* Search Bar Full Width */
@@ -1435,6 +1443,7 @@
         overflow-x: auto !important;
         white-space: nowrap !important;
         -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-x !important;
         scrollbar-width: none !important;
         gap: 8px !important;
         padding: 6px 4px !important;
@@ -1463,6 +1472,7 @@
         padding: 10px !important;
         width: 100% !important;
         box-sizing: border-box !important;
+        touch-action: pan-y !important;
       }
 
       /* Card equal height & image scaling */
@@ -1544,11 +1554,32 @@
         transform: translateX(0) !important;
       }
       .cart-backdrop {
+        display: none !important;
         position: fixed !important;
         inset: 0 !important;
         background: rgba(15, 23, 42, 0.8) !important;
         backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
         z-index: 395 !important;
+        pointer-events: none !important;
+      }
+      .cart-backdrop.active {
+        display: block !important;
+        pointer-events: auto !important;
+      }
+      .sidebar-backdrop {
+        display: none !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(15, 23, 42, 0.8) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        z-index: 300 !important;
+        pointer-events: none !important;
+      }
+      .sidebar-backdrop.active {
+        display: block !important;
+        pointer-events: auto !important;
       }
 
       /* Mobile Sticky Checkout Button */

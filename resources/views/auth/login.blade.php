@@ -444,11 +444,27 @@
 
         /* ─── RESPONSIVE ─── */
         @media (max-width: 900px) {
+            body {
+                height: 100% !important;
+                min-height: 100vh !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y !important;
+            }
             .split-left { display: none; }
-            .split-right { width: 100%; padding: 30px 20px; }
+            .split-right {
+                width: 100%;
+                min-height: 100vh;
+                justify-content: flex-start !important;
+                padding: 36px 20px;
+                overflow-y: visible !important;
+                -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y !important;
+            }
         }
         @media (max-width: 480px) {
-            .split-right { padding: 20px 14px; }
+            .split-right { padding: 24px 14px; }
         }
     </style>
 </head>
