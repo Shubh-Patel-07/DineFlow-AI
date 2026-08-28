@@ -22,10 +22,10 @@ Route::get('/register', [RegisterController::class, 'showRegister'])->name('regi
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 // Traditional Authentication Routes
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
-Route::post('/login', [AuthController::class, 'login'])->name('auth.login')->middleware('guest');
-Route::get('/pin-login', [AuthController::class, 'showPinLogin'])->name('auth.pin-login')->middleware('guest');
-Route::post('/pin-login', [AuthController::class, 'loginWithPin'])->name('auth.login-with-pin')->middleware('guest');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+Route::get('/pin-login', [AuthController::class, 'showPinLogin'])->name('auth.pin-login');
+Route::post('/pin-login', [AuthController::class, 'loginWithPin'])->name('auth.login-with-pin');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.switch-user');
 
