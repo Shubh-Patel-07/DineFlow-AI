@@ -797,11 +797,27 @@
             </ul>
 
             <div class="nav-actions">
-                <a href="{{ route('login') }}" class="btn-ghost">Login</a>
-                <a href="{{ route('register') }}" class="btn-primary">
-                    <span>Start Free</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                @auth
+                    @if(Auth::user()->role === 'superadmin')
+                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right:6px;"></i> Super Admin</a>
+                    @elseif(Auth::user()->role === 'kitchen')
+                        <a href="/kitchen" class="btn-ghost"><i class="fa-solid fa-fire-burner" style="margin-right:6px;"></i> Kitchen KDS</a>
+                    @elseif(in_array(Auth::user()->role, ['cashier', 'waiter']))
+                        <a href="/pos" class="btn-ghost"><i class="fa-solid fa-cash-register" style="margin-right:6px;"></i> POS</a>
+                    @else
+                        <a href="/dashboard" class="btn-ghost"><i class="fa-solid fa-gauge" style="margin-right:6px;"></i> Dashboard</a>
+                    @endif
+                    <a href="{{ route('register') }}" class="btn-primary">
+                        <span>+ Register Restaurant</span>
+                        <i class="fa-solid fa-plus"></i>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="btn-ghost">Login</a>
+                    <a href="{{ route('register') }}" class="btn-primary">
+                        <span>Start Free</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                @endauth
                 <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fa-solid fa-bars"></i></button>
             </div>
         </div>
@@ -817,8 +833,17 @@
             <li><a href="#faq" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">FAQ</a></li>
             <li><a href="/contact" style="color:#fff; text-decoration:none; font-size:16px;">Contact</a></li>
             <li style="padding-top:10px; display:flex; gap:10px;">
-                <a href="{{ route('login') }}" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Login</a>
-                <a href="{{ route('register') }}" class="btn-primary" style="flex:1; justify-content:center;">Start Free</a>
+                @auth
+                    @if(Auth::user()->role === 'superadmin')
+                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Super Admin</a>
+                    @else
+                        <a href="/dashboard" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Dashboard</a>
+                    @endif
+                    <a href="{{ route('register') }}" class="btn-primary" style="flex:1; justify-content:center;">+ Register</a>
+                @else
+                    <a href="{{ route('login') }}" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Login</a>
+                    <a href="{{ route('register') }}" class="btn-primary" style="flex:1; justify-content:center;">Start Free</a>
+                @endauth
             </li>
         </ul>
     </div>

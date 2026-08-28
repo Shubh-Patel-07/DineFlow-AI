@@ -18,8 +18,8 @@ use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Route;
 
 // Public SaaS Registration & Authentication Routes
-Route::get('/register', [RegisterController::class, 'showRegister'])->name('register')->middleware('guest');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.submit')->middleware('guest');
+Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 // Traditional Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');

@@ -15,15 +15,6 @@ class RegisterController extends Controller
 {
     public function showRegister()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $restaurant = $user->restaurant_id ? Restaurant::find($user->restaurant_id) : null;
-            if ($restaurant && !$restaurant->onboarding_completed) {
-                return redirect()->route('onboarding.index');
-            }
-            return redirect()->route('pos.index');
-        }
-
         return view('auth.register');
     }
 
