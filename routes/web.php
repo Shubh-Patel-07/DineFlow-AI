@@ -325,6 +325,11 @@ Route::get('/demo', function () {
     return view('pages.demo');
 })->name('demo');
 
+// Isolated Sandbox Demo Mode Routes
+Route::get('/demo/start', [\App\Http\Controllers\DemoSandboxController::class, 'startDemo'])->name('demo.start');
+Route::match(['get', 'post'], '/demo/reset', [\App\Http\Controllers\DemoSandboxController::class, 'resetDemo'])->name('demo.reset');
+Route::match(['get', 'post'], '/demo/exit', [\App\Http\Controllers\DemoSandboxController::class, 'exitDemo'])->name('demo.exit');
+
 // Public Contact / Demo / Enquiry Form Submissions (Rate limited)
 Route::post('/contact/submit', [ContactController::class, 'submit'])->middleware('throttle:15,1')->name('contact.submit');
 Route::post('/api/contact/submit', [ContactController::class, 'submit'])->middleware('throttle:15,1');

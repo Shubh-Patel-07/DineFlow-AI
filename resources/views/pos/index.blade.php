@@ -1776,6 +1776,23 @@
   <div id="waiterAlertsDrawer" style="position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 12px; max-width: 320px; width: 100%; pointer-events: auto;">
   </div>
 
+@if(Auth::user()?->restaurant?->is_demo)
+<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 6px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 99999;">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <span style="background:#000; color:#FBBF24; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:900;">DEMO POS</span>
+    <span>Isolated sandbox terminal. Real restaurant orders are not affected.</span>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <a href="{{ route('demo.reset') }}" onclick="return confirm('Reset demo sandbox to fresh state?');" style="background: rgba(0,0,0,0.15); color: #000; border: 1px solid rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: 800;">
+      <i class="fa-solid fa-rotate-left"></i> Reset
+    </a>
+    <a href="{{ route('demo.exit') }}" style="background: #000; color: #fff; padding: 3px 10px; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: 800;">
+      Exit Demo
+    </a>
+  </div>
+</div>
+@endif
+
   <!-- POS Body -->
   <div class="pos-wrapper">
 

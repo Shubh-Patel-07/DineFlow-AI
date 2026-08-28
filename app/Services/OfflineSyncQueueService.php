@@ -48,6 +48,14 @@ class OfflineSyncQueueService
             ];
         }
 
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        if ($restaurant && $restaurant->is_demo) {
+            return [
+                'success' => false,
+                'message' => 'Demo sandboxes cannot sync offline orders to production cloud.',
+            ];
+        }
+
         $clientOrderId = trim((string)($payload['client_order_id'] ?? $payload['order_uuid'] ?? ''));
         $tableId = (string)($payload['table_id'] ?? '1');
         $items = $payload['items'] ?? [];

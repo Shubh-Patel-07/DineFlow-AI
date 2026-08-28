@@ -31,7 +31,10 @@ class Restaurant extends Model
         'payment_reference',
         'billing_amount',
         'currency',
-        'suspension_reason'
+        'suspension_reason',
+        'is_demo',
+        'demo_session_id',
+        'expires_at'
     ];
 
     protected $casts = [
@@ -39,6 +42,8 @@ class Restaurant extends Model
         'gst_rate' => 'decimal:2',
         'service_charge' => 'decimal:2',
         'onboarding_completed' => 'boolean',
+        'is_demo' => 'boolean',
+        'expires_at' => 'datetime',
         'plan_limits' => 'array',
         'trial_ends_at' => 'datetime',
         'subscription_starts_at' => 'datetime',

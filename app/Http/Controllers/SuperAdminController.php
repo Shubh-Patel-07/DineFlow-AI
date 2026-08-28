@@ -150,7 +150,7 @@ class SuperAdminController extends Controller
      */
     public function restaurants(Request $request)
     {
-        $query = Restaurant::query()->with(['users' => function($q) {
+        $query = Restaurant::where('is_demo', false)->with(['users' => function($q) {
             $q->where('role', 'admin')->orWhere('role', 'owner');
         }]);
 
@@ -725,28 +725,32 @@ class SuperAdminController extends Controller
      */
     private function calculatePlatformStats(): array
     {
-        $totalRestaurants = Restaurant::count();
-        $activeRestaurants = Restaurant::where('subscription_status', 'active')->count();
-        $suspendedRestaurants = Restaurant::where('subscription_status', 'suspended')->count();
-        $trialRestaurants = Restaurant::where('subscription_status', 'trial')->count();
-        $expiringRestaurants = Restaurant::where('subscription_status', 'expiring')->count();
-        $graceRestaurants = Restaurant::where('subscription_status', 'grace_period')->count();
-        $expiredRestaurants = Restaurant::where('subscription_status', 'expired')->count();
+        $realRestaurantsQuery = Restaurant::where('is_demo', false);
+        $totalRestaurants = (clone $realRestaurantsQuery)->count();
+        $activeRestaurants = (clone $realRestaurantsQuery)->where('subscription_status', 'active')->count();
+        $suspendedRestaurants = (clone $realRestaurantsQuery)->where('subscription_status', 'suspended')->count();
+        $trialRestaurants = (clone $realRestaurantsQuery)->where('subscription_status', 'trial')->count();
+        $expiringRestaurants = (clone $realRestaurantsQuery)->where('subscription_status', 'expiring')->count();
+        $graceRestaurants = (clone $realRestaurantsQuery)->where('subscription_status', 'grace_period')->count();
+        $expiredRestaurants = (clone $realRestaurantsQuery)->where('subscription_status', 'expired')->count();
+        $activeDemoSandboxes = Restaurant::where('is_demo', true)->count();
 
-        $freePlanCount = Restaurant::where('plan_type', 'free')->count();
-        $proPlanCount = Restaurant::where('plan_type', 'pro')->count();
-        $enterprisePlanCount = Restaurant::where('plan_type', 'enterprise')->count();
-        $customPlanCount = Restaurant::where('plan_type', 'custom')->count();
+        $freePlanCount = (clone $realRestaurantsQuery)->where('plan_type', 'free')->count();
+        $proPlanCount = (clone $realRestaurantsQuery)->where('plan_type', 'pro')->count();
+        $enterprisePlanCount = (clone $realRestaurantsQuery)->where('plan_type', 'enterprise')->count();
+        $customPlanCount = (clone $realRestaurantsQuery)->where('plan_type', 'custom')->count();
 
-        $totalOrders = Order::count();
-        $todayOrders = Order::whereDate('created_at', Carbon::today())->count();
-        $monthOrders = Order::whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->count();
+        $realRestIds = (clone $realRestaurantsQuery)->pluck('id');
 
-        $totalGMV = (float)Order::where('payment_status', 'paid')->sum('total_amount');
-        $todayGMV = (float)Order::where('payment_status', 'paid')->whereDate('created_at', Carbon::today())->sum('total_amount');
-        $monthGMV = (float)Order::where('payment_status', 'paid')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('total_amount');
+        $totalOrders = Order::whereIn('restaurant_id', $realRestIds)->count();
+        $todayOrders = Order::whereIn('restaurant_id', $realRestIds)->whereDate('created_at', Carbon::today())->count();
+        $monthOrders = Order::whereIn('restaurant_id', $realRestIds)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->count();
 
-        $topRestaurants = Restaurant::withCount('orders')
+        $totalGMV = (float)Order::whereIn('restaurant_id', $realRestIds)->where('payment_status', 'paid')->sum('total_amount');
+        $todayGMV = (float)Order::whereIn('restaurant_id', $realRestIds)->where('payment_status', 'paid')->whereDate('created_at', Carbon::today())->sum('total_amount');
+        $monthGMV = (float)Order::whereIn('restaurant_id', $realRestIds)->where('payment_status', 'paid')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('total_amount');
+
+        $topRestaurants = Restaurant::where('is_demo', false)->withCount('orders')
             ->orderBy('orders_count', 'desc')
             ->limit(5)
             ->get()

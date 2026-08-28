@@ -332,6 +332,23 @@
 </head>
 <body>
 
+@if(Auth::user()?->restaurant?->is_demo)
+<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 7px 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 9999;">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <span style="background:#000; color:#FBBF24; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:900;">DEMO MODE</span>
+    <span>Your changes are temporary and strictly isolated in your personal sandbox. Production data is safe.</span>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <a href="{{ route('demo.reset') }}" onclick="return confirm('Reset demo sandbox to fresh sample state?');" style="background: rgba(0,0,0,0.15); color: #000; border: 1px solid rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px; text-decoration: none; font-size: 11.5px; font-weight: 800; display:flex; align-items:center; gap:4px;">
+      <i class="fa-solid fa-rotate-left"></i> Reset Demo
+    </a>
+    <a href="{{ route('demo.exit') }}" style="background: #000; color: #fff; padding: 4px 12px; border-radius: 6px; text-decoration: none; font-size: 11.5px; font-weight: 800;">
+      Exit Demo
+    </a>
+  </div>
+</div>
+@endif
+
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR -->

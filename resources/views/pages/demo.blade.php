@@ -481,7 +481,7 @@
                     <li><i class="fa-solid fa-check"></i> Real-time Cart &amp; Split Bill</li>
                     <li><i class="fa-solid fa-check"></i> Live Order Tracker</li>
                 </ul>
-                <a href="/customer/menu?restaurantId=1&tableId=1" target="_blank" class="btn-primary" style="width:100%;">
+                <a href="/demo/start?destination=qr&fresh=1" class="btn-primary" style="width:100%;">
                     <span>Launch Customer QR Demo</span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
@@ -500,7 +500,7 @@
                     <li><i class="fa-solid fa-check"></i> 58mm/80mm Thermal Receipts</li>
                     <li><i class="fa-solid fa-check"></i> Multi-Payment Settlement</li>
                 </ul>
-                <a href="/pos-terminal" target="_blank" class="btn-primary" style="width:100%;">
+                <a href="/demo/start?destination=pos&fresh=1" class="btn-primary" style="width:100%;">
                     <span>Launch POS Terminal Demo</span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
@@ -519,7 +519,7 @@
                     <li><i class="fa-solid fa-check"></i> Audio Chime Alerts</li>
                     <li><i class="fa-solid fa-check"></i> Single-Tap Stage Progression</li>
                 </ul>
-                <a href="/kitchen" target="_blank" class="btn-primary" style="width:100%;">
+                <a href="/demo/start?destination=kitchen&fresh=1" class="btn-primary" style="width:100%;">
                     <span>Launch Kitchen KDS Demo</span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
