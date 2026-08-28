@@ -19,11 +19,7 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        // Admin role gets full access to all endpoints
         $userRole = strtolower(trim($user->role ?? ''));
-        if ($userRole === 'admin') {
-            return $next($request);
-        }
 
         // Expand any comma-separated role definitions
         $expandedRoles = [];
@@ -31,6 +27,25 @@ class RoleMiddleware
             foreach (explode(',', $r) as $sub) {
                 $expandedRoles[] = strtolower(trim($sub));
             }
+        }
+
+        // If the route strictly requires superadmin, only superadmin can pass
+        if (in_array('superadmin', $expandedRoles)) {
+            if ($userRole !== 'superadmin') {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Forbidden: Superadmin privilege required."
+                    ], 403);
+                }
+                abort(403, "Forbidden: Superadmin privilege required.");
+            }
+            return $next($request);
+        }
+
+        // For standard tenant routes, superadmin and admin have full access
+        if ($userRole === 'superadmin' || $userRole === 'admin') {
+            return $next($request);
         }
 
         if (!in_array($userRole, $expandedRoles)) {

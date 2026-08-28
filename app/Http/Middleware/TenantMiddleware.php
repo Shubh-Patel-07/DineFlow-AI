@@ -21,6 +21,20 @@ class TenantMiddleware
             return $next($request);
         }
 
+        // Check if tenant is suspended
+        if ($user->restaurant_id) {
+            $restaurant = \App\Models\Restaurant::find($user->restaurant_id);
+            if ($restaurant && $restaurant->subscription_status === 'suspended') {
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Your restaurant account has been suspended. Please contact support.'
+                    ], 403);
+                }
+                abort(403, 'Your restaurant account has been suspended. Please contact support.');
+            }
+        }
+
         $userTenantId = strval($user->restaurant_id ?? '');
 
         // Extract requested tenant ID from route, query, input, or URI path

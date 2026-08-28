@@ -8,11 +8,23 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeders.
-     */
     public function run(): void
     {
+        // Create superadmin user
+        $superEmail = env('SUPERADMIN_EMAIL', 'superadmin@tendorabuy.in');
+        $superPass = env('SUPERADMIN_PASSWORD', 'SuperAdmin@Tendorabuy2026!');
+        User::updateOrCreate(
+            ['email' => $superEmail],
+            [
+                'username' => 'superadmin',
+                'name' => 'Tendorabuy Super Admin',
+                'password' => Hash::make($superPass),
+                'numeric_pin' => '9999',
+                'role' => 'superadmin',
+                'restaurant_id' => null,
+            ]
+        );
+
         // Create admin user
         User::updateOrCreate(
             ['username' => 'admin'],

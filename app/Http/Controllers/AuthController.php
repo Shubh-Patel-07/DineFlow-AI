@@ -44,6 +44,11 @@ class AuthController extends Controller
         
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
+
+        if (strtolower(trim($user->role ?? '')) === 'superadmin') {
+            return redirect('/superadmin');
+        }
+
         return redirect()->route('pos.index')->with('success', 'Welcome to DineFlow AI POS!');
     }
 

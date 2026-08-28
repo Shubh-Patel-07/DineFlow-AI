@@ -14,6 +14,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Route;
 
 // Public SaaS Registration & Authentication Routes
@@ -449,3 +450,30 @@ Route::prefix('api')->group(function () {
         Route::post('/upload/image', [RestaurantController::class, 'uploadImage'])->middleware('role:admin,manager');
     });
 });
+
+// ── SUPER ADMIN PLATFORM ROUTES (Role: superadmin ONLY) ────────────────
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
+    Route::get('/superadmin', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::get('/superadmin/restaurants', [SuperAdminController::class, 'dashboard'])->name('superadmin.restaurants');
+    Route::get('/superadmin/plans', [SuperAdminController::class, 'dashboard'])->name('superadmin.plans');
+    Route::get('/superadmin/analytics', [SuperAdminController::class, 'dashboard'])->name('superadmin.analytics');
+    Route::get('/superadmin/audit-logs', [SuperAdminController::class, 'dashboard'])->name('superadmin.audit-logs');
+
+    // Super Admin REST APIs
+    Route::prefix('api/superadmin')->group(function () {
+        Route::get('/dashboard', [SuperAdminController::class, 'platformStats']);
+        Route::get('/stats', [SuperAdminController::class, 'platformStats']);
+        Route::get('/restaurants', [SuperAdminController::class, 'restaurants']);
+        Route::get('/restaurants/{id}', [SuperAdminController::class, 'restaurantDetails']);
+        Route::post('/restaurants', [SuperAdminController::class, 'createRestaurant']);
+        Route::put('/restaurants/{id}', [SuperAdminController::class, 'updateRestaurant']);
+        Route::post('/restaurants/{id}/activate', [SuperAdminController::class, 'activateRestaurant']);
+        Route::post('/restaurants/{id}/suspend', [SuperAdminController::class, 'suspendRestaurant']);
+        Route::post('/restaurants/{id}/plan', [SuperAdminController::class, 'updatePlan']);
+        Route::post('/restaurants/{id}/limits', [SuperAdminController::class, 'updatePlanLimits']);
+        Route::get('/orders', [SuperAdminController::class, 'recentOrders']);
+        Route::get('/audit-logs', [SuperAdminController::class, 'auditLogs']);
+    });
+});
+
+
