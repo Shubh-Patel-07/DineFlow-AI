@@ -515,7 +515,7 @@
         </div>
 
 
-        @if ($errors->any())
+        @if (isset($errors) && $errors->any())
             <div class="error-container">
                 <i class="fas fa-exclamation-circle" style="color:var(--danger);"></i>
                 <div>

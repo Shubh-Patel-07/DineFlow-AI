@@ -31,7 +31,18 @@
             --text-muted: #64748B;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -40,27 +51,32 @@
             display: flex;
             flex-direction: column;
             line-height: 1.6;
+            width: 100%;
             overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
         }
 
         .container {
             max-width: 1140px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 clamp(14px, 4vw, 24px);
             width: 100%;
         }
 
-        /* Top Bar */
+        /* ─── TOP BAR / NAVBAR ─── */
         .topbar {
-            height: 76px;
-            background: rgba(9, 13, 26, 0.85);
+            height: 72px;
+            background: rgba(9, 13, 26, 0.9);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            width: 100%;
         }
 
         .topbar-inner {
@@ -68,32 +84,56 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            gap: 12px;
         }
 
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
+            flex-shrink: 0;
         }
 
         .brand-icon {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 17px;
             color: #fff;
-            box-shadow: 0 0 16px var(--primary-glow);
+            box-shadow: 0 0 12px var(--primary-glow);
         }
 
         .brand-name {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        /* Desktop Nav Items */
+        .nav-links-desktop {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links-desktop a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links-desktop a:hover {
             color: #fff;
         }
 
@@ -101,43 +141,53 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .btn-ghost {
             padding: 8px 16px;
             color: #CBD5E1;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             border-radius: 8px;
+            border: 1px solid var(--border);
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.03);
+            min-height: 40px;
         }
 
         .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
             color: #fff;
         }
 
         .btn-wa-header {
-            padding: 8px 16px;
-            background: rgba(37, 211, 102, 0.15);
-            border: 1px solid rgba(37, 211, 102, 0.35);
+            padding: 8px 14px;
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid rgba(37, 211, 102, 0.3);
             color: #4ADE80;
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 700;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            white-space: nowrap;
+            min-height: 40px;
         }
 
         .btn-wa-header:hover {
-            background: var(--whatsapp);
+            background: rgba(37, 211, 102, 0.22);
+            border-color: #25D366;
             color: #fff;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px var(--whatsapp-glow);
         }
 
         .btn-primary {
@@ -145,27 +195,123 @@
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #fff;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
             border-radius: 8px;
+            box-shadow: 0 4px 14px var(--primary-glow);
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             border: none;
             cursor: pointer;
+            justify-content: center;
+            white-space: nowrap;
+            min-height: 40px;
         }
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 16px var(--primary-glow);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
-        /* Hero */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ─── MOBILE DRAWER & BACKDROP ─── */
+        .mobile-drawer-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 13, 26, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 998;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .mobile-drawer-backdrop.active {
+            display: block;
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: #0D1326;
+            border-bottom: 1px solid var(--border);
+            padding: 20px 16px;
+            z-index: 999;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+            max-height: calc(100vh - 72px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-drawer.active {
+            display: block;
+        }
+
+        .mobile-drawer ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mobile-drawer ul li a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: background 0.15s;
+            min-height: 44px;
+        }
+
+        .mobile-drawer ul li a:hover,
+        .mobile-drawer ul li a.active {
+            background: rgba(99, 102, 241, 0.12);
+            color: #fff;
+        }
+
+        .mobile-drawer-actions {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* ─── HERO SECTION ─── */
         .contact-hero {
-            padding: 48px 0 32px;
+            padding: clamp(32px, 5vw, 48px) 0 clamp(20px, 3.5vw, 32px);
             text-align: center;
+            width: 100%;
         }
 
         .section-tag {
@@ -186,46 +332,40 @@
 
         .contact-hero h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 38px;
+            font-size: clamp(26px, 4.2vw, 38px);
             font-weight: 900;
             line-height: 1.2;
+            letter-spacing: -0.5px;
             margin-bottom: 12px;
+            color: #fff;
         }
 
         .contact-hero p {
-            font-size: 16px;
+            font-size: clamp(14.5px, 1.8vw, 16px);
             color: var(--text-secondary);
-            max-width: 620px;
+            max-width: 640px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
-        /* Grid */
+        /* ─── CONTACT GRID ─── */
         .contact-grid {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 32px;
-            margin-bottom: 70px;
-            align-items: start;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(20px, 3vw, 32px);
+            margin-bottom: clamp(40px, 6vw, 80px);
+            width: 100%;
         }
 
-        /* Left Column Cards */
-        .info-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 20px;
-        }
-
+        /* WhatsApp Spotlight Card */
         .wa-spotlight-card {
             background: linear-gradient(145deg, #064E3B 0%, #0D2818 50%, #131A35 100%);
             border: 1px solid rgba(37, 211, 102, 0.4);
             border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 24px rgba(6, 78, 59, 0.4);
-            position: relative;
-            overflow: hidden;
+            padding: clamp(20px, 3vw, 32px);
+            margin-bottom: 20px;
+            width: 100%;
+            min-width: 0;
         }
 
         .wa-badge-pill {
@@ -239,136 +379,153 @@
             font-size: 12px;
             font-weight: 700;
             margin-bottom: 14px;
+            width: fit-content;
         }
 
         .wa-spotlight-card h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 24px;
+            font-size: clamp(20px, 2.5vw, 24px);
             font-weight: 800;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            line-height: 1.25;
         }
 
         .wa-spotlight-card p {
-            font-size: 14px;
+            font-size: clamp(13.5px, 1.6vw, 14.5px);
             color: #D1FAE5;
             margin-bottom: 20px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .btn-wa-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             background: linear-gradient(135deg, #25D366, #128C7E);
             color: #fff;
             text-decoration: none;
-            padding: 13px 24px;
-            border-radius: 10px;
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
-            width: fit-content;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px var(--whatsapp-glow);
+            transition: all 0.2s ease;
+            width: 100%;
+            min-height: 44px;
         }
 
         .btn-wa-action:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
-            background: #25D366;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Direct Channels List */
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: clamp(16px, 2.5vw, 24px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            min-width: 0;
         }
 
         .contact-channel {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 14px;
-            background: rgba(15, 23, 42, 0.5);
+            gap: 14px;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--border);
             border-radius: 12px;
-            margin-bottom: 12px;
             text-decoration: none;
-            color: inherit;
             transition: all 0.2s ease;
+            min-height: 52px;
         }
 
         .contact-channel:hover {
-            border-color: var(--primary);
+            border-color: rgba(99, 102, 241, 0.4);
             background: rgba(99, 102, 241, 0.08);
-            transform: translateX(4px);
+            transform: translateX(3px);
         }
 
         .channel-icon {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
             background: rgba(99, 102, 241, 0.15);
             color: #818CF8;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             flex-shrink: 0;
         }
 
         .channel-info h4 {
-            font-size: 12px;
+            font-size: 13.5px;
             font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #fff;
+            margin-bottom: 2px;
         }
 
         .channel-info p {
-            font-size: 14.5px;
-            font-weight: 600;
-            color: #fff;
+            font-size: 12.5px;
+            color: var(--text-secondary);
         }
 
-        /* Right Form Card */
+        /* Form Card */
         .form-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 36px;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+            padding: clamp(20px, 3.5vw, 36px);
+            width: 100%;
+            min-width: 0;
         }
 
         .form-card h2 {
             font-family: 'Outfit', sans-serif;
-            font-size: 26px;
+            font-size: clamp(20px, 2.5vw, 26px);
             font-weight: 800;
             color: #fff;
             margin-bottom: 6px;
+            line-height: 1.25;
         }
 
-        .form-card > p {
+        .form-card p {
             font-size: 14px;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            line-height: 1.55;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 12px;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
+            width: 100%;
         }
 
         .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
             color: #CBD5E1;
             margin-bottom: 6px;
         }
 
-        .form-group label span.req {
-            color: #EF4444;
+        .form-group label .req {
+            color: #F87171;
         }
 
         .form-input {
@@ -376,12 +533,14 @@
             background: rgba(15, 23, 42, 0.85);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 12px 16px;
+            padding: 11px 14px;
             color: #fff;
             font-size: 14px;
             font-family: inherit;
             outline: none;
             transition: all 0.2s ease;
+            min-height: 44px;
+            box-sizing: border-box;
         }
 
         .form-input:focus {
@@ -409,11 +568,11 @@
 
         .btn-submit {
             width: 100%;
-            padding: 14px 20px;
+            padding: 13px 20px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #fff;
             font-family: 'Outfit', sans-serif;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             border: none;
             border-radius: 10px;
@@ -424,6 +583,7 @@
             gap: 10px;
             transition: all 0.2s ease;
             margin-top: 8px;
+            min-height: 44px;
         }
 
         .btn-submit:hover:not(:disabled) {
@@ -440,7 +600,7 @@
         .state-banner {
             display: none;
             border-radius: 14px;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
             margin-top: 10px;
             animation: fadeIn 0.3s ease-in-out;
@@ -452,21 +612,21 @@
         }
 
         .success-icon {
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: rgba(16, 185, 129, 0.2);
             color: #34D399;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            margin: 0 auto 14px;
+            font-size: 24px;
+            margin: 0 auto 12px;
         }
 
         .success-state h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: #fff;
             margin-bottom: 6px;
@@ -475,7 +635,7 @@
         .success-state p {
             font-size: 14px;
             color: #A7F3D0;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             line-height: 1.5;
         }
 
@@ -483,11 +643,10 @@
             background: rgba(239, 68, 68, 0.12);
             border: 1px solid rgba(239, 68, 68, 0.35);
             color: #FCA5A5;
-            font-size: 14px;
-            margin-bottom: 16px;
+            font-size: 13.5px;
+            margin-bottom: 14px;
         }
 
-        /* Honeypot field (hidden from real users) */
         .hp-field {
             display: none !important;
             visibility: hidden !important;
@@ -496,14 +655,15 @@
             left: -9999px !important;
         }
 
-        /* Footer */
+        /* ─── FOOTER ─── */
         .footer {
             margin-top: auto;
             border-top: 1px solid var(--border);
-            padding: 26px 0;
+            padding: 24px 0;
             text-align: center;
             font-size: 13px;
             color: var(--text-muted);
+            width: 100%;
         }
 
         @keyframes fadeIn {
@@ -511,48 +671,98 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile & Tablet Responsiveness */
-        @media (max-width: 900px) {
+        /* ─── RESPONSIVE BREAKPOINTS (320px - 960px) ─── */
+        @media (max-width: 960px) {
+            .nav-links-desktop { display: none; }
+            .desktop-auth-btns { display: none; }
+            .mobile-menu-btn { display: flex; }
             .contact-grid { grid-template-columns: 1fr; }
-            .contact-hero h1 { font-size: 30px; }
-            .form-card { padding: 24px 18px; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
         }
 
-        @media (max-width: 480px) {
-            .container { padding: 0 14px; }
-            .brand-name { font-size: 18px; }
+        @media (max-width: 640px) {
+            .topbar { height: 64px; }
+            .mobile-drawer { top: 64px; }
             .btn-wa-header span { display: none; }
-            .btn-wa-header { padding: 8px 12px; }
-            .contact-hero { padding: 32px 0 20px; }
-            .contact-hero h1 { font-size: 26px; }
-            .wa-spotlight-card { padding: 20px; }
-            .wa-spotlight-card h3 { font-size: 20px; }
-            .btn-wa-action { width: 100%; justify-content: center; font-size: 14px; }
+            .btn-wa-header { padding: 8px 10px; }
+        }
+
+        @media (max-width: 380px) {
+            .brand-name { font-size: 18px; }
+            .brand-icon { width: 34px; height: 34px; font-size: 15px; }
+            .btn-wa-header { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- TOPBAR / NAVBAR -->
     <header class="topbar">
         <div class="container topbar-inner">
+            <!-- Brand Logo -->
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
                 <div class="brand-name">Tendorabuy</div>
             </a>
+
+            <!-- Desktop Nav Links -->
+            <ul class="nav-links-desktop">
+                <li><a href="/#features">Features</a></li>
+                <li><a href="/#how-it-works">How It Works</a></li>
+                <li><a href="/#workflow">Online + Offline</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/demo">Live Demo</a></li>
+                <li><a href="/#faq">FAQ</a></li>
+            </ul>
+
+            <!-- Header Actions -->
             <div class="nav-actions">
-                <a href="/pricing" class="btn-ghost">Pricing</a>
-                <a href="/demo" class="btn-ghost">Demo</a>
                 <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
                     <i class="fa-brands fa-whatsapp"></i>
                     <span>+91 7777938338</span>
                 </a>
-                <a href="{{ route('login') }}" class="btn-ghost">Login</a>
-                <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
+                <div class="desktop-auth-btns" style="display:flex; align-items:center; gap:8px;">
+                    <a href="{{ route('login') }}" class="btn-ghost">Login</a>
+                    <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
+                </div>
+                <!-- Mobile Hamburger Button -->
+                <button type="button" class="mobile-menu-btn" onclick="toggleMobileDrawer()" aria-label="Toggle navigation menu">
+                    <i class="fa-solid fa-bars" id="menuToggleIcon"></i>
+                </button>
             </div>
         </div>
     </header>
+
+    <!-- MOBILE DRAWER BACKDROP -->
+    <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="toggleMobileDrawer()"></div>
+
+    <!-- MOBILE DRAWER -->
+    <nav class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation">
+        <ul>
+            <li><a href="/"><i class="fa-solid fa-house" style="color:var(--primary);"></i> Home</a></li>
+            <li><a href="/#features" onclick="toggleMobileDrawer()"><i class="fa-solid fa-sparkles" style="color:var(--primary);"></i> Features</a></li>
+            <li><a href="/#how-it-works" onclick="toggleMobileDrawer()"><i class="fa-solid fa-list-check" style="color:var(--primary);"></i> How It Works</a></li>
+            <li><a href="/#workflow" onclick="toggleMobileDrawer()"><i class="fa-solid fa-cloud-arrow-down" style="color:var(--primary);"></i> Online + Offline</a></li>
+            <li><a href="/demo"><i class="fa-solid fa-play" style="color:var(--primary);"></i> Live Demo Sandboxes</a></li>
+            <li><a href="/pricing"><i class="fa-solid fa-tags" style="color:var(--primary);"></i> Pricing Plans</a></li>
+            <li><a href="/#faq" onclick="toggleMobileDrawer()"><i class="fa-solid fa-circle-question" style="color:var(--primary);"></i> FAQ</a></li>
+            <li><a href="/contact" class="active"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> Contact Sales</a></li>
+            <li>
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" style="color: #4ADE80;">
+                    <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp); font-size: 16px;"></i> WhatsApp (+91 7777938338)
+                </a>
+            </li>
+        </ul>
+        <div class="mobile-drawer-actions">
+            <a href="{{ route('login') }}" class="btn-ghost" style="width:100%;">
+                <i class="fa-solid fa-right-to-bracket"></i> Login
+            </a>
+            <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">
+                <span>Start Free 14-Day Trial</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </nav>
 
     <main class="container">
         <!-- Hero Section -->
@@ -646,7 +856,7 @@
                         <div class="form-group">
                             <label for="contactPhone">Phone / WhatsApp Number <span class="req">*</span></label>
                             <input type="tel" id="contactPhone" name="phone" class="form-input" placeholder="e.g. 9876543210" required>
-                            <div class="field-error" id="err-phone">Please enter a valid 10-digit phone number.</div>
+                            <div class="field-error" id="err-phone">Please enter a valid phone number.</div>
                         </div>
 
                         <div class="form-group">
@@ -709,6 +919,25 @@
 
     <!-- Form Handler Script -->
     <script>
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('mobileDrawerBackdrop');
+            const icon = document.getElementById('menuToggleIcon');
+            const isOpen = drawer.classList.contains('active');
+
+            if (isOpen) {
+                drawer.classList.remove('active');
+                backdrop.classList.remove('active');
+                icon.className = 'fa-solid fa-bars';
+                document.body.style.overflow = '';
+            } else {
+                drawer.classList.add('active');
+                backdrop.classList.add('active');
+                icon.className = 'fa-solid fa-xmark';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
         async function handleContactSubmit(e) {
             e.preventDefault();
 

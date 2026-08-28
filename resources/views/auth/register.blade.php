@@ -344,14 +344,16 @@
                 -webkit-overflow-scrolling: touch !important;
                 touch-action: pan-y !important;
             }
-            .split-left { padding: 36px 20px; }
-            .split-right { padding: 32px 16px; overflow-y: visible !important; }
-            .hero-title { font-size: 26px; }
+            .split-left { padding: 24px 20px; flex: none; }
+            .split-left .hero-content,
+            .split-left .hero-footer { display: none; }
+            .split-right { padding: 20px 16px 40px; overflow-y: visible !important; }
             .form-row { grid-template-columns: 1fr; }
         }
         @media (max-width: 480px) {
-            .split-left { padding: 24px 14px; }
-            .split-right { padding: 24px 14px; }
+            .split-left { padding: 18px 14px; }
+            .split-right { padding: 14px 12px 32px; }
+            .auth-card { padding: 24px 16px; }
         }
     </style>
 </head>

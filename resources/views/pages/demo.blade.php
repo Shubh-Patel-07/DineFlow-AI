@@ -30,7 +30,18 @@
             --text-secondary: #94A3B8;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -39,27 +50,32 @@
             display: flex;
             flex-direction: column;
             line-height: 1.6;
+            width: 100%;
             overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
         }
 
         .container {
             max-width: 1180px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 clamp(14px, 4vw, 24px);
             width: 100%;
         }
 
-        /* Top Bar */
+        /* ─── TOP BAR / NAVBAR ─── */
         .topbar {
-            height: 76px;
-            background: rgba(9, 13, 26, 0.85);
+            height: 72px;
+            background: rgba(9, 13, 26, 0.9);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            width: 100%;
         }
 
         .topbar-inner {
@@ -67,96 +83,136 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            gap: 12px;
         }
 
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
+            flex-shrink: 0;
         }
 
         .brand-icon {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 17px;
             color: #fff;
+            box-shadow: 0 0 12px var(--primary-glow);
         }
 
         .brand-name {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        /* Desktop Nav Items */
+        .nav-links-desktop {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links-desktop a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links-desktop a:hover {
             color: #fff;
         }
 
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .btn-ghost {
-            padding: 9px 18px;
+            padding: 8px 16px;
             color: #CBD5E1;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             border-radius: 8px;
+            border: 1px solid var(--border);
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.03);
+            min-height: 40px;
         }
 
         .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
             color: #fff;
         }
 
         .btn-wa-header {
-            padding: 8px 16px;
-            background: rgba(37, 211, 102, 0.15);
-            border: 1px solid rgba(37, 211, 102, 0.35);
+            padding: 8px 14px;
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid rgba(37, 211, 102, 0.3);
             color: #4ADE80;
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 700;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            white-space: nowrap;
+            min-height: 40px;
         }
 
         .btn-wa-header:hover {
-            background: var(--whatsapp);
+            background: rgba(37, 211, 102, 0.22);
+            border-color: #25D366;
             color: #fff;
-            transform: translateY(-1px);
         }
 
         .btn-primary {
-            padding: 10px 22px;
+            padding: 9px 18px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #fff;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
             border-radius: 8px;
+            box-shadow: 0 4px 14px var(--primary-glow);
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             border: none;
             cursor: pointer;
+            justify-content: center;
+            white-space: nowrap;
+            min-height: 40px;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px var(--primary-glow);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
         .btn-success {
@@ -164,17 +220,19 @@
             background: linear-gradient(135deg, #25D366, #128C7E);
             color: #fff;
             text-decoration: none;
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
             border-radius: 10px;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+            min-height: 44px;
         }
 
         .btn-success:hover {
@@ -182,10 +240,102 @@
             box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
         }
 
-        /* Hero */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ─── MOBILE DRAWER & BACKDROP ─── */
+        .mobile-drawer-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 13, 26, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 998;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .mobile-drawer-backdrop.active {
+            display: block;
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: #0D1326;
+            border-bottom: 1px solid var(--border);
+            padding: 20px 16px;
+            z-index: 999;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+            max-height: calc(100vh - 72px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-drawer.active {
+            display: block;
+        }
+
+        .mobile-drawer ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mobile-drawer ul li a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: background 0.15s;
+            min-height: 44px;
+        }
+
+        .mobile-drawer ul li a:hover,
+        .mobile-drawer ul li a.active {
+            background: rgba(99, 102, 241, 0.12);
+            color: #fff;
+        }
+
+        .mobile-drawer-actions {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* ─── HERO SECTION ─── */
         .demo-hero {
-            padding: 50px 0 36px;
+            padding: clamp(36px, 6vw, 56px) 0 clamp(24px, 4vw, 36px);
             text-align: center;
+            width: 100%;
         }
 
         .section-tag {
@@ -200,46 +350,53 @@
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
         }
 
         .demo-hero h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 40px;
+            font-size: clamp(26px, 4.5vw, 40px);
             font-weight: 900;
             line-height: 1.2;
+            letter-spacing: -0.5px;
             margin-bottom: 14px;
+            color: #fff;
         }
 
         .demo-hero p {
-            font-size: 16px;
+            font-size: clamp(14.5px, 1.8vw, 16px);
             color: var(--text-secondary);
             max-width: 680px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
-        /* 3 Interactive Cards */
+        /* ─── 3 INTERACTIVE SANDBOX CARDS ─── */
         .demo-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 28px;
-            margin-bottom: 60px;
+            gap: clamp(16px, 2.5vw, 28px);
+            margin-bottom: clamp(36px, 6vw, 60px);
+            width: 100%;
         }
 
         .demo-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 32px 24px;
+            padding: clamp(20px, 3vw, 32px) clamp(16px, 2.5vw, 24px);
             display: flex;
             flex-direction: column;
             text-align: center;
             position: relative;
             transition: all 0.25s ease;
+            width: 100%;
+            min-width: 0;
         }
 
         .demo-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-4px);
             border-color: var(--border-glow);
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
         }
@@ -251,19 +408,20 @@
         }
 
         .demo-icon-wrap {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
-            margin: 0 auto 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
+            flex-shrink: 0;
         }
 
         .demo-card h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 20px;
+            font-size: clamp(18px, 2vw, 20px);
             font-weight: 800;
             color: #fff;
             margin-bottom: 8px;
@@ -272,16 +430,17 @@
         .demo-card p {
             font-size: 13.5px;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             flex: 1;
+            line-height: 1.55;
         }
 
         .demo-card ul {
             list-style: none;
             text-align: left;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             background: rgba(0, 0, 0, 0.2);
-            padding: 16px;
+            padding: 14px 16px;
             border-radius: 12px;
         }
 
@@ -290,55 +449,62 @@
             color: var(--text-secondary);
             margin-bottom: 8px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
+            line-height: 1.45;
         }
 
         .demo-card ul li:last-child { margin-bottom: 0; }
-        .demo-card ul li i { color: #10B981; font-size: 12px; }
+        .demo-card ul li i { color: #10B981; font-size: 12px; margin-top: 3px; flex-shrink: 0; }
 
-        /* Form + WhatsApp Section */
+        /* ─── BOOKING + WHATSAPP SECTION ─── */
         .demo-booking-wrap {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            margin-bottom: 80px;
+            gap: clamp(20px, 3vw, 32px);
+            margin-bottom: clamp(40px, 6vw, 80px);
+            width: 100%;
         }
 
         .booking-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 36px;
+            padding: clamp(20px, 3.5vw, 36px);
+            width: 100%;
+            min-width: 0;
         }
 
         .booking-card h2 {
             font-family: 'Outfit', sans-serif;
-            font-size: 26px;
+            font-size: clamp(20px, 2.5vw, 26px);
             font-weight: 800;
             color: #fff;
             margin-bottom: 8px;
+            line-height: 1.25;
         }
 
         .booking-card p {
             font-size: 14px;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            line-height: 1.55;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
+            gap: 12px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+            width: 100%;
         }
 
         .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
             color: #CBD5E1;
             margin-bottom: 6px;
@@ -349,12 +515,14 @@
             background: rgba(15, 23, 42, 0.85);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 12px 16px;
+            padding: 11px 14px;
             color: #fff;
             font-size: 14px;
             font-family: inherit;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            min-height: 44px;
+            box-sizing: border-box;
         }
 
         .form-input:focus {
@@ -366,10 +534,12 @@
             background: linear-gradient(145deg, #064E3B 0%, #0D2818 50%, #131A35 100%);
             border: 1px solid rgba(37, 211, 102, 0.4);
             border-radius: 20px;
-            padding: 36px;
+            padding: clamp(20px, 3.5vw, 36px);
             display: flex;
             flex-direction: column;
             justify-content: center;
+            width: 100%;
+            min-width: 0;
         }
 
         .wa-badge {
@@ -382,22 +552,23 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             width: fit-content;
         }
 
         .whatsapp-card h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 28px;
+            font-size: clamp(20px, 2.5vw, 28px);
             font-weight: 800;
             color: #fff;
             margin-bottom: 12px;
+            line-height: 1.25;
         }
 
         .whatsapp-card p {
-            font-size: 14.5px;
+            font-size: clamp(13.5px, 1.6vw, 14.5px);
             color: #D1FAE5;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             line-height: 1.6;
         }
 
@@ -409,54 +580,111 @@
             left: -9999px !important;
         }
 
-        /* Footer */
+        /* ─── FOOTER ─── */
         .footer {
             margin-top: auto;
             border-top: 1px solid var(--border);
-            padding: 30px 0;
+            padding: 24px 0;
             text-align: center;
             font-size: 13px;
             color: #64748B;
+            width: 100%;
         }
 
-        @media (max-width: 900px) {
+        /* ─── RESPONSIVE MEDIA QUERIES (320px - 960px) ─── */
+        @media (max-width: 960px) {
+            .nav-links-desktop { display: none; }
+            .desktop-auth-btns { display: none; }
+            .mobile-menu-btn { display: flex; }
             .demo-grid { grid-template-columns: 1fr; }
             .demo-booking-wrap { grid-template-columns: 1fr; }
-            .demo-hero h1 { font-size: 30px; }
-            .booking-card { padding: 24px 18px; }
-            .whatsapp-card { padding: 24px 18px; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
         }
 
-        @media (max-width: 480px) {
-            .container { padding: 0 16px; }
+        @media (max-width: 640px) {
+            .topbar { height: 64px; }
+            .mobile-drawer { top: 64px; }
             .btn-wa-header span { display: none; }
-            .btn-wa-header { padding: 8px 12px; }
-            .whatsapp-card h3 { font-size: 22px; }
-            .btn-success { width: 100%; justify-content: center; font-size: 14px; }
+            .btn-wa-header { padding: 8px 10px; }
+            .btn-success { width: 100%; font-size: 14px; }
+        }
+
+        @media (max-width: 380px) {
+            .brand-name { font-size: 18px; }
+            .brand-icon { width: 34px; height: 34px; font-size: 15px; }
+            .btn-wa-header { display: none; }
         }
     </style>
 </head>
 <body>
 
+    <!-- TOPBAR / NAVBAR -->
     <header class="topbar">
         <div class="container topbar-inner">
+            <!-- Brand Logo -->
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
                 <div class="brand-name">Tendorabuy</div>
             </a>
+
+            <!-- Desktop Nav Links -->
+            <ul class="nav-links-desktop">
+                <li><a href="/#features">Features</a></li>
+                <li><a href="/#how-it-works">How It Works</a></li>
+                <li><a href="/#workflow">Online + Offline</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/#faq">FAQ</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+
+            <!-- Header Actions -->
             <div class="nav-actions">
-                <a href="/pricing" class="btn-ghost">Pricing</a>
-                <a href="/contact" class="btn-ghost">Contact</a>
                 <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
                     <i class="fa-brands fa-whatsapp"></i>
                     <span>+91 7777938338</span>
                 </a>
-                <a href="{{ route('login') }}" class="btn-ghost">Login</a>
-                <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
+                <div class="desktop-auth-btns" style="display:flex; align-items:center; gap:8px;">
+                    <a href="{{ route('login') }}" class="btn-ghost">Login</a>
+                    <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
+                </div>
+                <!-- Mobile Hamburger Button -->
+                <button type="button" class="mobile-menu-btn" onclick="toggleMobileDrawer()" aria-label="Toggle navigation menu">
+                    <i class="fa-solid fa-bars" id="menuToggleIcon"></i>
+                </button>
             </div>
         </div>
     </header>
+
+    <!-- MOBILE DRAWER BACKDROP -->
+    <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="toggleMobileDrawer()"></div>
+
+    <!-- MOBILE DRAWER -->
+    <nav class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation">
+        <ul>
+            <li><a href="/"><i class="fa-solid fa-house" style="color:var(--primary);"></i> Home</a></li>
+            <li><a href="/#features" onclick="toggleMobileDrawer()"><i class="fa-solid fa-sparkles" style="color:var(--primary);"></i> Features</a></li>
+            <li><a href="/#how-it-works" onclick="toggleMobileDrawer()"><i class="fa-solid fa-list-check" style="color:var(--primary);"></i> How It Works</a></li>
+            <li><a href="/#workflow" onclick="toggleMobileDrawer()"><i class="fa-solid fa-cloud-arrow-down" style="color:var(--primary);"></i> Online + Offline</a></li>
+            <li><a href="/demo" class="active"><i class="fa-solid fa-play" style="color:var(--primary);"></i> Live Demo Sandboxes</a></li>
+            <li><a href="/pricing"><i class="fa-solid fa-tags" style="color:var(--primary);"></i> Pricing Plans</a></li>
+            <li><a href="/#faq" onclick="toggleMobileDrawer()"><i class="fa-solid fa-circle-question" style="color:var(--primary);"></i> FAQ</a></li>
+            <li><a href="/contact"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> Contact Sales</a></li>
+            <li>
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" style="color: #4ADE80;">
+                    <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp); font-size: 16px;"></i> WhatsApp (+91 7777938338)
+                </a>
+            </li>
+        </ul>
+        <div class="mobile-drawer-actions">
+            <a href="{{ route('login') }}" class="btn-ghost" style="width:100%;">
+                <i class="fa-solid fa-right-to-bracket"></i> Login
+            </a>
+            <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">
+                <span>Start Free 14-Day Trial</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </nav>
 
     <main class="container">
         <!-- 1. HERO -->
@@ -539,42 +767,42 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Your Full Name *</label>
+                            <label for="demoName">Your Full Name *</label>
                             <input type="text" id="demoName" required class="form-input" placeholder="e.g. Rahul Patel">
                         </div>
 
                         <div class="form-group">
-                            <label>Restaurant / Business Name *</label>
+                            <label for="demoRestName">Restaurant / Business Name *</label>
                             <input type="text" id="demoRestName" required class="form-input" placeholder="e.g. Spice Symphony Bistro">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>WhatsApp / Mobile Number *</label>
+                            <label for="demoPhone">WhatsApp / Mobile Number *</label>
                             <input type="tel" id="demoPhone" required class="form-input" placeholder="e.g. 9876543210">
                         </div>
 
                         <div class="form-group">
-                            <label>Email Address</label>
+                            <label for="demoEmail">Email Address</label>
                             <input type="email" id="demoEmail" class="form-input" placeholder="e.g. rahul@restaurant.com">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>City / Location</label>
+                            <label for="demoCity">City / Location</label>
                             <input type="text" id="demoCity" class="form-input" placeholder="e.g. Ahmedabad, Surat, Mumbai">
                         </div>
 
                         <div class="form-group">
-                            <label>Preferred Demo Slot</label>
+                            <label for="demoTime">Preferred Demo Slot</label>
                             <input type="text" id="demoTime" class="form-input" placeholder="e.g. Today 4 PM / Tomorrow">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Special Notes / Questions</label>
+                        <label for="demoMessage">Special Notes / Questions</label>
                         <input type="text" id="demoMessage" class="form-input" placeholder="e.g. Need 15 tables QR ordering + thermal printer setup">
                     </div>
 
@@ -618,6 +846,25 @@
     </footer>
 
     <script>
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('mobileDrawerBackdrop');
+            const icon = document.getElementById('menuToggleIcon');
+            const isOpen = drawer.classList.contains('active');
+
+            if (isOpen) {
+                drawer.classList.remove('active');
+                backdrop.classList.remove('active');
+                icon.className = 'fa-solid fa-bars';
+                document.body.style.overflow = '';
+            } else {
+                drawer.classList.add('active');
+                backdrop.classList.add('active');
+                icon.className = 'fa-solid fa-xmark';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
         async function submitDemoRequest(e) {
             e.preventDefault();
             const btn = document.getElementById('demoSubmitBtn');

@@ -920,6 +920,7 @@
 
         @media (max-width: 960px) {
             .nav-links { display: none; }
+            .desktop-auth-btns { display: none !important; }
             .mobile-menu-btn { display: flex; }
             .btn-header-demo { display: none; }
             .hero-mockup { grid-template-columns: 1fr; }
@@ -986,6 +987,7 @@
                     <span class="wa-text">+91 7777938338</span>
                 </a>
 
+                <div class="desktop-auth-btns" style="display:flex; align-items:center; gap:8px;">
                 @auth
                     @if(Auth::user()->role === 'superadmin')
                         <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i> Super Admin</a>
@@ -1006,6 +1008,7 @@
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 @endauth
+                </div>
 
                 <!-- Mobile Hamburger Button -->
                 <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu">
