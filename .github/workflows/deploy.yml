@@ -1,0 +1,27 @@
+name: Deploy to AWS Production
+
+on:
+  push:
+    branches:
+      - feature-teamlead
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USER || 'ubuntu' }}
+          key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          port: ${{ secrets.AWS_EC2_PORT || 22 }}
+          script: |
+            cd /var/www/tendorabuy || cd /var/www/dineflow
+            sudo bash deployment/scripts/deploy.sh
