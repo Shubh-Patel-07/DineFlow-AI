@@ -295,3 +295,354 @@ function escapeHtml(str) {
   if (typeof str !== 'string') return '';
   return str.replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[match]);
 }
+
+// ─────────────────────────────────────────────────────────────
+// BULK IMPORT EXCEL / CSV CONTROLLER
+// ─────────────────────────────────────────────────────────────
+
+let parsedCsvItems = [];
+
+function openBulkImportModal() {
+  parsedCsvItems = [];
+  const modal = document.getElementById('bulkImportModal');
+  const preview = document.getElementById('csvPreviewSection');
+  const fileInput = document.getElementById('csvFileInput');
+  const label = document.getElementById('uploadFileLabel');
+  
+  if (fileInput) fileInput.value = '';
+  if (preview) preview.style.display = 'none';
+  if (label) label.textContent = 'Click or Drag & Drop CSV File Here';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeBulkImportModal() {
+  const modal = document.getElementById('bulkImportModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleCsvFileSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const label = document.getElementById('uploadFileLabel');
+  if (label) label.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    parseCsvClientSide(text);
+  };
+  reader.readAsText(file);
+}
+
+function parseCsvClientSide(csvText) {
+  parsedCsvItems = [];
+  const lines = csvText.split(/\r\n|\n/);
+  if (lines.length < 2) return;
+
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+  const nameIdx = headers.findIndex(h => h.includes('name'));
+  const catIdx = headers.findIndex(h => h.includes('cat'));
+  const priceIdx = headers.findIndex(h => h.includes('price'));
+  const vegIdx = headers.findIndex(h => h.includes('veg'));
+  const descIdx = headers.findIndex(h => h.includes('desc'));
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Split by comma ignoring commas inside quotes
+    const row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+    if (row.length === 0 || !row[nameIdx >= 0 ? nameIdx : 0]) continue;
+
+    const name = row[nameIdx >= 0 ? nameIdx : 0];
+    const category = catIdx >= 0 && row[catIdx] ? row[catIdx] : 'General';
+    const rawPrice = priceIdx >= 0 && row[priceIdx] ? row[priceIdx].replace(/[^0-9.]/g, '') : '0';
+    const price = parseFloat(rawPrice) || 0;
+    const rawVeg = vegIdx >= 0 && row[vegIdx] ? row[vegIdx].toLowerCase() : 'yes';
+    const isVeg = !(rawVeg === 'no' || rawVeg === '0' || rawVeg === 'false' || rawVeg === 'non-veg' || rawVeg === 'nonveg');
+    const desc = descIdx >= 0 && row[descIdx] ? row[descIdx] : '';
+
+    parsedCsvItems.push({ name, category, price, is_veg: isVeg, description: desc, is_available: true });
+  }
+
+  const preview = document.getElementById('csvPreviewSection');
+  const tbody = document.getElementById('csvPreviewTableBody');
+  const countEl = document.getElementById('csvParsedCount');
+
+  if (countEl) countEl.textContent = parsedCsvItems.length;
+  if (tbody) {
+    tbody.innerHTML = parsedCsvItems.slice(0, 10).map(item => `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px 12px; font-weight:600; color:var(--text-primary);">${escapeHtml(item.name)}</td>
+        <td style="padding:8px 12px; color:var(--text-secondary);">${escapeHtml(item.category)}</td>
+        <td style="padding:8px 12px; font-weight:700; color:#10B981;">₹${item.price.toFixed(2)}</td>
+        <td style="padding:8px 12px;">${item.is_veg ? '<span style="color:#34D399;">🟢 Veg</span>' : '<span style="color:#F87171;">🔴 Non-Veg</span>'}</td>
+      </tr>
+    `).join('') + (parsedCsvItems.length > 10 ? `<tr><td colspan="4" style="padding:8px; text-align:center; color:var(--text-muted); font-size:11px;">...and ${parsedCsvItems.length - 10} more items</td></tr>` : '');
+  }
+
+  if (preview) preview.style.display = 'block';
+}
+
+async function handleBulkImportSubmit(event) {
+  event.preventDefault();
+  const fileInput = document.getElementById('csvFileInput');
+  const btn = document.getElementById('btnConfirmBulkImport');
+
+  if (parsedCsvItems.length === 0 && (!fileInput || !fileInput.files[0])) {
+    alert('Please select a valid CSV file with menu items first.');
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importing Items...';
+  }
+
+  try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    let res;
+
+    if (parsedCsvItems.length > 0) {
+      res = await fetch('/api/menu/bulk-import', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({ items: parsedCsvItems })
+      });
+    } else {
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      res = await fetch('/api/menu/bulk-import', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        body: formData
+      });
+    }
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      alert(`🎉 Success! ${data.count || parsedCsvItems.length} menu items imported successfully!`);
+      closeBulkImportModal();
+      loadMenuItems();
+    } else {
+      alert(data.message || 'Failed to import menu items. Please check your plan limits or CSV format.');
+    }
+  } catch (err) {
+    console.error('Bulk import error:', err);
+    alert('Network error while uploading menu items. Please try again.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Confirm &amp; Import Items';
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// AI PHOTO MENU SCANNER CONTROLLER
+// ─────────────────────────────────────────────────────────────
+
+let aiDetectedDishesList = [];
+
+function openAiMenuScanModal() {
+  aiDetectedDishesList = [];
+  const modal = document.getElementById('aiScanModal');
+  const results = document.getElementById('aiScanResultsSection');
+  const saveBtn = document.getElementById('btnSaveAiDishes');
+  const fileInput = document.getElementById('menuPhotoInput');
+  const rawText = document.getElementById('rawMenuText');
+  const label = document.getElementById('aiPhotoLabel');
+
+  if (fileInput) fileInput.value = '';
+  if (rawText) rawText.value = '';
+  if (results) results.style.display = 'none';
+  if (saveBtn) saveBtn.style.display = 'none';
+  if (label) label.textContent = 'Click or Drag Menu Card Photo Here';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAiMenuScanModal() {
+  const modal = document.getElementById('aiScanModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleMenuPhotoSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const label = document.getElementById('aiPhotoLabel');
+  if (label) label.innerHTML = `📸 <b>${escapeHtml(file.name)}</b> (${(file.size / 1024).toFixed(1)} KB) Selected!`;
+}
+
+async function runAiMenuScan() {
+  const fileInput = document.getElementById('menuPhotoInput');
+  const rawText = document.getElementById('rawMenuText')?.value || '';
+  const btn = document.getElementById('btnScanMenuAi');
+
+  if ((!fileInput || !fileInput.files[0]) && !rawText.trim()) {
+    alert('Please upload a photo of your menu card or paste the menu text first.');
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> AI Analyzing Dishes &amp; Prices...';
+  }
+
+  try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const formData = new FormData();
+    if (fileInput && fileInput.files[0]) {
+      formData.append('image', fileInput.files[0]);
+    }
+    if (rawText.trim()) {
+      formData.append('raw_text', rawText);
+    }
+
+    const res = await fetch('/api/menu/ai-scan', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success && Array.isArray(data.items) && data.items.length > 0) {
+      aiDetectedDishesList = data.items;
+      renderAiScanResultsTable();
+    } else {
+      alert(data.message || 'No dishes detected. Please ensure the menu photo is clear with legible text and prices.');
+    }
+  } catch (err) {
+    console.error('AI Scan error:', err);
+    alert('Failed to process menu photo. Please try again.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-microchip"></i> Start AI Dish Detection';
+    }
+  }
+}
+
+function renderAiScanResultsTable() {
+  const section = document.getElementById('aiScanResultsSection');
+  const tbody = document.getElementById('aiScanTableBody');
+  const countEl = document.getElementById('aiDetectedCount');
+  const saveBtn = document.getElementById('btnSaveAiDishes');
+
+  if (countEl) countEl.textContent = aiDetectedDishesList.length;
+
+  if (tbody) {
+    tbody.innerHTML = aiDetectedDishesList.map((item, idx) => `
+      <tr style="border-bottom:1px solid var(--border);" id="aiRow_${idx}">
+        <td style="padding:6px 8px; text-align:center;">
+          <input type="checkbox" class="ai-item-check" data-index="${idx}" checked style="accent-color:#6366F1; width:15px; height:15px;">
+        </td>
+        <td style="padding:6px 8px;">
+          <input type="text" value="${escapeHtml(item.name)}" oninput="updateAiItemField(${idx}, 'name', this.value)" style="width:100%; box-sizing:border-box; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:12px;">
+        </td>
+        <td style="padding:6px 8px;">
+          <input type="text" value="${escapeHtml(item.category)}" oninput="updateAiItemField(${idx}, 'category', this.value)" style="width:100%; box-sizing:border-box; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text-secondary); font-size:12px;">
+        </td>
+        <td style="padding:6px 8px;">
+          <input type="number" step="0.5" value="${item.price}" oninput="updateAiItemField(${idx}, 'price', parseFloat(this.value) || 0)" style="width:100%; box-sizing:border-box; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:#10B981; font-weight:700; font-size:12px;">
+        </td>
+        <td style="padding:6px 8px; text-align:center;">
+          <button type="button" onclick="toggleAiItemVeg(${idx})" style="border:none; background:transparent; cursor:pointer; font-size:16px;" title="Click to toggle Veg / Non-Veg">
+            ${item.is_veg ? '🟢' : '🔴'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  if (section) section.style.display = 'block';
+  if (saveBtn) saveBtn.style.display = 'inline-flex';
+}
+
+function updateAiItemField(idx, field, val) {
+  if (aiDetectedDishesList[idx]) {
+    aiDetectedDishesList[idx][field] = val;
+  }
+}
+
+function toggleAiItemVeg(idx) {
+  if (aiDetectedDishesList[idx]) {
+    aiDetectedDishesList[idx].is_veg = !aiDetectedDishesList[idx].is_veg;
+    renderAiScanResultsTable();
+  }
+}
+
+function toggleSelectAllAiItems(master) {
+  const checks = document.querySelectorAll('.ai-item-check');
+  checks.forEach(c => c.checked = master.checked);
+}
+
+function addCustomRowToAiTable() {
+  aiDetectedDishesList.unshift({
+    name: 'New Custom Dish',
+    category: 'Main Course',
+    price: 150,
+    is_veg: true,
+    description: '',
+    is_available: true
+  });
+  renderAiScanResultsTable();
+}
+
+async function saveAiDetectedDishes() {
+  const checks = document.querySelectorAll('.ai-item-check:checked');
+  const selectedIndices = Array.from(checks).map(c => parseInt(c.getAttribute('data-index')));
+  const itemsToSave = selectedIndices.map(idx => aiDetectedDishesList[idx]).filter(Boolean);
+
+  if (itemsToSave.length === 0) {
+    alert('Please select at least one item from the table to save.');
+    return;
+  }
+
+  const saveBtn = document.getElementById('btnSaveAiDishes');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving Items to Menu...';
+  }
+
+  try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const res = await fetch('/api/menu/bulk-import', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({ items: itemsToSave })
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      alert(`🎉 Awesome! ${data.count || itemsToSave.length} dishes have been added to your menu!`);
+      closeAiMenuScanModal();
+      loadMenuItems();
+    } else {
+      alert(data.message || 'Failed to save menu items.');
+    }
+  } catch (err) {
+    console.error('Save AI dishes error:', err);
+    alert('Network error while saving dishes.');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save All Selected Items (1-Click)';
+    }
+  }
+}

@@ -384,6 +384,9 @@ Route::prefix('api')->group(function () {
             ->middleware('role:admin,manager');
 
         Route::post('/menu', [MenuItemController::class, 'store'])->middleware('role:admin,manager');
+        Route::get('/menu/template', [MenuItemController::class, 'downloadTemplate']);
+        Route::post('/menu/bulk-import', [MenuItemController::class, 'bulkImport'])->middleware('role:admin,manager');
+        Route::post('/menu/ai-scan', [MenuItemController::class, 'aiScanMenu'])->middleware('role:admin,manager');
         Route::put('/menu/{id}', [MenuItemController::class, 'update'])->middleware('role:admin,manager,kitchen');
         Route::delete('/menu/{id}', [MenuItemController::class, 'destroy'])->middleware('role:admin');
 
