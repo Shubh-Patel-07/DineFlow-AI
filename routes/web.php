@@ -15,6 +15,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 // Public SaaS Registration & Authentication Routes
@@ -324,25 +325,10 @@ Route::get('/demo', function () {
     return view('pages.demo');
 })->name('demo');
 
-Route::post('/api/demo/request', function (Illuminate\Http\Request $request) {
-    $validated = $request->validate([
-        'name'            => 'required|string|max:255',
-        'restaurant_name' => 'required|string|max:255',
-        'phone'           => 'required|string|max:50',
-        'city'            => 'nullable|string|max:255',
-        'email'           => 'nullable|email|max:255',
-        'preferred_time'  => 'nullable|string|max:255',
-        'message'         => 'nullable|string',
-    ]);
-
-    $demo = \App\Models\DemoRequest::create($validated);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Demo request registered successfully.',
-        'data'    => $demo
-    ], 201);
-});
+// Public Contact / Demo / Enquiry Form Submissions (Rate limited)
+Route::post('/contact/submit', [ContactController::class, 'submit'])->middleware('throttle:15,1')->name('contact.submit');
+Route::post('/api/contact/submit', [ContactController::class, 'submit'])->middleware('throttle:15,1');
+Route::post('/api/demo/request', [ContactController::class, 'submit'])->middleware('throttle:15,1');
 
 
 // DineFlow AI API Endpoints (Phase 1-4)
@@ -515,6 +501,11 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
         Route::post('/restaurants/{id}/payment', [SuperAdminController::class, 'recordPayment']);
         Route::get('/orders', [SuperAdminController::class, 'recentOrders']);
         Route::get('/audit-logs', [SuperAdminController::class, 'auditLogs']);
+        
+        // Super Admin Leads & Enquiries Management
+        Route::get('/leads', [SuperAdminController::class, 'leads']);
+        Route::put('/leads/{id}/status', [SuperAdminController::class, 'updateLeadStatus']);
+        Route::delete('/leads/{id}', [SuperAdminController::class, 'deleteLead']);
     });
 });
 

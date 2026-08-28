@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing Plans — Tendorabuy Restaurant Management</title>
-    <meta name="description" content="Simple, transparent restaurant software pricing. Start with our 100% Free Plan or choose Pro and Enterprise growth tiers.">
+    <meta name="description" content="Simple, transparent restaurant software pricing. Start with our 100% Free Plan or choose Pro and Enterprise growth tiers. WhatsApp: +91 7777938338.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
@@ -16,6 +16,7 @@
             --primary-glow: rgba(99, 102, 241, 0.35);
             --primary-dark: #4338CA;
             --success: #10B981;
+            --whatsapp: #25D366;
             --bg: #090D1A;
             --card: #131A35;
             --border: rgba(255, 255, 255, 0.08);
@@ -86,6 +87,7 @@
 
         .nav-actions {
             display: flex;
+            align-items: center;
             gap: 12px;
         }
 
@@ -102,6 +104,27 @@
         .btn-ghost:hover {
             background: rgba(255, 255, 255, 0.06);
             color: #fff;
+        }
+
+        .btn-wa-header {
+            padding: 8px 16px;
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.35);
+            color: #4ADE80;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-wa-header:hover {
+            background: var(--whatsapp);
+            color: #fff;
+            transform: translateY(-1px);
         }
 
         .btn-primary {
@@ -256,6 +279,12 @@
                 <div class="brand-name">Tendorabuy</div>
             </a>
             <div class="nav-actions">
+                <a href="/demo" class="btn-ghost">Demo</a>
+                <a href="/contact" class="btn-ghost">Contact</a>
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20pricing%20plans." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>+91 7777938338</span>
+                </a>
                 <a href="{{ route('login') }}" class="btn-ghost">Login</a>
                 <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
             </div>
@@ -321,7 +350,8 @@
                     <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
                     <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone Support</li>
                 </ul>
-                <a href="/contact" class="btn-ghost" style="width:100%; border:1px solid var(--border); text-align:center;">Contact Sales</a>
+                <a href="/contact" class="btn-ghost" style="width:100%; border:1px solid var(--border); text-align:center; margin-bottom:10px;">Contact Sales Form</a>
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20am%20interested%20in%20the%20Enterprise%20Plan%20for%20my%20restaurant." target="_blank" class="btn-primary" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E);"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
             </div>
         </section>
     </main>

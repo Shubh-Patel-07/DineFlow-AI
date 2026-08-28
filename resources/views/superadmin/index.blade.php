@@ -829,6 +829,11 @@
         <i class="fa-solid fa-clipboard-list"></i>
         <span>Audit Logs</span>
       </a>
+      <a class="nav-item" onclick="switchSection('leads', this)">
+        <i class="fa-solid fa-address-book"></i>
+        <span>Leads &amp; Enquiries</span>
+        <span id="leadCountBadge" style="display:none; margin-left:auto; background:#EF4444; color:#fff; font-size:11px; padding:2px 7px; border-radius:10px; font-weight:700;">0</span>
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -1121,6 +1126,92 @@
         </div>
       </section>
 
+      <!-- ── SECTION: LEADS & ENQUIRIES ── -->
+      <section id="section-leads" style="display: none;">
+        <!-- Lead Metrics Overview -->
+        <div class="metrics-grid" style="margin-bottom: 24px;">
+          <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;"><i class="fa-solid fa-inbox"></i></div>
+            <div class="metric-content">
+              <span class="metric-label">Total Leads</span>
+              <div class="metric-value" id="leadStatTotal">0</div>
+              <span class="metric-change" style="color: var(--text-muted);">All submissions</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(239, 68, 68, 0.15); color: #F87171;"><i class="fa-solid fa-bell"></i></div>
+            <div class="metric-content">
+              <span class="metric-label">New / Pending</span>
+              <div class="metric-value" id="leadStatNew">0</div>
+              <span class="metric-change" style="color: #F87171;">Requires follow-up</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;"><i class="fa-solid fa-phone"></i></div>
+            <div class="metric-content">
+              <span class="metric-label">Contacted</span>
+              <div class="metric-value" id="leadStatContacted">0</div>
+              <span class="metric-change" style="color: #FBBF24;">In discussion</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #34D399;"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="metric-content">
+              <span class="metric-label">Converted</span>
+              <div class="metric-value" id="leadStatConverted">0</div>
+              <span class="metric-change" style="color: #34D399;">Active restaurants</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;">📥 Public Contact &amp; Demo Leads</h3>
+              <div style="position: relative;">
+                <input type="text" id="leadSearchInput" placeholder="Search name, restaurant, phone..." style="background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; padding: 7px 14px 7px 34px; border-radius: 8px; font-size: 13px; outline: none; width: 240px;" onkeyup="if(event.key==='Enter') fetchLeads(1)">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-muted);"></i>
+              </div>
+              <select id="leadStatusFilter" style="background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 13px; outline: none;" onchange="fetchLeads(1)">
+                <option value="all">All Statuses</option>
+                <option value="new">New</option>
+                <option value="pending">Pending</option>
+                <option value="contacted">Contacted</option>
+                <option value="converted">Converted</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-secondary" onclick="fetchLeads(1)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date &amp; Time</th>
+                  <th>Restaurant &amp; Contact</th>
+                  <th>Phone &amp; WhatsApp</th>
+                  <th>Email</th>
+                  <th>City / Slot</th>
+                  <th>Message / Enquiry</th>
+                  <th>Source</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody">
+                <tr><td colspan="9" style="text-align: center; padding: 24px;">Loading leads...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="leadsPagination" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-top:1px solid var(--border-color); font-size:13px; color:var(--text-secondary);">
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -1375,7 +1466,8 @@
         'restaurants': 'Restaurants Management',
         'subscriptions': 'SaaS Subscription Control',
         'analytics': 'Global Analytics',
-        'audit-logs': 'System Audit Logs'
+        'audit-logs': 'System Audit Logs',
+        'leads': 'Leads & Enquiries Management'
       };
       document.getElementById('currentSectionTitle').textContent = titles[sectionId] || 'Super Admin';
 
@@ -1383,6 +1475,7 @@
       if (sectionId === 'subscriptions') fetchSubscriptions();
       if (sectionId === 'audit-logs') fetchAuditLogs();
       if (sectionId === 'dashboard') fetchRecentOrders();
+      if (sectionId === 'leads') fetchLeads(1);
 
       if (window.innerWidth <= 1024) document.getElementById('sidebar').classList.remove('open');
     }
@@ -1809,8 +1902,199 @@
       }
     }
 
+    /* ─── LEADS & ENQUIRIES MANAGEMENT ─── */
+    let currentLeadsPage = 1;
+
+    async function fetchLeads(page = 1) {
+      currentLeadsPage = page;
+      const search = document.getElementById('leadSearchInput')?.value.trim() || '';
+      const status = document.getElementById('leadStatusFilter')?.value || 'all';
+
+      try {
+        const url = `/api/superadmin/leads?page=${page}&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`;
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.success) {
+          // Update overview metric cards
+          if (json.stats) {
+            document.getElementById('leadStatTotal').textContent = json.stats.total || 0;
+            document.getElementById('leadStatNew').textContent = json.stats.new_or_pending || 0;
+            document.getElementById('leadStatContacted').textContent = json.stats.contacted || 0;
+            document.getElementById('leadStatConverted').textContent = json.stats.converted || 0;
+
+            // Update sidebar badge
+            const badge = document.getElementById('leadCountBadge');
+            if (badge) {
+              const pendingCount = json.stats.new_or_pending || 0;
+              if (pendingCount > 0) {
+                badge.textContent = pendingCount;
+                badge.style.display = 'inline-block';
+              } else {
+                badge.style.display = 'none';
+              }
+            }
+          }
+
+          renderLeadsTable(json.data, json.pagination);
+        } else {
+          showToast(json.message || 'Failed to load leads', 'error');
+        }
+      } catch (err) {
+        console.error('Error fetching leads:', err);
+        showToast('Network error while loading leads', 'error');
+      }
+    }
+
+    function renderLeadsTable(leads, pagination) {
+      const tbody = document.getElementById('leadsTableBody');
+      if (!tbody) return;
+
+      if (!leads || leads.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--text-muted);">No lead enquiries found.</td></tr>';
+        document.getElementById('leadsPagination').innerHTML = '';
+        return;
+      }
+
+      tbody.innerHTML = leads.map(lead => {
+        const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+        const intlPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+        const waText = encodeURIComponent(`Hello ${lead.name || 'there'}, thank you for contacting Tendorabuy regarding "${lead.restaurant_name}". How can we help you?`);
+        const dateStr = new Date(lead.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+        const statusColors = {
+          'new': { bg: 'rgba(239, 68, 68, 0.15)', text: '#F87171', border: 'rgba(239, 68, 68, 0.3)' },
+          'pending': { bg: 'rgba(245, 158, 11, 0.15)', text: '#FBBF24', border: 'rgba(245, 158, 11, 0.3)' },
+          'contacted': { bg: 'rgba(99, 102, 241, 0.15)', text: '#818CF8', border: 'rgba(99, 102, 241, 0.3)' },
+          'converted': { bg: 'rgba(16, 185, 129, 0.15)', text: '#34D399', border: 'rgba(16, 185, 129, 0.3)' },
+          'closed': { bg: 'rgba(100, 116, 139, 0.15)', text: '#94A3B8', border: 'rgba(100, 116, 139, 0.3)' }
+        };
+        const currentStColor = statusColors[lead.status] || statusColors['new'];
+
+        return `
+          <tr>
+            <td style="white-space:nowrap; font-size:12px; color:var(--text-muted);">
+              <i class="fa-regular fa-calendar" style="margin-right:4px;"></i> ${dateStr}
+            </td>
+            <td>
+              <strong style="color:var(--text-primary); font-size:14px; display:block;">${escapeHtml(lead.restaurant_name || 'N/A')}</strong>
+              <span style="font-size:12px; color:var(--text-secondary);"><i class="fa-solid fa-user" style="font-size:10px; margin-right:4px;"></i> ${escapeHtml(lead.name || '')}</span>
+            </td>
+            <td style="white-space:nowrap;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <a href="tel:${escapeHtml(lead.phone)}" style="color:var(--text-primary); font-weight:600; text-decoration:none; font-size:13px;" title="Call">
+                  <i class="fa-solid fa-phone" style="font-size:11px; color:#818CF8; margin-right:4px;"></i> ${escapeHtml(lead.phone)}
+                </a>
+                <a href="https://wa.me/${intlPhone}?text=${waText}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#25D366; color:#fff; border-radius:6px; font-size:13px; text-decoration:none;" title="Chat on WhatsApp">
+                  <i class="fa-brands fa-whatsapp"></i>
+                </a>
+              </div>
+            </td>
+            <td style="font-size:12.5px;">
+              ${lead.email ? `<a href="mailto:${escapeHtml(lead.email)}" style="color:#818CF8; text-decoration:none;">${escapeHtml(lead.email)}</a>` : '<span style="color:var(--text-muted);">—</span>'}
+            </td>
+            <td style="font-size:12.5px;">
+              <div>${lead.city ? `<i class="fa-solid fa-location-dot" style="font-size:11px; color:#F59E0B; margin-right:4px;"></i> ${escapeHtml(lead.city)}` : '<span style="color:var(--text-muted);">—</span>'}</div>
+              ${lead.preferred_time ? `<div style="font-size:11px; color:var(--text-muted); margin-top:2px;"><i class="fa-solid fa-clock" style="font-size:10px;"></i> ${escapeHtml(lead.preferred_time)}</div>` : ''}
+            </td>
+            <td style="max-width:240px; font-size:12.5px; color:var(--text-secondary);">
+              <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(lead.message || '')}">
+                ${escapeHtml(lead.message || '—')}
+              </div>
+            </td>
+            <td>
+              <span class="metric-badge" style="background:rgba(255,255,255,0.06); color:var(--text-secondary); text-transform:capitalize; font-size:11px;">
+                ${escapeHtml(lead.source ? lead.source.replace(/_/g, ' ') : 'Website')}
+              </span>
+            </td>
+            <td>
+              <select onchange="updateLeadStatus(${lead.id}, this.value)" style="background:${currentStColor.bg}; color:${currentStColor.text}; border:1px solid ${currentStColor.border}; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; outline:none;">
+                <option value="new" ${lead.status === 'new' ? 'selected' : ''}>New</option>
+                <option value="pending" ${lead.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="contacted" ${lead.status === 'contacted' ? 'selected' : ''}>Contacted</option>
+                <option value="converted" ${lead.status === 'converted' ? 'selected' : ''}>Converted</option>
+                <option value="closed" ${lead.status === 'closed' ? 'selected' : ''}>Closed</option>
+              </select>
+            </td>
+            <td style="white-space:nowrap;">
+              <button onclick="deleteLead(${lead.id})" style="background:rgba(239, 68, 68, 0.12); color:#F87171; border:1px solid rgba(239, 68, 68, 0.3); border-radius:6px; padding:5px 8px; cursor:pointer; font-size:12px;" title="Delete Lead">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Pagination
+      if (pagination && pagination.total > 0) {
+        document.getElementById('leadsPagination').innerHTML = `
+          <div>Showing page ${pagination.current_page} of ${pagination.last_page} (${pagination.total} leads total)</div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-secondary" style="padding:4px 10px; font-size:12px;" ${pagination.current_page <= 1 ? 'disabled' : ''} onclick="fetchLeads(${pagination.current_page - 1})">Prev</button>
+            <button class="btn-secondary" style="padding:4px 10px; font-size:12px;" ${pagination.current_page >= pagination.last_page ? 'disabled' : ''} onclick="fetchLeads(${pagination.current_page + 1})">Next</button>
+          </div>
+        `;
+      }
+    }
+
+    async function updateLeadStatus(id, status) {
+      try {
+        const res = await fetch(`/api/superadmin/leads/${id}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN
+          },
+          body: JSON.stringify({ status: status })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message || 'Status updated', 'success');
+          fetchLeads(currentLeadsPage);
+        } else {
+          showToast(json.message || 'Failed to update status', 'error');
+        }
+      } catch (err) {
+        showToast('Error updating lead status', 'error');
+      }
+    }
+
+    async function deleteLead(id) {
+      if (!confirm('Are you sure you want to remove this lead submission?')) return;
+      try {
+        const res = await fetch(`/api/superadmin/leads/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN
+          }
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message || 'Lead removed', 'success');
+          fetchLeads(currentLeadsPage);
+        } else {
+          showToast(json.message || 'Failed to delete lead', 'error');
+        }
+      } catch (err) {
+        showToast('Error deleting lead', 'error');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       fetchRecentOrders();
+      fetchLeads(1); // initialize lead counter and table
     });
   </script>
 </body>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Experience Live Interactive Demo — Tendorabuy POS</title>
     <meta name="description" content="Test drive Tendorabuy restaurant POS, QR ordering menu, and Kitchen KDS with our interactive live demo sandboxes. No sign-up or credit card required.">
 
@@ -17,6 +18,8 @@
             --primary-glow: rgba(99, 102, 241, 0.35);
             --primary-dark: #4338CA;
             --success: #10B981;
+            --whatsapp: #25D366;
+            --whatsapp-dark: #128C7E;
             --accent: #EC4899;
             --bg: #090D1A;
             --bg-alt: #0D1326;
@@ -36,6 +39,7 @@
             display: flex;
             flex-direction: column;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
@@ -53,6 +57,9 @@
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .topbar-inner {
@@ -109,6 +116,27 @@
             color: #fff;
         }
 
+        .btn-wa-header {
+            padding: 8px 16px;
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.35);
+            color: #4ADE80;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-wa-header:hover {
+            background: var(--whatsapp);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
         .btn-primary {
             padding: 10px 22px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -132,23 +160,31 @@
         }
 
         .btn-success {
-            padding: 10px 22px;
-            background: linear-gradient(135deg, #10B981, #059669);
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
             color: #fff;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
-            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 10px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             border: none;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
         }
 
         /* Hero */
         .demo-hero {
-            padding: 60px 0 40px;
+            padding: 50px 0 36px;
             text-align: center;
         }
 
@@ -169,14 +205,14 @@
 
         .demo-hero h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 44px;
+            font-size: 40px;
             font-weight: 900;
             line-height: 1.2;
             margin-bottom: 14px;
         }
 
         .demo-hero p {
-            font-size: 16.5px;
+            font-size: 16px;
             color: var(--text-secondary);
             max-width: 680px;
             margin: 0 auto;
@@ -290,6 +326,12 @@
             margin-bottom: 24px;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
         .form-group {
             margin-bottom: 16px;
         }
@@ -304,7 +346,7 @@
 
         .form-input {
             width: 100%;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 12px 16px;
@@ -317,11 +359,12 @@
 
         .form-input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         .whatsapp-card {
-            background: linear-gradient(135deg, #064E3B 0%, #131A35 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: linear-gradient(145deg, #064E3B 0%, #0D2818 50%, #131A35 100%);
+            border: 1px solid rgba(37, 211, 102, 0.4);
             border-radius: 20px;
             padding: 36px;
             display: flex;
@@ -333,8 +376,8 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(16, 185, 129, 0.2);
-            color: #34D399;
+            background: rgba(37, 211, 102, 0.2);
+            color: #86EFAC;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
@@ -353,9 +396,17 @@
 
         .whatsapp-card p {
             font-size: 14.5px;
-            color: #A7F3D0;
+            color: #D1FAE5;
             margin-bottom: 28px;
             line-height: 1.6;
+        }
+
+        .hp-field {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
         }
 
         /* Footer */
@@ -371,7 +422,18 @@
         @media (max-width: 900px) {
             .demo-grid { grid-template-columns: 1fr; }
             .demo-booking-wrap { grid-template-columns: 1fr; }
-            .demo-hero h1 { font-size: 32px; }
+            .demo-hero h1 { font-size: 30px; }
+            .booking-card { padding: 24px 18px; }
+            .whatsapp-card { padding: 24px 18px; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 16px; }
+            .btn-wa-header span { display: none; }
+            .btn-wa-header { padding: 8px 12px; }
+            .whatsapp-card h3 { font-size: 22px; }
+            .btn-success { width: 100%; justify-content: center; font-size: 14px; }
         }
     </style>
 </head>
@@ -385,6 +447,11 @@
             </a>
             <div class="nav-actions">
                 <a href="/pricing" class="btn-ghost">Pricing</a>
+                <a href="/contact" class="btn-ghost">Contact</a>
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>+91 7777938338</span>
+                </a>
                 <a href="{{ route('login') }}" class="btn-ghost">Login</a>
                 <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
             </div>
@@ -467,35 +534,66 @@
                 <p>Our restaurant specialists will give you a live guided tour and help customize your menu and floor layout.</p>
 
                 <form id="demoRequestForm" onsubmit="submitDemoRequest(event)">
-                    <div class="form-group">
-                        <label>Your Full Name *</label>
-                        <input type="text" id="demoName" required class="form-input" placeholder="e.g. Rahul Patel">
+                    @csrf
+                    <input type="text" id="demoHp" name="website_hp" class="hp-field" tabindex="-1" autocomplete="off">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Your Full Name *</label>
+                            <input type="text" id="demoName" required class="form-input" placeholder="e.g. Rahul Patel">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Restaurant / Business Name *</label>
+                            <input type="text" id="demoRestName" required class="form-input" placeholder="e.g. Spice Symphony Bistro">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>WhatsApp / Mobile Number *</label>
+                            <input type="tel" id="demoPhone" required class="form-input" placeholder="e.g. 9876543210">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="demoEmail" class="form-input" placeholder="e.g. rahul@restaurant.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City / Location</label>
+                            <input type="text" id="demoCity" class="form-input" placeholder="e.g. Ahmedabad, Surat, Mumbai">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Preferred Demo Slot</label>
+                            <input type="text" id="demoTime" class="form-input" placeholder="e.g. Today 4 PM / Tomorrow">
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Restaurant / Business Name *</label>
-                        <input type="text" id="demoRestName" required class="form-input" placeholder="e.g. Spice Symphony Bistro">
+                        <label>Special Notes / Questions</label>
+                        <input type="text" id="demoMessage" class="form-input" placeholder="e.g. Need 15 tables QR ordering + thermal printer setup">
                     </div>
 
-                    <div class="form-group">
-                        <label>WhatsApp / Mobile Number *</label>
-                        <input type="tel" id="demoPhone" required class="form-input" placeholder="e.g. +91 98765 43210">
-                    </div>
-
-                    <div class="form-group">
-                        <label>City / Location</label>
-                        <input type="text" id="demoCity" class="form-input" placeholder="e.g. Ahmedabad, Surat, Mumbai">
-                    </div>
-
-                    <button type="submit" id="demoSubmitBtn" class="btn-primary" style="width:100%; padding:13px; font-size:15px; margin-top:10px;">
+                    <button type="submit" id="demoSubmitBtn" class="btn-primary" style="width:100%; padding:13px; font-size:15px; margin-top:6px;">
                         <span>Schedule My Demo Call</span>
                         <i class="fa-solid fa-calendar-check"></i>
                     </button>
                 </form>
 
-                <div id="demoSuccessMsg" style="display:none; margin-top:20px; padding:16px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:10px; color:#34D399; font-size:14px; text-align:center;">
-                    <i class="fa-solid fa-circle-check" style="font-size:20px; display:block; margin-bottom:6px;"></i>
-                    Thank you! Our specialist will call/WhatsApp you shortly for your live guided demo.
+                <div id="demoSuccessMsg" style="display:none; margin-top:20px; padding:24px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); border-radius:14px; text-align:center;">
+                    <div style="width:50px; height:50px; border-radius:50%; background:rgba(16,185,129,0.2); color:#34D399; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 12px;">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 style="font-family:'Outfit',sans-serif; color:#fff; font-size:18px; margin-bottom:6px;">Thank you! Your enquiry has been received.</h3>
+                    <p style="color:#A7F3D0; font-size:14px; margin-bottom:16px;">Our Tendorabuy team will contact you shortly.</p>
+                    <a id="demoWaBtn" href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-success" style="width:fit-content; margin:0 auto; display:inline-flex;">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i>
+                        <span>Chat on WhatsApp (+91 7777938338)</span>
+                    </a>
                 </div>
             </div>
 
@@ -505,9 +603,9 @@
                 <h3>Want an Instant Demo on WhatsApp?</h3>
                 <p>Chat directly with our product team. We can send you demo videos, sample QR codes to scan on your phone, and answer any setup questions immediately.</p>
 
-                <a href="https://wa.me/919876543210?text=Hello%20Tendorabuy%2C%20I%20want%20to%20get%20a%20live%20demo%20walkthrough%20of%20the%20restaurant%20POS%20and%20QR%20ordering%20system." target="_blank" class="btn-success" style="padding: 14px 28px; font-size: 16px; width: fit-content;">
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%2C%20I%20want%20to%20get%20a%20live%20demo%20walkthrough%20of%20the%20restaurant%20POS%20and%20QR%20ordering%20system." target="_blank" class="btn-success" style="padding: 14px 28px; font-size: 16px; width: fit-content;">
                     <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i>
-                    <span>Chat on WhatsApp Now</span>
+                    <span>Chat on WhatsApp (+91 7777938338)</span>
                 </a>
             </div>
         </section>
@@ -526,14 +624,31 @@
             const successBox = document.getElementById('demoSuccessMsg');
             const form = document.getElementById('demoRequestForm');
 
+            const name = document.getElementById('demoName').value.trim();
+            const restName = document.getElementById('demoRestName').value.trim();
+            const phone = document.getElementById('demoPhone').value.trim();
+            const email = document.getElementById('demoEmail') ? document.getElementById('demoEmail').value.trim() : '';
+            const city = document.getElementById('demoCity').value.trim();
+            const time = document.getElementById('demoTime') ? document.getElementById('demoTime').value.trim() : '';
+            const message = document.getElementById('demoMessage') ? document.getElementById('demoMessage').value.trim() : '';
+            const hp = document.getElementById('demoHp') ? document.getElementById('demoHp').value : '';
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
 
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
             const payload = {
-                name: document.getElementById('demoName').value,
-                restaurant_name: document.getElementById('demoRestName').value,
-                phone: document.getElementById('demoPhone').value,
-                city: document.getElementById('demoCity').value,
+                name: name,
+                restaurant_name: restName,
+                phone: phone,
+                email: email || null,
+                city: city || null,
+                preferred_time: time || null,
+                message: message || null,
+                source: 'demo_page',
+                website_hp: hp,
+                _token: csrfToken
             };
 
             try {
@@ -541,16 +656,20 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
                     },
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                if (data.success) {
+                if (res.ok && data.success) {
                     form.style.display = 'none';
                     successBox.style.display = 'block';
+
+                    const customWaText = encodeURIComponent(`Hello Tendorabuy Team, I just requested a demo for "${restName}". My name is ${name}.`);
+                    document.getElementById('demoWaBtn').href = `https://wa.me/917777938338?text=${customWaText}`;
                 } else {
-                    alert(data.message || 'Could not submit demo request. Please try WhatsApp directly.');
+                    alert(data.message || 'Could not submit demo request. Please try WhatsApp directly at +91 7777938338.');
                     btn.disabled = false;
                     btn.innerHTML = '<span>Schedule My Demo Call</span> <i class="fa-solid fa-calendar-check"></i>';
                 }

@@ -15,8 +15,127 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+use App\Models\DemoRequest;
+
 class SuperAdminController extends Controller
 {
+    /**
+     * Paginated and filterable list of all contact & demo leads for Super Admin
+     */
+    public function leads(Request $request)
+    {
+        $query = DemoRequest::query()->orderBy('created_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('restaurant_name', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%")
+                  ->orWhere('source', 'like', "%{$search}%")
+                  ->orWhere('message', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $leads = $query->paginate($request->input('per_page', 15));
+
+        // Aggregate overview lead stats
+        $totalLeads = DemoRequest::count();
+        $newToday = DemoRequest::whereDate('created_at', Carbon::today())->count();
+        $newOrPending = DemoRequest::whereIn('status', ['new', 'pending'])->count();
+        $contacted = DemoRequest::where('status', 'contacted')->count();
+        $converted = DemoRequest::where('status', 'converted')->count();
+        $closed = DemoRequest::where('status', 'closed')->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => $leads->items(),
+            'stats' => [
+                'total'          => $totalLeads,
+                'new_today'      => $newToday,
+                'new_or_pending' => $newOrPending,
+                'contacted'      => $contacted,
+                'converted'      => $converted,
+                'closed'         => $closed,
+            ],
+            'pagination' => [
+                'current_page' => $leads->currentPage(),
+                'last_page'    => $leads->lastPage(),
+                'per_page'     => $leads->perPage(),
+                'total'        => $leads->total(),
+            ]
+        ]);
+    }
+
+    /**
+     * Update status and notes for a lead
+     */
+    public function updateLeadStatus(Request $request, $id)
+    {
+        $lead = DemoRequest::find($id);
+        if (!$lead) {
+            return response()->json(['success' => false, 'message' => 'Lead not found'], 404);
+        }
+
+        $request->validate([
+            'status' => 'required|string|in:new,pending,contacted,converted,closed',
+            'notes'  => 'nullable|string|max:2000',
+        ]);
+
+        $oldStatus = $lead->status;
+        $lead->status = $request->status;
+        if ($request->has('notes')) {
+            $lead->notes = $request->notes;
+        }
+        $lead->save();
+
+        AuditLog::record('lead_status_updated', null, 'lead', $lead->id, [
+            'restaurant_name' => $lead->restaurant_name,
+            'lead_name'       => $lead->name,
+            'old_status'      => $oldStatus,
+            'new_status'      => $lead->status,
+            'notes'           => $lead->notes,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Lead status updated to " . ucfirst($lead->status) . ".",
+            'data'    => $lead
+        ]);
+    }
+
+    /**
+     * Delete a spam/junk lead
+     */
+    public function deleteLead($id)
+    {
+        $lead = DemoRequest::find($id);
+        if (!$lead) {
+            return response()->json(['success' => false, 'message' => 'Lead not found'], 404);
+        }
+
+        $leadData = [
+            'name'            => $lead->name,
+            'restaurant_name' => $lead->restaurant_name,
+            'phone'           => $lead->phone,
+        ];
+
+        $lead->delete();
+
+        AuditLog::record('lead_deleted', null, 'lead', $id, $leadData);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Lead removed successfully."
+        ]);
+    }
+
     /**
      * Render the Super Admin Dashboard Blade view
      */

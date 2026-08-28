@@ -798,6 +798,10 @@
             </ul>
 
             <div class="nav-actions">
+                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-ghost" style="color:#4ADE80; font-weight:700; display:inline-flex; align-items:center; gap:6px;" title="Chat on WhatsApp">
+                    <i class="fa-brands fa-whatsapp" style="font-size:17px; color:#25D366;"></i>
+                    <span class="desktop-only">+91 7777938338</span>
+                </a>
                 @auth
                     @if(Auth::user()->role === 'superadmin')
                         <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right:6px;"></i> Super Admin</a>
@@ -1197,10 +1201,16 @@
             <div class="cta-box">
                 <h2>Start Your Restaurant Free Today</h2>
                 <p>Join hundreds of modern restaurants accelerating their table turnover and kitchen speed with Tendorabuy.</p>
-                <a href="{{ route('register') }}" class="btn-primary" style="padding: 16px 36px; font-size: 17px;">
-                    <span>START FREE</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+                    <a href="{{ route('register') }}" class="btn-primary" style="padding: 15px 32px; font-size: 16px;">
+                        <span>START FREE TODAY</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-primary" style="padding: 15px 28px; font-size: 16px; background:linear-gradient(135deg, #25D366, #128C7E); box-shadow:0 4px 16px rgba(37,211,102,0.4);">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 19px;"></i>
+                        <span>Chat on WhatsApp</span>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
