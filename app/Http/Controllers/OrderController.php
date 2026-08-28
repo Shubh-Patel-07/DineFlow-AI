@@ -230,7 +230,9 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Order not found'], 404);
         }
 
-        return response()->json(['success' => true, 'data' => $order]);
+        return response()->json(['success' => true, 'data' => $order])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 
     public function showReceipt($id)

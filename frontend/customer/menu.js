@@ -610,11 +610,48 @@ document.addEventListener('click', event => {
 });
 
 
-// --- Cart helpers (local) ---
+// --- Cart helpers (local session-isolated with TTL) ---
+const CART_TTL_MS = 30 * 60 * 1000; // 30 minutes max inactivity
+
 function getCart() {
-  try { return JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]'); } catch { return []; }
+  try {
+    let raw = sessionStorage.getItem(CART_STORAGE_KEY) || localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object' && Array.isArray(parsed.items)) {
+      if (parsed.timestamp && (Date.now() - parsed.timestamp > CART_TTL_MS)) {
+        clearCustomerSessionCart();
+        return [];
+      }
+      return parsed.items;
+    }
+    if (Array.isArray(parsed)) return parsed;
+    return [];
+  } catch {
+    return [];
+  }
 }
-function saveCart(cart) { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
+
+function saveCart(cart) {
+  const payload = {
+    items: cart || [],
+    timestamp: Date.now()
+  };
+  try {
+    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
+  } catch (e) {
+    console.warn('Storage save failed:', e);
+  }
+}
+
+function clearCustomerSessionCart() {
+  try {
+    sessionStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem(CART_STORAGE_KEY);
+  } catch (e) {}
+}
 function addToCart(customizedItem) {
   if (!customizedItem) return;
   const masterItem = menuItems.find(i => 
@@ -967,10 +1004,27 @@ async function handleCheckout() {
     if (data.success && data.data) {
       const orderId = data.data.id || data.data._id;
       const amount = data.data.total_amount ?? data.data.totalAmount ?? 0;
+      
+      // 1. Clear cart completely
       saveCart([]);
+      clearCustomerSessionCart();
       renderCart();
       closeCart();
+
+      // 2. Clear cooking notes & special instructions
+      const notesInput = $('#cartSpecialInstructions');
+      if (notesInput) notesInput.value = '';
+      const chips = document.querySelectorAll('.cooking-chip.active');
+      chips.forEach(c => c.classList.remove('active'));
+
+      // 3. Reset selected coupon
+      selectedCoupon = null;
+
+      // 4. Save session order with timestamp
+      sessionStorage.setItem(`dineflow_session_order_${restaurantId}_${tableId}`, orderId);
+      sessionStorage.setItem(`dineflow_session_order_time_${restaurantId}_${tableId}`, Date.now());
       localStorage.setItem(`dineflow_session_order_${restaurantId}_${tableId}`, orderId);
+      localStorage.setItem(`dineflow_session_order_time_${restaurantId}_${tableId}`, Date.now());
 
       if (selectedCartPayMethod === 'upi') {
         openCustomerUpiModal(orderId, amount);
@@ -1270,8 +1324,17 @@ async function checkTableActiveOrder() {
     tracker.style.setProperty('display', 'none', 'important');
   }
 
-  const sessionPlacedOrderId = localStorage.getItem(`dineflow_session_order_${restaurantId}_${tableId}`);
+  // 30-minute TTL for order tracking
+  const ORDER_TTL_MS = 30 * 60 * 1000;
+  const sessionPlacedOrderId = sessionStorage.getItem(`dineflow_session_order_${restaurantId}_${tableId}`) || localStorage.getItem(`dineflow_session_order_${restaurantId}_${tableId}`);
+  const sessionOrderTime = parseInt(sessionStorage.getItem(`dineflow_session_order_time_${restaurantId}_${tableId}`) || localStorage.getItem(`dineflow_session_order_time_${restaurantId}_${tableId}`) || '0', 10);
+
   if (!sessionPlacedOrderId) return;
+
+  if (sessionOrderTime && (Date.now() - sessionOrderTime > ORDER_TTL_MS)) {
+    clearCustomerSessionOrder();
+    return;
+  }
 
   try {
     const res = await fetch(`${API_BASE}/orders/${sessionPlacedOrderId}`);
@@ -1281,12 +1344,23 @@ async function checkTableActiveOrder() {
       if (order.status !== 'completed' && order.status !== 'served' && order.status !== 'cancelled') {
         startLiveOrderTracking(order.id);
       } else {
-        localStorage.removeItem(`dineflow_session_order_${restaurantId}_${tableId}`);
+        clearCustomerSessionOrder();
       }
+    } else {
+      clearCustomerSessionOrder();
     }
   } catch (err) {
     console.log('Error checking table active order:', err);
   }
+}
+
+function clearCustomerSessionOrder() {
+  try {
+    sessionStorage.removeItem(`dineflow_session_order_${restaurantId}_${tableId}`);
+    sessionStorage.removeItem(`dineflow_session_order_time_${restaurantId}_${tableId}`);
+    localStorage.removeItem(`dineflow_session_order_${restaurantId}_${tableId}`);
+    localStorage.removeItem(`dineflow_session_order_time_${restaurantId}_${tableId}`);
+  } catch (e) {}
 }
 
 function highlightSuggestion(value, query) {
