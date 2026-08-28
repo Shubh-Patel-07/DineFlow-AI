@@ -55,7 +55,19 @@ class RoleMiddleware
                     'message' => "Forbidden: Role '{$userRole}' is not authorized to access this route."
                 ], 403);
             }
-            abort(403, "Forbidden: Role '{$userRole}' is not authorized.");
+
+            if ($userRole === 'cashier' || $userRole === 'waiter') {
+                return redirect('/pos');
+            } elseif ($userRole === 'kitchen') {
+                return redirect('/kitchen');
+            } elseif ($userRole === 'customer') {
+                $restId = $user->restaurant_id ?: 1;
+                return redirect("/customer/menu?restaurantId={$restId}&tableId=1")->with('error', 'Access restricted to customer digital menu.');
+            } elseif ($userRole === 'superadmin') {
+                return redirect('/superadmin');
+            }
+
+            return redirect()->route('login')->with('error', 'Please login with an authorized account.');
         }
 
         return $next($request);

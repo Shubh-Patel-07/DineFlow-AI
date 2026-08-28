@@ -82,9 +82,12 @@ $serveAdminPage = function ($filename) {
 Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        $restaurantId = $user->restaurant_id;
+        if ($user && $user->role === 'superadmin') {
+            return redirect('/superadmin');
+        }
+        $restaurantId = $user ? $user->restaurant_id : null;
         if (!$restaurantId) {
-            abort(403, 'No restaurant assigned to this account.');
+            return redirect('/onboarding');
         }
 
         // Today's Orders
