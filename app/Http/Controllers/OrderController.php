@@ -165,7 +165,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,preparing,served,completed,cancelled',
+            'status' => 'required|in:pending,preparing,ready,served,completed,cancelled',
         ]);
 
         $user = auth()->user();
@@ -214,6 +214,10 @@ class OrderController extends Controller
 
     public function getRestaurantOrders($restaurantId)
     {
+        $user = auth()->user();
+        if ($user && $user->role !== 'superadmin' && (int)$user->restaurant_id !== (int)$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized tenant orders access.'], 403);
+        }
         $orders = Order::where('restaurant_id', $restaurantId)->with(['items.menuItem', 'table'])->orderBy('created_at', 'desc')->paginate(50);
         return response()->json(['success' => true, 'data' => $orders]);
     }

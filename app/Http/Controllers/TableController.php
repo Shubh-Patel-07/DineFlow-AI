@@ -53,8 +53,12 @@ class TableController extends Controller
             $serverIp = request()->ip();
         }
 
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        $gstRate = $restaurant ? (float)$restaurant->gst_rate / 100 : 0.05;
+        $serviceRate = $restaurant ? (float)$restaurant->service_charge / 100 : 0.05;
+
         // Map tables to include dynamic occupancy status and live dynamic QR code URL
-        $tables = $tables->map(function($table) use ($serverIp) {
+        $tables = $tables->map(function($table) use ($serverIp, $gstRate, $serviceRate) {
             // Dynamically replace any local IP address in qr_code_url with current active server IP
             if ($table->qr_code_url) {
                 $table->qr_code_url = preg_replace('/(?:192\.168|10|172\.(?:1[6-9]|2\d|3[01]))\.[\d.]+|127\.0\.0\.1/', $serverIp, $table->qr_code_url);
@@ -69,8 +73,8 @@ class TableController extends Controller
                 $table->status = 'occupied';
                 $table->active_order_id = $activeOrder->id;
                 $subtotal = $activeOrder->total_amount;
-                $serviceCharge = $subtotal * 0.05;
-                $gst = ($subtotal + $serviceCharge) * 0.18;
+                $serviceCharge = $subtotal * $serviceRate;
+                $gst = ($subtotal + $serviceCharge) * $gstRate;
                 $table->active_order_amount = round($subtotal + $serviceCharge + $gst);
             } else {
                 $table->status = 'available';

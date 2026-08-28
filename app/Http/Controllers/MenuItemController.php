@@ -12,9 +12,15 @@ class MenuItemController extends Controller
         // For authenticated staff, enforce their own restaurant_id; for public QR, use the route/query param
         $user = auth()->user();
         if ($user && $user->restaurant_id) {
-            $restaurantId = (string)$user->restaurant_id;
+            $restaurantId = ($user->role === 'superadmin')
+                ? (string)($restaurantId ?? $request->query('restaurantId') ?? $request->query('restaurant_id') ?? $user->restaurant_id)
+                : (string)$user->restaurant_id;
         } else {
-            $restaurantId = (string)($restaurantId ?? $request->query('restaurantId') ?? $request->query('restaurant_id') ?? '1');
+            $restaurantId = (string)($restaurantId ?? $request->query('restaurantId') ?? $request->query('restaurant_id'));
+        }
+
+        if (!$restaurantId) {
+            return response()->json(['success' => true, 'data' => []]);
         }
 
         $items = MenuItem::where('restaurant_id', $restaurantId)->get();

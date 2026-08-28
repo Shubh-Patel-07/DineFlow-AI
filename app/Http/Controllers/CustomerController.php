@@ -166,7 +166,10 @@ class CustomerController extends Controller
             'rating' => 'required|integer|min:1|max:5',
         ]);
 
-        $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId') ?? '1';
+        $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId');
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
         $customerName = $request->input('customer_name') ?? $request->input('customerName') ?? 'Anonymous';
         $rating = $request->input('rating') ?? 5;
         $comment = $request->input('comment') ?? '';
@@ -191,7 +194,10 @@ class CustomerController extends Controller
 
     public function callWaiter(Request $request)
     {
-        $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId') ?? '1';
+        $restaurantId = $request->input('restaurant_id') ?? $request->input('restaurantId');
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Restaurant ID is required'], 422);
+        }
         $tableId = $request->input('table_id') ?? $request->input('tableId') ?? '1';
 
         $call = WaiterCall::create([

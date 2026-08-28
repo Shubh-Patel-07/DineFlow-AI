@@ -15,10 +15,10 @@ let category = 'All';
 let diet = 'all';
 let activeView = 'all';
 let activeSuggestionIndex = -1;
-const activeFilters = new Set();
-const FAVORITES_STORAGE_KEY = 'dineflow-favorites';
-const RECENT_STORAGE_KEY = 'dineflow-recent-items';
+const FAVORITES_STORAGE_KEY = `dineflow-favorites-${restaurantId}`;
+const RECENT_STORAGE_KEY = `dineflow-recent-items-${restaurantId}`;
 const THEME_STORAGE_KEY = 'dineflow-theme';
+const CART_STORAGE_KEY = `dineflow-cart-${restaurantId}`;
 const COMBO_OFFERS = [
   { id: 'combo-lunch', name: 'Lunch Combo', price: 499, includes: ['1 Pizza', '1 Soft Drink', '1 Dessert'], description: 'Perfect for a quick midday meal.' },
   { id: 'combo-family', name: 'Family Feast', price: 799, includes: ['2 Burgers', '2 Fries', '2 Drinks'], description: 'Great for sharing with friends or family.' },
@@ -611,7 +611,6 @@ document.addEventListener('click', event => {
 
 
 // --- Cart helpers (local) ---
-const CART_STORAGE_KEY = 'dineflow-cart';
 function getCart() {
   try { return JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]'); } catch { return []; }
 }
@@ -971,7 +970,7 @@ async function handleCheckout() {
       saveCart([]);
       renderCart();
       closeCart();
-      localStorage.setItem(`dineflow_session_order_${tableId}`, orderId);
+      localStorage.setItem(`dineflow_session_order_${restaurantId}_${tableId}`, orderId);
 
       if (selectedCartPayMethod === 'upi') {
         openCustomerUpiModal(orderId, amount);
@@ -1079,7 +1078,7 @@ async function checkLiveOrderStatus(orderId) {
         if (liveOrderPollInterval) { clearInterval(liveOrderPollInterval); liveOrderPollInterval = null; }
         const tracker = $('#liveOrderTracker');
         if (tracker) tracker.hidden = true;
-        localStorage.removeItem(`dineflow_session_order_${tableId}`);
+        localStorage.removeItem(`dineflow_session_order_${restaurantId}_${tableId}`);
         showToast('Order was cancelled by restaurant.', true);
         return;
       }
@@ -1157,7 +1156,7 @@ function updateLiveOrderTrackerUI(order) {
     // Auto-dismiss/hide tracker banner after 8 seconds when served/completed
     setTimeout(() => {
       hideLiveOrderTracker();
-      localStorage.removeItem(`dineflow_session_order_${tableId}`);
+      localStorage.removeItem(`dineflow_session_order_${restaurantId}_${tableId}`);
     }, 8000);
   }
 }
@@ -1271,7 +1270,7 @@ async function checkTableActiveOrder() {
     tracker.style.setProperty('display', 'none', 'important');
   }
 
-  const sessionPlacedOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  const sessionPlacedOrderId = localStorage.getItem(`dineflow_session_order_${restaurantId}_${tableId}`);
   if (!sessionPlacedOrderId) return;
 
   try {
@@ -1282,7 +1281,7 @@ async function checkTableActiveOrder() {
       if (order.status !== 'completed' && order.status !== 'served' && order.status !== 'cancelled') {
         startLiveOrderTracking(order.id);
       } else {
-        localStorage.removeItem(`dineflow_session_order_${tableId}`);
+        localStorage.removeItem(`dineflow_session_order_${restaurantId}_${tableId}`);
       }
     }
   } catch (err) {
@@ -1577,7 +1576,7 @@ async function openSplitBillModal() {
   }
 
   // Try session order first (saved when customer placed order)
-  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${restaurantId}_${tableId}`);
   if (sessionOrderId) {
     try {
       const res = await fetch(`${API_BASE}/orders/${sessionOrderId}`);
@@ -1739,7 +1738,7 @@ async function openPayFullBillModal() {
   }
 
   // Try session order first (saved when customer placed order)
-  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${tableId}`);
+  const sessionOrderId = localStorage.getItem(`dineflow_session_order_${restaurantId}_${tableId}`);
   if (sessionOrderId) {
     try {
       const res = await fetch(`${API_BASE}/orders/${sessionOrderId}`);

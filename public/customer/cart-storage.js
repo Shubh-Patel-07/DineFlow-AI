@@ -6,11 +6,15 @@
  * @version 1.0.0
  */
 class CartStorageHandler {
-  static STORAGE_KEY = 'dineflow_customer_cart';
+  static getStorageKey() {
+    const params = new URLSearchParams(window.location.search);
+    const rId = params.get('restaurantId') || params.get('restaurant_id') || '1';
+    return `dineflow_customer_cart_${rId}`;
+  }
 
   static getCart() {
     try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
+      const data = localStorage.getItem(this.getStorageKey());
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.error('[CartStorageHandler] Read error:', e);
@@ -20,7 +24,7 @@ class CartStorageHandler {
 
   static saveCart(items) {
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items || []));
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(items || []));
       window.dispatchEvent(new CustomEvent('dineflow:cart_updated', { detail: { count: (items || []).length } }));
     } catch (e) {
       console.error('[CartStorageHandler] Save error:', e);
@@ -29,7 +33,7 @@ class CartStorageHandler {
 
   static clearCart() {
     try {
-      localStorage.removeItem(this.STORAGE_KEY);
+      localStorage.removeItem(this.getStorageKey());
       window.dispatchEvent(new CustomEvent('dineflow:cart_cleared'));
     } catch (e) {
       console.error('[CartStorageHandler] Clear error:', e);
