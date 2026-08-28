@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy — DineFlow AI</title>
+    <title>Privacy Policy — Tendorabuy</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #090D1A; color: #F8FAFC; padding: 60px 20px; line-height: 1.7; }
@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="container">
-        <a href="/">← Back to DineFlow AI</a>
+        <a href="/">← Back to Tendorabuy</a>
         <h1>Privacy Policy</h1>
         <p>Last updated: August 2026</p>
         <h2>1. Information We Collect</h2>

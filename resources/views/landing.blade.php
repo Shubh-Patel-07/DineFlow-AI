@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DineFlow AI — Complete Restaurant Operating System & Smart QR POS</title>
-    <meta name="description" content="DineFlow AI is the complete restaurant operating system. Streamline table QR ordering, lightning-fast POS billing, real-time Kitchen Display (KDS), inventory control, and staff management.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Tendorabuy — Restaurant POS, QR Ordering & Kitchen Management</title>
+    <meta name="description" content="Tendorabuy is the complete all-in-one restaurant management platform. Streamline table QR digital menus, lightning-fast POS billing, real-time Kitchen Display (KDS), inventory control, offline desktop sync, and staff management.">
     
-    <!-- Open Graph SEO -->
-    <meta property="og:title" content="DineFlow AI — Complete Restaurant Operating System">
-    <meta property="og:description" content="Launch your smart restaurant with digital QR menus, live KDS, POS billing, and staff management on our generous Free Plan.">
+    <!-- Open Graph / SEO Metadata -->
+    <meta property="og:title" content="Tendorabuy — Restaurant POS, QR Ordering & Kitchen Management">
+    <meta property="og:description" content="Complete restaurant operating system. Streamline QR table ordering, fast POS billing, real-time KDS, offline desktop sync, and staff management.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="robots" content="index, follow">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,8 +84,9 @@
         .section-subtitle {
             font-size: 16px;
             color: var(--text-secondary);
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto 48px;
+            text-align: center;
         }
 
         /* ─── NAVBAR ─── */
@@ -117,14 +119,14 @@
         }
 
         .brand-icon {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             color: #fff;
             box-shadow: 0 0 16px var(--primary-glow);
         }
@@ -134,12 +136,13 @@
             font-size: 22px;
             font-weight: 800;
             color: #fff;
+            letter-spacing: -0.5px;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 30px;
             list-style: none;
         }
 
@@ -169,6 +172,9 @@
             font-weight: 600;
             border-radius: 10px;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-ghost:hover {
@@ -192,6 +198,7 @@
             gap: 8px;
             border: none;
             cursor: pointer;
+            justify-content: center;
         }
 
         .btn-primary:hover {
@@ -206,44 +213,30 @@
             color: #fff;
             font-size: 22px;
             cursor: pointer;
+            padding: 8px;
         }
 
-        /* ─── HERO SECTION ─── */
+        /* ─── 1. HERO SECTION ─── */
         .hero-section {
-            padding: 160px 0 100px;
+            padding: 140px 0 80px;
+            background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.15) 0%, rgba(9, 13, 26, 0) 70%);
             position: relative;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: -10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(0,0,0,0) 70%);
-            z-index: 0;
-            pointer-events: none;
         }
 
         .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 840px;
+            text-align: center;
+            max-width: 920px;
             margin: 0 auto;
         }
 
         .hero-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 56px;
+            font-size: 48px;
             font-weight: 900;
-            letter-spacing: -1.5px;
-            line-height: 1.12;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #FFFFFF 40%, #A5B4FC 100%);
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFFFFF 30%, #A5B4FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -251,9 +244,8 @@
         .hero-desc {
             font-size: 18px;
             color: var(--text-secondary);
-            line-height: 1.6;
             margin-bottom: 36px;
-            max-width: 680px;
+            max-width: 720px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -270,32 +262,33 @@
         .hero-pill-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding: 8px 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 30px;
+            color: #34D399;
             font-size: 13px;
-            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 48px;
         }
 
-        /* Hero Preview Window */
+        /* ─── SHOWCASE MOCKUP ─── */
         .hero-mockup-wrapper {
-            margin-top: 50px;
             position: relative;
-            z-index: 1;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            margin-top: 10px;
         }
 
         .hero-mockup {
-            background: var(--card);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            padding: 32px;
+            background: var(--card-glass);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(12px);
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            text-align: left;
         }
 
         .mock-card {
@@ -303,283 +296,408 @@
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 20px;
+            text-align: left;
         }
 
         .mock-icon {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 12px;
         }
 
         .mock-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 700;
-            margin-bottom: 6px;
             color: #fff;
+            margin-bottom: 6px;
         }
 
         .mock-sub {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-secondary);
+            line-height: 1.5;
         }
 
-        /* ─── FEATURES GRID ─── */
-        .features-section {
-            padding: 100px 0;
+        /* ─── TRUST STATS ─── */
+        .trust-section {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
             background: var(--bg-alt);
-            position: relative;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .trust-item h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .trust-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ─── FEATURES ─── */
+        .features-section {
+            padding: 90px 0;
             text-align: center;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             text-align: left;
         }
 
         .feature-card {
-            background: var(--card-glass);
-            backdrop-filter: blur(12px);
+            background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 18px;
             padding: 28px;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             border-color: var(--border-glow);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .feature-icon-wrap {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+        .feat-icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.12);
+            color: #818CF8;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            color: #818CF8;
             margin-bottom: 20px;
         }
 
-        .feature-title {
+        .feature-card h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 10px;
+            font-size: 19px;
+            font-weight: 700;
             color: #fff;
+            margin-bottom: 10px;
         }
 
-        .feature-desc {
-            font-size: 13.5px;
+        .feature-card p {
+            font-size: 14px;
             color: var(--text-secondary);
             line-height: 1.6;
         }
 
         /* ─── HOW IT WORKS ─── */
-        .how-section {
-            padding: 100px 0;
+        .steps-section {
+            padding: 90px 0;
+            background: var(--bg-alt);
             text-align: center;
         }
 
         .steps-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 24px;
             text-align: left;
-            position: relative;
         }
 
-        .step-box {
+        .step-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 24px;
+            border-radius: 16px;
+            padding: 28px;
             position: relative;
         }
 
         .step-num {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: var(--primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: rgba(99, 102, 241, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .step-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
             color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ─── ONLINE + OFFLINE WORKFLOW ─── */
+        .sync-section {
+            padding: 90px 0;
+            text-align: center;
+        }
+
+        .sync-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            text-align: left;
+        }
+
+        .sync-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+        }
+
+        .sync-card.cloud { border-left: 4px solid #6366F1; }
+        .sync-card.offline { border-left: 4px solid #10B981; }
+
+        .sync-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
             margin-bottom: 16px;
         }
 
-        .step-box-title {
+        .sync-card.cloud .sync-badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; }
+        .sync-card.offline .sync-badge { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+
+        .sync-card h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: 800;
             color: #fff;
+            margin-bottom: 12px;
         }
 
-        .step-box-desc {
-            font-size: 13px;
-            color: var(--text-secondary);
+        .sync-flow {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 13.5px;
+            color: #A5B4FC;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        /* ─── WORKFLOW FLOWCHART ─── */
-        .workflow-section {
-            padding: 100px 0;
+        /* ─── BENEFITS ─── */
+        .benefits-section {
+            padding: 90px 0;
             background: var(--bg-alt);
             text-align: center;
         }
 
-        .workflow-flow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 36px;
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            text-align: left;
         }
 
-        .workflow-node {
+        .benefit-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 14px 20px;
-            font-size: 14px;
+            padding: 22px;
+        }
+
+        .benefit-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
             font-weight: 700;
             color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 6px;
         }
 
-        .workflow-arrow {
-            color: #818CF8;
-            font-size: 14px;
+        .benefit-card p {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
 
-        /* ─── FREE PLAN SPOTLIGHT ─── */
-        .pricing-spotlight {
-            padding: 100px 0;
+        /* ─── PRICING PREVIEW ─── */
+        .pricing-section {
+            padding: 90px 0;
             text-align: center;
         }
 
-        .plan-card {
-            background: linear-gradient(145deg, rgba(19, 26, 53, 0.9), rgba(15, 23, 42, 0.9));
-            border: 2px solid #6366F1;
-            border-radius: 24px;
-            padding: 48px;
-            max-width: 680px;
-            margin: 0 auto;
-            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.2);
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            text-align: left;
+        }
+
+        .price-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
             position: relative;
+        }
+
+        .price-card.featured {
+            border-color: #6366F1;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.25);
+            background: linear-gradient(180deg, #18224B 0%, #131A35 100%);
+        }
+
+        .featured-tag {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #6366F1;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
         }
 
         .plan-price {
             font-family: 'Outfit', sans-serif;
-            font-size: 48px;
+            font-size: 40px;
             font-weight: 900;
             color: #fff;
-            margin: 16px 0;
+            margin-bottom: 16px;
         }
 
         .plan-price span {
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 15px;
             color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .plan-features-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            text-align: left;
-            margin: 32px 0;
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+            flex: 1;
         }
 
-        .plan-item {
+        .plan-features li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 14px;
-            color: #E2E8F0;
         }
 
-        .plan-item i {
-            color: #34D399;
+        .plan-features li i {
+            color: #10B981;
+            font-size: 14px;
         }
 
         /* ─── FAQ ─── */
         .faq-section {
-            padding: 100px 0;
+            padding: 90px 0;
             background: var(--bg-alt);
             text-align: center;
         }
 
-        .faq-container {
-            max-width: 720px;
+        .faq-list {
+            max-width: 800px;
             margin: 0 auto;
             text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
         .faq-item {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            margin-bottom: 14px;
-            overflow: hidden;
+            padding: 22px;
         }
 
-        .faq-question {
-            padding: 20px;
-            font-size: 16px;
+        .faq-item h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16.5px;
             font-weight: 700;
             color: #fff;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 8px;
         }
 
-        .faq-answer {
-            padding: 0 20px 20px;
+        .faq-item p {
             font-size: 14px;
             color: var(--text-secondary);
             line-height: 1.6;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
         }
 
         /* ─── CTA BANNER ─── */
-        .cta-section {
-            padding: 100px 0;
+        .cta-banner {
+            padding: 80px 0;
             text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.2) 0%, rgba(9, 13, 26, 0) 70%);
         }
 
         .cta-box {
-            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #18224B, #131A35);
             border: 1px solid var(--border-glow);
-            border-radius: 28px;
-            padding: 60px 32px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 24px;
+            padding: 60px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cta-box h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 38px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .cta-box p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* ─── FOOTER ─── */
         .footer {
+            padding: 60px 0 30px;
             background: #060913;
             border-top: 1px solid var(--border);
-            padding: 60px 0 30px;
-            font-size: 13.5px;
-            color: var(--text-muted);
         }
 
         .footer-grid {
@@ -587,16 +705,21 @@
             grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 40px;
             margin-bottom: 48px;
-            text-align: left;
         }
 
-        .footer-col h4 {
-            color: #fff;
+        .footer-brand p {
             font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            max-width: 320px;
+        }
+
+        .footer-col h5 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
             font-weight: 700;
-            margin-bottom: 18px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #fff;
+            margin-bottom: 16px;
         }
 
         .footer-col ul {
@@ -609,7 +732,8 @@
         .footer-col a {
             color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.2s;
+            font-size: 13.5px;
+            transition: color 0.2s ease;
         }
 
         .footer-col a:hover {
@@ -618,36 +742,38 @@
 
         .footer-bottom {
             padding-top: 24px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
         }
 
-        /* ─── RESPONSIVE BREAKPOINTS ─── */
+        /* ─── RESPONSIVE BREAKPOINTS (320px - 1024px) ─── */
         @media (max-width: 1024px) {
-            .hero-title { font-size: 46px; }
-            .steps-grid { grid-template-columns: 1fr 1fr; }
             .hero-mockup { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .benefits-grid { grid-template-columns: repeat(3, 1fr); }
+            .trust-grid { grid-template-columns: repeat(3, 1fr); }
+            .pricing-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
             .nav-links, .nav-actions .btn-ghost { display: none; }
             .mobile-menu-btn { display: block; }
             .hero-title { font-size: 34px; }
+            .hero-desc { font-size: 15.5px; }
             .section-title { font-size: 28px; }
-            .plan-features-list { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
             .steps-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title { font-size: 28px; }
-            .hero-ctas { flex-direction: column; width: 100%; }
-            .hero-ctas .btn-primary, .hero-ctas .btn-ghost { width: 100%; justify-content: center; }
+            .sync-grid { grid-template-columns: 1fr; }
+            .benefits-grid { grid-template-columns: 1fr; }
+            .trust-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-grid { grid-template-columns: 1fr; }
+            .cta-box { padding: 40px 20px; }
+            .cta-box h2 { font-size: 28px; }
         }
     </style>
 </head>
@@ -657,20 +783,21 @@
     <nav class="navbar">
         <div class="container nav-inner">
             <a href="/" class="brand-logo">
-                <div class="brand-icon"><i class="fa-solid fa-fire-burner"></i></div>
-                <div class="brand-name">DineFlow AI</div>
+                <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
+                <div class="brand-name">Tendorabuy</div>
             </a>
 
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#workflow">Workflow</a></li>
+                <li><a href="#workflow">Online + Offline</a></li>
                 <li><a href="/pricing">Pricing</a></li>
                 <li><a href="#faq">FAQ</a></li>
+                <li><a href="/contact">Contact</a></li>
             </ul>
 
             <div class="nav-actions">
-                <a href="{{ route('login') }}" class="btn-ghost">Sign In</a>
+                <a href="{{ route('login') }}" class="btn-ghost">Login</a>
                 <a href="{{ route('register') }}" class="btn-primary">
                     <span>Start Free</span>
                     <i class="fa-solid fa-arrow-right"></i>
@@ -685,11 +812,12 @@
         <ul style="list-style:none; display:flex; flex-direction:column; gap:16px;">
             <li><a href="#features" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">Features</a></li>
             <li><a href="#how-it-works" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">How It Works</a></li>
-            <li><a href="#workflow" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">Workflow</a></li>
+            <li><a href="#workflow" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">Online + Offline</a></li>
             <li><a href="/pricing" style="color:#fff; text-decoration:none; font-size:16px;">Pricing</a></li>
             <li><a href="#faq" onclick="toggleMobileNav()" style="color:#fff; text-decoration:none; font-size:16px;">FAQ</a></li>
+            <li><a href="/contact" style="color:#fff; text-decoration:none; font-size:16px;">Contact</a></li>
             <li style="padding-top:10px; display:flex; gap:10px;">
-                <a href="{{ route('login') }}" class="btn-ghost" style="flex:1; text-align:center;">Sign In</a>
+                <a href="{{ route('login') }}" class="btn-ghost" style="flex:1; text-align:center; border:1px solid var(--border);">Login</a>
                 <a href="{{ route('register') }}" class="btn-primary" style="flex:1; justify-content:center;">Start Free</a>
             </li>
         </ul>
@@ -698,24 +826,24 @@
     <!-- 1. HERO SECTION -->
     <section class="hero-section">
         <div class="container hero-content">
-            <div class="section-tag"><i class="fa-solid fa-bolt"></i> Complete Restaurant Operating System</div>
-            <h1 class="hero-title">Automate Orders, Kitchen & Billing in One Unified Platform.</h1>
+            <div class="section-tag"><i class="fa-solid fa-bolt"></i> Complete Restaurant Platform</div>
+            <h1 class="hero-title">Complete Restaurant Management, POS, QR Ordering & Kitchen in One Platform.</h1>
             <p class="hero-desc">
-                DineFlow AI empowers restaurants, bistros, and cafés with smart table QR menus, real-time Kitchen Display (KDS), lightning-fast POS billing, and intelligent inventory tracking.
+                Tendorabuy empowers restaurants, cafés, and food businesses with instant contactless table QR ordering, real-time Kitchen Display (KDS), lightning-fast POS billing, and intelligent inventory tracking.
             </p>
 
             <div class="hero-ctas">
                 <a href="{{ route('register') }}" class="btn-primary" style="padding: 14px 32px; font-size: 16px;">
-                    <span>Create Free Restaurant</span>
+                    <span>START FREE</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
                 <a href="{{ route('login') }}" class="btn-ghost" style="padding: 14px 28px; font-size: 15px; border:1px solid var(--border);">
-                    <i class="fa-solid fa-desktop" style="margin-right:8px;"></i> Live POS Terminal
+                    <i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i> LOGIN
                 </a>
             </div>
 
             <div class="hero-pill-badge">
-                <i class="fa-solid fa-check-circle" style="color:#10B981;"></i> 100% Free Starter Plan • Zero Credit Card • Setup in 2 Minutes
+                <i class="fa-solid fa-circle-check" style="color:#10B981;"></i> Free Starter Plan • No Credit Card Required • Setup in 2 Minutes
             </div>
 
             <!-- Visual Showcase Mockup -->
@@ -723,19 +851,47 @@
                 <div class="hero-mockup">
                     <div class="mock-card">
                         <div class="mock-icon" style="color:#818CF8;"><i class="fa-solid fa-qrcode"></i></div>
-                        <div class="mock-title">Digital QR Menus</div>
-                        <div class="mock-sub">Instant contactless guest ordering directly from dining tables with multilingual voice search.</div>
+                        <div class="mock-title">Smart QR Ordering</div>
+                        <div class="mock-sub">Instant contactless guest ordering from dining tables with multi-language voice search and UPI QR payments.</div>
                     </div>
                     <div class="mock-card">
                         <div class="mock-icon" style="color:#34D399;"><i class="fa-solid fa-fire-burner"></i></div>
                         <div class="mock-title">Live Kitchen Display (KDS)</div>
-                        <div class="mock-sub">Zero lost tickets. Color-coded order aging, audio chimes, and instant chef completion statuses.</div>
+                        <div class="mock-sub">Zero lost tickets. Color-coded order aging, audio chime alerts, and instant chef completion transitions.</div>
                     </div>
                     <div class="mock-card">
                         <div class="mock-icon" style="color:#F472B6;"><i class="fa-solid fa-cash-register"></i></div>
                         <div class="mock-title">POS Billing & Soundbox</div>
-                        <div class="mock-sub">Dynamic UPI QR payments, split bills, multi-language soundbox announcements, and thermal receipts.</div>
+                        <div class="mock-sub">Dynamic UPI QR payments, split bills, multi-language soundbox announcements, and thermal receipt printing.</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST / VALUE SECTION -->
+    <section class="trust-section">
+        <div class="container">
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <h3>Free Starter</h3>
+                    <p>₹0 / Forever Free Plan</p>
+                </div>
+                <div class="trust-item">
+                    <h3>No Credit Card</h3>
+                    <p>Instant Onboarding</p>
+                </div>
+                <div class="trust-item">
+                    <h3>2 Min Setup</h3>
+                    <p>Ready Out of the Box</p>
+                </div>
+                <div class="trust-item">
+                    <h3>Cloud + Offline</h3>
+                    <p>Works Without Internet</p>
+                </div>
+                <div class="trust-item">
+                    <h3>Multi-Tenant</h3>
+                    <p>Strict Data Isolation</p>
                 </div>
             </div>
         </div>
@@ -746,265 +902,325 @@
         <div class="container">
             <div class="section-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> Everything You Need</div>
             <h2 class="section-title">Built for Modern High-Volume Restaurants</h2>
-            <p class="section-subtitle">A comprehensive suite designed to eliminate wait times and boost table turnover.</p>
+            <p class="section-subtitle">A comprehensive suite designed to eliminate wait times and maximize table turnover.</p>
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-cash-register"></i></div>
-                    <h3 class="feature-title">Fast POS Terminal</h3>
-                    <p class="feature-desc">Sub-second order creation, table floor plan layout, quick-add modifiers, and keyboard shortcuts.</p>
+                    <div class="feat-icon-wrap"><i class="fa-solid fa-cash-register"></i></div>
+                    <h3>POS Billing</h3>
+                    <p>Lightning-fast touch terminal with quick item search, modifiers, combo deals, discounts, and one-click receipt printing.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-qrcode"></i></div>
-                    <h3 class="feature-title">Smart QR Digital Menu</h3>
-                    <p class="feature-desc">Guests order from their phones, call waiters, apply coupon discounts, and request item split bills.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(16,185,129,0.12); color:#34D399;"><i class="fa-solid fa-qrcode"></i></div>
+                    <h3>QR Digital Menu</h3>
+                    <p>Dynamic contactless menu ordering with veg/non-veg filters, dietary badges, live order tracking, and voice recognition.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-tv"></i></div>
-                    <h3 class="feature-title">Kitchen Display (KDS)</h3>
-                    <p class="feature-desc">Real-time KOT display with preparation timers, course management, and kitchen sound alerts.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(236,72,153,0.12); color:#F472B6;"><i class="fa-solid fa-utensils"></i></div>
+                    <h3>Kitchen KDS</h3>
+                    <p>Paperless kitchen display system with order aging timers, sound alerts, preparation stages, and single-tap item completions.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-boxes-stacked"></i></div>
-                    <h3 class="feature-title">Real-Time Inventory</h3>
-                    <p class="feature-desc">Automated ingredient depletion, low-stock threshold notifications, and purchase order tracking.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(245,158,11,0.12); color:#FBBF24;"><i class="fa-solid fa-chair"></i></div>
+                    <h3>Table Management</h3>
+                    <p>Real-time visual table floor layout with live occupancy status, occupied order amounts, bill settlement, and auto-release.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-users-gear"></i></div>
-                    <h3 class="feature-title">Staff & Quick PINs</h3>
-                    <p class="feature-desc">Role-based permissions for Admins, Managers, Cashiers, Kitchen, and Waiters with instant 4-digit PIN switching.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(59,130,246,0.12); color:#60A5FA;"><i class="fa-solid fa-user-shield"></i></div>
+                    <h3>Staff & Roles (RBAC)</h3>
+                    <p>Strict role boundaries for Admin, Manager, Cashier, Kitchen Chef, Waiter, and Customer with fast numeric PIN switching.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-receipt"></i></div>
-                    <h3 class="feature-title">Thermal & WhatsApp Invoices</h3>
-                    <p class="feature-desc">Auto-print standard thermal receipts, 80mm KOTs, A4 tax invoices, or send instant invoices via WhatsApp.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(139,92,246,0.12); color:#A78BFA;"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <h3>Inventory Control</h3>
+                    <p>Real-time stock deduction on menu item orders, reorder level alerts, supplier tracking, and waste management.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                    <h3 class="feature-title">Expense & Cost Tracking</h3>
-                    <p class="feature-desc">Record daily restaurant expenses, categorize grocery vs utility costs, and track true net margins.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(20,184,166,0.12); color:#2DD4BF;"><i class="fa-solid fa-receipt"></i></div>
+                    <h3>Expense Management</h3>
+                    <p>Record daily operational expenses (groceries, utilities, salaries, maintenance) categorized per restaurant tenant.</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon-wrap"><i class="fa-solid fa-chart-pie"></i></div>
-                    <h3 class="feature-title">AI Menu Engineering</h3>
-                    <p class="feature-desc">BCG matrix classification identifying your Star dishes, Plowhorses, and Puzzles for menu optimization.</p>
+                    <div class="feat-icon-wrap" style="background: rgba(244,63,94,0.12); color:#FB7185;"><i class="fa-solid fa-tags"></i></div>
+                    <h3>Offers & Coupons</h3>
+                    <p>Create percentage and flat discount coupons with expiry dates, minimum bill thresholds, and auto-apply logic.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feat-icon-wrap" style="background: rgba(16,185,129,0.12); color:#10B981;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <h3>Offline Desktop Sync</h3>
+                    <p>Windows Desktop POS continues running offline during internet outages and auto-syncs with cloud MySQL when reconnected.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 3. HOW IT WORKS -->
-    <section class="how-section" id="how-it-works">
+    <section class="steps-section" id="how-it-works">
         <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-route"></i> Simple 4-Step Process</div>
-            <h2 class="section-title">Up and Running in 4 Quick Steps</h2>
-            <p class="section-subtitle">No complicated installations or server setups required.</p>
+            <div class="section-tag"><i class="fa-solid fa-compass"></i> Simple Onboarding</div>
+            <h2 class="section-title">How Tendorabuy Works</h2>
+            <p class="section-subtitle">Get your restaurant up and running in 4 quick steps.</p>
 
             <div class="steps-grid">
-                <div class="step-box">
-                    <div class="step-num">1</div>
-                    <h3 class="step-box-title">Create Account</h3>
-                    <p class="step-box-desc">Sign up in seconds and get your isolated restaurant workspace under the Free Plan.</p>
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <h3>Create Account</h3>
+                    <p>Sign up for your free restaurant account with your restaurant name, contact, and preferred currency.</p>
                 </div>
-                <div class="step-box">
-                    <div class="step-num">2</div>
-                    <h3 class="step-box-title">Add Tables & Menu</h3>
-                    <p class="step-box-desc">Configure your dining floor layout, upload your menu items, and set pricing.</p>
+
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <h3>Add Menu & Tables</h3>
+                    <p>Easily input your food categories, dishes, prices, and configure your dining floor tables.</p>
                 </div>
-                <div class="step-box">
-                    <div class="step-num">3</div>
-                    <h3 class="step-box-title">Print QR Codes</h3>
-                    <p class="step-box-desc">Download ready-to-print table QR stands for instant guest ordering and waiter calls.</p>
+
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <h3>Generate QR Codes</h3>
+                    <p>Print high-resolution table QR codes that direct guests to your live digital menu.</p>
                 </div>
-                <div class="step-box">
-                    <div class="step-num">4</div>
-                    <h3 class="step-box-title">Take Live Orders</h3>
-                    <p class="step-box-desc">Receive orders directly on your POS and KDS screens with real-time kitchen tracking.</p>
+
+                <div class="step-card">
+                    <div class="step-num">04</div>
+                    <h3>Start Taking Orders</h3>
+                    <p>Receive orders on POS and Kitchen KDS in real-time, collect payments, and track revenue.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 4. RESTAURANT WORKFLOW -->
-    <section class="workflow-section" id="workflow">
+    <!-- 4. ONLINE + OFFLINE ARCHITECTURE -->
+    <section class="sync-section" id="workflow">
         <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-arrows-spin"></i> End-to-End Operation</div>
-            <h2 class="section-title">Seamless Restaurant Workflow</h2>
-            <p class="section-subtitle">How orders flow smoothly from customer smartphone to kitchen to settlement.</p>
+            <div class="section-tag"><i class="fa-solid fa-arrows-rotate"></i> Hybrid Reliability</div>
+            <h2 class="section-title">Uninterrupted Operations: Online + Offline</h2>
+            <p class="section-subtitle">Never lose an order, even if your restaurant internet connection drops.</p>
 
-            <div class="workflow-flow">
-                <div class="workflow-node"><i class="fa-solid fa-qrcode" style="color:#818CF8;"></i> Customer QR</div>
-                <div class="workflow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="workflow-node"><i class="fa-solid fa-book-open" style="color:#34D399;"></i> Digital Menu</div>
-                <div class="workflow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="workflow-node"><i class="fa-solid fa-cart-shopping" style="color:#FBBF24;"></i> Cart & Notes</div>
-                <div class="workflow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="workflow-node"><i class="fa-solid fa-cash-register" style="color:#818CF8;"></i> POS Terminal</div>
-                <div class="workflow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="workflow-node"><i class="fa-solid fa-kitchen-set" style="color:#F87171;"></i> KDS / KOT</div>
-                <div class="workflow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="workflow-node"><i class="fa-solid fa-indian-rupee-sign" style="color:#34D399;"></i> UPI / Cash</div>
-                <div class="workflow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="workflow-node"><i class="fa-solid fa-receipt" style="color:#A5B4FC;"></i> Tax Invoice</div>
+            <div class="sync-grid">
+                <div class="sync-card cloud">
+                    <span class="sync-badge">Cloud Mode (Online)</span>
+                    <h3>Real-Time Cloud Workflow</h3>
+                    <p>Orders flow instantly from guest table QR scans to POS and Kitchen displays over high-speed cloud infrastructure.</p>
+                    <div class="sync-flow">
+                        <span>1. Customer scans QR &amp; submits order</span>
+                        <span>2. Order saves to Cloud Database</span>
+                        <span>3. POS &amp; KDS notify kitchen staff</span>
+                        <span>4. Instant UPI payment verification</span>
+                    </div>
+                </div>
+
+                <div class="sync-card offline">
+                    <span class="sync-badge">Offline Mode (Desktop POS)</span>
+                    <h3>Local Desktop Resiliency</h3>
+                    <p>When internet disconnects, the Windows Desktop POS continues billing locally into SQLite and auto-syncs when back online.</p>
+                    <div class="sync-flow">
+                        <span>1. POS creates local order in SQLite</span>
+                        <span>2. Receipts print via local thermal printer</span>
+                        <span>3. Internet returns ➔ Auto-Sync queue fires</span>
+                        <span>4. Reconciled with Cloud MySQL (Zero Duplicates)</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- 5. FREE PLAN SPOTLIGHT -->
-    <section class="pricing-spotlight" id="pricing">
+    <!-- 5. RESTAURANT BENEFITS -->
+    <section class="benefits-section">
         <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-tag"></i> 100% Free Forever</div>
-            <h2 class="section-title">Generous Free Starter Plan</h2>
-            <p class="section-subtitle">Everything you need to launch and scale your restaurant with zero fees.</p>
+            <div class="section-tag"><i class="fa-solid fa-users"></i> Tailored Experience</div>
+            <h2 class="section-title">Benefits for Your Entire Team</h2>
+            <p class="section-subtitle">Designed specifically for every restaurant stakeholder.</p>
 
-            <div class="plan-card">
-                <div style="font-size:13px; font-weight:800; color:#818CF8; text-transform:uppercase; letter-spacing:1px;">Starter Plan</div>
-                <div class="plan-price">₹0 <span>/ forever</span></div>
-                <p style="font-size:14px; color:var(--text-secondary);">Ideal for independent cafés, diners, food trucks, and bistros.</p>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div style="font-size:24px; margin-bottom:10px;">👔</div>
+                    <h4>Restaurant Owner</h4>
+                    <p>Live sales analytics, expense tracking, menu engineering matrix, and multi-branch control.</p>
+                </div>
+                <div class="benefit-card">
+                    <div style="font-size:24px; margin-bottom:10px;">💳</div>
+                    <h4>Cashier</h4>
+                    <p>Speedy billing, split bills, UPI QR soundbox confirmation, and instant thermal receipt printing.</p>
+                </div>
+                <div class="benefit-card">
+                    <div style="font-size:24px; margin-bottom:10px;">🏃</div>
+                    <h4>Waiter</h4>
+                    <p>Digital waiter calls with table numbers, mobile table ordering, and instant dish ready notifications.</p>
+                </div>
+                <div class="benefit-card">
+                    <div style="font-size:24px; margin-bottom:10px;">👨‍🍳</div>
+                    <h4>Kitchen Chef</h4>
+                    <p>Color-coded KDS screen, zero missed paper tickets, preparation countdown, and single-click completion.</p>
+                </div>
+                <div class="benefit-card">
+                    <div style="font-size:24px; margin-bottom:10px;">📱</div>
+                    <h4>Customer</h4>
+                    <p>Zero wait time, contactless digital menu with voice ordering, live order tracker, and easy UPI payment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="plan-features-list">
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> <strong>10 Tables</strong></div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> <strong>5 Staff Accounts</strong></div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> <strong>100 Menu Items</strong></div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> <strong>500 Monthly Orders</strong></div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> Table QR Ordering</div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> Real-Time KDS</div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> Thermal Printing</div>
-                    <div class="plan-item"><i class="fa-solid fa-circle-check"></i> Soundbox Alerts</div>
+    <!-- 6. PRICING -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-tag"><i class="fa-solid fa-gem"></i> Transparent Pricing</div>
+            <h2 class="section-title">Simple Plans for Restaurants of Any Size</h2>
+            <p class="section-subtitle">Start 100% free with no credit card required. Upgrade as your restaurant expands.</p>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="price-card">
+                    <div class="plan-name">Free Starter</div>
+                    <div class="plan-price">₹0 <span>/ forever</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Up to 10 Dining Tables</li>
+                        <li><i class="fa-solid fa-check"></i> Up to 5 Staff Accounts</li>
+                        <li><i class="fa-solid fa-check"></i> Up to 100 Menu Items</li>
+                        <li><i class="fa-solid fa-check"></i> 500 Orders / Month</li>
+                        <li><i class="fa-solid fa-check"></i> QR Code Menus &amp; KDS</li>
+                        <li><i class="fa-solid fa-check"></i> Standard POS Billing</li>
+                    </ul>
+                    <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">Get Started Free</a>
                 </div>
 
-                <a href="{{ route('register') }}" class="btn-primary" style="width:100%; padding:16px; justify-content:center; font-size:16px;">
-                    <span>Get Started Free</span>
+                <!-- Pro Plan -->
+                <div class="price-card featured">
+                    <div class="featured-tag">Most Popular</div>
+                    <div class="plan-name">Pro Growth</div>
+                    <div class="plan-price">₹1,499 <span>/ month</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Up to 50 Dining Tables</li>
+                        <li><i class="fa-solid fa-check"></i> Up to 20 Staff Accounts</li>
+                        <li><i class="fa-solid fa-check"></i> Up to 500 Menu Items</li>
+                        <li><i class="fa-solid fa-check"></i> 5,000 Orders / Month</li>
+                        <li><i class="fa-solid fa-check"></i> Offline Desktop Sync</li>
+                        <li><i class="fa-solid fa-check"></i> Advanced Sales &amp; Matrix Analytics</li>
+                    </ul>
+                    <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">Start 14-Day Trial</a>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="price-card">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price">₹3,999 <span>/ month</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Unlimited Tables &amp; Staff</li>
+                        <li><i class="fa-solid fa-check"></i> Unlimited Menu Items</li>
+                        <li><i class="fa-solid fa-check"></i> Unlimited Monthly Orders</li>
+                        <li><i class="fa-solid fa-check"></i> Multi-Branch Management</li>
+                        <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
+                        <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone Support</li>
+                    </ul>
+                    <a href="/contact" class="btn-ghost" style="width:100%; border:1px solid var(--border); text-align:center;">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. FAQ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-tag"><i class="fa-solid fa-circle-question"></i> Questions &amp; Answers</div>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Everything you need to know about Tendorabuy.</p>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <h4>Is Tendorabuy free to use?</h4>
+                    <p>Yes! Our Free Starter Plan is 100% free forever with no credit card required. It includes up to 10 tables, 5 staff accounts, 100 menu items, POS billing, and QR ordering.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Do customers need to download an application to order?</h4>
+                    <p>No. Customers simply scan the QR code on their dining table with their phone camera. The digital menu opens instantly in any mobile browser.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Can POS work offline when internet is down?</h4>
+                    <p>Yes. Our Windows Desktop POS app saves orders locally in an offline SQLite database. When internet connection returns, all orders automatically synchronize to the cloud.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Can I connect standard thermal receipt printers?</h4>
+                    <p>Yes. Tendorabuy supports standard 58mm and 80mm ESC/POS thermal printers, network printers, and standard A4 tax invoices.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>Can multiple independent restaurants use the platform?</h4>
+                    <p>Yes. Tendorabuy features strict multi-tenant data isolation. Each restaurant has its own private menu, customer base, orders, inventory, and staff.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. FINAL CTA -->
+    <section class="cta-banner">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Start Your Restaurant Free Today</h2>
+                <p>Join hundreds of modern restaurants accelerating their table turnover and kitchen speed with Tendorabuy.</p>
+                <a href="{{ route('register') }}" class="btn-primary" style="padding: 16px 36px; font-size: 17px;">
+                    <span>START FREE</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- 6. FAQ SECTION -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-circle-question"></i> Got Questions?</div>
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <p class="section-subtitle">Clear answers about DineFlow AI features and plans.</p>
-
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Is DineFlow AI really free to use?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes! Our Free Starter Plan includes up to 10 tables, 5 staff members, 100 menu dishes, and 500 monthly orders completely free forever.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Do I need special hardware to run the POS?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        No special proprietary hardware is required. DineFlow AI runs smoothly on any Android tablet, iPad, laptop, desktop, or smartphone with a modern web browser.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>How does customer QR ordering work?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Each dining table has a unique QR code. When guests scan it with their smartphone camera, your digital menu opens instantly without downloading any mobile app.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Can I print KOTs and thermal receipts?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes. DineFlow AI supports standard 58mm and 80mm thermal receipt printers, network ESC/POS printers, browser printing, and A4 tax invoices.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 7. FINAL CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-box">
-                <h2 style="font-family:'Outfit',sans-serif; font-size:36px; font-weight:800; margin-bottom:16px;">Ready to Modernize Your Restaurant?</h2>
-                <p style="font-size:16px; color:var(--text-secondary); max-width:560px; margin:0 auto 32px;">
-                    Join hundreds of forward-thinking restaurants accelerating their floor operations with DineFlow AI today.
-                </p>
-                <a href="{{ route('register') }}" class="btn-primary" style="padding:16px 36px; font-size:16px;">
-                    <span>Launch Your Free Restaurant</span>
-                    <i class="fa-solid fa-rocket"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- 8. FOOTER -->
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-col">
-                    <a href="/" class="brand-logo" style="margin-bottom:16px;">
-                        <div class="brand-icon"><i class="fa-solid fa-fire-burner"></i></div>
-                        <div class="brand-name">DineFlow AI</div>
+                <div class="footer-brand">
+                    <a href="/" class="brand-logo">
+                        <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
+                        <div class="brand-name">Tendorabuy</div>
                     </a>
-                    <p style="font-size:13.5px; color:var(--text-secondary); line-height:1.6; max-width:320px;">
-                        The next-generation cloud restaurant operating system and POS terminal for modern hospitality brands.
-                    </p>
+                    <p>Complete restaurant management platform, smart table QR ordering, kitchen display system, and POS billing.</p>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Product</h4>
+                    <h5>Product</h5>
                     <ul>
                         <li><a href="#features">Features</a></li>
-                        <li><a href="#workflow">Workflow</a></li>
-                        <li><a href="/pricing">Pricing Plans</a></li>
-                        <li><a href="{{ route('login') }}">POS Terminal</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#workflow">Online + Offline</a></li>
+                        <li><a href="/pricing">Pricing</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Company</h4>
+                    <h5>Account &amp; Auth</h5>
                     <ul>
-                        <li><a href="{{ route('contact') }}">Contact Us</a></li>
-                        <li><a href="{{ route('terms') }}">Terms of Service</a></li>
-                        <li><a href="{{ route('privacy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ route('register') }}">Start Free</a></li>
+                        <li><a href="{{ route('login') }}">Login</a></li>
+                        <li><a href="{{ route('auth.pin-login') }}">Quick PIN Login</a></li>
+                        <li><a href="/contact">Support</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Get Started</h4>
+                    <h5>Legal &amp; Info</h5>
                     <ul>
-                        <li><a href="{{ route('register') }}">Create Free Account</a></li>
-                        <li><a href="{{ route('login') }}">Staff Login</a></li>
-                        <li><a href="{{ route('login') }}">PIN Login</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/contact">Contact Sales</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="footer-bottom">
-                <div>&copy; 2026 DineFlow AI Inc. All rights reserved.</div>
-                <div style="display:flex; gap:16px;">
-                    <a href="{{ route('terms') }}" style="color:var(--text-muted); text-decoration:none;">Terms</a>
-                    <a href="{{ route('privacy') }}" style="color:var(--text-muted); text-decoration:none;">Privacy</a>
-                    <a href="{{ route('contact') }}" style="color:var(--text-muted); text-decoration:none;">Contact</a>
-                </div>
+                <div>&copy; 2026 Tendorabuy. All rights reserved.</div>
+                <div>Designed for High-Performance Restaurant Operations</div>
             </div>
         </div>
     </footer>
@@ -1014,16 +1230,6 @@
             const drawer = document.getElementById('mobileDrawer');
             if (drawer) {
                 drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
-            }
-        }
-
-        function toggleFaq(elem) {
-            const item = elem.parentElement;
-            item.classList.toggle('active');
-            const icon = elem.querySelector('i');
-            if (icon) {
-                icon.classList.toggle('fa-chevron-down');
-                icon.classList.toggle('fa-chevron-up');
             }
         }
     </script>

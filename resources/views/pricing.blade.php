@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing Plans — DineFlow AI Restaurant Management</title>
-    <meta name="description" content="Simple, transparent restaurant software pricing. Start with our 100% Free Plan or view upcoming Pro plans.">
+    <title>Pricing Plans — Tendorabuy Restaurant Management</title>
+    <meta name="description" content="Simple, transparent restaurant software pricing. Start with our 100% Free Plan or choose Pro and Enterprise growth tiers.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
@@ -31,6 +31,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            line-height: 1.6;
         }
 
         .container {
@@ -78,300 +79,256 @@
 
         .brand-name {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #fff;
         }
 
-        /* Pricing Section */
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-ghost {
+            padding: 9px 18px;
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        .btn-primary {
+            padding: 9px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Hero */
         .pricing-hero {
-            padding: 80px 0 40px;
+            padding: 60px 0 40px;
             text-align: center;
         }
 
-        .pricing-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 30px;
-            color: #A5B4FC;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
-        }
-
-        .pricing-title {
+        .pricing-hero h1 {
             font-family: 'Outfit', sans-serif;
             font-size: 42px;
             font-weight: 900;
             margin-bottom: 12px;
         }
 
-        .pricing-sub {
+        .pricing-hero p {
             font-size: 16px;
             color: var(--text-secondary);
-            max-width: 540px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
-        /* Pricing Cards Grid */
+        /* Grid */
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin: 50px 0 100px;
+            gap: 28px;
+            margin-bottom: 60px;
         }
 
         .pricing-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 36px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             position: relative;
-            transition: all 0.3s ease;
         }
 
         .pricing-card.featured {
             border-color: var(--primary);
-            box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
-            transform: scale(1.03);
+            box-shadow: 0 0 30px var(--primary-glow);
+            background: linear-gradient(180deg, #18224B 0%, #131A35 100%);
         }
 
-        .badge-popular {
+        .featured-badge {
             position: absolute;
-            top: -14px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary);
             color: #fff;
             font-size: 11px;
             font-weight: 800;
+            text-transform: uppercase;
             padding: 4px 14px;
             border-radius: 20px;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .plan-header {
-            margin-bottom: 24px;
-        }
-
-        .plan-name {
+        .card-header h3 {
             font-family: 'Outfit', sans-serif;
             font-size: 20px;
             font-weight: 800;
+            color: #fff;
             margin-bottom: 6px;
         }
 
-        .plan-desc {
+        .card-header p {
             font-size: 13px;
             color: var(--text-secondary);
+            margin-bottom: 20px;
         }
 
-        .plan-price-wrap {
-            margin: 20px 0;
-        }
-
-        .price-amount {
+        .card-price {
             font-family: 'Outfit', sans-serif;
             font-size: 40px;
             font-weight: 900;
             color: #fff;
+            margin-bottom: 24px;
         }
 
-        .price-period {
+        .card-price span {
             font-size: 14px;
             color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .feature-list {
             list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
             margin-bottom: 32px;
+            flex: 1;
         }
 
-        .feature-item {
+        .feature-list li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 13.5px;
-            color: #E2E8F0;
         }
 
-        .feature-item i {
+        .feature-list li i {
             color: var(--success);
-            font-size: 13px;
-        }
-
-        .btn-plan {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
             font-size: 14px;
-            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding: 30px 0;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.2s ease;
+            font-size: 13px;
+            color: #64748B;
         }
 
-        .btn-plan-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff;
-            box-shadow: 0 4px 16px var(--primary-glow);
-        }
-
-        .btn-plan-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
-        }
-
-        .btn-plan-disabled {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 960px) {
+        @media (max-width: 900px) {
             .pricing-grid { grid-template-columns: 1fr; }
-            .pricing-card.featured { transform: none; }
+            .pricing-hero h1 { font-size: 32px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header class="topbar">
         <div class="container topbar-inner">
             <a href="/" class="brand-logo">
-                <div class="brand-icon"><i class="fa-solid fa-fire-burner"></i></div>
-                <div class="brand-name">DineFlow AI</div>
+                <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
+                <div class="brand-name">Tendorabuy</div>
             </a>
-
-            <div style="display:flex; gap:12px; align-items:center;">
-                <a href="{{ route('login') }}" style="color:var(--text-secondary); text-decoration:none; font-size:14px; font-weight:600;">Sign In</a>
-                <a href="{{ route('register') }}" style="padding:8px 18px; background:var(--primary); color:#fff; text-decoration:none; border-radius:8px; font-size:13px; font-weight:700;">Start Free</a>
+            <div class="nav-actions">
+                <a href="{{ route('login') }}" class="btn-ghost">Login</a>
+                <a href="{{ route('register') }}" class="btn-primary">Start Free</a>
             </div>
         </div>
     </header>
 
-    <!-- Content -->
-    <main class="container" style="flex:1;">
+    <main class="container">
         <section class="pricing-hero">
-            <div class="pricing-tag"><i class="fa-solid fa-tags"></i> Transparent Pricing</div>
-            <h1 class="pricing-title">Simple Plans for Restaurants of Any Size</h1>
-            <p class="pricing-sub">Get started on our 100% Free Plan with zero commitments or setup fees.</p>
+            <h1>Simple, Predictable Restaurant Pricing</h1>
+            <p>Every plan includes POS billing, QR digital menu, kitchen KDS, and table management.</p>
         </section>
 
         <section class="pricing-grid">
-            <!-- 1. FREE PLAN -->
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <h3>Free Starter</h3>
+                    <p>Perfect for food trucks, cafés, and emerging restaurants.</p>
+                </div>
+                <div class="card-price">₹0 <span>/ forever</span></div>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-check"></i> Up to 10 Dining Tables</li>
+                    <li><i class="fa-solid fa-check"></i> Up to 5 Staff Accounts</li>
+                    <li><i class="fa-solid fa-check"></i> Up to 100 Menu Items</li>
+                    <li><i class="fa-solid fa-check"></i> 500 Orders / Month</li>
+                    <li><i class="fa-solid fa-check"></i> Smart QR Menus &amp; KDS</li>
+                    <li><i class="fa-solid fa-check"></i> Standard POS Billing</li>
+                </ul>
+                <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">Create Free Account</a>
+            </div>
+
+            <!-- Pro Plan -->
             <div class="pricing-card featured">
-                <div class="badge-popular">Current Plan</div>
-                <div>
-                    <div class="plan-header">
-                        <h2 class="plan-name">Free Starter</h2>
-                        <p class="plan-desc">Complete core restaurant POS and QR ordering essentials.</p>
-                    </div>
-
-                    <div class="plan-price-wrap">
-                        <span class="price-amount">₹0</span>
-                        <span class="price-period">/ forever</span>
-                    </div>
-
-                    <ul class="feature-list">
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>10 Tables</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>5 Staff Accounts</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>100 Menu Dishes</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>500 Orders / month</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Table QR Menu & Ordering</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Real-time Kitchen Display (KDS)</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> POS Terminal & UPI Billing</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Thermal Receipts & WhatsApp</li>
-                    </ul>
+                <div class="featured-badge">Most Popular</div>
+                <div class="card-header">
+                    <h3>Pro Growth</h3>
+                    <p>For high-volume restaurants requiring offline sync and deeper insights.</p>
                 </div>
-
-                <a href="{{ route('register') }}" class="btn-plan btn-plan-primary">
-                    Get Started Free <i class="fa-solid fa-arrow-right" style="margin-left:6px;"></i>
-                </a>
+                <div class="card-price">₹1,499 <span>/ month</span></div>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-check"></i> Up to 50 Dining Tables</li>
+                    <li><i class="fa-solid fa-check"></i> Up to 20 Staff Accounts</li>
+                    <li><i class="fa-solid fa-check"></i> Up to 500 Menu Items</li>
+                    <li><i class="fa-solid fa-check"></i> 5,000 Orders / Month</li>
+                    <li><i class="fa-solid fa-check"></i> Offline Windows Desktop Sync</li>
+                    <li><i class="fa-solid fa-check"></i> Advanced Sales &amp; Matrix Analytics</li>
+                </ul>
+                <a href="{{ route('register') }}" class="btn-primary" style="width:100%;">Start 14-Day Trial</a>
             </div>
 
-            <!-- 2. PRO PLAN (COMING SOON) -->
+            <!-- Enterprise Plan -->
             <div class="pricing-card">
-                <div>
-                    <div class="plan-header">
-                        <h2 class="plan-name">Pro Growth</h2>
-                        <p class="plan-desc">For busy dining restaurants and multi-floor operations.</p>
-                    </div>
-
-                    <div class="plan-price-wrap">
-                        <span class="price-amount">₹1,499</span>
-                        <span class="price-period">/ month</span>
-                    </div>
-
-                    <ul class="feature-list">
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>50 Tables</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>25 Staff Accounts</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>500 Menu Dishes</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>5,000 Orders / month</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Multi-station Kitchen KDS</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> AI Demand & Stock Forecasting</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Loyalty & Custom Coupons</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Priority 24/7 Support</li>
-                    </ul>
+                <div class="card-header">
+                    <h3>Enterprise</h3>
+                    <p>For restaurant chains, hotel dining, and multi-branch franchises.</p>
                 </div>
-
-                <button class="btn-plan btn-plan-disabled" disabled>
-                    Coming Soon
-                </button>
-            </div>
-
-            <!-- 3. ENTERPRISE PLAN (COMING SOON) -->
-            <div class="pricing-card">
-                <div>
-                    <div class="plan-header">
-                        <h2 class="plan-name">Enterprise</h2>
-                        <p class="plan-desc">Custom solutions for restaurant chains and franchises.</p>
-                    </div>
-
-                    <div class="plan-price-wrap">
-                        <span class="price-amount">₹3,999</span>
-                        <span class="price-period">/ month</span>
-                    </div>
-
-                    <ul class="feature-list">
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>Unlimited Tables</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>Unlimited Staff</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>Unlimited Menu Dishes</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> <strong>Unlimited Orders</strong></li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Multi-Outlet Central Dashboard</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Custom ERP & Accounting API</li>
-                        <li class="feature-item"><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
-                    </ul>
-                </div>
-
-                <button class="btn-plan btn-plan-disabled" disabled>
-                    Coming Soon
-                </button>
+                <div class="card-price">₹3,999 <span>/ month</span></div>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-check"></i> Unlimited Tables &amp; Staff</li>
+                    <li><i class="fa-solid fa-check"></i> Unlimited Menu Items</li>
+                    <li><i class="fa-solid fa-check"></i> Unlimited Monthly Orders</li>
+                    <li><i class="fa-solid fa-check"></i> Multi-Branch Control</li>
+                    <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
+                    <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone Support</li>
+                </ul>
+                <a href="/contact" class="btn-ghost" style="width:100%; border:1px solid var(--border); text-align:center;">Contact Sales</a>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer style="background:#060913; border-top:1px solid var(--border); padding:30px 0; font-size:13px; color:var(--text-secondary); text-align:center;">
+    <footer class="footer">
         <div class="container">
-            &copy; 2026 DineFlow AI Inc. All rights reserved. • <a href="/" style="color:#818CF8; text-decoration:none;">Back to Home</a>
+            &copy; 2026 Tendorabuy. All rights reserved. &bull; <a href="/terms" style="color:#94A3B8; text-decoration:none;">Terms</a> &bull; <a href="/privacy" style="color:#94A3B8; text-decoration:none;">Privacy</a> &bull; <a href="/contact" style="color:#94A3B8; text-decoration:none;">Contact</a>
         </div>
     </footer>
 

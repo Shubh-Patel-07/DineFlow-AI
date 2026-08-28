@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us — DineFlow AI</title>
+    <title>Contact Us — Tendorabuy</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -18,22 +18,22 @@
 </head>
 <body>
     <div class="container">
-        <a href="/">← Back to DineFlow AI</a>
-        <h1>Contact Support & Sales</h1>
-        <p>Have questions about setting up DineFlow AI in your restaurant or need enterprise multi-branch assistance? We are here to help!</p>
+        <a href="/">← Back to Tendorabuy</a>
+        <h1>Contact Support &amp; Sales</h1>
+        <p>Have questions about setting up Tendorabuy in your restaurant or need enterprise assistance? We are here to help!</p>
 
         <div class="contact-box">
             <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
             <div>
                 <div style="font-size:12px; color:#94A3B8; text-transform:uppercase; font-weight:700;">Email Support</div>
-                <div style="font-size:15px; font-weight:600; color:#fff;">support@dineflow.test</div>
+                <div style="font-size:15px; font-weight:600; color:#fff;">support@tendorabuy.in</div>
             </div>
         </div>
 
         <div class="contact-box">
             <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
             <div>
-                <div style="font-size:12px; color:#94A3B8; text-transform:uppercase; font-weight:700;">Direct Phone & WhatsApp</div>
+                <div style="font-size:12px; color:#94A3B8; text-transform:uppercase; font-weight:700;">Direct Phone &amp; WhatsApp</div>
                 <div style="font-size:15px; font-weight:600; color:#fff;">+91 98765 43210 (Mon-Sat, 9AM-8PM IST)</div>
             </div>
         </div>
@@ -42,7 +42,7 @@
             <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
             <div>
                 <div style="font-size:12px; color:#94A3B8; text-transform:uppercase; font-weight:700;">Headquarters</div>
-                <div style="font-size:15px; font-weight:600; color:#fff;">DineFlow AI Technologies, Patan, Gujarat, India</div>
+                <div style="font-size:15px; font-weight:600; color:#fff;">Tendorabuy Technologies, Gujarat, India</div>
             </div>
         </div>
     </div>
