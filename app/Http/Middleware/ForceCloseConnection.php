@@ -12,9 +12,11 @@ class ForceCloseConnection
     {
         $response = $next($request);
         
-        // Force the connection to close immediately. This prevents the single-threaded/multi-threaded
-        // PHP built-in CLI server from hanging on HTTP keep-alive connections from mobile browsers.
-        $response->headers->set('Connection', 'close');
+        // Force the connection to close only on PHP built-in CLI server to avoid hanging mobile requests.
+        // On Nginx / PHP-FPM in production, allow Nginx to manage FastCGI connection pooling natively.
+        if (php_sapi_name() === 'cli-server') {
+            $response->headers->set('Connection', 'close');
+        }
         
         return $response;
     }
