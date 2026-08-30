@@ -150,7 +150,7 @@ class TenantMiddleware
                 'support' => [
                     'phone' => '+91 7777938338',
                     'whatsapp' => 'https://wa.me/917777938338',
-                    'email' => 'support@tendorabuy.in'
+                    'email' => 'shubhmpatel77@gmail.com'
                 ]
             ], 403);
         }

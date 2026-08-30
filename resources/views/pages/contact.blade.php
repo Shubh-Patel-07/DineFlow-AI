@@ -799,11 +799,11 @@
                         </div>
                     </a>
 
-                    <a href="mailto:support@tendorabuy.in" class="contact-channel">
+                    <a href="mailto:shubhmpatel77@gmail.com" class="contact-channel">
                         <div class="channel-icon"><i class="fa-solid fa-envelope"></i></div>
                         <div class="channel-info">
                             <h4>Email Support &amp; Sales</h4>
-                            <p>support@tendorabuy.in</p>
+                            <p>shubhmpatel77@gmail.com</p>
                         </div>
                     </a>
 

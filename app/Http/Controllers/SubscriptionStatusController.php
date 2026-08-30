@@ -65,7 +65,7 @@ class SubscriptionStatusController extends Controller
         }
 
         $supportPhone = '+91 7777938338';
-        $supportEmail = 'billing@tendorabuy.in';
+        $supportEmail = 'shubhmpatel77@gmail.com';
         $waGeneralMessage = urlencode("Hello Tendorabuy Team, I need assistance with my restaurant subscription for '{$restaurant->name}' (ID #{$restaurant->id}). Status: " . strtoupper($status));
         $whatsappUrl = "https://wa.me/917777938338?text={$waGeneralMessage}";
 

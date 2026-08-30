@@ -59,7 +59,7 @@
         <h2>3. Data & Privacy</h2>
         <p>Each restaurant tenant is cryptographically isolated. Your order records, inventory, and revenue metrics remain strictly confidential to your account.</p>
         <h2>4. Contact</h2>
-        <p>Questions regarding our terms? Reach us at <a href="/contact">our contact page</a> or email <a href="mailto:support@tendorabuy.in">support@tendorabuy.in</a>.</p>
+        <p>Questions regarding our terms? Reach us at <a href="/contact">our contact page</a> or email <a href="mailto:shubhmpatel77@gmail.com">shubhmpatel77@gmail.com</a>.</p>
     </div>
 </body>
 </html>
