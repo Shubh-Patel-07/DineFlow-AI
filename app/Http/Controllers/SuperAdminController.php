@@ -311,7 +311,6 @@ class SuperAdminController extends Controller
                 'password' => Hash::make($request->owner_password),
                 'role' => 'admin',
                 'restaurant_id' => $restaurant->id,
-                'numeric_pin' => Hash::make((string)rand(1000, 9999)),
                 'is_active' => true,
             ]);
 

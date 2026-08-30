@@ -19,9 +19,9 @@ class UserSeeder extends Seeder
                 'username' => 'superadmin',
                 'name' => 'Tendorabuy Super Admin',
                 'password' => Hash::make($superPass),
-                'numeric_pin' => '9999',
                 'role' => 'superadmin',
                 'restaurant_id' => null,
+                'is_active' => true,
             ]
         );
 
@@ -32,9 +32,9 @@ class UserSeeder extends Seeder
                 'name' => 'Admin User',
                 'email' => 'admin@dineflow.com',
                 'password' => Hash::make('password'),
-                'numeric_pin' => '1234',
                 'role' => 'admin',
                 'restaurant_id' => '1',
+                'is_active' => true,
             ]
         );
 
@@ -45,9 +45,9 @@ class UserSeeder extends Seeder
                 'name' => 'Manager',
                 'email' => 'manager@dineflow.com',
                 'password' => Hash::make('password'),
-                'numeric_pin' => '5678',
                 'role' => 'manager',
                 'restaurant_id' => '1',
+                'is_active' => true,
             ]
         );
 
@@ -58,9 +58,9 @@ class UserSeeder extends Seeder
                 'name' => 'Cashier',
                 'email' => 'cashier@dineflow.com',
                 'password' => Hash::make('password'),
-                'numeric_pin' => '9999',
                 'role' => 'cashier',
                 'restaurant_id' => '1',
+                'is_active' => true,
             ]
         );
 
@@ -71,9 +71,9 @@ class UserSeeder extends Seeder
                 'name' => 'Head Chef',
                 'email' => 'chef@dineflow.com',
                 'password' => Hash::make('password'),
-                'numeric_pin' => '2580',
                 'role' => 'kitchen',
                 'restaurant_id' => '1',
+                'is_active' => true,
             ]
         );
 
@@ -84,9 +84,9 @@ class UserSeeder extends Seeder
                 'name' => 'Waiter John',
                 'email' => 'waiter@dineflow.com',
                 'password' => Hash::make('password'),
-                'numeric_pin' => '3690',
                 'role' => 'waiter',
                 'restaurant_id' => '1',
+                'is_active' => true,
             ]
         );
     }

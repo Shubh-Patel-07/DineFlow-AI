@@ -39,7 +39,6 @@ class EnsureSuperAdminCommand extends Command
                 'username'      => $username,
                 'email'         => $email,
                 'password'      => Hash::make($password),
-                'numeric_pin'   => Hash::make('9999'),
                 'role'          => 'superadmin',
                 'restaurant_id' => null,
                 'is_active'     => true,

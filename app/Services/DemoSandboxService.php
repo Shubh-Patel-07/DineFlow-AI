@@ -52,7 +52,6 @@ class DemoSandboxService
             'email' => $username . '@sandbox.tendorabuy.in',
             'password' => Hash::make('demo1234'),
             'role' => 'admin',
-            'numeric_pin' => '1234',
             'restaurant_id' => $restaurant->id,
         ]);
 

@@ -517,19 +517,19 @@
                 </div>
             </div>
 
-            <!-- STEP 6: Staff & PINs -->
+            <!-- STEP 6: Staff Credentials -->
             <div class="step-pane" id="step6">
                 <div class="pane-header">
-                    <h2 class="pane-title">Step 6: Staff Credentials & Quick PINs</h2>
-                    <p class="pane-desc">Your Administrator owner account has a 4-digit PIN for instant terminal logins.</p>
+                    <h2 class="pane-title">Step 6: Staff Credentials & Account Access</h2>
+                    <p class="pane-desc">Your Administrator owner account uses your Email and Password for secure logins.</p>
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div style="background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); border-radius:14px; padding:18px;">
                         <div style="font-size:11px; font-weight:700; color:#A5B4FC; text-transform:uppercase;">Owner Administrator</div>
                         <div style="font-size:16px; font-weight:800; color:#fff; margin:6px 0;">{{ $user->name }}</div>
-                        <div style="font-size:13px; color:var(--text-secondary);">Username: <strong style="color:#fff;">{{ $user->username }}</strong></div>
-                        <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Quick PIN: <strong style="color:#34D399; font-size:16px;">{{ $user->numeric_pin }}</strong></div>
+                        <div style="font-size:13px; color:var(--text-secondary);">Login Email: <strong style="color:#fff;">{{ $user->email }}</strong></div>
+                        <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Security: <strong style="color:#34D399; font-size:13px;">Password Protected</strong></div>
                     </div>
 
                     <div style="background:rgba(15,23,42,0.6); border:1px solid var(--border); border-radius:14px; padding:18px;">

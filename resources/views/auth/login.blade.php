@@ -526,18 +526,8 @@
             </div>
         @endif
 
-        <!-- Switcher Tabs -->
-        <div class="tab-group">
-            <button class="tab-btn active" id="tabPassword" onclick="switchTab('password')">
-                <i class="fa-solid fa-key"></i> Password Login
-            </button>
-            <button class="tab-btn" id="tabPin" onclick="switchTab('pin')">
-                <i class="fa-solid fa-fingerprint"></i> Quick PIN
-            </button>
-        </div>
-
-        <!-- PASSWORD FORM -->
-        <div class="form-panel active" id="panelPassword">
+        <!-- PRIMARY LOGIN FORM (EMAIL/USERNAME + PASSWORD) -->
+        <div class="form-panel active" id="panelPassword" style="display:block;">
             <form method="POST" action="/login">
                 @csrf
                 <div class="form-group">
@@ -566,69 +556,10 @@
             </form>
         </div>
 
-        <!-- PIN FORM -->
-        <div class="form-panel" id="panelPin">
-            <form method="POST" action="/pin-login" id="pinSubmitForm">
-                @csrf
-                
-                <!-- Select Staff Account Dropdown & Pills -->
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="font-size: 11.5px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Select Staff Account</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
-                        <select name="username" id="pinUsername" class="form-control" onchange="onRoleSelectDropdownChange(this.value)" style="padding-left:42px; appearance:none; -webkit-appearance:none; background:var(--card); font-weight:600; cursor:pointer;">
-                            <option value="admin">👑 Admin</option>
-                            <option value="manager">👔 Manager</option>
-                            <option value="cashier">💳 Cashier</option>
-                            <option value="kitchen">👨‍🍳 Kitchen</option>
-                            <option value="waiter">🛎️ Waiter</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down" style="left:auto; right:14px; pointer-events:none; font-size:12px;"></i>
-                    </div>
-                </div>
-
-                <div class="role-pills" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
-                    <button type="button" class="role-pill active" data-role="admin" onclick="selectRole('admin', this)"><i class="fa-solid fa-crown"></i> Admin</button>
-                    <button type="button" class="role-pill" data-role="manager" onclick="selectRole('manager', this)"><i class="fa-solid fa-user-tie"></i> Manager</button>
-                    <button type="button" class="role-pill" data-role="cashier" onclick="selectRole('cashier', this)"><i class="fa-solid fa-cash-register"></i> Cashier</button>
-                    <button type="button" class="role-pill" data-role="kitchen" onclick="selectRole('kitchen', this)"><i class="fa-solid fa-utensils"></i> Chef</button>
-                    <button type="button" class="role-pill" data-role="waiter" onclick="selectRole('waiter', this)"><i class="fa-solid fa-bell"></i> Waiter</button>
-                </div>
-
-                <input type="hidden" name="numeric_pin" id="hiddenPinInput">
-
-
-                <!-- PIN Dots -->
-                <div class="pin-dots">
-                    <div class="pin-dot" id="dot1"></div>
-                    <div class="pin-dot" id="dot2"></div>
-                    <div class="pin-dot" id="dot3"></div>
-                    <div class="pin-dot" id="dot4"></div>
-                </div>
-
-                <!-- Keypad -->
-                <div class="keypad">
-                    <button type="button" class="key" onclick="pressKey(1)">1</button>
-                    <button type="button" class="key" onclick="pressKey(2)">2</button>
-                    <button type="button" class="key" onclick="pressKey(3)">3</button>
-                    <button type="button" class="key" onclick="pressKey(4)">4</button>
-                    <button type="button" class="key" onclick="pressKey(5)">5</button>
-                    <button type="button" class="key" onclick="pressKey(6)">6</button>
-                    <button type="button" class="key" onclick="pressKey(7)">7</button>
-                    <button type="button" class="key" onclick="pressKey(8)">8</button>
-                    <button type="button" class="key" onclick="pressKey(9)">9</button>
-                    <button type="button" class="key key-action" onclick="clearPin()">C</button>
-                    <button type="button" class="key" onclick="pressKey(0)">0</button>
-                    <button type="button" class="key key-action" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
-                    <button type="button" class="key key-action" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--primary), #4338CA); color: white; border-radius: 12px; height: 48px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 14px var(--primary-glow);" onclick="manualPinSubmit()"><i class="fa-solid fa-right-to-bracket"></i> Submit Quick PIN</button>
-                </div>
-            </form>
-        </div>
-
         <!-- Login help text -->
-        <div class="credentials-box" style="text-align:center;">
+        <div class="credentials-box" style="text-align:center; margin-top:16px;">
             <div style="font-weight:600; color:var(--text-secondary); font-size:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
-                <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> Enter your staff username and PIN to sign in quickly
+                <i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> Secure Enterprise Role-Based Authentication
             </div>
         </div>
     </div>
@@ -645,134 +576,6 @@
                 slides[currentSlide].classList.add('active');
             }
         }, 4000);
-
-        // Tab Switcher
-        function switchTab(type) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
-
-            if (type === 'password') {
-                document.getElementById('tabPassword').classList.add('active');
-                document.getElementById('panelPassword').classList.add('active');
-            } else {
-                document.getElementById('tabPin').classList.add('active');
-                document.getElementById('panelPin').classList.add('active');
-                clearPin();
-            }
-        }
-
-        // Role Selector Sync
-        function selectRole(role, btnEl) {
-            const sel = document.getElementById('pinUsername');
-            if (sel) sel.value = role;
-            document.querySelectorAll('.role-pill').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-role') === role || btn === btnEl);
-            });
-            clearPin();
-        }
-
-        function onRoleSelectDropdownChange(role) {
-            document.querySelectorAll('.role-pill').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-role') === role);
-            });
-            clearPin();
-        }
-
-
-        // Quick PIN Logic
-        let enteredPin = '';
-        const hiddenPinInput = document.getElementById('hiddenPinInput');
-        const pinSubmitForm = document.getElementById('pinSubmitForm');
-
-        function updatePinDisplay() {
-            for (let i = 1; i <= 4; i++) {
-                const dot = document.getElementById('dot' + i);
-                if (dot) {
-                    if (enteredPin.length >= i) dot.classList.add('active');
-                    else dot.classList.remove('active');
-                }
-            }
-        }
-
-        function pressKey(num) {
-            if (enteredPin.length < 4) {
-                enteredPin += String(num);
-                updatePinDisplay();
-                
-                if (enteredPin.length === 4) {
-                    hiddenPinInput.value = enteredPin;
-                    setTimeout(() => {
-                        pinSubmitForm.submit();
-                    }, 200);
-                }
-            }
-        }
-
-        function manualPinSubmit() {
-            if (enteredPin.length >= 4) {
-                hiddenPinInput.value = enteredPin;
-                pinSubmitForm.submit();
-            } else {
-                alert('Please enter your 4-digit PIN to login.');
-            }
-        }
-
-        function clearPin() {
-            enteredPin = '';
-            updatePinDisplay();
-        }
-
-        function backspacePin() {
-            if (enteredPin.length > 0) {
-                enteredPin = enteredPin.slice(0, -1);
-                updatePinDisplay();
-            }
-        }
-
-        // 1-Click Fillers
-        function quickFillPassword(username, password) {
-            switchTab('password');
-            const userInput = document.querySelector('input[name="username"]');
-            const passInput = document.querySelector('input[name="password"]');
-            if (userInput) userInput.value = username;
-            if (passInput) passInput.value = password;
-            setTimeout(() => {
-                const form = document.querySelector('#panelPassword form');
-                if (form) form.submit();
-            }, 150);
-        }
-
-        function quickFillPin(username, pin) {
-            switchTab('pin');
-            const pills = document.querySelectorAll('.role-pill');
-            pills.forEach(pill => {
-                if (pill.textContent.toLowerCase().includes(username)) {
-                    selectRole(username, pill);
-                }
-            });
-            clearPin();
-            for (let char of String(pin)) {
-                pressKey(parseInt(char));
-            }
-        }
-
-        // Keyboard Support
-        document.addEventListener('keydown', (e) => {
-            const pinPanel = document.getElementById('panelPin');
-            if (!pinPanel || !pinPanel.classList.contains('active')) return;
-
-            if (e.key >= '0' && e.key <= '9') {
-                pressKey(parseInt(e.key));
-            } else if (e.key === 'Backspace') {
-                e.preventDefault();
-                backspacePin();
-            } else if (e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
-                clearPin();
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                manualPinSubmit();
-            }
-        });
     </script>
 </body>
 </html>

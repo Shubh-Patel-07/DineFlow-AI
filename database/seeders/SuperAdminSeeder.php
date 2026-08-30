@@ -23,7 +23,6 @@ class SuperAdminSeeder extends Seeder
                 'password' => Hash::make($password),
                 'role' => 'superadmin',
                 'restaurant_id' => null,
-                'numeric_pin' => '9999'
             ]
         );
     }

@@ -45,7 +45,6 @@ class StaffController extends Controller
                     'phone' => $u->phone,
                     'role' => $u->role,
                     'restaurant_id' => $u->restaurant_id,
-                    'has_pin' => !empty($u->numeric_pin),
                     'is_active' => $u->is_active !== false,
                     'created_at' => $u->created_at ? $u->created_at->toISOString() : null,
                 ];
@@ -54,7 +53,7 @@ class StaffController extends Controller
     }
 
     /**
-     * Create a new staff member with Email + Password (and optional Quick PIN).
+     * Create a new staff member with Email + Password.
      */
     public function store(Request $request)
     {
@@ -64,11 +63,9 @@ class StaffController extends Controller
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|string|in:admin,owner,manager,cashier,kitchen,waiter,staff',
             'phone' => 'nullable|string|max:20',
-            'numeric_pin' => 'nullable|string|min:4|max:8|regex:/^[0-9]+$/',
         ], [
             'email.unique' => 'This email address is already registered.',
             'password.confirmed' => 'Password confirmation does not match.',
-            'numeric_pin.regex' => 'The Quick PIN must contain only digits (0-9).',
         ]);
 
         $user = auth()->user();
@@ -92,19 +89,6 @@ class StaffController extends Controller
             ], 422);
         }
 
-        // If optional PIN is provided, check collision within same tenant
-        if (!empty($validated['numeric_pin'])) {
-            $existingStaff = User::where('restaurant_id', $restaurantId)->get();
-            foreach ($existingStaff as $st) {
-                if ($st->verifyPin($validated['numeric_pin'])) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'This Quick PIN is already assigned to another staff member in your restaurant.'
-                    ], 422);
-                }
-            }
-        }
-
         // Generate clean username from email or name
         $baseUser = explode('@', $validated['email'])[0];
         $username = Str::slug($baseUser);
@@ -125,12 +109,6 @@ class StaffController extends Controller
             'restaurant_id' => $restaurantId,
             'is_active' => true,
         ]);
-
-        if (!empty($validated['numeric_pin'])) {
-            $staffUser->setPin($validated['numeric_pin']);
-        } else {
-            $staffUser->numeric_pin = null;
-        }
 
         $staffUser->save();
 
@@ -154,7 +132,6 @@ class StaffController extends Controller
                 'phone' => $staffUser->phone,
                 'role' => $staffUser->role,
                 'restaurant_id' => $staffUser->restaurant_id,
-                'has_pin' => !empty($staffUser->numeric_pin),
                 'is_active' => true,
             ],
             'message' => "Staff member \"{$staffUser->name}\" created successfully. They can now login with {$staffUser->email}."
@@ -186,7 +163,6 @@ class StaffController extends Controller
             'email' => "sometimes|required|email|max:255|unique:users,email,{$id}",
             'role' => 'sometimes|required|string|in:admin,owner,manager,cashier,kitchen,waiter,staff',
             'phone' => 'nullable|string|max:20',
-            'numeric_pin' => 'nullable|string|min:4|max:8|regex:/^[0-9]+$/',
             'is_active' => 'sometimes|boolean',
         ]);
 
@@ -195,21 +171,6 @@ class StaffController extends Controller
         if (isset($validated['role'])) $staffUser->role = $validated['role'] === 'owner' ? 'admin' : $validated['role'];
         if (isset($validated['phone'])) $staffUser->phone = $validated['phone'];
         if (isset($validated['is_active'])) $staffUser->is_active = (bool)$validated['is_active'];
-
-        if (!empty($validated['numeric_pin'])) {
-            $peers = User::where('restaurant_id', $staffUser->restaurant_id)
-                ->where('id', '!=', $staffUser->id)
-                ->get();
-            foreach ($peers as $peer) {
-                if ($peer->verifyPin($validated['numeric_pin'])) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'This Quick PIN is already assigned to another staff member in your restaurant.'
-                    ], 422);
-                }
-            }
-            $staffUser->setPin($validated['numeric_pin']);
-        }
 
         $staffUser->save();
 
@@ -233,7 +194,6 @@ class StaffController extends Controller
                 'phone' => $staffUser->phone,
                 'role' => $staffUser->role,
                 'restaurant_id' => $staffUser->restaurant_id,
-                'has_pin' => !empty($staffUser->numeric_pin),
                 'is_active' => $staffUser->is_active !== false,
             ],
             'message' => 'Staff member updated successfully.'
@@ -280,54 +240,6 @@ class StaffController extends Controller
         return response()->json([
             'success' => true,
             'message' => "Password for {$staffUser->name} ({$staffUser->email}) has been reset successfully."
-        ]);
-    }
-
-    /**
-     * Reset/Set Quick PIN for a staff member (Optional).
-     */
-    public function resetPin(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'numeric_pin' => 'required|string|min:4|max:8|regex:/^[0-9]+$/',
-        ]);
-
-        $user = auth()->user();
-        $query = User::query();
-        if ($user && $user->role !== 'superadmin' && $user->restaurant_id) {
-            $query->where('restaurant_id', $user->restaurant_id);
-        }
-        $staffUser = $query->find($id);
-
-        if (!$staffUser) {
-            return response()->json(['success' => false, 'message' => 'Staff member not found in your restaurant'], 404);
-        }
-
-        // Check collision in tenant
-        $peers = User::where('restaurant_id', $staffUser->restaurant_id)
-            ->where('id', '!=', $staffUser->id)
-            ->get();
-        foreach ($peers as $peer) {
-            if ($peer->verifyPin($validated['numeric_pin'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'This Quick PIN is already assigned to another staff member.'
-                ], 422);
-            }
-        }
-
-        $staffUser->setPin($validated['numeric_pin']);
-        $staffUser->save();
-
-        if (class_exists(AuditLog::class)) {
-            try {
-                AuditLog::record('staff_pin_reset', $staffUser->restaurant_id, 'user', $staffUser->id);
-            } catch (\Throwable $e) {}
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => "Quick PIN for {$staffUser->name} has been updated successfully."
         ]);
     }
 
@@ -413,54 +325,6 @@ class StaffController extends Controller
         return response()->json([
             'success' => true,
             'message' => "Staff member \"{$deletedName}\" removed successfully."
-        ]);
-    }
-
-    /**
-     * Verify staff PIN for POS quick staff switching (Tenant-Scoped).
-     */
-    public function verifyStaffPin(Request $request)
-    {
-        $request->validate([
-            'numeric_pin' => 'required|string',
-        ]);
-
-        $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : $request->input('restaurant_id');
-
-        if (!$restaurantId) {
-            return response()->json(['success' => false, 'message' => 'Restaurant context required'], 403);
-        }
-
-        $staffMembers = User::where('restaurant_id', $restaurantId)
-            ->where('is_active', '!=', false)
-            ->get();
-
-        $matchedStaff = null;
-        foreach ($staffMembers as $st) {
-            if ($st->verifyPin($request->numeric_pin)) {
-                $matchedStaff = $st;
-                break;
-            }
-        }
-
-        if (!$matchedStaff) {
-            return response()->json(['success' => false, 'message' => 'Invalid staff PIN for this restaurant.'], 401);
-        }
-
-        if ($request->hasSession()) {
-            session(['active_role' => $matchedStaff->role, 'last_username' => $matchedStaff->username]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $matchedStaff->id,
-                'name' => $matchedStaff->name,
-                'role' => $matchedStaff->role,
-                'username' => $matchedStaff->username,
-            ],
-            'message' => "Switched active staff to {$matchedStaff->name} ({$matchedStaff->role})"
         ]);
     }
 }

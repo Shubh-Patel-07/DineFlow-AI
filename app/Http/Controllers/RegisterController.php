@@ -69,7 +69,7 @@ class RegisterController extends Controller
                 ]
             ]);
 
-            // 2. Generate clean username & random 4-digit PIN for owner
+            // 2. Generate clean username for owner
             $cleanSlug = Str::slug($validated['name']);
             if (empty($cleanSlug)) $cleanSlug = 'owner';
             $username = $cleanSlug . rand(100, 999);
@@ -79,8 +79,6 @@ class RegisterController extends Controller
                 $username = $cleanSlug . rand(1000, 9999);
             }
 
-            $pin = (string) rand(1000, 9999);
-
             // 3. Create Admin Owner Account
             $user = User::create([
                 'name'          => $validated['name'],
@@ -88,7 +86,6 @@ class RegisterController extends Controller
                 'email'         => $validated['email'],
                 'phone'         => $validated['phone'] ?? null,
                 'password'      => Hash::make($validated['password']),
-                'numeric_pin'   => Hash::make($pin),
                 'role'          => 'admin',
                 'restaurant_id' => $restaurant->id,
                 'is_active'     => true,

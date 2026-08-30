@@ -1,6 +1,6 @@
 /**
- * DineFlow AI — Staff & Access Roles Controller v2.2.0
- * Email + Password Primary Login / Optional Quick PIN & Tenant-Isolated RBAC.
+ * DineFlow AI — Staff & Access Roles Controller
+ * Email + Password Primary Login & Tenant-Isolated RBAC.
  */
 
 const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || new URLSearchParams(window.location.search).get('restaurantId') || '1';
@@ -87,7 +87,6 @@ function createStaffCardElement(staff) {
   }[role] || { title: 'Staff Member', badge: staff.role, gradient: 'linear-gradient(135deg, #64748B, #475569)', icon: 'fa-user', desc: 'Standard staff access credentials.' };
 
   const isDeactivated = staff.is_active === false;
-  const isPinConfigured = staff.has_pin !== false;
 
   const card = document.createElement('div');
   card.className = `staff-card ${isDeactivated ? 'deactivated' : ''}`;
@@ -122,28 +121,6 @@ function createStaffCardElement(staff) {
       ` : ''}
     </div>
 
-    <!-- Authentication Status Box -->
-    <div class="pin-status-box" style="display:flex; flex-direction:column; gap:6px; align-items:stretch;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Primary Login:</span>
-        <span style="color:#10B981; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-lock"></i> Password Protected
-        </span>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--border); padding-top:4px;">
-        <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Quick PIN:</span>
-        ${isPinConfigured ? `
-          <span class="pin-status-pill configured" style="font-size:11.5px;">
-            <i class="fa-solid fa-circle-check"></i> Enabled
-          </span>
-        ` : `
-          <span class="pin-status-pill missing" style="font-size:11.5px; color:var(--text-muted);">
-            <i class="fa-solid fa-circle-minus"></i> Optional (Not Set)
-          </span>
-        `}
-      </div>
-    </div>
-
     <p style="font-size:12px; color:var(--text-secondary); margin:0; line-height:1.4;">${roleMeta.desc}</p>
 
     <div class="card-actions">
@@ -153,14 +130,11 @@ function createStaffCardElement(staff) {
       <button class="card-btn" onclick="openResetPasswordModal(${staff.id}, '${escapeHtml(staff.name)}', '${escapeHtml(staff.email)}')">
         <i class="fa-solid fa-key"></i> Password
       </button>
-      <button class="card-btn" onclick="openResetPinModal(${staff.id}, '${escapeHtml(staff.name)}')">
-        <i class="fa-solid fa-fingerprint"></i> PIN
-      </button>
       <button class="card-btn" onclick="toggleStaffStatus(${staff.id})">
         <i class="fa-solid ${isDeactivated ? 'fa-toggle-off' : 'fa-toggle-on'}"></i> ${isDeactivated ? 'Activate' : 'Deactivate'}
       </button>
       <button class="card-btn danger" onclick="deleteStaffMember(${staff.id}, '${escapeHtml(staff.name)}')">
-        <i class="fa-solid fa-trash"></i>
+        <i class="fa-solid fa-trash"></i> Delete
       </button>
     </div>
   `;
@@ -169,14 +143,14 @@ function createStaffCardElement(staff) {
 }
 
 /* =========================================================
- * ADD STAFF MODAL (Email + Password Primary)
+ * ADD STAFF MODAL
  * ========================================================= */
 function openAddStaffModal() {
   const modal = document.getElementById('addStaffModal');
   if (!modal) return;
+  document.getElementById('addStaffForm')?.reset();
   modal.style.display = 'flex';
   setTimeout(() => { modal.style.opacity = '1'; }, 10);
-  document.getElementById('addStaffForm')?.reset();
 }
 
 function closeAddStaffModal() {
@@ -186,7 +160,7 @@ function closeAddStaffModal() {
   setTimeout(() => { modal.style.display = 'none'; }, 200);
 }
 
-async function saveNewStaffMember(event) {
+async function submitAddStaff(event) {
   event.preventDefault();
   const name = document.getElementById('staffNameInput')?.value.trim();
   const email = document.getElementById('staffEmailInput')?.value.trim();
@@ -194,7 +168,6 @@ async function saveNewStaffMember(event) {
   const password = document.getElementById('staffPasswordInput')?.value;
   const passwordConfirm = document.getElementById('staffPasswordConfirmInput')?.value;
   const phone = document.getElementById('staffPhoneInput')?.value.trim();
-  const pin = document.getElementById('staffPinInput')?.value.trim();
   const submitBtn = document.getElementById('saveStaffSubmitBtn');
 
   if (!name) {
@@ -211,10 +184,6 @@ async function saveNewStaffMember(event) {
   }
   if (password !== passwordConfirm) {
     showToast('Passwords do not match. Please re-type password.', 'error');
-    return;
-  }
-  if (pin && (pin.length < 4 || pin.length > 8 || !/^[0-9]+$/.test(pin))) {
-    showToast('Quick PIN must be 4 to 8 numeric digits if provided.', 'error');
     return;
   }
 
@@ -235,8 +204,7 @@ async function saveNewStaffMember(event) {
         role: role,
         password: password,
         password_confirmation: passwordConfirm,
-        phone: phone || null,
-        numeric_pin: pin || null
+        phone: phone || null
       })
     });
 
@@ -282,8 +250,8 @@ function closeResetPasswordModal() {
 async function submitResetPassword(event) {
   event.preventDefault();
   const id = document.getElementById('resetPasswordStaffId')?.value;
-  const password = document.getElementById('newStaffPasswordInput')?.value;
-  const confirmPassword = document.getElementById('confirmNewStaffPasswordInput')?.value;
+  const password = document.getElementById('newPasswordInput')?.value;
+  const confirmPassword = document.getElementById('confirmNewPasswordInput')?.value;
 
   if (!password || password.length < 6) {
     showToast('New password must be at least 6 characters long.', 'error');
@@ -322,68 +290,6 @@ async function submitResetPassword(event) {
 }
 
 /* =========================================================
- * RESET PIN MODAL (Optional Quick PIN)
- * ========================================================= */
-function openResetPinModal(staffId, staffName) {
-  const modal = document.getElementById('resetPinModal');
-  if (!modal) return;
-
-  document.getElementById('resetPinStaffId').value = staffId;
-  const label = document.getElementById('resetPinStaffLabel');
-  if (label) label.textContent = `Set a 4-6 digit Quick PIN for ${staffName} (for fast POS terminal switching).`;
-
-  document.getElementById('resetPinForm')?.reset();
-  modal.style.display = 'flex';
-  setTimeout(() => { modal.style.opacity = '1'; }, 10);
-}
-
-function closeResetPinModal() {
-  const modal = document.getElementById('resetPinModal');
-  if (!modal) return;
-  modal.style.opacity = '0';
-  setTimeout(() => { modal.style.display = 'none'; }, 200);
-}
-
-async function submitResetPin(event) {
-  event.preventDefault();
-  const id = document.getElementById('resetPinStaffId')?.value;
-  const pin = document.getElementById('newPinInput')?.value.trim();
-  const pinConfirm = document.getElementById('confirmNewPinInput')?.value.trim();
-
-  if (!pin || pin.length < 4 || pin.length > 8 || !/^[0-9]+$/.test(pin)) {
-    showToast('Quick PIN must be 4 to 8 numeric digits.', 'error');
-    return;
-  }
-  if (pin !== pinConfirm) {
-    showToast('PIN and Confirm PIN do not match.', 'error');
-    return;
-  }
-
-  try {
-    const res = await fetch(`/api/staff/${id}/reset-pin`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': getCsrfToken()
-      },
-      body: JSON.stringify({ numeric_pin: pin })
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      showToast(data.message || 'Quick PIN updated successfully.', 'success');
-      closeResetPinModal();
-      loadStaffMembers();
-    } else {
-      showToast(data.message || 'Failed to update PIN.', 'error');
-    }
-  } catch (err) {
-    showToast('Network error while updating PIN.', 'error');
-  }
-}
-
-/* =========================================================
  * EDIT STAFF MODAL
  * ========================================================= */
 function openEditStaffModal(staffId) {
@@ -394,10 +300,10 @@ function openEditStaffModal(staffId) {
   if (!modal) return;
 
   document.getElementById('editStaffId').value = staff.id;
-  document.getElementById('editStaffName').value = staff.name || '';
-  document.getElementById('editStaffEmail').value = staff.email || '';
-  document.getElementById('editStaffRole').value = staff.role || 'cashier';
-  document.getElementById('editStaffPhone').value = staff.phone || '';
+  document.getElementById('editStaffNameInput').value = staff.name || '';
+  document.getElementById('editStaffEmailInput').value = staff.email || '';
+  document.getElementById('editStaffRoleSelect').value = staff.role || 'cashier';
+  document.getElementById('editStaffPhoneInput').value = staff.phone || '';
 
   modal.style.display = 'flex';
   setTimeout(() => { modal.style.opacity = '1'; }, 10);
@@ -413,10 +319,10 @@ function closeEditStaffModal() {
 async function submitEditStaff(event) {
   event.preventDefault();
   const id = document.getElementById('editStaffId')?.value;
-  const name = document.getElementById('editStaffName')?.value.trim();
-  const email = document.getElementById('editStaffEmail')?.value.trim();
-  const role = document.getElementById('editStaffRole')?.value;
-  const phone = document.getElementById('editStaffPhone')?.value.trim();
+  const name = document.getElementById('editStaffNameInput')?.value.trim();
+  const email = document.getElementById('editStaffEmailInput')?.value.trim();
+  const role = document.getElementById('editStaffRoleSelect')?.value;
+  const phone = document.getElementById('editStaffPhoneInput')?.value.trim();
 
   try {
     const res = await fetch(`/api/staff/${id}`, {

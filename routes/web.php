@@ -25,8 +25,7 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 // Traditional Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
-Route::get('/pin-login', [AuthController::class, 'showPinLogin'])->name('auth.pin-login');
-Route::post('/pin-login', [AuthController::class, 'loginWithPin'])->middleware('throttle:5,1')->name('auth.login-with-pin');
+Route::get('/pin-login', fn() => redirect('/login'))->name('auth.pin-login');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.switch-user');
 
@@ -506,10 +505,8 @@ Route::prefix('api')->group(function () {
         Route::get('/staff', [StaffController::class, 'index'])->middleware('role:admin,manager');
         Route::post('/staff', [StaffController::class, 'store'])->middleware('role:admin,manager');
         Route::put('/staff/{id}', [StaffController::class, 'update'])->middleware('role:admin,manager');
-        Route::put('/staff/{id}/reset-pin', [StaffController::class, 'resetPin'])->middleware('role:admin,manager');
         Route::put('/staff/{id}/reset-password', [StaffController::class, 'resetPassword'])->middleware('role:admin,manager');
         Route::put('/staff/{id}/toggle-status', [StaffController::class, 'toggleStatus'])->middleware('role:admin,manager');
-        Route::post('/staff/verify-pin', [StaffController::class, 'verifyStaffPin']);
         Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->middleware('role:admin');
 
         // File & Image Storage
