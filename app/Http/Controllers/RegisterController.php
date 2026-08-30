@@ -108,8 +108,8 @@ class RegisterController extends Controller
                     'data'     => [
                         'restaurant_id' => $restaurant->id,
                         'user_id'       => $user->id,
+                        'email'         => $user->email,
                         'username'      => $user->username,
-                        'pin'           => $pin,
                     ]
                 ], 201);
             }

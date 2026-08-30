@@ -240,8 +240,12 @@ class OrderController extends Controller
         return response()->json(['success' => true, 'data' => $orders]);
     }
 
-    public function show($id)
+    public function show($id = null, $extraId = null)
     {
+        if ($id instanceof Request || is_object($id)) {
+            $id = $extraId ?? ($id instanceof Request ? ($id->route('id') ?? $id->input('id')) : null);
+        }
+
         $user = auth()->user();
         $query = Order::with('items');
         if ($user && $user->restaurant_id) {

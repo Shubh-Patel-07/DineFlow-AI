@@ -246,8 +246,16 @@ class StaffController extends Controller
     /**
      * Toggle staff member active/inactive status.
      */
-    public function toggleStatus($id)
+    public function toggleStatus($request = null, $id = null)
     {
+        if ($id === null && $request !== null) {
+            if (!is_object($request)) {
+                $id = $request;
+            } elseif ($request instanceof Request) {
+                $id = $request->route('id') ?? $request->input('id');
+            }
+        }
+
         $user = auth()->user();
         if ($user && (int)$user->id === (int)$id) {
             return response()->json(['success' => false, 'message' => 'You cannot deactivate your own active account.'], 400);
