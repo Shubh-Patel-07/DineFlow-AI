@@ -539,6 +539,7 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
         Route::post('/restaurants/{id}/plan', [SuperAdminController::class, 'updatePlan']);
         Route::post('/restaurants/{id}/limits', [SuperAdminController::class, 'updatePlanLimits']);
         Route::post('/restaurants/{id}/subscription', [SuperAdminController::class, 'updateSubscription']);
+        Route::post('/restaurants/{id}/extend', [SuperAdminController::class, 'extendSubscription']);
         Route::post('/restaurants/{id}/payment', [SuperAdminController::class, 'recordPayment']);
         Route::get('/orders', [SuperAdminController::class, 'recentOrders']);
         Route::get('/audit-logs', [SuperAdminController::class, 'auditLogs']);

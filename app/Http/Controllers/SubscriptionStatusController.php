@@ -65,9 +65,60 @@ class SubscriptionStatusController extends Controller
         }
 
         $supportPhone = '+91 7777938338';
-        $supportEmail = 'support@tendorabuy.in';
-        $waMessage = urlencode("Hello Tendorabuy Support, I need assistance with my restaurant account (#{$restaurant->id} - {$restaurant->name}). Current Status: " . strtoupper($status));
-        $whatsappUrl = "https://wa.me/917777938338?text={$waMessage}";
+        $supportEmail = 'billing@tendorabuy.in';
+        $waGeneralMessage = urlencode("Hello Tendorabuy Team, I need assistance with my restaurant subscription for '{$restaurant->name}' (ID #{$restaurant->id}). Status: " . strtoupper($status));
+        $whatsappUrl = "https://wa.me/917777938338?text={$waGeneralMessage}";
+
+        $waProMessage = urlencode("Hello Tendorabuy Team, I would like to renew / upgrade to the PRO Plan (₹999/mo) for my restaurant '{$restaurant->name}' (ID #{$restaurant->id}). Please send payment link and activate.");
+        $waEnterpriseMessage = urlencode("Hello Tendorabuy Team, I would like to enquire about the ENTERPRISE Plan for my restaurant '{$restaurant->name}' (ID #{$restaurant->id}). Please connect with sales.");
+
+        $availablePlans = [
+            'free' => [
+                'name' => 'Starter Free',
+                'tagline' => 'Essential tools for small cafés and quick food stalls',
+                'price' => '₹0',
+                'period' => '/ month',
+                'badge' => 'Standard',
+                'popular' => false,
+                'tables' => 'Up to 10 Tables',
+                'staff' => '5 Staff Logins',
+                'orders' => '500 Orders / month',
+                'menu_items' => '100 Menu Items',
+                'features' => ['Digital QR Menu', 'Basic POS Billing', 'Standard Sales Summary'],
+                'cta_text' => 'Choose Starter',
+                'cta_url' => "https://wa.me/917777938338?text=" . urlencode("Hello Tendorabuy Team, please activate Starter Free Plan for '{$restaurant->name}' (ID #{$restaurant->id})"),
+            ],
+            'pro' => [
+                'name' => 'Restaurant Pro',
+                'tagline' => 'Complete digital command center for high-volume restaurants',
+                'price' => '₹999',
+                'period' => '/ month',
+                'badge' => 'Most Popular',
+                'popular' => true,
+                'tables' => 'Up to 50 Tables',
+                'staff' => '25 Staff Logins (Admin, Cashier, Chef, Waiter)',
+                'orders' => '5,000 Orders / month',
+                'menu_items' => '500 Menu Items',
+                'features' => ['Fast POS Billing & Thermal Receipts', 'Live Kitchen Display (KDS)', 'Real-Time Inventory & Low-Stock Alerts', 'AI Menu Engineering & Demand Forecast', 'Multi-Language KOT & QR Menu'],
+                'cta_text' => 'Renew / Upgrade to Pro',
+                'cta_url' => "https://wa.me/917777938338?text={$waProMessage}",
+            ],
+            'enterprise' => [
+                'name' => 'Enterprise & Chains',
+                'tagline' => 'Custom multi-outlet architecture with priority dedicated support',
+                'price' => 'Custom',
+                'period' => 'Annual Billing',
+                'badge' => 'Chains & Franchises',
+                'popular' => false,
+                'tables' => '200+ Tables',
+                'staff' => '100+ Staff Accounts',
+                'orders' => 'Unlimited Orders',
+                'menu_items' => '2,000+ Menu Items',
+                'features' => ['Multi-Branch Centralized Reporting', 'Custom POS & Payment Gateway Setup', 'Dedicated Account Manager & 24/7 SLA', 'Custom API & ERP Integrations'],
+                'cta_text' => 'Contact Enterprise Sales',
+                'cta_url' => "https://wa.me/917777938338?text={$waEnterpriseMessage}",
+            ],
+        ];
 
         return view('subscription.status', [
             'restaurant' => $restaurant,
@@ -83,6 +134,7 @@ class SubscriptionStatusController extends Controller
             'supportPhone' => $supportPhone,
             'supportEmail' => $supportEmail,
             'whatsappUrl' => $whatsappUrl,
+            'availablePlans' => $availablePlans,
         ]);
     }
 }

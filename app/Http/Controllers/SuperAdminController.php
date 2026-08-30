@@ -574,7 +574,7 @@ class SuperAdminController extends Controller
     }
 
     /**
-     * Full subscription lifecycle override (dates, trial, grace period, status)
+     * Full subscription lifecycle override (dates, trial, grace period, status, custom messages)
      */
     public function updateSubscription(Request $request, $id)
     {
@@ -588,6 +588,11 @@ class SuperAdminController extends Controller
             'billing_amount' => 'nullable|numeric|min:0',
             'payment_status' => 'nullable|string|in:paid,unpaid,pending,waived',
             'reason' => 'nullable|string|max:255',
+            'expiry_message' => 'nullable|string|max:2000',
+            'grace_period_message' => 'nullable|string|max:2000',
+            'renewal_message' => 'nullable|string|max:2000',
+            'suspension_message' => 'nullable|string|max:2000',
+            'suspension_internal_note' => 'nullable|string|max:2000',
         ]);
 
         $restaurant = Restaurant::find($id);
@@ -609,6 +614,11 @@ class SuperAdminController extends Controller
         if ($request->filled('trial_ends_at')) $updateData['trial_ends_at'] = Carbon::parse($request->trial_ends_at);
         if ($request->filled('billing_amount')) $updateData['billing_amount'] = (float)$request->billing_amount;
         if ($request->filled('payment_status')) $updateData['payment_status'] = $request->payment_status;
+        if ($request->has('expiry_message')) $updateData['expiry_message'] = $request->expiry_message;
+        if ($request->has('grace_period_message')) $updateData['grace_period_message'] = $request->grace_period_message;
+        if ($request->has('renewal_message')) $updateData['renewal_message'] = $request->renewal_message;
+        if ($request->has('suspension_message')) $updateData['suspension_message'] = $request->suspension_message;
+        if ($request->has('suspension_internal_note')) $updateData['suspension_internal_note'] = $request->suspension_internal_note;
 
         $restaurant->update($updateData);
 
@@ -633,6 +643,80 @@ class SuperAdminController extends Controller
             'success' => true,
             'message' => "Subscription updated for '{$restaurant->name}'.",
             'data' => $restaurant
+        ]);
+    }
+
+    /**
+     * Extend restaurant subscription expiry
+     */
+    public function extendSubscription(Request $request, $id)
+    {
+        $request->validate([
+            'days' => 'nullable|integer|min:1|max:3650',
+            'months' => 'nullable|integer|min:1|max:120',
+            'reason' => 'nullable|string|max:255',
+            'expiry_message' => 'nullable|string|max:2000',
+            'renewal_message' => 'nullable|string|max:2000',
+        ]);
+
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
+            return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
+        }
+
+        $days = (int)$request->input('days', 0);
+        $months = (int)$request->input('months', 0);
+
+        $baseDate = ($restaurant->subscription_expires_at && Carbon::parse($restaurant->subscription_expires_at)->isFuture())
+            ? Carbon::parse($restaurant->subscription_expires_at)
+            : Carbon::now();
+
+        if ($months > 0) {
+            $newExpiresAt = (clone $baseDate)->addMonths($months);
+        } else {
+            $days = $days > 0 ? $days : 30;
+            $newExpiresAt = (clone $baseDate)->addDays($days);
+        }
+
+        $oldStatus = $restaurant->subscription_status;
+        $updateData = [
+            'subscription_status' => 'active',
+            'subscription_expires_at' => $newExpiresAt,
+            'suspension_reason' => null,
+            'suspension_message' => null,
+            'suspension_internal_note' => null,
+            'suspended_at' => null,
+        ];
+
+        if ($request->has('expiry_message')) $updateData['expiry_message'] = $request->expiry_message;
+        if ($request->has('renewal_message')) $updateData['renewal_message'] = $request->renewal_message;
+
+        $restaurant->update($updateData);
+
+        $reason = $request->input('reason', 'Subscription extended by Super Admin');
+
+        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'active', [
+            'previous_status' => $oldStatus,
+            'starts_at' => $restaurant->subscription_starts_at ?: Carbon::now(),
+            'expires_at' => $newExpiresAt,
+            'reason' => $reason,
+        ]);
+
+        AuditLog::record('subscription_extended', $restaurant->id, 'subscription', $restaurant->id, [
+            'previous_status' => $oldStatus,
+            'new_expires_at' => $newExpiresAt->toDateTimeString(),
+            'reason' => $reason
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Subscription for '{$restaurant->name}' extended successfully until " . $newExpiresAt->format('d M Y') . ".",
+            'data' => [
+                'id' => $restaurant->id,
+                'name' => $restaurant->name,
+                'subscription_status' => 'active',
+                'subscription_expires_at' => $newExpiresAt->toISOString(),
+            ]
         ]);
     }
 

@@ -1370,6 +1370,14 @@
             <input type="number" id="subModalGrace" class="form-input" min="0" max="60" value="7">
           </div>
           <div class="form-group">
+            <label>Customer-Facing Expiry / Renewal Message</label>
+            <textarea id="subModalExpiryMessage" class="form-textarea" rows="2" placeholder="Custom message shown to restaurant owner upon plan expiry (e.g. તમારો Pro Plan પૂર્ણ થઈ ગયો છે. કૃપા કરીને રિન્યૂ કરો...)"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Confidential Internal Admin Note</label>
+            <textarea id="subModalInternalNote" class="form-textarea" rows="2" placeholder="Private note for Super Admin team (Strictly NEVER shown to restaurant)"></textarea>
+          </div>
+          <div class="form-group">
             <label>Action Reason / Note</label>
             <input type="text" id="subModalReason" class="form-input" placeholder="e.g. Promotional extension, trial extension">
           </div>
@@ -1744,13 +1752,15 @@
       }
     }
 
-    function openSubscriptionModal(id, name, status, plan, expiry, grace) {
+    function openSubscriptionModal(id, name, status, plan, expiry, grace, expiryMsg, internalNote) {
       document.getElementById('subModalRestaurantId').value = id;
       document.getElementById('subModalRestaurantName').textContent = `Manage Subscription: ${name}`;
       document.getElementById('subModalStatus').value = status || 'active';
       document.getElementById('subModalPlan').value = plan || 'free';
       document.getElementById('subModalExpiry').value = expiry ? expiry.split('T')[0] : '';
       document.getElementById('subModalGrace').value = grace || 7;
+      document.getElementById('subModalExpiryMessage').value = expiryMsg || '';
+      document.getElementById('subModalInternalNote').value = internalNote || '';
       document.getElementById('subModalReason').value = '';
       openModal('subscriptionModal');
     }
@@ -1778,6 +1788,8 @@
         plan_type: document.getElementById('subModalPlan').value,
         subscription_expires_at: document.getElementById('subModalExpiry').value || null,
         grace_period_days: parseInt(document.getElementById('subModalGrace').value) || 7,
+        expiry_message: document.getElementById('subModalExpiryMessage').value || null,
+        suspension_internal_note: document.getElementById('subModalInternalNote').value || null,
         reason: document.getElementById('subModalReason').value || 'Manual override'
       };
 
