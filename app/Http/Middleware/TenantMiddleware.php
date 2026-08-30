@@ -9,45 +9,69 @@ use Carbon\Carbon;
 
 class TenantMiddleware
 {
+    /**
+     * Routes that must always be accessible regardless of subscription status.
+     */
+    private array $bypassRoutes = [
+        'subscription/status',
+        'subscription/renew',
+        'logout',
+        'api/health',
+    ];
+
+    private array $bypassRouteNames = [
+        'subscription.status',
+        'auth.logout',
+        'login',
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
         if (!$user) {
-            // Unauthenticated public request (e.g. customer QR endpoints)
             return $next($request);
         }
 
-        // Only a global superadmin can bypass tenant scoping
+        // Superadmin bypasses all tenant scoping
         if (strtolower(trim($user->role ?? '')) === 'superadmin') {
             return $next($request);
         }
 
-        // Allow status page and logout routes to pass through regardless of suspension
-        if ($request->is('subscription/status') || $request->routeIs('subscription.status') || $request->is('logout') || $request->routeIs('auth.logout')) {
-            return $next($request);
+        // Allow whitelisted routes to pass through regardless of suspension/expiry
+        foreach ($this->bypassRoutes as $route) {
+            if ($request->is($route)) {
+                return $next($request);
+            }
+        }
+        foreach ($this->bypassRouteNames as $routeName) {
+            if ($request->routeIs($routeName)) {
+                return $next($request);
+            }
         }
 
-        // Check if tenant is operational (active, trial, grace_period vs suspended, expired, cancelled)
+        // ── SUBSCRIPTION STATUS ENFORCEMENT ────────────────────────────────────
         if ($user->restaurant_id) {
             $restaurant = \App\Models\Restaurant::find($user->restaurant_id);
             if ($restaurant) {
                 $status = strtolower(trim($restaurant->subscription_status ?? 'active'));
-                
-                // Real-time server authoritative expiration check
-                $effectiveExpiry = $restaurant->subscription_expires_at 
-                    ? Carbon::parse($restaurant->subscription_expires_at) 
+
+                // Real-time server-authoritative expiration check
+                $effectiveExpiry = $restaurant->subscription_expires_at
+                    ? Carbon::parse($restaurant->subscription_expires_at)
                     : ($restaurant->trial_ends_at ? Carbon::parse($restaurant->trial_ends_at) : null);
 
                 if ($effectiveExpiry) {
                     $graceDays = !is_null($restaurant->grace_period_days) ? intval($restaurant->grace_period_days) : 7;
                     $gracePeriodEnd = (clone $effectiveExpiry)->addDays($graceDays);
-                    
+
                     if (Carbon::now()->isAfter($gracePeriodEnd) && !in_array($status, ['suspended', 'expired', 'cancelled'])) {
                         $status = 'expired';
                         $restaurant->update(['subscription_status' => 'expired']);
-                        \App\Models\AuditLog::record('subscription_expired_auto', $restaurant->id, 'subscription', $restaurant->id, [
-                            'reason' => 'Subscription and grace period exceeded'
-                        ]);
+                        try {
+                            \App\Models\AuditLog::record('subscription_expired_auto', $restaurant->id, 'subscription', $restaurant->id, [
+                                'reason' => 'Subscription and grace period exceeded'
+                            ]);
+                        } catch (\Throwable $e) {}
                     } elseif (Carbon::now()->isAfter($effectiveExpiry) && Carbon::now()->isBefore($gracePeriodEnd) && $status !== 'grace_period' && !in_array($status, ['suspended', 'cancelled'])) {
                         $status = 'grace_period';
                         $restaurant->update(['subscription_status' => 'grace_period']);
@@ -57,50 +81,21 @@ class TenantMiddleware
                     }
                 }
 
+                // ── SUSPENDED: Redirect to professional status page ──
                 if ($status === 'suspended') {
-                    $customerMsg = $restaurant->getCustomerFacingSuspensionMessage();
-                    if ($request->is('api/*') || ($request->expectsJson() && !$request->is('dashboard') && !$request->is('pos') && !$request->is('kitchen') && !$request->is('admin/*') && !$request->is('frontend/*'))) {
-                        return response()->json([
-                            'success' => false,
-                            'status' => 'suspended',
-                            'restaurant_name' => $restaurant->name,
-                            'message' => $customerMsg,
-                            'reason' => $restaurant->suspension_reason,
-                            'redirect' => '/subscription/status',
-                            'support' => [
-                                'phone' => '+91 7777938338',
-                                'whatsapp' => 'https://wa.me/917777938338',
-                                'email' => 'support@tendorabuy.in'
-                            ]
-                        ], 403);
-                    }
-                    return redirect()->route('subscription.status');
+                    return $this->respondWithStatusRedirect($request, $restaurant, 'suspended');
                 }
 
+                // ── EXPIRED / CANCELLED: Redirect to professional status page ──
                 if ($status === 'expired' || $status === 'cancelled') {
-                    $customerMsg = $restaurant->getCustomerFacingExpiryMessage();
-                    if ($request->is('api/*') || ($request->expectsJson() && !$request->is('dashboard') && !$request->is('pos') && !$request->is('kitchen') && !$request->is('admin/*') && !$request->is('frontend/*'))) {
-                        return response()->json([
-                            'success' => false,
-                            'status' => 'expired',
-                            'restaurant_name' => $restaurant->name,
-                            'message' => $customerMsg,
-                            'redirect' => '/subscription/status',
-                            'support' => [
-                                'phone' => '+91 7777938338',
-                                'whatsapp' => 'https://wa.me/917777938338',
-                                'email' => 'support@tendorabuy.in'
-                            ]
-                        ], 403);
-                    }
-                    return redirect()->route('subscription.status');
+                    return $this->respondWithStatusRedirect($request, $restaurant, $status);
                 }
             }
         }
 
+        // ── CROSS-TENANT ACCESS CHECK ──────────────────────────────────────────
         $userTenantId = strval($user->restaurant_id ?? '');
 
-        // Extract requested tenant ID from route, query, input, or URI path
         $requestedTenantId = $request->route('restaurantId')
             ?? $request->route('restaurant_id')
             ?? $request->query('restaurantId')
@@ -114,7 +109,6 @@ class TenantMiddleware
             $requestedTenantId = $matches[1];
         }
 
-        // If a specific tenant was requested and doesn't match the user's restaurant, DENY access
         if ($requestedTenantId !== null && $requestedTenantId !== '' && $userTenantId !== '' && strval($requestedTenantId) !== $userTenantId) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
@@ -133,5 +127,35 @@ class TenantMiddleware
         }
 
         return $next($request);
+    }
+
+    /**
+     * Return proper response for suspended/expired restaurants.
+     * API requests get structured JSON; web requests redirect to the professional status page.
+     */
+    private function respondWithStatusRedirect(Request $request, $restaurant, string $status): Response
+    {
+        $customerMsg = ($status === 'suspended')
+            ? $restaurant->getCustomerFacingSuspensionMessage()
+            : $restaurant->getCustomerFacingExpiryMessage();
+
+        // For pure API requests, return structured JSON (not a raw abort)
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'status' => $status,
+                'restaurant_name' => $restaurant->name,
+                'message' => $customerMsg,
+                'redirect' => '/subscription/status',
+                'support' => [
+                    'phone' => '+91 7777938338',
+                    'whatsapp' => 'https://wa.me/917777938338',
+                    'email' => 'support@tendorabuy.in'
+                ]
+            ], 403);
+        }
+
+        // For web requests, redirect to professional subscription status page
+        return redirect()->route('subscription.status');
     }
 }

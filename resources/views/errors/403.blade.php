@@ -16,6 +16,21 @@
     </style>
 </head>
 <body>
+    @php
+        // SAFETY NET: If the authenticated user belongs to a suspended/expired restaurant,
+        // redirect them to the professional subscription status page instead of showing raw 403.
+        $authUser = auth()->user();
+        if ($authUser && $authUser->restaurant_id && strtolower(trim($authUser->role ?? '')) !== 'superadmin') {
+            $restaurant403 = \App\Models\Restaurant::find($authUser->restaurant_id);
+            if ($restaurant403) {
+                $restStatus403 = strtolower(trim($restaurant403->subscription_status ?? 'active'));
+                if (in_array($restStatus403, ['suspended', 'expired', 'cancelled'])) {
+                    header('Location: /subscription/status');
+                    exit;
+                }
+            }
+        }
+    @endphp
     <div class="error-card">
         <div class="error-code">403</div>
         <h1>Access Denied / Forbidden</h1>

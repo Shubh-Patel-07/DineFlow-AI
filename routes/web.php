@@ -32,6 +32,7 @@ Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.sw
 
 // Professional Subscription & Suspension Status Page
 Route::get('/subscription/status', [SubscriptionStatusController::class, 'show'])->name('subscription.status')->middleware('auth');
+Route::get('/subscription/renew', [SubscriptionStatusController::class, 'show'])->name('subscription.renew')->middleware('auth');
 
 // Guided Onboarding Wizard
 Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index')->middleware(['auth', 'tenant']);
