@@ -342,58 +342,66 @@
     </main>
   </div>
 
-  <!-- ADD STAFF MODAL -->
+  <!-- ADD STAFF MODAL (Primary: Email + Password, Optional: Quick PIN) -->
   <div class="modal-overlay" id="addStaffModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
-    <div class="modal" style="width:520px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal" style="width:540px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column; max-height:90vh;">
       <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
         <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
           <i class="fa-solid fa-user-plus" style="color:var(--primary);"></i>
-          <span>Add New Staff Member</span>
+          <span>Add Staff Member (Email + Password)</span>
         </div>
         <button class="modal-close" onclick="closeAddStaffModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <form id="addStaffForm" onsubmit="saveNewStaffMember(event)" style="padding:24px; display:flex; flex-direction:column; gap:14px;">
+      <form id="addStaffForm" onsubmit="saveNewStaffMember(event)" style="padding:24px; display:flex; flex-direction:column; gap:14px; overflow-y:auto;">
         <div class="form-group">
           <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Full Name *</label>
           <input type="text" id="staffNameInput" class="form-input" placeholder="e.g. Ramesh Kumar" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
         </div>
 
-        <div class="form-group">
-          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Role & Access Privilege *</label>
-          <select id="staffRoleSelect" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:600;">
-            <option value="cashier" selected>💳 Head Cashier (POS & Billing)</option>
-            <option value="kitchen">👨‍🍳 Kitchen Chef (KDS & Preparation)</option>
-            <option value="waiter">🛎️ Table Captain / Waiter (Orders & Tables)</option>
-            <option value="manager">👔 Store Manager (Operations & Reports)</option>
-            <option value="admin">👑 Administrator (Full Control)</option>
-          </select>
-        </div>
-
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="form-group">
-            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Quick PIN (4-6 Digits) *</label>
-            <input type="password" id="staffPinInput" class="form-input" maxlength="6" pattern="[0-9]{4,6}" inputmode="numeric" placeholder="••••" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:800; letter-spacing:4px;">
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Email (Login ID) *</label>
+            <input type="email" id="staffEmailInput" class="form-input" placeholder="e.g. ramesh@restaurant.com" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
           </div>
           <div class="form-group">
-            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirm Quick PIN *</label>
-            <input type="password" id="staffPinConfirmInput" class="form-input" maxlength="6" pattern="[0-9]{4,6}" inputmode="numeric" placeholder="••••" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:800; letter-spacing:4px;">
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Role & Privilege *</label>
+            <select id="staffRoleSelect" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:600;">
+              <option value="cashier" selected>💳 Head Cashier (POS & Billing)</option>
+              <option value="kitchen">👨‍🍳 Kitchen Chef (KDS & Preparation)</option>
+              <option value="waiter">🛎️ Table Captain / Waiter (Orders & Tables)</option>
+              <option value="manager">👔 Store Manager (Operations & Reports)</option>
+              <option value="admin">👑 Administrator (Full Control)</option>
+            </select>
           </div>
         </div>
 
+        <!-- Primary Login: Password & Confirm Password -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; background:var(--bg); padding:12px; border-radius:14px; border:1px solid var(--border);">
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11.5px; font-weight:700; color:var(--primary); text-transform:uppercase;">Login Password *</label>
+            <input type="password" id="staffPasswordInput" class="form-input" placeholder="Min 6 characters" minlength="6" required style="padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); outline:none;">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11.5px; font-weight:700; color:var(--primary); text-transform:uppercase;">Confirm Password *</label>
+            <input type="password" id="staffPasswordConfirmInput" class="form-input" placeholder="Repeat password" minlength="6" required style="padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); outline:none;">
+          </div>
+        </div>
+
+        <!-- Optional Phone and Optional Quick PIN -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="form-group">
             <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Phone Number (Optional)</label>
             <input type="tel" id="staffPhoneInput" class="form-input" placeholder="e.g. 9876543210" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
           </div>
           <div class="form-group">
-            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Email (Optional)</label>
-            <input type="email" id="staffEmailInput" class="form-input" placeholder="staff@restaurant.com" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Quick PIN (Optional - 4-6 Digits)</label>
+            <input type="password" id="staffPinInput" class="form-input" maxlength="6" pattern="[0-9]{4,6}" inputmode="numeric" placeholder="e.g. 2468 (Optional)" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:700;">
           </div>
         </div>
 
         <div class="modal-footer" style="padding-top:12px; display:flex; justify-content:end; gap:10px;">
           <button type="button" onclick="closeAddStaffModal()" style="padding:10px 20px; font-size:13px; font-weight:700; border-radius:10px; background:var(--primary-light); color:var(--text-muted); border:1px solid var(--border); cursor:pointer;">Cancel</button>
-          <button type="submit" id="saveStaffSubmitBtn" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35);">Save Staff Member</button>
+          <button type="submit" id="saveStaffSubmitBtn" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35);">Save Staff Account</button>
         </div>
       </form>
     </div>
@@ -416,57 +424,86 @@
           <input type="text" id="editStaffName" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
         </div>
         <div class="form-group">
-          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Role</label>
-          <select id="editStaffRole" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:600;">
-            <option value="admin">👑 Administrator (Full Control)</option>
-            <option value="manager">👔 Store Manager (Operations & Reports)</option>
-            <option value="cashier">💳 Head Cashier (POS & Billing)</option>
-            <option value="kitchen">👨‍🍳 Kitchen Chef (KDS & Preparation)</option>
-            <option value="waiter">🛎️ Table Captain / Waiter (Orders & Tables)</option>
-          </select>
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Email (Login Username)</label>
+          <input type="email" id="editStaffEmail" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Staff Role</label>
+            <select id="editStaffRole" class="form-input" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:600;">
+              <option value="admin">👑 Administrator</option>
+              <option value="manager">👔 Store Manager</option>
+              <option value="cashier">💳 Head Cashier</option>
+              <option value="kitchen">👨‍🍳 Kitchen Chef</option>
+              <option value="waiter">🛎️ Table Waiter</option>
+            </select>
+          </div>
           <div class="form-group">
             <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Phone Number</label>
             <input type="tel" id="editStaffPhone" class="form-input" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
           </div>
-          <div class="form-group">
-            <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Email</label>
-            <input type="email" id="editStaffEmail" class="form-input" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
-          </div>
         </div>
         <div class="modal-footer" style="padding-top:12px; display:flex; justify-content:end; gap:10px;">
           <button type="button" onclick="closeEditStaffModal()" style="padding:10px 20px; font-size:13px; font-weight:700; border-radius:10px; background:var(--primary-light); color:var(--text-muted); border:1px solid var(--border); cursor:pointer;">Cancel</button>
-          <button type="submit" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Update Staff Details</button>
+          <button type="submit" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Update Details</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- RESET PIN MODAL -->
+  <!-- RESET PASSWORD MODAL (Primary Login Credential Reset) -->
+  <div class="modal-overlay" id="resetPasswordModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+    <div class="modal" style="width:440px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+      <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+        <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-lock" style="color:var(--primary);"></i>
+          <span>Reset Staff Password</span>
+        </div>
+        <button class="modal-close" onclick="closeResetPasswordModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="resetPasswordForm" onsubmit="submitResetPassword(event)" style="padding:24px; display:flex; flex-direction:column; gap:14px;">
+        <input type="hidden" id="resetPasswordStaffId">
+        <p style="font-size:13px; color:var(--text-muted); margin:0;" id="resetPasswordStaffLabel">Set a new login password for this staff member.</p>
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">New Password * (Min 6 Chars)</label>
+          <input type="password" id="newStaffPasswordInput" class="form-input" minlength="6" required placeholder="Enter new password" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
+        </div>
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirm New Password *</label>
+          <input type="password" id="confirmNewStaffPasswordInput" class="form-input" minlength="6" required placeholder="Repeat new password" style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none;">
+        </div>
+        <div class="modal-footer" style="padding-top:12px; display:flex; justify-content:end; gap:10px;">
+          <button type="button" onclick="closeResetPasswordModal()" style="padding:10px 20px; font-size:13px; font-weight:700; border-radius:10px; background:var(--primary-light); color:var(--text-muted); border:1px solid var(--border); cursor:pointer;">Cancel</button>
+          <button type="submit" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Save New Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RESET PIN MODAL (Optional Quick PIN) -->
   <div class="modal-overlay" id="resetPinModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
     <div class="modal" style="width:420px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
       <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
         <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
-          <i class="fa-solid fa-key" style="color:var(--primary);"></i>
-          <span>Reset Quick PIN</span>
+          <i class="fa-solid fa-fingerprint" style="color:var(--primary);"></i>
+          <span>Configure Quick PIN (Optional)</span>
         </div>
         <button class="modal-close" onclick="closeResetPinModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="resetPinForm" onsubmit="submitResetPin(event)" style="padding:24px; display:flex; flex-direction:column; gap:14px;">
         <input type="hidden" id="resetPinStaffId">
-        <p style="font-size:13px; color:var(--text-muted); margin:0;" id="resetPinStaffLabel">Set a new 4-6 digit Quick PIN.</p>
+        <p style="font-size:13px; color:var(--text-muted); margin:0;" id="resetPinStaffLabel">Set a 4-6 digit Quick PIN for fast POS terminal switching.</p>
         <div class="form-group">
-          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">New Quick PIN *</label>
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Quick PIN (4-6 Digits) *</label>
           <input type="password" id="newPinInput" class="form-input" maxlength="6" pattern="[0-9]{4,6}" inputmode="numeric" placeholder="••••" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:800; letter-spacing:4px;">
         </div>
         <div class="form-group">
-          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirm New PIN *</label>
+          <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirm PIN *</label>
           <input type="password" id="confirmNewPinInput" class="form-input" maxlength="6" pattern="[0-9]{4,6}" inputmode="numeric" placeholder="••••" required style="padding:11px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); outline:none; font-weight:800; letter-spacing:4px;">
         </div>
         <div class="modal-footer" style="padding-top:12px; display:flex; justify-content:end; gap:10px;">
           <button type="button" onclick="closeResetPinModal()" style="padding:10px 20px; font-size:13px; font-weight:700; border-radius:10px; background:var(--primary-light); color:var(--text-muted); border:1px solid var(--border); cursor:pointer;">Cancel</button>
-          <button type="submit" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Save New PIN</button>
+          <button type="submit" style="padding:10px 22px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Save Quick PIN</button>
         </div>
       </form>
     </div>

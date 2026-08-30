@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\PlanLimitService;
 use Illuminate\Http\Request;
@@ -53,17 +54,20 @@ class StaffController extends Controller
     }
 
     /**
-     * Create a new staff member within the authenticated restaurant tenant.
+     * Create a new staff member with Email + Password (and optional Quick PIN).
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
             'role' => 'required|string|in:admin,owner,manager,cashier,kitchen,waiter,staff',
-            'numeric_pin' => 'required|string|min:4|max:8|regex:/^[0-9]+$/',
-            'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
+            'numeric_pin' => 'nullable|string|min:4|max:8|regex:/^[0-9]+$/',
         ], [
+            'email.unique' => 'This email address is already registered.',
+            'password.confirmed' => 'Password confirmation does not match.',
             'numeric_pin.regex' => 'The Quick PIN must contain only digits (0-9).',
         ]);
 
@@ -88,38 +92,57 @@ class StaffController extends Controller
             ], 422);
         }
 
-        // Check PIN collision within the same restaurant tenant
-        $existingStaff = User::where('restaurant_id', $restaurantId)->get();
-        foreach ($existingStaff as $st) {
-            if ($st->verifyPin($validated['numeric_pin'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'This Quick PIN is already assigned to another staff member in your restaurant.'
-                ], 422);
+        // If optional PIN is provided, check collision within same tenant
+        if (!empty($validated['numeric_pin'])) {
+            $existingStaff = User::where('restaurant_id', $restaurantId)->get();
+            foreach ($existingStaff as $st) {
+                if ($st->verifyPin($validated['numeric_pin'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This Quick PIN is already assigned to another staff member in your restaurant.'
+                    ], 422);
+                }
             }
         }
 
-        // Generate unique username within tenant
-        $slug = Str::slug($validated['name']);
-        if (empty($slug)) $slug = 'staff';
-        $username = $slug . '_' . $restaurantId . '_' . rand(100, 999);
-        while (User::where('username', $username)->exists()) {
-            $username = $slug . '_' . $restaurantId . '_' . rand(1000, 9999);
+        // Generate clean username from email or name
+        $baseUser = explode('@', $validated['email'])[0];
+        $username = Str::slug($baseUser);
+        if (empty($username)) $username = 'staff';
+        $uniqueUsername = $username . '_' . $restaurantId;
+        $counter = 1;
+        while (User::where('username', $uniqueUsername)->exists()) {
+            $uniqueUsername = $username . '_' . $restaurantId . '_' . $counter++;
         }
-
-        $email = $validated['email'] ?? ($username . '@dineflow.local');
 
         $staffUser = new User([
             'name' => $validated['name'],
-            'username' => $username,
-            'email' => $email,
+            'username' => $uniqueUsername,
+            'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
             'role' => $validated['role'] === 'owner' ? 'admin' : $validated['role'],
+            'password' => Hash::make($validated['password']),
             'restaurant_id' => $restaurantId,
             'is_active' => true,
         ]);
-        $staffUser->setPin($validated['numeric_pin']);
+
+        if (!empty($validated['numeric_pin'])) {
+            $staffUser->setPin($validated['numeric_pin']);
+        } else {
+            $staffUser->numeric_pin = null;
+        }
+
         $staffUser->save();
+
+        if (class_exists(AuditLog::class)) {
+            try {
+                AuditLog::record('staff_created', $restaurantId, 'user', $staffUser->id, [
+                    'name' => $staffUser->name,
+                    'email' => $staffUser->email,
+                    'role' => $staffUser->role,
+                ]);
+            } catch (\Throwable $e) {}
+        }
 
         return response()->json([
             'success' => true,
@@ -131,10 +154,10 @@ class StaffController extends Controller
                 'phone' => $staffUser->phone,
                 'role' => $staffUser->role,
                 'restaurant_id' => $staffUser->restaurant_id,
-                'has_pin' => true,
+                'has_pin' => !empty($staffUser->numeric_pin),
                 'is_active' => true,
             ],
-            'message' => "Staff member \"{$staffUser->name}\" created successfully."
+            'message' => "Staff member \"{$staffUser->name}\" created successfully. They can now login with {$staffUser->email}."
         ], 201);
     }
 
@@ -160,21 +183,20 @@ class StaffController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
+            'email' => "sometimes|required|email|max:255|unique:users,email,{$id}",
             'role' => 'sometimes|required|string|in:admin,owner,manager,cashier,kitchen,waiter,staff',
-            'numeric_pin' => 'nullable|string|min:4|max:8|regex:/^[0-9]+$/',
             'phone' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'numeric_pin' => 'nullable|string|min:4|max:8|regex:/^[0-9]+$/',
             'is_active' => 'sometimes|boolean',
         ]);
 
         if (isset($validated['name'])) $staffUser->name = $validated['name'];
+        if (isset($validated['email'])) $staffUser->email = $validated['email'];
         if (isset($validated['role'])) $staffUser->role = $validated['role'] === 'owner' ? 'admin' : $validated['role'];
         if (isset($validated['phone'])) $staffUser->phone = $validated['phone'];
-        if (isset($validated['email'])) $staffUser->email = $validated['email'];
         if (isset($validated['is_active'])) $staffUser->is_active = (bool)$validated['is_active'];
 
         if (!empty($validated['numeric_pin'])) {
-            // Check collision with other staff in same restaurant
             $peers = User::where('restaurant_id', $staffUser->restaurant_id)
                 ->where('id', '!=', $staffUser->id)
                 ->get();
@@ -190,6 +212,16 @@ class StaffController extends Controller
         }
 
         $staffUser->save();
+
+        if (class_exists(AuditLog::class)) {
+            try {
+                AuditLog::record('staff_updated', $staffUser->restaurant_id, 'user', $staffUser->id, [
+                    'name' => $staffUser->name,
+                    'email' => $staffUser->email,
+                    'role' => $staffUser->role,
+                ]);
+            } catch (\Throwable $e) {}
+        }
 
         return response()->json([
             'success' => true,
@@ -209,15 +241,17 @@ class StaffController extends Controller
     }
 
     /**
-     * Delete a staff member (scoped to tenant).
+     * Reset password for a staff member.
      */
-    public function destroy($id)
+    public function resetPassword(Request $request, $id)
     {
-        $user = auth()->user();
-        if ($user && (int)$user->id === (int)$id) {
-            return response()->json(['success' => false, 'message' => 'You cannot delete your own active administrator account.'], 400);
-        }
+        $validated = $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ], [
+            'password.confirmed' => 'Password confirmation does not match.',
+        ]);
 
+        $user = auth()->user();
         $query = User::query();
         if ($user && $user->role !== 'superadmin' && $user->restaurant_id) {
             $query->where('restaurant_id', $user->restaurant_id);
@@ -229,19 +263,28 @@ class StaffController extends Controller
         }
 
         if ($user && $user->role === 'manager' && in_array($staffUser->role, ['admin', 'owner'])) {
-            return response()->json(['success' => false, 'message' => 'Managers cannot delete administrator accounts.'], 403);
+            return response()->json(['success' => false, 'message' => 'Managers cannot reset administrator passwords.'], 403);
         }
 
-        $staffUser->delete();
+        $staffUser->password = Hash::make($validated['password']);
+        $staffUser->save();
+
+        if (class_exists(AuditLog::class)) {
+            try {
+                AuditLog::record('staff_password_reset', $staffUser->restaurant_id, 'user', $staffUser->id, [
+                    'email' => $staffUser->email,
+                ]);
+            } catch (\Throwable $e) {}
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Staff member removed successfully.'
+            'message' => "Password for {$staffUser->name} ({$staffUser->email}) has been reset successfully."
         ]);
     }
 
     /**
-     * Reset Quick PIN for a staff member.
+     * Reset/Set Quick PIN for a staff member (Optional).
      */
     public function resetPin(Request $request, $id)
     {
@@ -276,9 +319,15 @@ class StaffController extends Controller
         $staffUser->setPin($validated['numeric_pin']);
         $staffUser->save();
 
+        if (class_exists(AuditLog::class)) {
+            try {
+                AuditLog::record('staff_pin_reset', $staffUser->restaurant_id, 'user', $staffUser->id);
+            } catch (\Throwable $e) {}
+        }
+
         return response()->json([
             'success' => true,
-            'message' => "Quick PIN for {$staffUser->name} has been reset successfully."
+            'message' => "Quick PIN for {$staffUser->name} has been updated successfully."
         ]);
     }
 
@@ -307,10 +356,63 @@ class StaffController extends Controller
 
         $statusText = $staffUser->is_active ? 'activated' : 'deactivated';
 
+        if (class_exists(AuditLog::class)) {
+            try {
+                AuditLog::record('staff_status_toggled', $staffUser->restaurant_id, 'user', $staffUser->id, [
+                    'is_active' => $staffUser->is_active,
+                ]);
+            } catch (\Throwable $e) {}
+        }
+
         return response()->json([
             'success' => true,
             'is_active' => $staffUser->is_active,
             'message' => "Staff member {$staffUser->name} has been {$statusText}."
+        ]);
+    }
+
+    /**
+     * Delete a staff member (scoped to tenant).
+     */
+    public function destroy($id)
+    {
+        $user = auth()->user();
+        if ($user && (int)$user->id === (int)$id) {
+            return response()->json(['success' => false, 'message' => 'You cannot delete your own active administrator account.'], 400);
+        }
+
+        $query = User::query();
+        if ($user && $user->role !== 'superadmin' && $user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
+        }
+        $staffUser = $query->find($id);
+
+        if (!$staffUser) {
+            return response()->json(['success' => false, 'message' => 'Staff member not found in your restaurant'], 404);
+        }
+
+        if ($user && $user->role === 'manager' && in_array($staffUser->role, ['admin', 'owner'])) {
+            return response()->json(['success' => false, 'message' => 'Managers cannot delete administrator accounts.'], 403);
+        }
+
+        $deletedName = $staffUser->name;
+        $deletedEmail = $staffUser->email;
+        $rId = $staffUser->restaurant_id;
+
+        $staffUser->delete();
+
+        if (class_exists(AuditLog::class)) {
+            try {
+                AuditLog::record('staff_deleted', $rId, 'user', (int)$id, [
+                    'name' => $deletedName,
+                    'email' => $deletedEmail,
+                ]);
+            } catch (\Throwable $e) {}
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Staff member \"{$deletedName}\" removed successfully."
         ]);
     }
 
@@ -358,7 +460,7 @@ class StaffController extends Controller
                 'role' => $matchedStaff->role,
                 'username' => $matchedStaff->username,
             ],
-            'message' => "Logged in as {$matchedStaff->name} ({$matchedStaff->role})"
+            'message' => "Switched active staff to {$matchedStaff->name} ({$matchedStaff->role})"
         ]);
     }
 }

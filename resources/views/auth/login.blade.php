@@ -541,10 +541,10 @@
             <form method="POST" action="/login">
                 @csrf
                 <div class="form-group">
-                    <label>Username</label>
+                    <label>Staff Email or Username</label>
                     <div class="input-wrapper">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" name="username" class="form-control" placeholder="Enter your username or email" value="{{ old('username') }}" required>
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="text" name="username" class="form-control" placeholder="e.g. cashier@restaurant.com or username" value="{{ old('username') }}" required autofocus>
                     </div>
                 </div>
 
@@ -552,12 +552,12 @@
                     <label>Password</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                        <input type="password" name="password" class="form-control" placeholder="Enter your staff password" required>
                     </div>
                 </div>
 
                 <button type="submit" class="btn-submit">
-                    <i class="fa-solid fa-right-to-bracket"></i> Login to POS
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In to Restaurant
                 </button>
 
                 <div style="text-align:center; margin-top:16px; font-size:13px; color:var(--text-secondary);">

@@ -93,10 +93,12 @@ class User extends Authenticatable
     /**
      * Store hashed PIN securely.
      */
-    public function setPin(string $pin): void
+    public function setPin(?string $pin): void
     {
-        $hashed = Hash::make(trim($pin));
-        $this->numeric_pin = $hashed;
-        $this->password = $hashed;
+        if (empty($pin)) {
+            $this->numeric_pin = null;
+        } else {
+            $this->numeric_pin = Hash::make(trim($pin));
+        }
     }
 }

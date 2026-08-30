@@ -18,7 +18,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle username/password login
+     * Handle username/email + password primary login
      */
     public function login(Request $request)
     {
@@ -26,45 +26,91 @@ class AuthController extends Controller
             'username' => 'required|string',
             'password' => 'required|string',
         ], [
-            'username.required' => 'Username is required',
+            'username.required' => 'Email or Username is required',
             'password.required' => 'Password is required',
         ]);
 
-        // Find user by username or email
-        $user = User::where('username', $request->username)
-            ->orWhere('email', $request->username)
+        // Find user by email, username, or phone
+        $identifier = trim($request->username);
+        $user = User::where('email', $identifier)
+            ->orWhere('username', $identifier)
+            ->orWhere('phone', $identifier)
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['success' => false, 'message' => 'Invalid email/username or password.'], 401);
+            }
             return back()
                 ->withInput($request->only('username'))
-                ->withErrors(['login' => 'Invalid username or password']);
+                ->withErrors(['login' => 'Invalid email or password.']);
         }
 
-        // Store username and role in session for RBAC
-        if ($request->hasSession()) {
-            session(['last_username' => $user->username, 'active_role' => $user->role ?? $user->username]);
-            $request->session()->regenerate();
+        // Check active status
+        if ($user->is_active === false) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['success' => false, 'message' => 'This staff account has been deactivated. Please contact your restaurant administrator.'], 403);
+            }
+            return back()
+                ->withInput($request->only('username'))
+                ->withErrors(['login' => 'This staff account has been deactivated. Please contact your restaurant administrator.']);
         }
-        
+
         Auth::login($user, $request->boolean('remember'));
 
-        $role = strtolower(trim($user->role ?? $user->username ?? ''));
-        if ($role === 'superadmin') {
-            return redirect('/superadmin');
-        } elseif ($role === 'customer') {
-            $restId = $user->restaurant_id;
-            if (!$restId) {
-                return redirect('/');
-            }
-            return redirect("/customer/menu?restaurantId={$restId}&tableId=1");
-        } elseif ($role === 'kitchen' || $role === 'chef') {
-            return redirect('/kitchen');
-        } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
-            return redirect('/dashboard');
+        // Store username and role in session for tenant RBAC
+        if ($request->hasSession()) {
+            session([
+                'last_username' => $user->username,
+                'active_role' => $user->role ?? $user->username,
+                'restaurant_id' => $user->restaurant_id,
+            ]);
+            $request->session()->regenerate();
         }
 
-        return redirect('/pos')->with('success', 'Welcome to DineFlow AI POS!');
+        // Record Audit Log if available
+        if (class_exists(\App\Models\AuditLog::class)) {
+            try {
+                \App\Models\AuditLog::record('staff_login', $user->restaurant_id, 'user', $user->id, [
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'method' => 'password'
+                ]);
+            } catch (\Throwable $e) {
+                // Non-blocking audit log
+            }
+        }
+
+        $role = strtolower(trim($user->role ?? $user->username ?? ''));
+        $redirectUrl = '/pos';
+
+        if ($role === 'superadmin') {
+            $redirectUrl = '/superadmin';
+        } elseif ($role === 'customer') {
+            $restId = $user->restaurant_id;
+            $redirectUrl = $restId ? "/customer/menu?restaurantId={$restId}&tableId=1" : '/';
+        } elseif ($role === 'kitchen' || $role === 'chef') {
+            $redirectUrl = '/kitchen';
+        } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
+            $redirectUrl = '/dashboard';
+        }
+
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'redirect' => $redirectUrl,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'restaurant_id' => $user->restaurant_id,
+                ],
+                'message' => 'Logged in successfully.'
+            ]);
+        }
+
+        return redirect($redirectUrl)->with('success', 'Welcome to DineFlow AI!');
     }
 
     /**
