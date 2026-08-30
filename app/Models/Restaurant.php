@@ -32,6 +32,9 @@ class Restaurant extends Model
         'billing_amount',
         'currency',
         'suspension_reason',
+        'suspension_message',
+        'suspension_internal_note',
+        'suspended_at',
         'is_demo',
         'demo_session_id',
         'expires_at'
@@ -51,7 +54,8 @@ class Restaurant extends Model
         'last_payment_date' => 'datetime',
         'next_renewal_date' => 'datetime',
         'billing_amount' => 'decimal:2',
-        'grace_period_days' => 'integer'
+        'grace_period_days' => 'integer',
+        'suspended_at' => 'datetime',
     ];
 
     public function tables()
@@ -121,5 +125,34 @@ class Restaurant extends Model
     public function isInGracePeriod(): bool
     {
         return strtolower(trim($this->subscription_status ?? '')) === 'grace_period';
+    }
+
+    public function isExpired(): bool
+    {
+        return in_array(strtolower(trim($this->subscription_status ?? '')), ['expired', 'cancelled']);
+    }
+
+    public function isExpiringSoon(): bool
+    {
+        return strtolower(trim($this->subscription_status ?? '')) === 'expiring';
+    }
+
+    public function getCustomerFacingSuspensionMessage(): string
+    {
+        if (!empty($this->suspension_message)) {
+            return $this->suspension_message;
+        }
+
+        return "Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.";
+    }
+
+    public function getCustomerFacingExpiryMessage(): string
+    {
+        return "Your restaurant subscription has expired. Please renew your subscription or contact Tendorabuy support to continue using Tendorabuy.";
+    }
+
+    public function getCustomerFacingGracePeriodMessage(): string
+    {
+        return "Your subscription has expired and is currently in the grace period. Please renew before the grace period ends.";
     }
 }

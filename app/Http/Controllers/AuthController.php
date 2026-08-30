@@ -90,10 +90,27 @@ class AuthController extends Controller
         } elseif ($role === 'customer') {
             $restId = $user->restaurant_id;
             $redirectUrl = $restId ? "/customer/menu?restaurantId={$restId}&tableId=1" : '/';
-        } elseif ($role === 'kitchen' || $role === 'chef') {
-            $redirectUrl = '/kitchen';
-        } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
-            $redirectUrl = '/dashboard';
+        } else {
+            // For restaurant staff, check if restaurant is suspended or expired
+            if ($user->restaurant_id) {
+                $restaurant = \App\Models\Restaurant::find($user->restaurant_id);
+                if ($restaurant) {
+                    $status = strtolower(trim($restaurant->subscription_status ?? 'active'));
+                    if (in_array($status, ['suspended', 'expired', 'cancelled'])) {
+                        $redirectUrl = '/subscription/status';
+                    } elseif ($role === 'kitchen' || $role === 'chef') {
+                        $redirectUrl = '/kitchen';
+                    } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
+                        $redirectUrl = '/dashboard';
+                    } else {
+                        $redirectUrl = '/pos';
+                    }
+                }
+            } elseif ($role === 'kitchen' || $role === 'chef') {
+                $redirectUrl = '/kitchen';
+            } elseif ($role === 'admin' || $role === 'owner' || $role === 'manager') {
+                $redirectUrl = '/dashboard';
+            }
         }
 
         if ($request->expectsJson() || $request->is('api/*')) {

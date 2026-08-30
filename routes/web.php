@@ -16,6 +16,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SubscriptionStatusController;
 use Illuminate\Support\Facades\Route;
 
 // Public SaaS Registration & Authentication Routes
@@ -28,6 +29,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::get('/pin-login', fn() => redirect('/login'))->name('auth.pin-login');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/switch-user', [AuthController::class, 'switchUser'])->name('auth.switch-user');
+
+// Professional Subscription & Suspension Status Page
+Route::get('/subscription/status', [SubscriptionStatusController::class, 'show'])->name('subscription.status')->middleware('auth');
 
 // Guided Onboarding Wizard
 Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index')->middleware(['auth', 'tenant']);

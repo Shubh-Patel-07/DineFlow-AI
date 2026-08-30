@@ -22,6 +22,11 @@ class TenantMiddleware
             return $next($request);
         }
 
+        // Allow status page and logout routes to pass through regardless of suspension
+        if ($request->is('subscription/status') || $request->routeIs('subscription.status') || $request->is('logout') || $request->routeIs('auth.logout')) {
+            return $next($request);
+        }
+
         // Check if tenant is operational (active, trial, grace_period vs suspended, expired, cancelled)
         if ($user->restaurant_id) {
             $restaurant = \App\Models\Restaurant::find($user->restaurant_id);
@@ -48,29 +53,47 @@ class TenantMiddleware
                         $restaurant->update(['subscription_status' => 'grace_period']);
                     } elseif (Carbon::now()->isBefore($effectiveExpiry) && in_array($status, ['expired', 'grace_period'])) {
                         $status = ($restaurant->trial_ends_at && !$restaurant->subscription_expires_at) ? 'trial' : 'active';
-                        $restaurant->update(['subscription_status' => $status, 'suspension_reason' => null]);
+                        $restaurant->update(['subscription_status' => $status, 'suspension_reason' => null, 'suspension_message' => null]);
                     }
                 }
 
                 if ($status === 'suspended') {
-                    $reason = $restaurant->suspension_reason ? " Reason: {$restaurant->suspension_reason}" : " Please contact platform support.";
-                    if ($request->expectsJson() || $request->is('api/*')) {
+                    $customerMsg = $restaurant->getCustomerFacingSuspensionMessage();
+                    if ($request->is('api/*') || ($request->expectsJson() && !$request->is('dashboard') && !$request->is('pos') && !$request->is('kitchen') && !$request->is('admin/*') && !$request->is('frontend/*'))) {
                         return response()->json([
                             'success' => false,
-                            'message' => 'Your restaurant account has been suspended.' . $reason
+                            'status' => 'suspended',
+                            'restaurant_name' => $restaurant->name,
+                            'message' => $customerMsg,
+                            'reason' => $restaurant->suspension_reason,
+                            'redirect' => '/subscription/status',
+                            'support' => [
+                                'phone' => '+91 7777938338',
+                                'whatsapp' => 'https://wa.me/917777938338',
+                                'email' => 'support@tendorabuy.in'
+                            ]
                         ], 403);
                     }
-                    abort(403, 'Your restaurant account has been suspended.' . $reason);
+                    return redirect()->route('subscription.status');
                 }
 
                 if ($status === 'expired' || $status === 'cancelled') {
-                    if ($request->expectsJson() || $request->is('api/*')) {
+                    $customerMsg = $restaurant->getCustomerFacingExpiryMessage();
+                    if ($request->is('api/*') || ($request->expectsJson() && !$request->is('dashboard') && !$request->is('pos') && !$request->is('kitchen') && !$request->is('admin/*') && !$request->is('frontend/*'))) {
                         return response()->json([
                             'success' => false,
-                            'message' => 'Your SaaS subscription plan has expired. Please upgrade or renew your plan.'
+                            'status' => 'expired',
+                            'restaurant_name' => $restaurant->name,
+                            'message' => $customerMsg,
+                            'redirect' => '/subscription/status',
+                            'support' => [
+                                'phone' => '+91 7777938338',
+                                'whatsapp' => 'https://wa.me/917777938338',
+                                'email' => 'support@tendorabuy.in'
+                            ]
                         ], 403);
                     }
-                    abort(403, 'Your SaaS subscription plan has expired. Please upgrade or renew your plan.');
+                    return redirect()->route('subscription.status');
                 }
             }
         }

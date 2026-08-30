@@ -476,6 +476,45 @@
   <!-- Dashboard Content -->
   <div class="dashboard-content" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
 
+    @php
+      $currentRest = \App\Models\Restaurant::find(Auth::user()?->restaurant_id);
+      $restStatus = strtolower(trim($currentRest?->subscription_status ?? 'active'));
+      $expiryDate = $currentRest?->subscription_expires_at ?? $currentRest?->trial_ends_at;
+      $daysRemaining = $expiryDate ? \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($expiryDate), false) : null;
+    @endphp
+
+    @if($restStatus === 'grace_period')
+      <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 18px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 800; color: #F59E0B;">Subscription in Grace Period</h4>
+            <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">{{ $currentRest->getCustomerFacingGracePeriodMessage() }}</p>
+          </div>
+        </div>
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello Tendorabuy Team, I need to renew my restaurant subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
+        </a>
+      </div>
+    @elseif($restStatus === 'expiring' || ($daysRemaining !== null && $daysRemaining >= 0 && $daysRemaining <= 3))
+      <div style="background: rgba(249, 115, 22, 0.12); border: 1.5px solid rgba(249, 115, 22, 0.4); border-radius: 18px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(249, 115, 22, 0.2); border: 1px solid rgba(249, 115, 22, 0.5); color: #FB923C; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div>
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 800; color: #FB923C;">Subscription Expiring Soon</h4>
+            <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">Your restaurant subscription will expire in {{ max(0, intval($daysRemaining)) }} day(s). Renew now to avoid any disruption.</p>
+          </div>
+        </div>
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello Tendorabuy Team, I want to renew/extend subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
+        </a>
+      </div>
+    @endif
+
     <!-- Welcome Hero Banner -->
     <div style="background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 24px; padding: 24px 28px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
       <div style="display: flex; align-items: center; gap: 16px;">

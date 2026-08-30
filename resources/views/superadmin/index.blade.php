@@ -1266,26 +1266,56 @@
     </div>
   </div>
 
-  <!-- ── MODAL: SUSPEND RESTAURANT (WITH REASON) ── -->
+  <!-- ── MODAL: SUSPEND RESTAURANT (WITH REASON & CUSTOM MESSAGES) ── -->
   <div class="modal-overlay" id="suspendModal">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 540px;">
       <div class="modal-header">
-        <h3 style="color: var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Suspend Restaurant</h3>
+        <h3 style="color: var(--danger);"><i class="fa-solid fa-ban"></i> Suspend Restaurant</h3>
         <button class="modal-close" onclick="closeModal('suspendModal')">&times;</button>
       </div>
       <form id="suspendForm" onsubmit="submitSuspend(event)">
         <input type="hidden" id="suspendRestaurantId">
-        <div class="modal-body">
-          <p id="suspendRestaurantName" style="font-weight: 700; font-size: 14px; color: var(--text-primary);"></p>
-          <p style="font-size: 12px; color: var(--text-muted);">Suspending this restaurant will temporarily block staff from processing new orders/bills while keeping all historical data 100% intact.</p>
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <p id="suspendRestaurantName" style="font-weight: 800; font-size: 15px; color: var(--text-primary); margin: 0 0 4px;"></p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Suspending this restaurant will temporarily block staff from processing new orders/bills while keeping all historical data 100% intact.</p>
+          </div>
+
           <div class="form-group">
-            <label>Reason for Suspension</label>
-            <textarea id="suspendReason" class="form-textarea" placeholder="e.g. Subscription payment overdue, terms violation, maintenance..." required></textarea>
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Suspension Category / Reason *</label>
+            <select id="suspendReasonSelect" class="form-select" onchange="handleSuspendReasonChange(this.value)" required>
+              <option value="Payment Pending">Payment Pending / Overdue</option>
+              <option value="Subscription Issue">Subscription Issue / Expired</option>
+              <option value="Policy Violation">Policy Violation / Terms Breach</option>
+              <option value="Temporary Suspension" selected>Temporary Administrative Suspension</option>
+              <option value="Other">Other Custom Reason</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="customReasonWrapper" style="display: none;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Custom Reason Details</label>
+            <input type="text" id="suspendCustomReason" class="form-input" placeholder="Specify custom suspension reason...">
+          </div>
+
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-primary);">
+              Customer-Facing Message
+              <span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">(Visible to restaurant users upon login)</span>
+            </label>
+            <textarea id="suspendCustomerMessage" class="form-textarea" rows="3" placeholder="Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-primary);">
+              Internal Super Admin Note
+              <span style="font-size: 11px; font-weight: 400; color: #F87171;">(CONFIDENTIAL — Never shown to restaurant)</span>
+            </label>
+            <textarea id="suspendInternalNote" class="form-textarea" rows="2" placeholder="e.g. Discussed with client on WhatsApp, requested payment by Friday..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-secondary" onclick="closeModal('suspendModal')">Cancel</button>
-          <button type="submit" class="btn-danger">Confirm Suspension</button>
+          <button type="submit" class="btn-danger" style="background: #DC2626;"><i class="fa-solid fa-ban"></i> Confirm Suspension</button>
         </div>
       </form>
     </div>
@@ -1637,23 +1667,52 @@
       }
     }
 
+    function handleSuspendReasonChange(val) {
+      const customWrapper = document.getElementById('customReasonWrapper');
+      const custMsg = document.getElementById('suspendCustomerMessage');
+      if (val === 'Other') {
+        customWrapper.style.display = 'block';
+      } else {
+        customWrapper.style.display = 'none';
+      }
+
+      // Populate smart default customer message based on reason
+      if (val === 'Payment Pending') {
+        custMsg.value = 'Your restaurant account has been temporarily suspended due to a pending subscription payment. Please contact support to restore immediate access.';
+      } else if (val === 'Subscription Issue') {
+        custMsg.value = 'Your restaurant subscription has expired and access is suspended. Please renew your plan or contact support.';
+      } else if (val === 'Policy Violation') {
+        custMsg.value = 'Your restaurant account has been suspended due to an administrative policy review. Please contact Tendorabuy support.';
+      } else {
+        custMsg.value = 'Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.';
+      }
+    }
+
     function openSuspendModal(id, name) {
       document.getElementById('suspendRestaurantId').value = id;
       document.getElementById('suspendRestaurantName').textContent = `Suspend Restaurant: ${name}`;
-      document.getElementById('suspendReason').value = '';
+      document.getElementById('suspendReasonSelect').value = 'Temporary Suspension';
+      document.getElementById('customReasonWrapper').style.display = 'none';
+      document.getElementById('suspendCustomReason').value = '';
+      document.getElementById('suspendCustomerMessage').value = 'Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.';
+      document.getElementById('suspendInternalNote').value = '';
       openModal('suspendModal');
     }
 
     async function submitSuspend(e) {
       e.preventDefault();
       const id = document.getElementById('suspendRestaurantId').value;
-      const reason = document.getElementById('suspendReason').value;
+      const selectReason = document.getElementById('suspendReasonSelect').value;
+      const customReason = document.getElementById('suspendCustomReason').value.trim();
+      const reason = (selectReason === 'Other' && customReason) ? customReason : selectReason;
+      const customer_message = document.getElementById('suspendCustomerMessage').value.trim();
+      const internal_note = document.getElementById('suspendInternalNote').value.trim();
 
       try {
         const res = await fetch(`/api/superadmin/restaurants/${id}/suspend`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
-          body: JSON.stringify({ reason })
+          body: JSON.stringify({ reason, customer_message, internal_note })
         });
         const json = await res.json();
         if (json.success) {
