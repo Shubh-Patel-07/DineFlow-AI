@@ -113,7 +113,7 @@ class SuperAdminController extends Controller
     /**
      * Delete a spam/junk lead
      */
-    public function deleteLead($id)
+    public function deleteLead(Request $request, $id)
     {
         $lead = DemoRequest::find($id);
         if (!$lead) {
@@ -139,7 +139,7 @@ class SuperAdminController extends Controller
     /**
      * Render the Super Admin Dashboard Blade view
      */
-    public function dashboard()
+    public function dashboard(Request $request = null)
     {
         $stats = $this->calculatePlatformStats();
         return view('superadmin.index', compact('stats'));
@@ -225,7 +225,7 @@ class SuperAdminController extends Controller
     /**
      * Detailed single restaurant view including full usage statistics, subscription history, and audit log
      */
-    public function restaurantDetails($id)
+    public function restaurantDetails(Request $request, $id)
     {
         $restaurant = Restaurant::with(['users'])->find($id);
         if (!$restaurant) {
@@ -310,6 +310,7 @@ class SuperAdminController extends Controller
                 'username' => strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $request->owner_name)) . rand(100, 999),
                 'password' => Hash::make($request->owner_password),
                 'role' => 'admin',
+                'restaurant_id' => $restaurant->id,
                 'numeric_pin' => Hash::make((string)rand(1000, 9999)),
                 'is_active' => true,
             ]);
@@ -668,7 +669,7 @@ class SuperAdminController extends Controller
     /**
      * Global Platform Stats (Cross-Tenant)
      */
-    public function platformStats()
+    public function platformStats(Request $request = null)
     {
         return response()->json([
             'success' => true,
@@ -679,7 +680,7 @@ class SuperAdminController extends Controller
     /**
      * Recent Global Orders across all restaurants
      */
-    public function recentOrders()
+    public function recentOrders(Request $request = null)
     {
         $orders = Order::with('restaurant')
             ->whereHas('restaurant', fn($q) => $q->where('is_demo', false))

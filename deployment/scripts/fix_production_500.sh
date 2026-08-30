@@ -89,9 +89,11 @@ git pull origin feature-teamlead 2>/dev/null || git pull origin main 2>/dev/null
 echo ">> Installing optimized production Composer packages..."
 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-# 8. Run Database Migrations
+# 8. Run Database Migrations & Ensure SuperAdmin
 echo ">> Running database migrations..."
 php artisan migrate --force
+echo ">> Ensuring SuperAdmin account is active..."
+php artisan superadmin:ensure
 
 # 9. Clear and Optimize Caches
 echo ">> Rebuilding production caches..."
