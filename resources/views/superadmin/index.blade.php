@@ -1323,7 +1323,16 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Expiry Date</label>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label style="margin:0;">Expiry Date</label>
+              <div style="display:flex; gap:4px;">
+                <button type="button" class="btn-secondary" style="padding:2px 7px; font-size:11px; border-radius:6px;" onclick="quickExtendExpiry(1)">+1 Day</button>
+                <button type="button" class="btn-secondary" style="padding:2px 7px; font-size:11px; border-radius:6px;" onclick="quickExtendExpiry(7)">+7 Days</button>
+                <button type="button" class="btn-secondary" style="padding:2px 7px; font-size:11px; border-radius:6px;" onclick="quickExtendExpiry(30)">+30 Days</button>
+                <button type="button" class="btn-secondary" style="padding:2px 7px; font-size:11px; border-radius:6px;" onclick="quickExtendExpiry(90)">+90 Days</button>
+                <button type="button" class="btn-secondary" style="padding:2px 7px; font-size:11px; border-radius:6px;" onclick="quickExtendExpiry(365)">+1 Year</button>
+              </div>
+            </div>
             <input type="date" id="subModalExpiry" class="form-input">
           </div>
           <div class="form-group">
@@ -1685,6 +1694,21 @@
       document.getElementById('subModalGrace').value = grace || 7;
       document.getElementById('subModalReason').value = '';
       openModal('subscriptionModal');
+    }
+
+    function quickExtendExpiry(days) {
+      const currentVal = document.getElementById('subModalExpiry').value;
+      let base = currentVal ? new Date(currentVal + 'T00:00:00') : new Date();
+      if (isNaN(base.getTime()) || base < new Date()) {
+        base = new Date();
+      }
+      base.setDate(base.getDate() + days);
+      const yyyy = base.getFullYear();
+      const mm = String(base.getMonth() + 1).padStart(2, '0');
+      const dd = String(base.getDate()).padStart(2, '0');
+      document.getElementById('subModalExpiry').value = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('subModalStatus').value = 'active';
+      document.getElementById('subModalReason').value = `Extended validity by ${days} day(s)`;
     }
 
     async function submitSubscriptionOverride(e) {

@@ -8,5 +8,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('subscriptions:process-expiry')->daily();
+Schedule::command('subscriptions:process-expiry')->everyTenMinutes();
 Schedule::command('demo:cleanup')->everyThirtyMinutes();

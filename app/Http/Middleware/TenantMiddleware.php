@@ -28,10 +28,14 @@ class TenantMiddleware
             if ($restaurant) {
                 $status = strtolower(trim($restaurant->subscription_status ?? 'active'));
                 
-                // Real-time server authoritative expiration check if subscription_expires_at is set
-                if ($restaurant->subscription_expires_at && Carbon::now()->isAfter($restaurant->subscription_expires_at)) {
-                    $graceDays = intval($restaurant->grace_period_days ?: 7);
-                    $gracePeriodEnd = Carbon::parse($restaurant->subscription_expires_at)->addDays($graceDays);
+                // Real-time server authoritative expiration check
+                $effectiveExpiry = $restaurant->subscription_expires_at 
+                    ? Carbon::parse($restaurant->subscription_expires_at) 
+                    : ($restaurant->trial_ends_at ? Carbon::parse($restaurant->trial_ends_at) : null);
+
+                if ($effectiveExpiry) {
+                    $graceDays = !is_null($restaurant->grace_period_days) ? intval($restaurant->grace_period_days) : 7;
+                    $gracePeriodEnd = (clone $effectiveExpiry)->addDays($graceDays);
                     
                     if (Carbon::now()->isAfter($gracePeriodEnd) && !in_array($status, ['suspended', 'expired', 'cancelled'])) {
                         $status = 'expired';
@@ -39,9 +43,12 @@ class TenantMiddleware
                         \App\Models\AuditLog::record('subscription_expired_auto', $restaurant->id, 'subscription', $restaurant->id, [
                             'reason' => 'Subscription and grace period exceeded'
                         ]);
-                    } elseif (Carbon::now()->isBefore($gracePeriodEnd) && $status !== 'grace_period' && !in_array($status, ['suspended', 'cancelled'])) {
+                    } elseif (Carbon::now()->isAfter($effectiveExpiry) && Carbon::now()->isBefore($gracePeriodEnd) && $status !== 'grace_period' && !in_array($status, ['suspended', 'cancelled'])) {
                         $status = 'grace_period';
                         $restaurant->update(['subscription_status' => 'grace_period']);
+                    } elseif (Carbon::now()->isBefore($effectiveExpiry) && in_array($status, ['expired', 'grace_period'])) {
+                        $status = ($restaurant->trial_ends_at && !$restaurant->subscription_expires_at) ? 'trial' : 'active';
+                        $restaurant->update(['subscription_status' => $status, 'suspension_reason' => null]);
                     }
                 }
 

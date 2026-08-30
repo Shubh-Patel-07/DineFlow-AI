@@ -21,12 +21,23 @@ class ProcessSubscriptionExpiryCommand extends Command
         $expiringCount = 0;
         $graceCount = 0;
         $expiredCount = 0;
+        $restoredCount = 0;
 
-        $restaurants = Restaurant::whereNotNull('subscription_expires_at')->get();
+        $restaurants = Restaurant::where(function($q) {
+            $q->whereNotNull('subscription_expires_at')
+              ->orWhereNotNull('trial_ends_at');
+        })->where('is_demo', false)->get();
 
         foreach ($restaurants as $restaurant) {
-            $expiresAt = Carbon::parse($restaurant->subscription_expires_at);
-            $graceDays = intval($restaurant->grace_period_days ?: 7);
+            $expiresAt = $restaurant->subscription_expires_at 
+                ? Carbon::parse($restaurant->subscription_expires_at) 
+                : ($restaurant->trial_ends_at ? Carbon::parse($restaurant->trial_ends_at) : null);
+
+            if (!$expiresAt) {
+                continue;
+            }
+
+            $graceDays = !is_null($restaurant->grace_period_days) ? intval($restaurant->grace_period_days) : 7;
             $graceEndsAt = (clone $expiresAt)->addDays($graceDays);
             $currentStatus = strtolower(trim($restaurant->subscription_status ?? 'active'));
 
@@ -35,8 +46,49 @@ class ProcessSubscriptionExpiryCommand extends Command
                 continue;
             }
 
+            // Case 0: Legitimate Future Expiry -> If status was expired/grace_period due to past date, restore to active
+            if ($now->isBefore($expiresAt)) {
+                if (in_array($currentStatus, ['expired', 'grace_period'])) {
+                    $oldStatus = $currentStatus;
+                    $restoredStatus = ($restaurant->trial_ends_at && !$restaurant->subscription_expires_at) ? 'trial' : 'active';
+                    $restaurant->update([
+                        'subscription_status' => $restoredStatus,
+                        'suspension_reason' => null
+                    ]);
+
+                    SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', $restoredStatus, [
+                        'previous_status' => $oldStatus,
+                        'reason' => 'Subscription validity extended to future date',
+                        'changed_by' => null,
+                    ]);
+
+                    AuditLog::record('subscription_restored_auto', $restaurant->id, 'subscription', $restaurant->id, [
+                        'previous_status' => $oldStatus,
+                        'new_status' => $restoredStatus,
+                        'expires_at' => $expiresAt->toDateTimeString(),
+                    ]);
+
+                    $this->info("Restaurant #{$restaurant->id} '{$restaurant->name}' RESTORED to {$restoredStatus} (Valid until {$expiresAt->toDateString()})");
+                    $restoredCount++;
+                } elseif ($now->diffInDays($expiresAt, false) <= 3) {
+                    // Within 3 days of expiring -> Mark EXPIRING
+                    if ($currentStatus === 'active' || $currentStatus === 'trial') {
+                        $oldStatus = $currentStatus;
+                        $restaurant->update(['subscription_status' => 'expiring']);
+
+                        AuditLog::record('subscription_expiring_soon_cron', $restaurant->id, 'subscription', $restaurant->id, [
+                            'previous_status' => $oldStatus,
+                            'new_status' => 'expiring',
+                            'days_remaining' => $now->diffInDays($expiresAt)
+                        ]);
+
+                        $this->info("Restaurant #{$restaurant->id} '{$restaurant->name}' marked EXPIRING SOON ({$expiresAt->toDateString()})");
+                        $expiringCount++;
+                    }
+                }
+            }
             // Case 1: Past grace period -> Mark EXPIRED
-            if ($now->isAfter($graceEndsAt)) {
+            elseif ($now->isAfter($graceEndsAt)) {
                 if ($currentStatus !== 'expired') {
                     $oldStatus = $currentStatus;
                     $restaurant->update(['subscription_status' => 'expired']);
@@ -81,27 +133,11 @@ class ProcessSubscriptionExpiryCommand extends Command
                     $graceCount++;
                 }
             }
-            // Case 3: Within 3 days of expiring -> Mark EXPIRING
-            elseif ($now->diffInDays($expiresAt, false) <= 3 && $now->isBefore($expiresAt)) {
-                if ($currentStatus === 'active' || $currentStatus === 'trial') {
-                    $oldStatus = $currentStatus;
-                    $restaurant->update(['subscription_status' => 'expiring']);
-
-                    AuditLog::record('subscription_expiring_soon_cron', $restaurant->id, 'subscription', $restaurant->id, [
-                        'previous_status' => $oldStatus,
-                        'new_status' => 'expiring',
-                        'days_remaining' => $now->diffInDays($expiresAt)
-                    ]);
-
-                    $this->info("Restaurant #{$restaurant->id} '{$restaurant->name}' marked EXPIRING SOON ({$expiresAt->toDateString()})");
-                    $expiringCount++;
-                }
-            }
 
             $processed++;
         }
 
-        $this->info("Lifecycle processing completed. Evaluated: {$processed} | Expiring Soon: {$expiringCount} | Grace Period: {$graceCount} | Expired: {$expiredCount}");
+        $this->info("Lifecycle processing completed. Evaluated: {$processed} | Restored: {$restoredCount} | Expiring Soon: {$expiringCount} | Grace Period: {$graceCount} | Expired: {$expiredCount}");
         return Command::SUCCESS;
     }
 }
