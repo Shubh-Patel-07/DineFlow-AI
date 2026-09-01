@@ -374,46 +374,66 @@ class SuperAdminController extends Controller
      */
     public function activateRestaurant(Request $request, $id)
     {
-        $restaurant = Restaurant::find($id);
-        if (!$restaurant) {
-            return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
-        }
+        try {
+            $restaurant = Restaurant::find($id);
+            if (!$restaurant) {
+                return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
+            }
 
-        $oldStatus = $restaurant->subscription_status;
-        
-        $updateData = [
-            'subscription_status' => 'active',
-            'suspension_reason' => null,
-            'suspension_message' => null,
-            'suspension_internal_note' => null,
-            'suspended_at' => null,
-        ];
-        if ($restaurant->subscription_expires_at && Carbon::parse($restaurant->subscription_expires_at)->isPast()) {
-            $updateData['subscription_expires_at'] = Carbon::now()->addDays(30);
-        }
-        $restaurant->update($updateData);
-
-        $reason = $request->input('reason', 'Super Admin restored/activated access');
-
-        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'active', [
-            'previous_status' => $oldStatus,
-            'reason' => $reason,
-        ]);
-
-        AuditLog::record('restaurant_activated', $restaurant->id, 'restaurant', $restaurant->id, [
-            'previous_status' => $oldStatus,
-            'reason' => $reason
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => "Restaurant '{$restaurant->name}' has been activated successfully.",
-            'data' => [
-                'id' => $restaurant->id,
-                'name' => $restaurant->name,
+            $oldStatus = $restaurant->subscription_status;
+            
+            $updateData = [
                 'subscription_status' => 'active',
-            ]
-        ]);
+                'suspension_reason' => null,
+                'suspension_message' => null,
+                'suspension_internal_note' => null,
+                'suspended_at' => null,
+            ];
+            if ($restaurant->subscription_expires_at) {
+                try {
+                    if (Carbon::parse($restaurant->subscription_expires_at)->isPast()) {
+                        $updateData['subscription_expires_at'] = Carbon::now()->addDays(30);
+                    }
+                } catch (\Throwable $e) {}
+            }
+            $restaurant->update($updateData);
+
+            $reason = $request->input('reason', 'Super Admin restored/activated access');
+
+            try {
+                SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'active', [
+                    'previous_status' => $oldStatus,
+                    'reason' => $reason,
+                ]);
+            } catch (\Throwable $e) {
+                \Log::warning('SubscriptionHistory record failed on activate: ' . $e->getMessage());
+            }
+
+            try {
+                AuditLog::record('restaurant_activated', $restaurant->id, 'restaurant', $restaurant->id, [
+                    'previous_status' => $oldStatus,
+                    'reason' => $reason
+                ]);
+            } catch (\Throwable $e) {
+                \Log::warning('AuditLog record failed on activate: ' . $e->getMessage());
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Restaurant '{$restaurant->name}' has been activated successfully.",
+                'data' => [
+                    'id' => $restaurant->id,
+                    'name' => $restaurant->name,
+                    'subscription_status' => 'active',
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Activate restaurant failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error activating restaurant: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -421,54 +441,70 @@ class SuperAdminController extends Controller
      */
     public function suspendRestaurant(Request $request, $id)
     {
-        $restaurant = Restaurant::find($id);
-        if (!$restaurant) {
-            return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
-        }
+        try {
+            $restaurant = Restaurant::find($id);
+            if (!$restaurant) {
+                return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
+            }
 
-        $reason = $request->input('reason', 'Temporary Administrative Suspension');
-        $customerMessage = trim((string)$request->input('customer_message', $request->input('suspension_message', '')));
-        $internalNote = trim((string)$request->input('internal_note', $request->input('suspension_internal_note', '')));
+            $reason = $request->input('reason', 'Temporary Administrative Suspension');
+            $customerMessage = trim((string)$request->input('customer_message', $request->input('suspension_message', '')));
+            $internalNote = trim((string)$request->input('internal_note', $request->input('suspension_internal_note', '')));
 
-        if (empty($customerMessage)) {
-            $customerMessage = "Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.";
-        }
+            if (empty($customerMessage)) {
+                $customerMessage = "Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.";
+            }
 
-        $oldStatus = $restaurant->subscription_status;
+            $oldStatus = $restaurant->subscription_status;
 
-        $restaurant->update([
-            'subscription_status' => 'suspended',
-            'suspension_reason' => $reason,
-            'suspension_message' => $customerMessage,
-            'suspension_internal_note' => $internalNote,
-            'suspended_at' => Carbon::now(),
-        ]);
-
-        SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'suspended', [
-            'previous_status' => $oldStatus,
-            'reason' => $reason,
-            'customer_message' => $customerMessage,
-        ]);
-
-        AuditLog::record('restaurant_suspended', $restaurant->id, 'restaurant', $restaurant->id, [
-            'previous_status' => $oldStatus,
-            'reason' => $reason,
-            'customer_message' => $customerMessage,
-            'internal_note' => $internalNote,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => "Restaurant '{$restaurant->name}' has been suspended successfully.",
-            'data' => [
-                'id' => $restaurant->id,
-                'name' => $restaurant->name,
+            $restaurant->update([
                 'subscription_status' => 'suspended',
                 'suspension_reason' => $reason,
                 'suspension_message' => $customerMessage,
-                'suspended_at' => $restaurant->suspended_at?->toDateTimeString(),
-            ]
-        ]);
+                'suspension_internal_note' => $internalNote,
+                'suspended_at' => Carbon::now(),
+            ]);
+
+            try {
+                SubscriptionHistory::record($restaurant, $restaurant->plan_type ?? 'free', 'suspended', [
+                    'previous_status' => $oldStatus,
+                    'reason' => $reason,
+                    'customer_message' => $customerMessage,
+                ]);
+            } catch (\Throwable $e) {
+                \Log::warning('SubscriptionHistory record failed on suspend: ' . $e->getMessage());
+            }
+
+            try {
+                AuditLog::record('restaurant_suspended', $restaurant->id, 'restaurant', $restaurant->id, [
+                    'previous_status' => $oldStatus,
+                    'reason' => $reason,
+                    'customer_message' => $customerMessage,
+                    'internal_note' => $internalNote,
+                ]);
+            } catch (\Throwable $e) {
+                \Log::warning('AuditLog record failed on suspend: ' . $e->getMessage());
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Restaurant '{$restaurant->name}' has been suspended successfully.",
+                'data' => [
+                    'id' => $restaurant->id,
+                    'name' => $restaurant->name,
+                    'subscription_status' => 'suspended',
+                    'suspension_reason' => $reason,
+                    'suspension_message' => $customerMessage,
+                    'suspended_at' => $restaurant->suspended_at?->toDateTimeString(),
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Suspend restaurant failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error suspending restaurant: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
