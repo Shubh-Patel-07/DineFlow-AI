@@ -1568,6 +1568,8 @@
       }
     }
 
+    window.restaurantsMap = new Map();
+
     function debounceFetchRestaurants() {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(fetchRestaurants, 300);
@@ -1588,26 +1590,26 @@
         const json = await res.json();
         const tbody = document.getElementById('restaurantsTableBody');
 
-        if (json.success && json.data.length > 0) {
+        if (json.success && json.data && json.data.length > 0) {
+          json.data.forEach(r => window.restaurantsMap.set(Number(r.id), r));
+
           tbody.innerHTML = json.data.map(r => {
             const expiryStr = r.subscription_expires_at ? new Date(r.subscription_expires_at).toLocaleDateString() : 'Lifetime / Free';
-            const safeName = (r.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            const safeStatus = (r.subscription_status || 'active');
+            const safeStatus = (r.subscription_status || 'active').toLowerCase();
             const safePlan = (r.plan_type || 'free');
-            const safeExpiry = (r.subscription_expires_at || '');
-            const safeGrace = r.grace_period_days || 7;
-            const safeBilling = r.billing_amount || 0;
-            const revenue = (r.total_revenue || 0);
+            const revenue = Number(r.total_revenue || 0);
+            const isSuspended = safeStatus === 'suspended';
+
             return `
             <tr>
               <td>#${r.id}</td>
               <td>
-                <strong style="color: var(--text-primary); font-size: 14px; cursor: pointer;" onclick="openDetailsModal(${r.id})">${r.name}</strong>
-                <div style="font-size: 11px; color: var(--text-muted);">${r.phone || 'No phone'} • ${r.address || ''}</div>
+                <strong style="color: var(--text-primary); font-size: 14px; cursor: pointer;" onclick="openDetailsModal(${r.id})">${escapeHtml(r.name)}</strong>
+                <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(r.phone || 'No phone')} • ${escapeHtml(r.address || '')}</div>
               </td>
               <td>
-                <div>${r.owner ? r.owner.name : 'N/A'}</div>
-                <div style="font-size: 11px; color: var(--text-muted);">${r.owner ? r.owner.email : ''}</div>
+                <div>${r.owner ? escapeHtml(r.owner.name) : 'N/A'}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${r.owner ? escapeHtml(r.owner.email) : ''}</div>
               </td>
               <td><span class="plan-badge plan-${safePlan}">${safePlan}</span></td>
               <td>
@@ -1623,19 +1625,19 @@
                   <button class="action-btn" title="View Full Inspection" onclick="openDetailsModal(${r.id})">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  ${safeStatus === 'suspended' ? `
-                    <button class="action-btn" title="Activate / Restore Restaurant" onclick="quickActivate(${r.id})">
-                      <i class="fa-solid fa-play" style="color: var(--success);"></i>
+                  ${isSuspended ? `
+                    <button class="action-btn" title="Activate / Restore Restaurant" onclick="quickActivate(${r.id})" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.4);">
+                      <i class="fa-solid fa-play"></i>
                     </button>
                   ` : `
-                    <button class="action-btn" title="Suspend Restaurant" onclick="openSuspendModal(${r.id}, '${safeName}')">
-                      <i class="fa-solid fa-pause" style="color: var(--danger);"></i>
+                    <button class="action-btn" title="Suspend Restaurant" onclick="openSuspendModal(${r.id})" style="background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.4);">
+                      <i class="fa-solid fa-pause"></i>
                     </button>
                   `}
-                  <button class="action-btn" title="Subscription & Expiry" onclick="openSubscriptionModal(${r.id}, '${safeName}', '${safeStatus}', '${safePlan}', '${safeExpiry}', ${safeGrace})">
+                  <button class="action-btn" title="Subscription & Expiry" onclick="openSubscriptionModal(${r.id})">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                   </button>
-                  <button class="action-btn" title="Record Manual Payment" onclick="openPaymentModal(${r.id}, '${safeName}', ${safeBilling})">
+                  <button class="action-btn" title="Record Manual Payment" onclick="openPaymentModal(${r.id})">
                     <i class="fa-solid fa-receipt"></i>
                   </button>
                 </div>
@@ -1655,10 +1657,14 @@
         const res = await fetch('/api/superadmin/restaurants?per_page=50');
         const json = await res.json();
         const tbody = document.getElementById('subscriptionsTableBody');
-        if (json.success && json.data.length > 0) {
-          tbody.innerHTML = json.data.map(r => `
+        if (json.success && json.data && json.data.length > 0) {
+          json.data.forEach(r => window.restaurantsMap.set(Number(r.id), r));
+
+          tbody.innerHTML = json.data.map(r => {
+            const isSuspended = (r.subscription_status || '').toLowerCase() === 'suspended';
+            return `
             <tr>
-              <td><strong>${r.name}</strong></td>
+              <td><strong>${escapeHtml(r.name)}</strong></td>
               <td><span class="plan-badge plan-${r.plan_type}">${r.plan_type}</span></td>
               <td><span class="status-badge status-${r.subscription_status}">${r.subscription_status}</span></td>
               <td>${r.subscription_expires_at ? new Date(r.subscription_expires_at).toLocaleDateString() : 'N/A (Free/Lifetime)'}</td>
@@ -1666,16 +1672,25 @@
               <td><span class="metric-badge" style="background: rgba(16,185,129,0.15); color: #34D399;">${r.payment_status}</span></td>
               <td>
                 <div class="actions-group">
-                  <button class="action-btn" title="Edit Subscription" onclick="openSubscriptionModal(${r.id}, '${r.name}', '${r.subscription_status}', '${r.plan_type}', '${r.subscription_expires_at || ''}', ${r.grace_period_days || 7})">
+                  ${isSuspended ? `
+                    <button class="action-btn" title="Activate Restaurant" onclick="quickActivate(${r.id})" style="color: #10B981;">
+                      <i class="fa-solid fa-play"></i>
+                    </button>
+                  ` : `
+                    <button class="action-btn" title="Suspend Restaurant" onclick="openSuspendModal(${r.id})" style="color: #EF4444;">
+                      <i class="fa-solid fa-pause"></i>
+                    </button>
+                  `}
+                  <button class="action-btn" title="Edit Subscription" onclick="openSubscriptionModal(${r.id})">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <button class="action-btn" title="Record Payment" onclick="openPaymentModal(${r.id}, '${r.name}', ${r.billing_amount || 0})">
+                  <button class="action-btn" title="Record Payment" onclick="openPaymentModal(${r.id})">
                     <i class="fa-solid fa-indian-rupee-sign"></i>
                   </button>
                 </div>
               </td>
             </tr>
-          `).join('');
+          `}).join('');
         }
       } catch (err) {
         console.error('Failed to fetch subscriptions:', err);
@@ -1691,7 +1706,6 @@
         customWrapper.style.display = 'none';
       }
 
-      // Populate smart default customer message based on reason
       if (val === 'Payment Pending') {
         custMsg.value = 'Your restaurant account has been temporarily suspended due to a pending subscription payment. Please contact support to restore immediate access.';
       } else if (val === 'Subscription Issue') {
@@ -1703,9 +1717,10 @@
       }
     }
 
-    function openSuspendModal(id, name) {
+    function openSuspendModal(id) {
+      const r = window.restaurantsMap.get(Number(id)) || {};
       document.getElementById('suspendRestaurantId').value = id;
-      document.getElementById('suspendRestaurantName').textContent = `Suspend Restaurant: ${name}`;
+      document.getElementById('suspendRestaurantName').textContent = `Suspend Restaurant: ${r.name || ('#' + id)}`;
       document.getElementById('suspendReasonSelect').value = 'Temporary Suspension';
       document.getElementById('customReasonWrapper').style.display = 'none';
       document.getElementById('suspendCustomReason').value = '';
@@ -1731,11 +1746,13 @@
         });
         const json = await res.json();
         if (json.success) {
-          showToast(json.message);
+          showToast(json.message || 'Restaurant suspended successfully');
           closeModal('suspendModal');
+          closeModal('detailsModal');
           fetchRestaurants();
+          fetchSubscriptions();
         } else {
-          showToast(json.message || 'Failed', 'error');
+          showToast(json.message || 'Suspension failed', 'error');
         }
       } catch (err) {
         showToast('Operation failed', 'error');
@@ -1743,31 +1760,38 @@
     }
 
     async function quickActivate(id) {
-      if (!confirm('Are you sure you want to activate/restore this restaurant?')) return;
+      const r = window.restaurantsMap.get(Number(id)) || {};
+      const restName = r.name ? `"${r.name}"` : `Restaurant #${id}`;
+      if (!confirm(`Are you sure you want to activate/restore ${restName}?`)) return;
       try {
         const res = await fetch(`/api/superadmin/restaurants/${id}/activate`, {
           method: 'POST',
-          headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
         });
         const json = await res.json();
         if (json.success) {
-          showToast(json.message);
+          showToast(json.message || 'Restaurant activated successfully');
+          closeModal('detailsModal');
           fetchRestaurants();
+          fetchSubscriptions();
+        } else {
+          showToast(json.message || 'Activation failed', 'error');
         }
       } catch (err) {
         showToast('Activation failed', 'error');
       }
     }
 
-    function openSubscriptionModal(id, name, status, plan, expiry, grace, expiryMsg, internalNote) {
+    function openSubscriptionModal(id) {
+      const r = window.restaurantsMap.get(Number(id)) || {};
       document.getElementById('subModalRestaurantId').value = id;
-      document.getElementById('subModalRestaurantName').textContent = `Manage Subscription: ${name}`;
-      document.getElementById('subModalStatus').value = status || 'active';
-      document.getElementById('subModalPlan').value = plan || 'free';
-      document.getElementById('subModalExpiry').value = expiry ? expiry.split('T')[0] : '';
-      document.getElementById('subModalGrace').value = grace || 7;
-      document.getElementById('subModalExpiryMessage').value = expiryMsg || '';
-      document.getElementById('subModalInternalNote').value = internalNote || '';
+      document.getElementById('subModalRestaurantName').textContent = `Manage Subscription: ${r.name || ('#' + id)}`;
+      document.getElementById('subModalStatus').value = r.subscription_status || 'active';
+      document.getElementById('subModalPlan').value = r.plan_type || 'free';
+      document.getElementById('subModalExpiry').value = r.subscription_expires_at ? r.subscription_expires_at.split('T')[0] : '';
+      document.getElementById('subModalGrace').value = r.grace_period_days || 7;
+      document.getElementById('subModalExpiryMessage').value = r.expiry_message || '';
+      document.getElementById('subModalInternalNote').value = r.suspension_internal_note || '';
       document.getElementById('subModalReason').value = '';
       openModal('subscriptionModal');
     }
@@ -1808,7 +1832,7 @@
         });
         const json = await res.json();
         if (json.success) {
-          showToast(json.message);
+          showToast(json.message || 'Subscription updated');
           closeModal('subscriptionModal');
           fetchRestaurants();
           fetchSubscriptions();
@@ -1820,10 +1844,11 @@
       }
     }
 
-    function openPaymentModal(id, name, defaultAmount) {
+    function openPaymentModal(id) {
+      const r = window.restaurantsMap.get(Number(id)) || {};
       document.getElementById('payModalRestaurantId').value = id;
-      document.getElementById('payModalRestaurantName').textContent = `Record Payment: ${name}`;
-      document.getElementById('payModalAmount').value = defaultAmount > 0 ? defaultAmount : '1999.00';
+      document.getElementById('payModalRestaurantName').textContent = `Record Payment: ${r.name || ('#' + id)}`;
+      document.getElementById('payModalAmount').value = (r.billing_amount && Number(r.billing_amount) > 0) ? r.billing_amount : '1999.00';
       document.getElementById('payModalRef').value = '';
       openModal('paymentModal');
     }
@@ -1846,7 +1871,7 @@
         });
         const json = await res.json();
         if (json.success) {
-          showToast(json.message);
+          showToast(json.message || 'Payment recorded');
           closeModal('paymentModal');
           fetchRestaurants();
           fetchSubscriptions();
@@ -1870,23 +1895,41 @@
           const r = json.data.restaurant;
           const u = json.data.usage;
           const histories = json.data.subscription_histories || [];
-          const logs = json.data.audit_logs || [];
+          const isSuspended = (r.subscription_status || '').toLowerCase() === 'suspended';
+
+          window.restaurantsMap.set(Number(r.id), r);
 
           content.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
               <div>
-                <h3 style="font-size: 20px; font-weight: 800;">${r.name}</h3>
-                <p style="font-size: 12px; color: var(--text-muted);">${r.address} • ${r.phone}</p>
-                <div style="margin-top: 6px;">
+                <h3 style="font-size: 20px; font-weight: 800;">${escapeHtml(r.name)}</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">${escapeHtml(r.address || '')} • ${escapeHtml(r.phone || '')}</p>
+                <div style="margin-top: 6px; display: flex; gap: 6px; align-items: center;">
                   <span class="plan-badge plan-${r.plan_type}">${r.plan_type}</span>
                   <span class="status-badge status-${r.subscription_status}">${r.subscription_status}</span>
                 </div>
               </div>
               <div style="text-align: right;">
                 <div style="font-size: 11px; color: var(--text-muted);">Total GMV</div>
-                <div style="font-size: 22px; font-weight: 800; color: var(--success);">₹${json.data.total_revenue.toLocaleString('en-IN')}</div>
-                <div style="font-size: 11px; color: var(--text-secondary);">${json.data.total_orders} Total Orders</div>
+                <div style="font-size: 22px; font-weight: 800; color: var(--success);">₹${Number(json.data.total_revenue || 0).toLocaleString('en-IN')}</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">${json.data.total_orders || 0} Total Orders</div>
               </div>
+            </div>
+
+            <!-- Action Buttons Inside Modal -->
+            <div style="display: flex; gap: 8px; margin: 16px 0; padding: 12px; background: var(--bg-primary); border-radius: 10px;">
+              ${isSuspended ? `
+                <button type="button" class="btn-primary" style="background: #10B981; border-color: #10B981; flex: 1;" onclick="quickActivate(${r.id})">
+                  <i class="fa-solid fa-play"></i> Activate / Restore Restaurant
+                </button>
+              ` : `
+                <button type="button" class="btn-danger" style="background: #EF4444; border-color: #EF4444; flex: 1;" onclick="openSuspendModal(${r.id})">
+                  <i class="fa-solid fa-pause"></i> Suspend Restaurant
+                </button>
+              `}
+              <button type="button" class="btn-secondary" style="flex: 1;" onclick="openSubscriptionModal(${r.id})">
+                <i class="fa-solid fa-clock-rotate-left"></i> Manage Plan & Validity
+              </button>
             </div>
 
             <!-- Quota Utilization -->
@@ -1932,7 +1975,7 @@
               <div style="max-height: 120px; overflow-y: auto; font-size: 12px; display: flex; flex-direction: column; gap: 6px;">
                 ${histories.length ? histories.map(h => `
                   <div style="padding: 6px 10px; background: var(--bg-primary); border-radius: 8px; display: flex; justify-content: space-between;">
-                    <span><strong>${h.new_plan.toUpperCase()}</strong> (${h.new_status}) — ${h.reason || 'Status change'}</span>
+                    <span><strong>${escapeHtml(h.new_plan ? h.new_plan.toUpperCase() : '')}</strong> (${escapeHtml(h.new_status || '')}) — ${escapeHtml(h.reason || 'Status change')}</span>
                     <span style="color: var(--text-muted);">${new Date(h.created_at).toLocaleDateString()}</span>
                   </div>
                 `).join('') : '<p style="color: var(--text-muted);">No subscription history recorded yet.</p>'}
