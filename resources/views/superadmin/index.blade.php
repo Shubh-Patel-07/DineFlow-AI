@@ -1591,6 +1591,13 @@
         if (json.success && json.data.length > 0) {
           tbody.innerHTML = json.data.map(r => {
             const expiryStr = r.subscription_expires_at ? new Date(r.subscription_expires_at).toLocaleDateString() : 'Lifetime / Free';
+            const safeName = (r.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeStatus = (r.subscription_status || 'active');
+            const safePlan = (r.plan_type || 'free');
+            const safeExpiry = (r.subscription_expires_at || '');
+            const safeGrace = r.grace_period_days || 7;
+            const safeBilling = r.billing_amount || 0;
+            const revenue = (r.total_revenue || 0);
             return `
             <tr>
               <td>#${r.id}</td>
@@ -1602,33 +1609,33 @@
                 <div>${r.owner ? r.owner.name : 'N/A'}</div>
                 <div style="font-size: 11px; color: var(--text-muted);">${r.owner ? r.owner.email : ''}</div>
               </td>
-              <td><span class="plan-badge plan-${r.plan_type}">${r.plan_type}</span></td>
+              <td><span class="plan-badge plan-${safePlan}">${safePlan}</span></td>
               <td>
-                <span class="status-badge status-${r.subscription_status}">
-                  <i class="fa-solid fa-circle" style="font-size: 6px;"></i> ${r.subscription_status}
+                <span class="status-badge status-${safeStatus}">
+                  <i class="fa-solid fa-circle" style="font-size: 6px;"></i> ${safeStatus}
                 </span>
                 <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Exp: ${expiryStr}</div>
               </td>
-              <td><strong>${r.orders_count}</strong></td>
-              <td style="color: var(--success); font-weight: 700;">₹${r.total_revenue.toLocaleString('en-IN')}</td>
+              <td><strong>${r.orders_count || 0}</strong></td>
+              <td style="color: var(--success); font-weight: 700;">₹${revenue.toLocaleString('en-IN')}</td>
               <td>
                 <div class="actions-group">
                   <button class="action-btn" title="View Full Inspection" onclick="openDetailsModal(${r.id})">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  ${r.subscription_status === 'suspended' ? `
+                  ${safeStatus === 'suspended' ? `
                     <button class="action-btn" title="Activate / Restore Restaurant" onclick="quickActivate(${r.id})">
                       <i class="fa-solid fa-play" style="color: var(--success);"></i>
                     </button>
                   ` : `
-                    <button class="action-btn" title="Suspend Restaurant" onclick="openSuspendModal(${r.id}, '${r.name}')">
+                    <button class="action-btn" title="Suspend Restaurant" onclick="openSuspendModal(${r.id}, '${safeName}')">
                       <i class="fa-solid fa-pause" style="color: var(--danger);"></i>
                     </button>
                   `}
-                  <button class="action-btn" title="Subscription & Expiry" onclick="openSubscriptionModal(${r.id}, '${r.name}', '${r.subscription_status}', '${r.plan_type}', '${r.subscription_expires_at || ''}', ${r.grace_period_days || 7})">
+                  <button class="action-btn" title="Subscription & Expiry" onclick="openSubscriptionModal(${r.id}, '${safeName}', '${safeStatus}', '${safePlan}', '${safeExpiry}', ${safeGrace})">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                   </button>
-                  <button class="action-btn" title="Record Manual Payment" onclick="openPaymentModal(${r.id}, '${r.name}', ${r.billing_amount || 0})">
+                  <button class="action-btn" title="Record Manual Payment" onclick="openPaymentModal(${r.id}, '${safeName}', ${safeBilling})">
                     <i class="fa-solid fa-receipt"></i>
                   </button>
                 </div>
