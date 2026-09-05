@@ -3,6 +3,35 @@
  */
 
 let allTables = [];
+let currentSelectedTableId = null;
+let currentSelectedTableNumber = null;
+let restaurantBranding = {
+  name: localStorage.getItem('dineflow_restaurant_name') || 'DineFlow Restaurant',
+  logo: localStorage.getItem('dineflow_restaurant_logo') || ''
+};
+
+async function loadRestaurantBranding() {
+  const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+  try {
+    const res = await fetch(`/api/restaurants/${restaurantId}/settings`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.data) {
+        if (data.data.name) {
+          restaurantBranding.name = data.data.name;
+          localStorage.setItem('dineflow_restaurant_name', data.data.name);
+        }
+        if (data.data.logo) {
+          restaurantBranding.logo = data.data.logo;
+          localStorage.setItem(`dineflow_restaurant_logo_${restaurantId}`, data.data.logo);
+          localStorage.setItem('dineflow_restaurant_logo', data.data.logo);
+        }
+      }
+    }
+  } catch (err) {
+    console.log('Branding fetch fallback:', err);
+  }
+}
 
 function showLoader() {
   const loader = document.querySelector('[data-loader]');
@@ -22,6 +51,7 @@ function hideLoader() {
 
 async function loadTables() {
   showLoader();
+  loadRestaurantBranding();
   const result = await APIService.getTables();
   hideLoader();
 
@@ -103,20 +133,28 @@ function renderTables() {
           <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: 0.3px;">${table.table_number}</h3>
         </div>
 
-        <!-- Action Button -->
-        <button onclick="showQrModal(this.dataset.tablenum, this.dataset.qr)" data-tablenum="${String(table.table_number).replace(/\"/g, '&quot;')}" data-qr="${String(table.qr_code_url).replace(/\"/g, '&quot;')}" class="btn-primary" style="width: 100%; height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 11.5px; font-weight: 700; color: #FFFFFF; cursor: pointer; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
-          <i class="fa-solid fa-qrcode"></i> View QR Code
-        </button>
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px;">
+          <button onclick="showQrModal(this.dataset.tablenum, this.dataset.qr, this.dataset.tableid)" data-tablenum="${String(table.table_number).replace(/\"/g, '&quot;')}" data-qr="${String(table.qr_code_url).replace(/\"/g, '&quot;')}" data-tableid="${table.id}" class="btn-primary" style="flex: 1; height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 11.5px; font-weight: 700; color: #FFFFFF; cursor: pointer; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
+            <i class="fa-solid fa-qrcode"></i> View QR
+          </button>
+          <a href="/admin/qr-poster/${table.id}" target="_blank" class="btn-secondary" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; border-radius: 10px; text-decoration: none; font-size: 11px; font-weight: 700; color: var(--text-primary); border: 1px solid var(--border); background: var(--card);" title="A4 Print Poster">
+            <i class="fa-solid fa-file-pdf" style="color: #EF4444;"></i> A4
+          </a>
+        </div>
       </div>
     `;
   }).join('');
 }
 
 function showQrModal(tableNumber, qrCodeUrl, tableId = null) {
+  currentSelectedTableId = tableId;
+  currentSelectedTableNumber = tableNumber;
   document.getElementById('qrModalTitle').textContent = `QR Code for Table ${tableNumber}`;
   const imgEl = document.getElementById('qrModalImage');
   if (imgEl) {
-    imgEl.src = qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin + '/customer/menu?tableId=' + (tableId || '1'))}`;
+    const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+    imgEl.src = qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin + '/customer/menu?restaurantId=' + restaurantId + '&tableId=' + (tableId || tableNumber || '1'))}`;
   }
   document.getElementById('qrModal').hidden = false;
 }
@@ -135,7 +173,39 @@ function printQrCode() {
   const printTableNum = document.getElementById('qrPrintTableNumber');
   if (printTableNum) printTableNum.textContent = tableNumber;
 
+  // Apply dynamic restaurant branding
+  const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+  const restName = restaurantBranding.name || localStorage.getItem('dineflow_restaurant_name') || 'DineFlow Restaurant';
+  const restLogo = restaurantBranding.logo || localStorage.getItem(`dineflow_restaurant_logo_${restaurantId}`) || localStorage.getItem('dineflow_restaurant_logo') || '';
+
+  const nameEl = document.getElementById('qrPrintRestaurantName');
+  if (nameEl) nameEl.textContent = restName;
+
+  const logoEl = document.getElementById('qrPrintLogo');
+  const logoBox = document.getElementById('qrPrintLogoContainer');
+  if (logoEl) {
+    if (restLogo) {
+      logoEl.src = restLogo;
+      logoEl.style.display = 'block';
+      if (logoBox) logoBox.style.display = 'flex';
+    } else {
+      logoEl.src = '/images/dineflow_logo.jpg';
+      logoEl.style.display = 'block';
+      if (logoBox) logoBox.style.display = 'flex';
+    }
+  }
+
   window.print();
+}
+
+function openTableA4Poster() {
+  if (currentSelectedTableId) {
+    window.open(`/admin/qr-poster/${currentSelectedTableId}`, '_blank');
+  } else {
+    const matched = allTables.find(t => String(t.table_number) === String(currentSelectedTableNumber));
+    const tId = matched ? matched.id : 1;
+    window.open(`/admin/qr-poster/${tId}`, '_blank');
+  }
 }
 
 function openAddTableModal() {

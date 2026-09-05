@@ -196,7 +196,8 @@
       </div>
       <p class="qr-modal-hint">Scan this code using a mobile phone to open the menu</p>
       <div class="qr-modal-actions">
-        <button onclick="printQrCode()" class="btn-primary"><i class="fa-solid fa-print"></i> Print QR</button>
+        <button onclick="printQrCode()" class="btn-primary"><i class="fa-solid fa-print"></i> Print Quick QR</button>
+        <button onclick="openTableA4Poster()" class="btn-primary" style="background: linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-file-pdf"></i> A4 Poster</button>
         <button onclick="closeQrModal()" class="btn-secondary">Close</button>
       </div>
     </div>
@@ -206,9 +207,11 @@
   <div id="qrPrintLayout" class="qr-print-layout">
     <div class="qr-print-card">
       <div class="qr-print-header">
-        <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="logo-image">
-        <h2>DineFlow AI</h2>
-        <p>Smart Dining Experience</p>
+        <div id="qrPrintLogoContainer" style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
+          <img id="qrPrintLogo" src="/images/dineflow_logo.jpg" alt="Restaurant Logo" class="logo-image" style="max-height: 56px; max-width: 140px; object-fit: contain; border-radius: 12px;">
+        </div>
+        <h2 id="qrPrintRestaurantName">DineFlow AI</h2>
+        <p id="qrPrintTagline">Scan to View Menu & Order</p>
       </div>
       <div class="qr-print-body">
         <div class="qr-print-code-wrapper">

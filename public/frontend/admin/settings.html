@@ -835,10 +835,27 @@
             localStorage.setItem('dineflow_restaurant_signature', result.url);
           }
 
+          // Auto-persist directly to database immediately
+          try {
+            await fetch(`/api/restaurants/${RESTAURANT_ID}/settings`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+              },
+              body: JSON.stringify({
+                [type]: result.url
+              })
+            });
+          } catch (e) {
+            console.log('Branding auto-save error:', e);
+          }
+
           if (typeof Toast !== 'undefined' && Toast.success) {
-            Toast.success(`${type === 'logo' ? 'Logo' : 'Signature'} uploaded successfully!`);
+            Toast.success(`✅ ${type === 'logo' ? 'Logo' : 'Signature'} uploaded and saved!`);
           } else {
-            alert(`✅ ${type === 'logo' ? 'Logo' : 'Signature'} uploaded successfully! Click "Save All Settings" to apply.`);
+            alert(`✅ ${type === 'logo' ? 'Logo' : 'Signature'} uploaded and saved successfully!`);
           }
         } else {
           alert(result.message || 'Image upload failed');
@@ -870,6 +887,20 @@
         localStorage.removeItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`);
         localStorage.removeItem('dineflow_restaurant_signature');
       }
+
+      // Auto-persist removal directly to database
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || window.CSRF_TOKEN || '';
+      fetch(`/api/restaurants/${RESTAURANT_ID}/settings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+          [type]: null
+        })
+      }).catch(err => console.log('Remove branding server sync:', err));
 
       if (typeof Toast !== 'undefined' && Toast.success) {
         Toast.success(`${type === 'logo' ? 'Logo' : 'Signature'} removed.`);
