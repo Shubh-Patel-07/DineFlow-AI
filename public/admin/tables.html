@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="/frontend/admin/admin.css?v=1.0.1">
+  <link rel="stylesheet" href="/frontend/admin/qr-poster-component.css?v=2.0.0">
 </head>
 <body>
   <!-- Loader -->
@@ -188,52 +189,28 @@
 
   <!-- QR Code Modal -->
   <div id="qrModal" class="qr-modal" hidden>
-    <div class="qr-modal-content">
-      <button onclick="closeQrModal()" class="qr-modal-close">&times;</button>
-      <h3 id="qrModalTitle">Table QR Code</h3>
-      <div class="qr-container">
-        <img id="qrModalImage" src="" alt="QR Code">
-      </div>
-      <p class="qr-modal-hint">Scan this code using a mobile phone to open the menu</p>
-      <div class="qr-modal-actions">
-        <button onclick="printQrCode()" class="btn-primary"><i class="fa-solid fa-print"></i> Print Quick QR</button>
-        <button onclick="openTableA4Poster()" class="btn-primary" style="background: linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-file-pdf"></i> A4 Poster</button>
-        <button onclick="closeQrModal()" class="btn-secondary">Close</button>
+    <div class="qr-modal-content" style="max-width: 380px; padding: 20px 16px;">
+      <button onclick="closeQrModal()" class="qr-modal-close" style="position: absolute; top: 12px; right: 16px; border: none; background: transparent; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      
+      <!-- Unified Master QR Poster Preview -->
+      <div id="qrModalPosterContainer" style="display: flex; justify-content: center; width: 100%; margin: 8px 0 16px 0;"></div>
+
+      <div class="qr-modal-actions" style="display: flex; gap: 8px; justify-content: center; width: 100%;">
+        <button onclick="printQrCode()" class="btn-primary" style="flex: 1; height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-size: 12px; font-weight: 700; color: #FFFFFF; cursor: pointer;"><i class="fa-solid fa-print"></i> Quick Print</button>
+        <button onclick="openTableA4Poster()" class="btn-primary" style="flex: 1; height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; background: linear-gradient(135deg, #10B981, #059669); border: none; font-size: 12px; font-weight: 700; color: #FFFFFF; cursor: pointer;"><i class="fa-solid fa-file-pdf"></i> A4 Poster</button>
+        <button onclick="closeQrModal()" class="btn-secondary" style="height: 38px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer;">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- QR Print Layout (Hidden on screen, styled for print only) -->
-  <div id="qrPrintLayout" class="qr-print-layout">
-    <div class="qr-print-card">
-      <div class="qr-print-header">
-        <div id="qrPrintLogoContainer" style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
-          <img id="qrPrintLogo" src="/images/dineflow_logo.jpg" alt="Restaurant Logo" class="logo-image" style="max-height: 56px; max-width: 140px; object-fit: contain; border-radius: 12px;">
-        </div>
-        <h2 id="qrPrintRestaurantName">DineFlow AI</h2>
-        <p id="qrPrintTagline">Scan to View Menu & Order</p>
-      </div>
-      <div class="qr-print-body">
-        <div class="qr-print-code-wrapper">
-          <img id="qrPrintImage" src="" alt="Table QR Code">
-        </div>
-        <div class="table-badge-container">
-          <span class="table-badge-label">TABLE</span>
-          <h1 id="qrPrintTableNumber">T-01</h1>
-        </div>
-        <p class="scan-instructions">📸 Scan QR Code using your phone camera to view menu & place order</p>
-      </div>
-      <div class="qr-print-footer">
-        <p class="thank-you">Thank you for dining with us!</p>
-        <p class="branding-footer">Powered by DineFlow AI • www.dineflow.ai</p>
-      </div>
-    </div>
-  </div>
+  <!-- QR Print Container (For instant window.print) -->
+  <div id="qrPrintLayout" class="dineflow-qr-print-container"></div>
 
   <!-- Scripts -->
   <script src="/frontend/admin/utils.js?v=1.0.1"></script>
   <script src="/frontend/admin/api.js?v=1.0.1"></script>
-  <script src="/frontend/admin/tables.js?v=1.0.1"></script>
+  <script src="/frontend/admin/qr-poster-component.js?v=2.0.0"></script>
+  <script src="/frontend/admin/tables.js?v=2.0.0"></script>
   <script>
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');

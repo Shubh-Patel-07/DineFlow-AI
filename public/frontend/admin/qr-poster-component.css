@@ -1,0 +1,295 @@
+/**
+ * DineFlow AI — Master Table QR Poster Component CSS
+ * Unified visual hierarchy, typography, and print styling across all views
+ */
+
+.dineflow-qr-poster-card {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-radius: 24px;
+  padding: 28px 24px 22px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  border: 2px solid #E2E8F0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+}
+
+/* Standee / Modal variant sizing */
+.dineflow-qr-poster-card.size-preview {
+  max-width: 320px;
+  padding: 22px 18px 16px 18px;
+  gap: 8px;
+}
+
+.dineflow-qr-poster-card.size-modal {
+  max-width: 340px;
+  padding: 24px 20px 18px 20px;
+  gap: 10px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+/* 1. TOP SECTION: RESTAURANT BRANDING */
+.dineflow-qr-poster-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.dineflow-qr-logo-box {
+  height: 54px;
+  max-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.dineflow-qr-logo-img {
+  max-height: 52px;
+  max-width: 160px;
+  object-fit: contain;
+  display: block;
+}
+
+.dineflow-qr-monogram {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #0F172A;
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+}
+
+.dineflow-qr-rest-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  color: #0F172A;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+  margin: 0;
+  word-break: break-word;
+  max-width: 95%;
+}
+
+.dineflow-qr-poster-card.size-preview .dineflow-qr-rest-name {
+  font-size: 17px;
+}
+
+.dineflow-qr-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.dineflow-qr-poster-card.size-preview .dineflow-qr-tagline {
+  font-size: 12px;
+}
+
+/* 2. MIDDLE SECTION: QR CODE & TABLE BADGE */
+.dineflow-qr-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.dineflow-qr-frame {
+  width: 200px;
+  height: 200px;
+  background: #FFFFFF;
+  border: 2px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+}
+
+.dineflow-qr-poster-card.size-preview .dineflow-qr-frame {
+  width: 175px;
+  height: 175px;
+  padding: 6px;
+}
+
+.dineflow-qr-code-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.dineflow-qr-table-badge {
+  background: #0F172A;
+  color: #FFFFFF;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 5px 24px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.dineflow-qr-poster-card.size-preview .dineflow-qr-table-badge {
+  font-size: 14px;
+  padding: 4px 20px;
+}
+
+/* Divider */
+.dineflow-qr-divider {
+  width: 85%;
+  height: 1.5px;
+  background: #E2E8F0;
+  margin: 2px 0;
+}
+
+/* 3. BOTTOM SECTION: DINEFLOW & INSTAGRAM FOOTER */
+.dineflow-qr-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.dineflow-qr-powered-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dineflow-qr-powered-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.dineflow-qr-tiny-logo {
+  height: 16px;
+  object-fit: contain;
+}
+
+.dineflow-qr-smp-pill {
+  font-size: 9px;
+  font-weight: 900;
+  color: #4F46E5;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  font-family: 'Inter', sans-serif;
+}
+
+.dineflow-qr-instagram-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dineflow-qr-instagram-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: #0F172A;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  transition: opacity 0.2s;
+}
+
+.dineflow-qr-instagram-link:hover {
+  opacity: 0.8;
+}
+
+.dineflow-qr-instagram-icon {
+  font-size: 14px;
+  color: #E1306C;
+}
+
+/* --- PRINT LAYOUT (A4 OPTIMIZED) --- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .dineflow-qr-print-container,
+  .dineflow-qr-print-container * {
+    visibility: visible;
+  }
+
+  .dineflow-qr-print-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF !important;
+    padding: 0;
+    margin: 0;
+    z-index: 999999;
+  }
+
+  .dineflow-qr-poster-card.print-target {
+    border: 3px solid #0F172A !important;
+    box-shadow: none !important;
+    width: 360px !important;
+    max-width: 360px !important;
+    padding: 34px 28px 26px 28px !important;
+    gap: 14px !important;
+    border-radius: 28px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .dineflow-qr-poster-card.print-target .dineflow-qr-frame {
+    width: 220px !important;
+    height: 220px !important;
+    border: 2px solid #E2E8F0 !important;
+  }
+
+  .dineflow-qr-poster-card.print-target .dineflow-qr-table-badge {
+    background: #0F172A !important;
+    color: #FFFFFF !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

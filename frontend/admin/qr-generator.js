@@ -1,5 +1,6 @@
 /**
  * DineFlow AI — Table QR Code Generator Engine v2.1.0
+ * Unified layout renders: Powered by DineFlow with smp-pill / smp-badge and @smp.officials
  */
 
 let restaurantTables = [];
@@ -127,14 +128,8 @@ function onTableSelected() {
     const testLink = document.getElementById('testScanLink');
     if (testLink) testLink.href = targetUrl;
 
-    // Update preview table badge (e.g. Table: T-01 or Table: 1)
-    const badge = document.getElementById('previewTableBadge');
-    const rawNum = currentTable.table_number || String(currentTable.id);
-    const tableLabel = rawNum.toLowerCase().startsWith('table') ? rawNum : `Table: ${rawNum}`;
-    if (badge) badge.textContent = tableLabel.toUpperCase();
-
-    // Render QR Code
-    renderQRCode(targetUrl);
+    // Render Master Poster Card Preview
+    renderMasterPosterPreview(targetUrl);
 }
 
 function updateQRPreview() {
@@ -143,29 +138,34 @@ function updateQRPreview() {
         const text = nameInput.value.trim() || 'DineFlow AI Restaurant';
         restaurantInfo.name = text;
         localStorage.setItem('dineflow_restaurant_name', text);
-        updateBrandVisuals();
+        const origin = window.location.origin;
+        const targetUrl = `${origin}/customer/menu?restaurantId=${RESTAURANT_ID}&tableId=${currentTable ? currentTable.id : 1}`;
+        renderMasterPosterPreview(targetUrl);
+    }
+}
+
+function renderMasterPosterPreview(url) {
+    const printArea = document.getElementById('printArea');
+    if (!printArea) return;
+
+    const nameInput = document.getElementById('restaurantDisplayName');
+    const restName = (nameInput?.value.trim()) || restaurantInfo.name || 'DineFlow AI Restaurant';
+    const logoUrl = restaurantInfo.logo || localStorage.getItem('dineflow_restaurant_logo');
+    const rawNum = currentTable ? (currentTable.table_number || String(currentTable.id)) : '1';
+
+    if (typeof window.renderDineflowQrPoster === 'function') {
+        window.renderDineflowQrPoster(printArea, {
+            restaurantName: restName,
+            restaurantLogo: logoUrl,
+            tableNumber: rawNum,
+            qrDataUrl: url,
+            size: 'preview'
+        });
     }
 }
 
 function renderQRCode(url) {
-    const qrContainer = document.getElementById('qrcode');
-    if (!qrContainer) return;
-
-    qrContainer.innerHTML = '';
-    activeQRInstance = null;
-
-    try {
-        activeQRInstance = new QRCode(qrContainer, {
-            text: url,
-            width: 190,
-            height: 190,
-            colorDark: '#000000',
-            colorLight: '#FFFFFF',
-            correctLevel: QRCode.CorrectLevel.H
-        });
-    } catch (e) {
-        console.error('QRCode rendering error:', e);
-    }
+    renderMasterPosterPreview(url);
 }
 
 function regenerateActiveQR() {
@@ -176,11 +176,11 @@ function regenerateActiveQR() {
 }
 
 function downloadQRCodePNG() {
-    const qrContainer = document.getElementById('qrcode');
-    if (!qrContainer) return;
+    const printArea = document.getElementById('printArea');
+    if (!printArea) return;
 
-    const canvas = qrContainer.querySelector('canvas');
-    const img = qrContainer.querySelector('img');
+    const canvas = printArea.querySelector('canvas');
+    const img = printArea.querySelector('img.dineflow-qr-code-img') || printArea.querySelector('#qrcode img') || printArea.querySelector('canvas');
 
     const tableNum = currentTable ? (currentTable.table_number || currentTable.id).replace(/[^a-zA-Z0-9_-]/g, '_') : 'Table_QR';
     const filename = `${tableNum}_QR_DineFlow.png`;
@@ -247,63 +247,25 @@ function renderBatchTableCards() {
     const origin = window.location.origin;
     const restName = document.getElementById('restaurantDisplayName')?.value.trim() || restaurantInfo.name || 'Restaurant';
     const logoUrl = restaurantInfo.logo || localStorage.getItem('dineflow_restaurant_logo');
-    const initialChar = escapeHtml(restName.charAt(0).toUpperCase() || 'R');
 
     restaurantTables.forEach((table, index) => {
         const targetUrl = `${origin}/customer/menu?restaurantId=${RESTAURANT_ID}&tableId=${table.id}`;
         const rawNum = table.table_number || String(table.id);
-        const tableLabel = rawNum.toLowerCase().startsWith('table') ? rawNum : `Table: ${rawNum}`;
 
-        const brandVisualHtml = logoUrl
-            ? `<img src="${logoUrl}" style="max-height:36px; max-width:100px; object-fit:contain;" alt="Logo" onerror="this.style.display='none'">`
-            : `<div style="width:36px; height:36px; border-radius:8px; background:#0F172A; color:#fff; font-size:18px; font-weight:900; display:flex; align-items:center; justify-content:center; font-family:'Outfit',sans-serif;">${initialChar}</div>`;
+        const cardBox = document.createElement('div');
+        cardBox.style.display = 'flex';
+        cardBox.style.justifyContent = 'center';
+        container.appendChild(cardBox);
 
-        const card = document.createElement('div');
-        card.className = 'batch-card';
-        card.style.border = '2px solid #0F172A';
-        card.style.borderRadius = '18px';
-        card.style.padding = '18px 16px 12px 16px';
-        card.style.gap = '8px';
-        card.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:100%;">
-                ${brandVisualHtml}
-                <div style="font-family:'Outfit',sans-serif; font-size:15px; font-weight:900; color:#0F172A; text-transform:uppercase; letter-spacing:0.3px;">${escapeHtml(restName)}</div>
-            </div>
-            <div style="font-size:11px; color:#475569; font-weight:600;">Scan to View Menu &amp; Order</div>
-            <div id="batchQr_${table.id}" style="width:160px; height:160px; display:flex; align-items:center; justify-content:center; padding:4px; border:1px solid #E2E8F0; border-radius:10px; margin:2px 0;"></div>
-            <div style="background:#0F172A; color:#fff; font-family:'Outfit',sans-serif; font-size:14px; font-weight:800; padding:4px 18px; border-radius:16px;">${escapeHtml(tableLabel.toUpperCase())}</div>
-            <div style="width:100%; height:1px; background:#E2E8F0; margin:6px 0 2px 0;"></div>
-            <div style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:0 2px;">
-                <span style="font-size:9px; font-weight:600; color:#64748B;">Powered by DineFlow</span>
-                <div style="display:flex; align-items:center; gap:4px;">
-                    <span class="smp-badge" style="font-size:8.5px; font-weight:900; color:#4F46E5; background:#EEF2FF; border:1px solid #C7D2FE; padding:0 4px; border-radius:3px;">SMP</span>
-                    <img src="/images/dineflow_logo.png" style="height:12px; object-fit:contain;" alt="DineFlow" onerror="this.src='/images/dineflow_logo.jpg'">
-                </div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:center; width:100%; margin-top:2px;">
-                <a href="https://www.instagram.com/smp.officials/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:4px; text-decoration:none; color:#0F172A; font-size:10px; font-weight:700;">
-                    <i class="fa-brands fa-instagram" style="color:#E1306C; font-size:11px;"></i>
-                    <span>@smp.officials</span>
-                </a>
-            </div>
-            <div style="width:100%; height:1px; background:#E2E8F0; margin:4px 0 2px 0;"></div>
-        `;
-        container.appendChild(card);
-
-        // Generate QR code for this specific card
-        setTimeout(() => {
-            const el = document.getElementById(`batchQr_${table.id}`);
-            if (el) {
-                new QRCode(el, {
-                    text: targetUrl,
-                    width: 150,
-                    height: 150,
-                    colorDark: '#000000',
-                    colorLight: '#FFFFFF',
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            }
-        }, 50 * index);
+        if (typeof window.renderDineflowQrPoster === 'function') {
+            window.renderDineflowQrPoster(cardBox, {
+                restaurantName: restName,
+                restaurantLogo: logoUrl,
+                tableNumber: rawNum,
+                qrDataUrl: targetUrl,
+                size: 'preview'
+            });
+        }
     });
 }
 

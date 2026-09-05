@@ -147,15 +147,30 @@ function renderTables() {
   }).join('');
 }
 
+let currentSelectedQrUrl = '';
+
 function showQrModal(tableNumber, qrCodeUrl, tableId = null) {
   currentSelectedTableId = tableId;
   currentSelectedTableNumber = tableNumber;
-  document.getElementById('qrModalTitle').textContent = `QR Code for Table ${tableNumber}`;
-  const imgEl = document.getElementById('qrModalImage');
-  if (imgEl) {
-    const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
-    imgEl.src = qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin + '/customer/menu?restaurantId=' + restaurantId + '&tableId=' + (tableId || tableNumber || '1'))}`;
+
+  const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+  const restName = restaurantBranding.name || localStorage.getItem('dineflow_restaurant_name') || 'DineFlow Restaurant';
+  const restLogo = restaurantBranding.logo || localStorage.getItem(`dineflow_restaurant_logo_${restaurantId}`) || localStorage.getItem('dineflow_restaurant_logo') || '';
+  
+  const qrUrl = qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin + '/customer/menu?restaurantId=' + restaurantId + '&tableId=' + (tableId || tableNumber || '1'))}`;
+  currentSelectedQrUrl = qrUrl;
+
+  const modalContainer = document.getElementById('qrModalPosterContainer');
+  if (modalContainer && typeof window.renderDineflowQrPoster === 'function') {
+    window.renderDineflowQrPoster(modalContainer, {
+      restaurantName: restName,
+      restaurantLogo: restLogo,
+      tableNumber: tableNumber,
+      qrUrl: qrUrl,
+      size: 'modal'
+    });
   }
+
   document.getElementById('qrModal').hidden = false;
 }
 
@@ -164,38 +179,27 @@ function closeQrModal() {
 }
 
 function printQrCode() {
-  const qrUrl = document.getElementById('qrModalImage').src;
-  const tableTitle = document.getElementById('qrModalTitle').textContent;
-  const tableNumber = tableTitle.replace('QR Code for Table ', '');
-
-  const printImage = document.getElementById('qrPrintImage');
-  if (printImage) printImage.src = qrUrl;
-  const printTableNum = document.getElementById('qrPrintTableNumber');
-  if (printTableNum) printTableNum.textContent = tableNumber;
-
-  // Apply dynamic restaurant branding
   const restaurantId = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
   const restName = restaurantBranding.name || localStorage.getItem('dineflow_restaurant_name') || 'DineFlow Restaurant';
   const restLogo = restaurantBranding.logo || localStorage.getItem(`dineflow_restaurant_logo_${restaurantId}`) || localStorage.getItem('dineflow_restaurant_logo') || '';
+  const tableNum = currentSelectedTableNumber || '1';
+  const qrUrl = currentSelectedQrUrl || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(window.location.origin + '/customer/menu?restaurantId=' + restaurantId + '&tableId=' + (currentSelectedTableId || tableNum || '1'))}`;
 
-  const nameEl = document.getElementById('qrPrintRestaurantName');
-  if (nameEl) nameEl.textContent = restName;
-
-  const logoEl = document.getElementById('qrPrintLogo');
-  const logoBox = document.getElementById('qrPrintLogoContainer');
-  if (logoEl) {
-    if (restLogo) {
-      logoEl.src = restLogo;
-      logoEl.style.display = 'block';
-      if (logoBox) logoBox.style.display = 'flex';
-    } else {
-      logoEl.src = '/images/dineflow_logo.jpg';
-      logoEl.style.display = 'block';
-      if (logoBox) logoBox.style.display = 'flex';
-    }
+  const printContainer = document.getElementById('qrPrintLayout');
+  if (printContainer && typeof window.renderDineflowQrPoster === 'function') {
+    window.renderDineflowQrPoster(printContainer, {
+      restaurantName: restName,
+      restaurantLogo: restLogo,
+      tableNumber: tableNum,
+      qrUrl: qrUrl,
+      size: 'print',
+      customClass: 'print-target'
+    });
   }
 
-  window.print();
+  setTimeout(() => {
+    window.print();
+  }, 100);
 }
 
 function openTableA4Poster() {
