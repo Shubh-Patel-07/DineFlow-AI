@@ -318,7 +318,9 @@ Route::middleware(['auth', 'tenant', 'role:admin,manager'])->group(function () u
 });
 
 Route::get('/menu', function () {
-    return redirect('/frontend/customer/menu.html?restaurantId=1&tableId=1');
+    $firstRest = \App\Models\Restaurant::where('subscription_status', 'active')->first() ?: \App\Models\Restaurant::first();
+    $restId = $firstRest ? $firstRest->id : 1;
+    return redirect("/frontend/customer/menu.html?restaurantId={$restId}&tableId=1&restaurant_id={$restId}&table_id=1");
 });
 
 Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
@@ -336,6 +338,12 @@ Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
         if ($table) {
             $restaurant = \App\Models\Restaurant::find($table->restaurant_id);
         }
+    }
+
+    // Resilient fallback: if restaurant not found by param, try the first active restaurant
+    if (!$restaurant) {
+        $restaurant = \App\Models\Restaurant::where('subscription_status', 'active')->first() 
+            ?: \App\Models\Restaurant::first();
     }
 
     if (!$restaurant) {
@@ -366,7 +374,7 @@ Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
         $validTableId = $firstTable ? $firstTable->id : '1';
     }
 
-    return redirect("/frontend/customer/menu.html?restaurantId={$restaurant->id}&tableId={$validTableId}");
+    return redirect("/frontend/customer/menu.html?restaurantId={$restaurant->id}&tableId={$validTableId}&restaurant_id={$restaurant->id}&table_id={$validTableId}");
 });
 
 // Public SaaS Landing, Pricing & Legal Pages

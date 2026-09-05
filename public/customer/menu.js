@@ -1,6 +1,6 @@
 const params = new URLSearchParams(window.location.search);
-const restaurantId = params.get('restaurantId') || '1';
-let tableId = params.get('tableId') || params.get('table') || '1';
+const restaurantId = params.get('restaurantId') || params.get('restaurant_id') || params.get('restaurant') || '1';
+let tableId = params.get('tableId') || params.get('table_id') || params.get('table') || '1';
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
 const translations = {

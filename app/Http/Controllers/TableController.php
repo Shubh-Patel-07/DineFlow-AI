@@ -36,8 +36,8 @@ class TableController extends Controller
             'status' => 'active',
         ]);
 
-        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
-        $qrData = $baseUrl . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id;
+        $baseUrl = $this->getPublicBaseUrl($request);
+        $qrData = $baseUrl . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id . "&restaurant_id=" . $restaurantId . "&table_id=" . $table->id;
         $table->qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrData);
         $table->save();
 
@@ -53,7 +53,7 @@ class TableController extends Controller
 
         $tables = Table::where('restaurant_id', $restaurantId)->get();
         
-        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $baseUrl = $this->getPublicBaseUrl(request());
         $restaurant = \App\Models\Restaurant::find($restaurantId);
         $restaurantName = $restaurant ? $restaurant->name : 'DineFlow Restaurant';
         $gstRate = $restaurant ? (float)$restaurant->gst_rate / 100 : 0.05;
@@ -61,7 +61,7 @@ class TableController extends Controller
 
         // Map tables to include dynamic occupancy status and live dynamic QR code URL
         $tables = $tables->map(function($table) use ($baseUrl, $restaurantId, $restaurantName, $gstRate, $serviceRate) {
-            $table->qr_data_url = $baseUrl . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id;
+            $table->qr_data_url = $baseUrl . "/customer/menu?restaurantId=" . $restaurantId . "&tableId=" . $table->id . "&restaurant_id=" . $restaurantId . "&table_id=" . $table->id;
             $table->restaurant_name = $restaurantName;
             $table->qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($table->qr_data_url);
 
@@ -136,12 +136,18 @@ class TableController extends Controller
     public function showA4QrPoster(Request $request, $tableId = null)
     {
         $user = auth()->user();
-        $restaurantId = $user ? ($user->restaurant_id ?? 1) : ($request->query('restaurant_id') ?? 1);
-        if ($user && $user->role === 'superadmin' && $request->query('restaurant_id')) {
-            $restaurantId = $request->query('restaurant_id');
+        $restaurantId = $user ? ($user->restaurant_id ?? null) : ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? null);
+        if ($user && $user->role === 'superadmin' && ($request->query('restaurant_id') ?? $request->query('restaurantId'))) {
+            $restaurantId = $request->query('restaurant_id') ?? $request->query('restaurantId');
         }
 
-        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        $restaurant = null;
+        if ($restaurantId) {
+            $restaurant = \App\Models\Restaurant::find($restaurantId);
+        }
+        if (!$restaurant) {
+            $restaurant = \App\Models\Restaurant::where('subscription_status', 'active')->first() ?: \App\Models\Restaurant::first();
+        }
         if (!$restaurant) {
             abort(404, 'Restaurant not found');
         }
@@ -164,7 +170,7 @@ class TableController extends Controller
         }
 
         $tables = Table::where('restaurant_id', $restaurant->id)->orderBy('id')->get();
-        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $baseUrl = $this->getPublicBaseUrl($request);
         $isBatch = false;
 
         return view('pos.qr_poster_a4', compact('restaurant', 'table', 'tables', 'isBatch', 'baseUrl'));
@@ -173,12 +179,18 @@ class TableController extends Controller
     public function showA4QrPosterBatch(Request $request)
     {
         $user = auth()->user();
-        $restaurantId = $user ? ($user->restaurant_id ?? 1) : ($request->query('restaurant_id') ?? 1);
-        if ($user && $user->role === 'superadmin' && $request->query('restaurant_id')) {
-            $restaurantId = $request->query('restaurant_id');
+        $restaurantId = $user ? ($user->restaurant_id ?? null) : ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? null);
+        if ($user && $user->role === 'superadmin' && ($request->query('restaurant_id') ?? $request->query('restaurantId'))) {
+            $restaurantId = $request->query('restaurant_id') ?? $request->query('restaurantId');
         }
 
-        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        $restaurant = null;
+        if ($restaurantId) {
+            $restaurant = \App\Models\Restaurant::find($restaurantId);
+        }
+        if (!$restaurant) {
+            $restaurant = \App\Models\Restaurant::where('subscription_status', 'active')->first() ?: \App\Models\Restaurant::first();
+        }
         if (!$restaurant) {
             abort(404, 'Restaurant not found');
         }
@@ -192,11 +204,36 @@ class TableController extends Controller
             $tables = collect([$defaultTable]);
         }
 
-        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $baseUrl = $this->getPublicBaseUrl($request);
         $isBatch = true;
         $table = $tables->first();
 
         return view('pos.qr_poster_a4', compact('restaurant', 'table', 'tables', 'isBatch', 'baseUrl'));
+    }
+
+    public function getPublicBaseUrl(?Request $request = null): string
+    {
+        $req = $request ?: request();
+
+        if ($req) {
+            $scheme = $req->header('x-forwarded-proto') ?: $req->getScheme();
+            $host = $req->header('x-forwarded-host') ?: $req->getHttpHost();
+
+            if (!empty($host) && !str_contains($host, 'localhost') && !str_contains($host, '127.0.0.1')) {
+                return rtrim($scheme . '://' . $host, '/');
+            }
+        }
+
+        $configuredUrl = rtrim(config('app.url') ?: '', '/');
+        if (!empty($configuredUrl) && !str_contains($configuredUrl, 'localhost') && !str_contains($configuredUrl, '127.0.0.1')) {
+            return $configuredUrl;
+        }
+
+        if ($req && method_exists($req, 'schemeAndHttpHost')) {
+            return rtrim($req->schemeAndHttpHost(), '/');
+        }
+
+        return rtrim(config('app.url') ?: url('/'), '/');
     }
 }
 

@@ -548,7 +548,7 @@
 
     @foreach($postersList as $t)
       @php
-        $targetTableUrl = $baseUrl . "/customer/menu?restaurantId={$restaurant->id}&tableId={$t->id}";
+        $targetTableUrl = $baseUrl . "/customer/menu?restaurantId={$restaurant->id}&tableId={$t->id}&restaurant_id={$restaurant->id}&table_id={$t->id}";
         $rawNum = $t->table_number ?: (string)$t->id;
         $tBadge = stripos($rawNum, 'table') !== false ? strtoupper($rawNum) : 'TABLE: ' . strtoupper($rawNum);
         $logoUrl = $restaurant->getEffectiveLogoUrl();
