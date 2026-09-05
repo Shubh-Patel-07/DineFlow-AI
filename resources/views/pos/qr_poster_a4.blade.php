@@ -110,7 +110,7 @@
       background: #FFFFFF;
       box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
       border-radius: 4px;
-      padding: 14mm 16mm;
+      padding: 10mm 12mm;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -119,13 +119,7 @@
       position: relative;
       page-break-inside: avoid;
       break-inside: avoid;
-      page-break-after: always;
-      break-after: page;
-    }
-
-    .poster-page:last-child {
-      page-break-after: avoid !important;
-      break-after: avoid !important;
+      overflow: hidden;
     }
 
     /* Internal Decorative Border Frame */
@@ -346,10 +340,10 @@
       color: #E1306C;
     }
 
-    /* --- PRINT OPTIMIZATION (EXACT A4 PORTRAIT) --- */
+    /* --- PRINT OPTIMIZATION (EXACT A4 PORTRAIT - STRICT 1-PAGE GUARANTEE) --- */
     @page {
       size: A4 portrait;
-      margin: 8mm;
+      margin: 0;
     }
 
     @media print {
@@ -357,8 +351,12 @@
         background: #FFFFFF !important;
         margin: 0 !important;
         padding: 0 !important;
-        min-height: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       .no-print, .screen-action-bar {
@@ -366,24 +364,53 @@
       }
 
       .a4-container {
+        display: block !important;
+        width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
         gap: 0 !important;
       }
 
       .poster-page {
         box-shadow: none !important;
         border-radius: 0 !important;
-        margin: 0 auto !important;
-        padding: 8mm !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 275mm !important;
-        max-height: 275mm !important;
+        margin: 0 !important;
+        padding: 8mm 12mm !important;
+        width: 210mm !important;
+        max-width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        min-height: 297mm !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        @if(!$isBatch)
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        @else
+        page-break-after: always !important;
+        break-after: page !important;
+        @endif
+      }
+
+      .poster-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
       }
 
       .poster-card {
         border-width: 2.5px !important;
         border-color: #0F172A !important;
-        border-radius: 24px !important;
+        border-radius: 26px !important;
+        padding: 20px 22px 18px !important;
+        height: 100% !important;
+        max-height: 100% !important;
       }
     }
 
@@ -518,8 +545,7 @@
             </div>
           </div>
 
-          <!-- 5. BOTTOM DIVIDER -->
-          <div class="divider-line"></div>
+
 
         </div>
       </div>

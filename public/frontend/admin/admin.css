@@ -415,169 +415,41 @@ body.light-theme .spinner-ring, html.light-theme .spinner-ring {
 }
 
 /* Print Layout styling */
-.qr-print-layout {
+.qr-print-layout,
+.dineflow-qr-print-container {
   display: none;
 }
 
 @media print {
   html, body {
-    background: white !important;
-    color: black !important;
-    height: 100%;
+    background: #FFFFFF !important;
+    color: #0F172A !important;
     margin: 0 !important;
     padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  body * {
-    display: none !important;
+  /* When printing QR poster layouts */
+  body:has(.dineflow-qr-print-container) * {
+    visibility: hidden;
   }
 
-  .qr-print-layout, .qr-print-layout * {
-    display: block !important;
+  .dineflow-qr-print-container,
+  .dineflow-qr-print-container * {
+    visibility: visible !important;
   }
 
-  .qr-print-layout {
-    position: absolute;
-    inset: 0;
+  .dineflow-qr-print-container {
+    position: fixed !important;
+    inset: 0 !important;
     display: flex !important;
-    align-items: center;
-    justify-content: center;
-    background: white;
-  }
-
-  .qr-print-card {
-    border: 1px solid #CBD5E1;
-    border-top: 10px solid #6366F1;
-    padding: 36px;
-    width: 360px;
-    text-align: center;
-    border-radius: 20px;
-    background: white;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .qr-print-header {
-    border-bottom: 1px solid #E2E8F0;
-    padding-bottom: 18px;
-    margin-bottom: 22px;
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .qr-print-header .logo-image {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    border: 1px solid #E2E8F0;
-    object-fit: cover;
-    display: block !important;
-  }
-
-  .qr-print-header h2 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 24px;
-    font-weight: 900;
-    margin: 0;
-    letter-spacing: 0.5px;
-    color: #1E293B;
-  }
-
-  .qr-print-header p {
-    font-size: 10px;
-    margin: 4px 0 0 0;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-weight: 700;
-    color: #64748B;
-  }
-
-  .qr-print-body {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .qr-print-code-wrapper {
-    border: 1px solid #E2E8F0;
-    padding: 12px;
-    border-radius: 14px;
-    display: inline-block !important;
-    background: white;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-  }
-
-  .qr-print-code-wrapper img {
-    width: 170px;
-    height: 170px;
-    display: block !important;
-  }
-
-  .table-badge-container {
-    background: #F1F5F9 !important;
-    border: 2px solid #6366F1;
-    border-radius: 12px;
-    padding: 6px 20px;
-    display: inline-flex !important;
-    flex-direction: column;
-    align-items: center;
-    margin: 10px 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .table-badge-label {
-    font-size: 9px;
-    font-weight: 800;
-    color: #4F46E5;
-    letter-spacing: 2px;
-    margin-bottom: 2px;
-    display: block !important;
-  }
-
-  .qr-print-body h1 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 34px;
-    font-weight: 900;
-    margin: 0;
-    letter-spacing: 0.5px;
-    color: #0F172A;
-  }
-
-  .qr-print-body .scan-instructions {
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.5;
-    margin: 15px 12px 0 12px;
-    color: #334155;
-  }
-
-  .qr-print-footer {
-    border-top: 1px dashed #CBD5E1;
-    margin-top: 22px;
-    padding-top: 15px;
-  }
-
-  .qr-print-footer .thank-you {
-    font-size: 11px;
-    font-style: italic;
-    color: #64748B;
-    margin: 0 0 5px 0;
-    font-weight: 600;
-    display: block !important;
-  }
-
-  .qr-print-footer .branding-footer {
-    font-size: 8px;
-    font-weight: 700;
-    color: #94A3B8;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 0;
-    display: block !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #FFFFFF !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
 
@@ -1433,5 +1305,13 @@ html.light-theme .btn-secondary {
   .main, .content {
     overflow-x: hidden;
   }
+}
+
+/* Global Light Theme Contrast Fix for Inline Dark Colors */
+body.light-theme [style*="color:#F8FAFC"],
+body.light-theme [style*="color: #F8FAFC"],
+html.light-theme [style*="color:#F8FAFC"],
+html.light-theme [style*="color: #F8FAFC"] {
+  color: #0F172A !important;
 }
 
