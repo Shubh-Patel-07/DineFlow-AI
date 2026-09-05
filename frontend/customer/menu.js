@@ -294,6 +294,12 @@ function normalizeItem(item) {
     isVeg = !String(item.type).toLowerCase().includes('non');
   }
 
+  let badgeText = item.badge || '';
+  if (isAvail && (badgeText.toLowerCase().includes('sold out') || badgeText.toLowerCase().includes('out of stock'))) {
+    badgeText = isPop ? 'Popular' : 'Special';
+  }
+  if (!badgeText) badgeText = cat;
+
   return {
     ...item,
     id: item.id || item._id,
@@ -302,7 +308,7 @@ function normalizeItem(item) {
     available: isAvail,
     isVeg: isVeg,
     rating: String(item.rating || '4.8'),
-    badge: item.badge || cat,
+    badge: badgeText,
     popular: isPop
   };
 }
@@ -1323,8 +1329,12 @@ async function loadMenu() {
       menuItems = apiRawItems.map(apiItem => {
         const match = staticFoodItems.find(s => s.name.toLowerCase() === apiItem.name.toLowerCase() || String(s.id) === String(apiItem.id));
         const merged = match ? { ...match, ...apiItem, image: apiItem.image || match.image } : { ...apiItem };
-        merged.is_available = apiItem.is_available !== undefined ? apiItem.is_available : (apiItem.available !== undefined ? apiItem.available : true);
-        merged.available = parseBoolean(merged.is_available, true);
+        const isApiAvail = parseBoolean(apiItem.is_available ?? apiItem.available, true);
+        merged.is_available = isApiAvail;
+        merged.available = isApiAvail;
+        if (isApiAvail && merged.badge && (merged.badge.toLowerCase().includes('sold') || merged.badge.toLowerCase().includes('stock'))) {
+          merged.badge = match?.badge && !match.badge.toLowerCase().includes('sold') && !match.badge.toLowerCase().includes('stock') ? match.badge : 'Special';
+        }
         return normalizeItem(merged);
       });
       renderCategories();
