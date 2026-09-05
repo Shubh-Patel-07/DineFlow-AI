@@ -7,8 +7,8 @@ set -e
 
 APP_DIR="/var/www/tendorabuy"
 
-# Detect installed PHP-FPM version dynamically (e.g. php8.3-fpm or php8.2-fpm)
-PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.3")
+# Detect installed PHP-FPM version dynamically (e.g. php8.5-fpm, php8.3-fpm, php8.2-fpm)
+PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.5")
 PHP_FPM_SERVICE="php${PHP_VER}-fpm"
 
 echo "=========================================================="
@@ -52,7 +52,7 @@ chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
 
 # 8. Reload PHP-FPM to flush opcache
 echo ">> Reloading PHP-FPM..."
-systemctl reload $PHP_FPM_SERVICE 2>/dev/null || systemctl restart $PHP_FPM_SERVICE 2>/dev/null || systemctl reload php8.3-fpm 2>/dev/null || systemctl reload php8.2-fpm 2>/dev/null || true
+systemctl reload $PHP_FPM_SERVICE 2>/dev/null || systemctl restart $PHP_FPM_SERVICE 2>/dev/null || systemctl reload php8.5-fpm 2>/dev/null || systemctl reload php8.3-fpm 2>/dev/null || systemctl reload php8.2-fpm 2>/dev/null || true
 
 # 9. Reload Nginx
 echo ">> Reloading Nginx..."
