@@ -338,6 +338,7 @@
 
   <!-- A4 Invoice Container -->
   <div class="invoice-card">
+    <div style="width: 48px; height: 4px; border-radius: 4px; background: linear-gradient(135deg, #4F46E5, #06B6D4); margin-bottom: 14px;"></div>
     
     <!-- Header -->
     <div class="header-grid">
