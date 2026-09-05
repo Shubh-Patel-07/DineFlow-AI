@@ -14,6 +14,7 @@ let menuItems = [];
 let category = 'All';
 let diet = 'all';
 let activeView = 'all';
+let activeFilters = new Set();
 let activeSuggestionIndex = -1;
 const FAVORITES_STORAGE_KEY = `dineflow-favorites-${restaurantId}`;
 const RECENT_STORAGE_KEY = `dineflow-recent-items-${restaurantId}`;
