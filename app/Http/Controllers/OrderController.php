@@ -275,16 +275,21 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
-            'name' => 'ULTIMATE DINEFLOW AI',
-            'address' => '456 Gourmet Boulevard, Patan',
-            'phone' => '+91 98765 43210'
-        ]);
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        if (!$restaurant) {
+            $restaurant = new \App\Models\Restaurant([
+                'name' => 'Restaurant #' . $order->restaurant_id,
+                'address' => 'Local Address',
+                'phone' => '+91 99999 00000',
+                'email' => 'contact@restaurant.com'
+            ]);
+        }
 
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+        $isDemo = (bool)($restaurant->is_demo || session('is_demo') || ($user && $user->restaurant && $user->restaurant->is_demo));
 
-        return view('pos.receipt', compact('order', 'restaurant', 'tableName'));
+        return view('pos.receipt', compact('order', 'restaurant', 'tableName', 'isDemo'));
     }
 
     public function showA4Invoice(Request $request, $id)
@@ -303,18 +308,22 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id) ?? new \App\Models\Restaurant([
-            'name' => 'DineFlow AI Restaurant Suite',
-            'address' => '456 Gourmet Boulevard, Commercial Hub, Patan, Gujarat - 384265',
-            'phone' => '+91 98765 43210',
-            'email' => 'billing@dineflow.ai',
-            'gstin' => '24ABCDE1234F1Z5'
-        ]);
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        if (!$restaurant) {
+            $restaurant = new \App\Models\Restaurant([
+                'name' => 'Restaurant #' . $order->restaurant_id,
+                'address' => 'Local Address',
+                'phone' => '+91 99999 00000',
+                'email' => 'contact@restaurant.com',
+                'gstin' => ''
+            ]);
+        }
 
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+        $isDemo = (bool)($restaurant->is_demo || session('is_demo') || ($user && $user->restaurant && $user->restaurant->is_demo));
 
-        return view('pos.invoice_a4', compact('order', 'restaurant', 'tableName'));
+        return view('pos.invoice_a4', compact('order', 'restaurant', 'tableName', 'isDemo'));
     }
 
     public function showKitchenKOT($id)

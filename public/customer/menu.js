@@ -1282,9 +1282,29 @@ async function loadMenu() {
     ]);
     if (restaurantResult.status === 'fulfilled' && restaurantResult.value) {
       const rData = restaurantResult.value;
-      const nameEl = $('#restaurantName'); if (nameEl && rData.name) nameEl.textContent = rData.name;
+      window.restaurant = rData;
+      const restName = rData.name || 'Restaurant';
+      const nameEl = $('#restaurantName'); if (nameEl) nameEl.textContent = restName;
+      const titleEl = $('#restaurantMainTitle'); if (titleEl) titleEl.textContent = restName;
+      document.title = `${restName} | Digital Menu`;
+
       const locEl = $('#restaurantLocation'); if (locEl && (rData.address || rData.location)) locEl.textContent = rData.address || rData.location;
-      const logoEl = $('#restaurantLogo'); if (logoEl && rData.logo) logoEl.src = resolveImagePath(rData.logo);
+      
+      const logoEl = $('#restaurantLogo');
+      const monogramEl = $('#restaurantMonogram');
+      if (rData.logo) {
+        if (logoEl) {
+          logoEl.src = resolveImagePath(rData.logo);
+          logoEl.style.display = 'block';
+        }
+        if (monogramEl) monogramEl.style.display = 'none';
+      } else {
+        if (logoEl) logoEl.style.display = 'none';
+        if (monogramEl) {
+          monogramEl.style.display = 'flex';
+          monogramEl.textContent = restName.charAt(0).toUpperCase() || 'R';
+        }
+      }
     }
     const restaurantTables = tablesResult.status === 'fulfilled' && Array.isArray(tablesResult.value) ? tablesResult.value : [];
     setTableOptions(restaurantTables);

@@ -12,6 +12,8 @@ class Restaurant extends Model
         'address',
         'phone',
         'logo',
+        'signature',
+        'signature_name',
         'gstin',
         'gst_rate',
         'service_charge',
@@ -165,5 +167,46 @@ class Restaurant extends Model
         }
 
         return "Your subscription has expired and is currently in the grace period. Please renew your plan before the grace period ends.";
+    }
+
+    public function getEffectiveLogoUrl(): ?string
+    {
+        if (!empty($this->logo)) {
+            return $this->logo;
+        }
+        if (!empty($this->settings['logo'])) {
+            return $this->settings['logo'];
+        }
+        return null;
+    }
+
+    public function getEffectiveSignature(): ?string
+    {
+        if (!empty($this->signature)) {
+            return $this->signature;
+        }
+        if (!empty($this->settings['signature'])) {
+            return $this->settings['signature'];
+        }
+        return null;
+    }
+
+    public function getEffectiveSignatureName(): ?string
+    {
+        if (!empty($this->signature_name)) {
+            return $this->signature_name;
+        }
+        if (!empty($this->settings['signature_name'])) {
+            return $this->settings['signature_name'];
+        }
+        return null;
+    }
+
+    public function isDemo(): bool
+    {
+        if (isset($this->is_demo)) {
+            return (bool) $this->is_demo;
+        }
+        return (int) $this->id === 1;
     }
 }

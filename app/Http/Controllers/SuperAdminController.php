@@ -242,7 +242,11 @@ class SuperAdminController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'restaurant' => $restaurant,
+                'restaurant' => array_merge($restaurant->toArray(), [
+                    'logo' => $restaurant->getEffectiveLogoUrl(),
+                    'signature' => $restaurant->getEffectiveSignature(),
+                    'signature_name' => $restaurant->getEffectiveSignatureName(),
+                ]),
                 'usage' => $usage,
                 'total_orders' => $totalOrders,
                 'total_revenue' => round($totalRevenue, 2),

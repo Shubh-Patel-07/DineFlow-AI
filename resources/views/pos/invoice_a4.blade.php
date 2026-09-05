@@ -270,12 +270,26 @@
     <!-- Header -->
     <div class="header-grid">
       <div class="brand-section">
-        <img src="/images/dineflow_logo.jpg" alt="Logo" class="brand-logo">
+        @php
+          $logoUrl = $restaurant->getEffectiveLogoUrl();
+        @endphp
+        @if(!empty($logoUrl))
+          <img src="{{ $logoUrl }}" alt="{{ $restaurant->name }} Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logoFallbackAvatar').style.display='flex';">
+          <div id="logoFallbackAvatar" class="brand-logo" style="display:none; align-items:center; justify-content:center; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; font-size:24px; font-weight:800; font-family:'Outfit',sans-serif;">
+            {{ strtoupper(substr($restaurant->name, 0, 1)) }}
+          </div>
+        @else
+          <div class="brand-logo" style="display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; font-size:24px; font-weight:800; font-family:'Outfit',sans-serif;">
+            {{ strtoupper(substr($restaurant->name, 0, 1)) }}
+          </div>
+        @endif
         <div class="brand-info">
           <h1>{{ $restaurant->name }}</h1>
           <p><i class="fa-solid fa-location-dot"></i> {{ $restaurant->address }}</p>
-          <p><i class="fa-solid fa-phone"></i> {{ $restaurant->phone }} &nbsp;•&nbsp; <i class="fa-solid fa-envelope"></i> {{ $restaurant->email }}</p>
+          <p><i class="fa-solid fa-phone"></i> {{ $restaurant->phone }} @if(!empty($restaurant->email)) &nbsp;•&nbsp; <i class="fa-solid fa-envelope"></i> {{ $restaurant->email }} @endif</p>
+          @if(!empty($restaurant->gstin))
           <p style="font-weight: 700; color: #334155; margin-top: 3px;">GSTIN: {{ $restaurant->gstin }}</p>
+          @endif
         </div>
       </div>
       <div class="invoice-title-badge">
@@ -290,7 +304,7 @@
       <div class="meta-box">
         <h4>Billed To (Customer)</h4>
         <p>Guest Customer</p>
-        <p style="font-size: 11px; color: #64748B;">Table: <strong>{{ $tableName }}</strong></p>
+        <p style="font-size: 11px; color: #64748B;">Table: <strong>{{ $tableName ?? ($order->table ? ($order->table->table_number ?? $order->table->id) : ('Table #' . ($order->table_id ?? '1'))) }}</strong></p>
       </div>
       <div class="meta-box" style="text-align: right;">
         <h4>Payment Status</h4>
@@ -380,13 +394,44 @@
           <p>DineFlow AI Digital Receipt</p>
         </div>
       </div>
-      <div class="sign-box" style="text-align: center; width: 160px;">
-        <div style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #1E293B; letter-spacing: 3px; margin-bottom: 4px;">
-          SMP
-        </div>
-        <div style="border-top: 1.5px solid #475569; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
-          Authorized Signatory (SMP)
-        </div>
+      <div class="sign-box" style="text-align: center; width: 180px;">
+        @if(!empty($isDemo))
+          {{-- DEMO MODE SIGNATURE: Preserves existing SMP demo signature --}}
+          <div style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #1E293B; letter-spacing: 3px; margin-bottom: 4px;">
+            SMP
+          </div>
+          <div style="border-top: 1.5px solid #475569; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
+            Authorized Signatory (SMP)
+          </div>
+        @else
+          {{-- REAL RESTAURANT SIGNATURE --}}
+          @php
+            $signImg = $restaurant->getEffectiveSignature();
+            $signName = $restaurant->getEffectiveSignatureName();
+          @endphp
+          @if(!empty($signImg))
+            <div style="height: 48px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+              <img src="{{ $signImg }}" alt="Authorized Signature" style="max-height: 44px; max-width: 160px; object-fit: contain;">
+            </div>
+            <div style="border-top: 1.5px solid #475569; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
+              Authorized Signatory @if(!empty($signName)) ({{ $signName }}) @endif
+            </div>
+          @elseif(!empty($signName))
+            <div style="font-family: 'Great Vibes', cursive; font-size: 26px; color: #1E293B; margin-bottom: 2px; line-height: 1.2;">
+              {{ $signName }}
+            </div>
+            <div style="border-top: 1.5px solid #475569; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
+              Authorized Signatory ({{ $signName }})
+            </div>
+          @else
+            <div style="height: 38px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; font-size: 13px; font-weight: 600; color: #475569;">
+              {{ $restaurant->name }}
+            </div>
+            <div style="border-top: 1.5px solid #475569; padding-top: 4px; font-size: 11px; font-weight: 700; color: #0F172A;">
+              Authorized Signatory
+            </div>
+          @endif
+        @endif
       </div>
     </div>
 
@@ -411,7 +456,7 @@
       const msg = `🍽️ *${@json($restaurant->name)}*\n` +
                   `*Official Tax Invoice #INV-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}*\n` +
                   `-----------------------------------------\n` +
-                  `📍 Table: ${@json($tableName)}\n` +
+                  `📍 Table: ${@json($tableName ?? ($order->table ? ($order->table->table_number ?? $order->table->id) : ('Table #' . ($order->table_id ?? '1'))))}\n` +
                   `💰 *Grand Total: ₹{{ number_format($grandTotal, 2) }}*\n` +
                   `-----------------------------------------\n` +
                   `📄 View Digital PDF Invoice: ${invoiceUrl}\n\n` +

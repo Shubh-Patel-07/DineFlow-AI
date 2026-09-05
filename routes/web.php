@@ -81,7 +81,15 @@ $serveAdminPage = function ($filename) {
     $content = preg_replace('/<meta\s+name=["\']csrf-token["\']\s+content=["\'][^"\']*["\']\s*\/?>/i', '<meta name="csrf-token" content="' . $csrfToken . '">', $content);
     $content = str_replace('<input type="hidden" name="_token" value="">', '<input type="hidden" name="_token" value="' . $csrfToken . '">', $content);
 
-    $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n  window.CSRF_TOKEN = " . json_encode($csrfToken) . ";\n</script>";
+    $dineflowConfig = [
+        'platformName' => config('dineflow.platform_name', 'DineFlow'),
+        'instagramHandle' => config('dineflow.instagram.handle', '@smp.officials'),
+        'instagramUrl' => config('dineflow.instagram.url', 'https://www.instagram.com/smp.officials/'),
+        'logo' => config('dineflow.logo', '/images/dineflow_logo.png'),
+        'smpPill' => config('dineflow.smp.pill_text', 'SMP'),
+    ];
+
+    $script = "<script>\n  window.AUTH_USER_ID = " . json_encode($userId) . ";\n  window.AUTH_USER_NAME = " . json_encode($userName) . ";\n  window.AUTH_USER_ROLE = " . json_encode($userRole) . ";\n  window.AUTH_USER_RESTAURANT_ID = " . json_encode($userRestaurantId) . ";\n  window.CSRF_TOKEN = " . json_encode($csrfToken) . ";\n  window.DINEFLOW_CONFIG = " . json_encode($dineflowConfig) . ";\n</script>";
     $content = str_replace('<head>', "<head>\n  {$script}", $content);
     return response($content)->header('Content-Type', 'text/html; charset=UTF-8');
 };
@@ -180,7 +188,8 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
             return redirect()->route('onboarding.index');
         }
         $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
-        return view('pos.index', compact('todayOrdersCount', 'restaurantId'));
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        return view('pos.index', compact('todayOrdersCount', 'restaurantId', 'restaurant'));
     })->name('pos.index')->middleware('role:admin,manager,cashier,waiter');
 
     Route::get('/kitchen', function () {
@@ -192,7 +201,8 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
         if (!$restaurantId) {
             return redirect()->route('onboarding.index');
         }
-        return view('pos.kitchen', compact('restaurantId'));
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        return view('pos.kitchen', compact('restaurantId', 'restaurant'));
     })->name('pos.kitchen')->middleware('role:admin,manager,kitchen,chef');
     Route::get('/orders/{id}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt')->middleware('role:admin,manager,cashier,waiter');
     Route::get('/orders/{id}/invoice-a4', [OrderController::class, 'showA4Invoice'])->name('orders.invoice.a4')->middleware('role:admin,manager,cashier,waiter');
@@ -282,6 +292,10 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
 
         Route::get('/frontend/admin/qr-generator.html', fn() => $serveAdminPage('qr-generator.html'))->middleware('role:admin,manager');
         Route::get('/admin/qr-generator', fn() => $serveAdminPage('qr-generator.html'))->middleware('role:admin,manager');
+        Route::get('/admin/qr-poster/{tableId?}', [\App\Http\Controllers\TableController::class, 'showA4QrPoster'])->name('admin.qr-poster')->middleware('role:admin,manager');
+        Route::get('/admin/qr-poster-batch', [\App\Http\Controllers\TableController::class, 'showA4QrPosterBatch'])->name('admin.qr-poster-batch')->middleware('role:admin,manager');
+        Route::get('/admin/qr-print/{tableId?}', [\App\Http\Controllers\TableController::class, 'showA4QrPoster'])->middleware('role:admin,manager');
+        Route::get('/admin/qr-print-all', [\App\Http\Controllers\TableController::class, 'showA4QrPosterBatch'])->middleware('role:admin,manager');
 
         Route::get('/frontend/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
         Route::get('/admin/sales-report.html', fn() => $serveAdminPage('sales-report.html'))->middleware('role:admin,manager');
@@ -311,24 +325,48 @@ Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
     $tableParam = $request->query('tableId') ?? $request->query('table_id') ?? $request->query('table');
     $restaurantParam = $request->query('restaurantId') ?? $request->query('restaurant_id') ?? $request->query('restaurant');
 
+    $restaurant = null;
+    if ($restaurantParam) {
+        $restaurant = \App\Models\Restaurant::find($restaurantParam);
+    }
+
     $table = null;
-    if ($tableParam) {
+    if ($tableParam && !$restaurant) {
         $table = \App\Models\Table::find($tableParam);
+        if ($table) {
+            $restaurant = \App\Models\Restaurant::find($table->restaurant_id);
+        }
     }
 
-    if ($table && !$restaurantParam) {
-        $restaurantId = $table->restaurant_id;
-        $tableId = $table->id;
+    if (!$restaurant) {
+        return response('<!DOCTYPE html><html><head><title>Restaurant Not Found</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#0F172A;color:#F8FAFC;text-align:center;padding:20px;}h1{font-size:24px;margin-bottom:8px;color:#F87171;}p{color:#94A3B8;font-size:14px;}</style></head><body><div><h1>🍽️ Restaurant Not Found</h1><p>The requested restaurant dining menu does not exist or has been removed.</p></div></body></html>', 404)->header('Content-Type', 'text/html');
+    }
+
+    if (!$restaurant->isOperational()) {
+        return response('<!DOCTYPE html><html><head><title>Restaurant Temporarily Closed</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#0F172A;color:#F8FAFC;text-align:center;padding:20px;}h1{font-size:24px;margin-bottom:8px;color:#FBBF24;}p{color:#94A3B8;font-size:14px;}</style></head><body><div><h1>🔒 Restaurant Temporarily Closed</h1><p>This dining venue is currently not accepting digital orders. Please check back shortly.</p></div></body></html>', 403)->header('Content-Type', 'text/html');
+    }
+
+    // Validate table strictly belongs to this restaurant
+    $validTableId = '1';
+    if ($tableParam) {
+        $matchedTable = \App\Models\Table::where('restaurant_id', $restaurant->id)
+            ->where(function($q) use ($tableParam) {
+                $q->where('id', $tableParam)->orWhere('table_number', $tableParam);
+            })->first();
+
+        if ($matchedTable) {
+            $validTableId = $matchedTable->id;
+        } else {
+            // If cross-tenant table spoofing or invalid table, fallback to restaurant's first valid table
+            $firstTable = \App\Models\Table::where('restaurant_id', $restaurant->id)->first();
+            $validTableId = $firstTable ? $firstTable->id : '1';
+        }
     } else {
-        $restaurantId = $restaurantParam ?: ($table ? $table->restaurant_id : '1');
-        $tableId = $table ? $table->id : ($tableParam ?: '1');
+        $firstTable = \App\Models\Table::where('restaurant_id', $restaurant->id)->first();
+        $validTableId = $firstTable ? $firstTable->id : '1';
     }
 
-    $restaurant = \App\Models\Restaurant::find($restaurantId);
-    if ($restaurant && !$restaurant->isOperational()) {
-        return response('<h2>This restaurant is temporarily closed.</h2><p>Please check back later.</p>', 403)->header('Content-Type', 'text/html');
-    }
-    return redirect("/frontend/customer/menu.html?restaurantId={$restaurantId}&tableId={$tableId}");
+    return redirect("/frontend/customer/menu.html?restaurantId={$restaurant->id}&tableId={$validTableId}");
 });
 
 // Public SaaS Landing, Pricing & Legal Pages
@@ -392,6 +430,22 @@ Route::prefix('api')->group(function () {
             'status' => 'online',
             'timestamp' => now()->toIso8601String(),
             'version' => '2.4.0',
+        ]);
+    });
+
+    Route::get('/platform/config', function () {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'platform_name' => config('dineflow.platform_name', 'DineFlow'),
+                'platform_tagline' => config('dineflow.platform_tagline', 'Restaurant Suite v2.0'),
+                'logo' => config('dineflow.logo', '/images/dineflow_logo.png'),
+                'logo_alt' => config('dineflow.logo_alt', '/images/dineflow_logo.jpg'),
+                'instagram_handle' => config('dineflow.instagram.handle', '@smp.officials'),
+                'instagram_url' => config('dineflow.instagram.url', 'https://www.instagram.com/smp.officials/'),
+                'smp_pill' => config('dineflow.smp.pill_text', 'SMP'),
+                'smp_asset_found' => config('dineflow.smp.asset') !== null,
+            ]
         ]);
     });
 

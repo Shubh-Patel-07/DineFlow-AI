@@ -2121,3 +2121,104 @@ body.light-theme #tableReservationModal label,
 body.light-theme #customerReviewModal label {
   color: #475569 !important;
 }
+
+/* === BRAND HEADER MONOGRAM & DYNAMIC BRANDING === */
+.hero-brand-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-brand-monogram {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+  color: #FFFFFF;
+  font-family: var(--font-accent, 'Outfit', sans-serif);
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  border: 2px solid rgba(99, 102, 241, 0.5);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.restaurant-primary-name {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text-main, #F8FAFC);
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+/* === CUSTOMER MENU FOOTER BRANDING === */
+.customer-menu-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px 84px 16px;
+  margin-top: 28px;
+  border-top: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+  color: var(--text-muted, #94A3B8);
+  font-size: 11.5px;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.customer-menu-footer .powered-by-line {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.customer-menu-footer .powered-by-line strong {
+  font-weight: 700;
+  color: var(--text-main, #F8FAFC);
+}
+
+.customer-menu-footer .footer-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.customer-menu-footer .smp-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px;
+  font-weight: 900;
+  color: #818CF8;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.customer-menu-footer .dineflow-footer-logo {
+  height: 15px;
+  max-width: 80px;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+body.light-theme .customer-menu-footer {
+  border-top-color: #E2E8F0 !important;
+  color: #64748B !important;
+}
+
+body.light-theme .customer-menu-footer .powered-by-line strong {
+  color: #0F172A !important;
+}
+
+body.light-theme .customer-menu-footer .smp-badge {
+  color: #4F46E5 !important;
+  background: #EEF2FF !important;
+  border-color: #C7D2FE !important;
+}

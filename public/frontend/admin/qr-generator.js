@@ -1,290 +1,376 @@
-// QR Code Generator JavaScript
+/**
+ * DineFlow AI — Table QR Code Generator Engine v2.1.0
+ */
 
-let qrInstance = null;
-let generatedQRCodes = [];
-let currentQRData = null;
+let restaurantTables = [];
+let activeQRInstance = null;
+let customQRInstance = null;
+let currentTable = null;
+let restaurantInfo = {
+    name: 'DineFlow AI Restaurant',
+    logo: ''
+};
 
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    initializeMockData();
-    loadGeneratedQRCodes();
-    renderQRHistory();
+const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
+
+document.addEventListener('DOMContentLoaded', async function() {
+    await initQRGenerator();
 });
 
-// Initialize mock data
-function initializeMockData() {
-    if (!localStorage.getItem('generatedQRCodes')) {
-        const mockQRCodes = [
-            {
-                id: 1,
-                content: 'https://dineflow.com/menu',
-                label: 'Main Menu',
-                type: 'url',
-                createdAt: new Date().toISOString()
-            }
-        ];
-        localStorage.setItem('generatedQRCodes', JSON.stringify(mockQRCodes));
-    }
-}
-
-// Update QR form based on type selection
-function updateQRForm() {
-    const type = document.getElementById('qrType').value;
-    const formSections = document.querySelectorAll('.qr-form-section');
-    formSections.forEach(section => section.style.display = 'none');
-
-    switch(type) {
-        case 'url':
-            document.getElementById('urlForm').style.display = 'block';
-            break;
-        case 'text':
-            document.getElementById('textForm').style.display = 'block';
-            break;
-        case 'vcard':
-            document.getElementById('vcardForm').style.display = 'block';
-            break;
-        case 'wifi':
-            document.getElementById('wifiForm').style.display = 'block';
-            break;
-        case 'order':
-            document.getElementById('orderForm').style.display = 'block';
-            break;
-    }
-}
-
-// Generate QR Code
-function generateQR() {
+async function initQRGenerator() {
+    // 1. Fetch Restaurant details from API
     try {
-        const type = document.getElementById('qrType').value;
-        let qrContent = '';
-        let qrLabel = '';
-        let qrType = type;
-
-        switch(type) {
-            case 'url':
-                qrContent = document.getElementById('qrUrl').value;
-                qrLabel = document.getElementById('qrLabel').value || 'Menu Link';
-                if (!qrContent) {
-                    alert('Please enter a URL');
-                    return;
-                }
-                break;
-
-            case 'text':
-                qrContent = document.getElementById('qrText').value;
-                qrLabel = document.getElementById('qrTextLabel').value || 'Text QR';
-                if (!qrContent) {
-                    alert('Please enter text');
-                    return;
-                }
-                break;
-
-            case 'vcard':
-                const name = document.getElementById('vcardName').value;
-                const phone = document.getElementById('vcardPhone').value;
-                const email = document.getElementById('vcardEmail').value;
-                const org = document.getElementById('vcardOrg').value;
-
-                if (!name) {
-                    alert('Please enter a name');
-                    return;
-                }
-
-                qrContent = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${org}\nEND:VCARD`;
-                qrLabel = name;
-                break;
-
-            case 'wifi':
-                const ssid = document.getElementById('wifiSSID').value;
-                const password = document.getElementById('wifiPassword').value;
-                const security = document.getElementById('wifiSecurity').value;
-
-                if (!ssid) {
-                    alert('Please enter SSID');
-                    return;
-                }
-
-                qrContent = `WIFI:T:${security};S:${ssid};P:${password};;`;
-                qrLabel = ssid;
-                break;
-
-            case 'order':
-                const orderId = document.getElementById('orderId').value;
-                qrLabel = document.getElementById('orderLabel').value || orderId;
-
-                if (!orderId) {
-                    alert('Please enter Order ID');
-                    return;
-                }
-
-                qrContent = `ORDER:${orderId}`;
-                break;
+        const response = await fetch(`/api/restaurants/${RESTAURANT_ID}/settings`);
+        const result = await response.json();
+        if (result.success && result.data) {
+            restaurantInfo.name = result.data.name || restaurantInfo.name;
+            restaurantInfo.logo = result.data.logo || '';
+            localStorage.setItem('dineflow_restaurant_name', restaurantInfo.name);
+            if (restaurantInfo.logo) {
+                localStorage.setItem('dineflow_restaurant_logo', restaurantInfo.logo);
+            }
         }
+    } catch (e) {
+        console.warn('Could not fetch restaurant settings, using local cache:', e);
+    }
 
-        // Clear previous QR
-        document.getElementById('qrcode').innerHTML = '';
-        qrInstance = null;
+    const savedName = localStorage.getItem('dineflow_restaurant_name') || restaurantInfo.name || 'DineFlow AI Restaurant';
+    const nameInput = document.getElementById('restaurantDisplayName');
+    if (nameInput) nameInput.value = savedName;
 
-        // Generate new QR
-        qrInstance = new QRCode(document.getElementById('qrcode'), {
-            text: qrContent,
-            width: 250,
-            height: 250,
+    if (window.DINEFLOW_CONFIG && window.DINEFLOW_CONFIG.instagramHandle) {
+        const handleEl = document.getElementById('previewInstaHandle');
+        if (handleEl) handleEl.textContent = window.DINEFLOW_CONFIG.instagramHandle;
+    }
+
+    updateBrandVisuals();
+
+    // 2. Fetch Restaurant's actual tables
+    await loadRestaurantTables();
+}
+
+function updateBrandVisuals() {
+    const nameInput = document.getElementById('restaurantDisplayName');
+    const previewName = document.getElementById('previewRestName');
+    const text = (nameInput?.value.trim()) || restaurantInfo.name || 'DineFlow AI Restaurant';
+    if (previewName) previewName.textContent = text;
+
+    const logoImg = document.getElementById('previewRestLogo');
+    const monogram = document.getElementById('previewRestMonogram');
+    const logoUrl = restaurantInfo.logo || localStorage.getItem('dineflow_restaurant_logo');
+
+    if (logoUrl && logoImg) {
+        logoImg.src = logoUrl;
+        logoImg.style.display = 'block';
+        if (monogram) monogram.style.display = 'none';
+    } else {
+        if (logoImg) logoImg.style.display = 'none';
+        if (monogram) {
+            monogram.style.display = 'flex';
+            monogram.textContent = text.charAt(0).toUpperCase() || 'R';
+        }
+    }
+}
+
+async function loadRestaurantTables() {
+    const selector = document.getElementById('tableSelector');
+    if (!selector) return;
+
+    selector.innerHTML = '<option value="">-- Loading Restaurant Tables... --</option>';
+
+    try {
+        const response = await fetch(`/api/tables/restaurant/${RESTAURANT_ID}`);
+        const result = await response.json();
+
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+            restaurantTables = result.data;
+            selector.innerHTML = '';
+
+            restaurantTables.forEach((table) => {
+                const opt = document.createElement('option');
+                opt.value = table.id;
+                opt.textContent = `🍽️ ${table.table_number || 'Table ' + table.id} (${table.status || 'Active'})`;
+                selector.appendChild(opt);
+            });
+
+            // Select first table by default
+            selector.selectedIndex = 0;
+            onTableSelected();
+        } else {
+            // Fallback for restaurants that haven't created tables yet
+            selector.innerHTML = '<option value="1">🍽️ Table 1 (Default)</option>';
+            restaurantTables = [{ id: 1, table_number: 'Table 1', status: 'available' }];
+            onTableSelected();
+        }
+    } catch (err) {
+        console.warn('Could not load tables from API, using fallback:', err);
+        selector.innerHTML = '<option value="1">🍽️ Table 1 (Fallback)</option>';
+        restaurantTables = [{ id: 1, table_number: 'Table 1', status: 'available' }];
+        onTableSelected();
+    }
+}
+
+function onTableSelected() {
+    const selector = document.getElementById('tableSelector');
+    if (!selector) return;
+
+    const selectedId = selector.value;
+    currentTable = restaurantTables.find(t => String(t.id) === String(selectedId)) || { id: selectedId, table_number: `Table ${selectedId}` };
+
+    const origin = window.location.origin;
+    const targetUrl = `${origin}/customer/menu?restaurantId=${RESTAURANT_ID}&tableId=${currentTable.id}`;
+
+    // Update form input & test link
+    const urlInput = document.getElementById('targetQrUrl');
+    if (urlInput) urlInput.value = targetUrl;
+
+    const testLink = document.getElementById('testScanLink');
+    if (testLink) testLink.href = targetUrl;
+
+    // Update preview table badge (e.g. Table: T-01 or Table: 1)
+    const badge = document.getElementById('previewTableBadge');
+    const rawNum = currentTable.table_number || String(currentTable.id);
+    const tableLabel = rawNum.toLowerCase().startsWith('table') ? rawNum : `Table: ${rawNum}`;
+    if (badge) badge.textContent = tableLabel.toUpperCase();
+
+    // Render QR Code
+    renderQRCode(targetUrl);
+}
+
+function updateQRPreview() {
+    const nameInput = document.getElementById('restaurantDisplayName');
+    if (nameInput) {
+        const text = nameInput.value.trim() || 'DineFlow AI Restaurant';
+        restaurantInfo.name = text;
+        localStorage.setItem('dineflow_restaurant_name', text);
+        updateBrandVisuals();
+    }
+}
+
+function renderQRCode(url) {
+    const qrContainer = document.getElementById('qrcode');
+    if (!qrContainer) return;
+
+    qrContainer.innerHTML = '';
+    activeQRInstance = null;
+
+    try {
+        activeQRInstance = new QRCode(qrContainer, {
+            text: url,
+            width: 190,
+            height: 190,
             colorDark: '#000000',
-            colorLight: '#ffffff',
+            colorLight: '#FFFFFF',
             correctLevel: QRCode.CorrectLevel.H
         });
-
-        currentQRData = {
-            content: qrContent,
-            label: qrLabel,
-            type: qrType,
-            createdAt: new Date().toISOString()
-        };
-
-        // Show info
-        document.getElementById('qrInfoText').textContent = `Type: ${type.toUpperCase()} | Label: ${qrLabel}`;
-        document.getElementById('qrInfo').classList.add('show');
-
-        // Show download button
-        document.getElementById('downloadBtn').style.display = 'flex';
-
-        // Show success message
-        const successMsg = document.getElementById('successMessage');
-        successMsg.classList.add('show');
-        setTimeout(() => successMsg.classList.remove('show'), 3000);
-
-        console.log('QR Code generated successfully');
-
-    } catch (error) {
-        console.error('Error generating QR code:', error);
-        alert('Error generating QR code. Please try again.');
+    } catch (e) {
+        console.error('QRCode rendering error:', e);
     }
 }
 
-// Download QR Code
-function downloadQR() {
-    if (!qrInstance) {
-        alert('Please generate a QR code first');
-        return;
+function regenerateActiveQR() {
+    onTableSelected();
+    if (typeof Toast !== 'undefined' && Toast.success) {
+        Toast.success('QR code regenerated successfully!');
     }
+}
 
-    try {
-        const canvas = document.querySelector('#qrcode canvas');
+function downloadQRCodePNG() {
+    const qrContainer = document.getElementById('qrcode');
+    if (!qrContainer) return;
+
+    const canvas = qrContainer.querySelector('canvas');
+    const img = qrContainer.querySelector('img');
+
+    const tableNum = currentTable ? (currentTable.table_number || currentTable.id).replace(/[^a-zA-Z0-9_-]/g, '_') : 'Table_QR';
+    const filename = `${tableNum}_QR_DineFlow.png`;
+
+    if (canvas) {
+        const dataUrl = canvas.toDataURL('image/png');
         const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = `qrcode-${currentQRData.label}-${Date.now()}.png`;
+        link.download = filename;
+        link.href = dataUrl;
         link.click();
-
-        // Save to history
-        saveQRCodeToHistory(currentQRData);
-        console.log('QR Code downloaded successfully');
-
-    } catch (error) {
-        console.error('Error downloading QR code:', error);
-        alert('Error downloading QR code');
+    } else if (img && img.src) {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = img.src;
+        link.click();
+    } else {
+        alert('QR code is still rendering. Please try again.');
     }
 }
 
-// Save QR Code to history
-function saveQRCodeToHistory(qrData) {
-    generatedQRCodes.push({
-        id: generatedQRCodes.length + 1,
-        ...qrData
-    });
-
-    localStorage.setItem('generatedQRCodes', JSON.stringify(generatedQRCodes));
-    renderQRHistory();
+function printSingleTableCard() {
+    const tableId = currentTable ? currentTable.id : '1';
+    window.open(`/admin/qr-poster/${tableId}`, '_blank');
 }
 
-// Load generated QR codes from localStorage
-function loadGeneratedQRCodes() {
-    try {
-        generatedQRCodes = JSON.parse(localStorage.getItem('generatedQRCodes')) || [];
-    } catch (error) {
-        console.error('Error loading QR codes:', error);
+function switchQRTab(tab) {
+    const secSingle = document.getElementById('sectionSingleQR');
+    const secBatch = document.getElementById('sectionBatchQR');
+    const secCustom = document.getElementById('sectionCustomQR');
+
+    const btnSingle = document.getElementById('tabSingleBtn');
+    const btnBatch = document.getElementById('tabBatchBtn');
+    const btnCustom = document.getElementById('tabCustomBtn');
+
+    [btnSingle, btnBatch, btnCustom].forEach(b => b?.classList.remove('active'));
+    if (secSingle) secSingle.style.display = 'none';
+    if (secBatch) secBatch.style.display = 'none';
+    if (secCustom) secCustom.style.display = 'none';
+
+    if (tab === 'single') {
+        if (secSingle) secSingle.style.display = 'block';
+        btnSingle?.classList.add('active');
+    } else if (tab === 'batch') {
+        if (secBatch) secBatch.style.display = 'block';
+        btnBatch?.classList.add('active');
+        renderBatchTableCards();
+    } else if (tab === 'custom') {
+        if (secCustom) secCustom.style.display = 'block';
+        btnCustom?.classList.add('active');
+        generateCustomQR();
     }
 }
 
-// Render QR history
-function renderQRHistory(filter = 'all') {
-    const container = document.getElementById('qrGridContainer');
+function renderBatchTableCards() {
+    const container = document.getElementById('batchCardsContainer');
+    if (!container) return;
 
-    const filteredCodes = filter === 'all' 
-        ? generatedQRCodes 
-        : generatedQRCodes.filter(qr => qr.type === filter);
-
-    if (filteredCodes.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <p>No QR codes found</p>
-            </div>
-        `;
+    if (!restaurantTables || restaurantTables.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">No tables found for this restaurant.</p>';
         return;
     }
 
-    container.innerHTML = '<div class="qr-grid">' + filteredCodes.map(qr => `
-        <div class="qr-item">
-            <div id="qr-${qr.id}"></div>
-            <div class="qr-item-name">${qr.label}</div>
-            <div class="qr-actions">
-                <button class="btn-small btn-download" onclick="regenerateQR(${qr.id})">
-                    <i class="fas fa-download"></i>
-                </button>
-                <button class="btn-small btn-delete" onclick="deleteQRCode(${qr.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('') + '</div>';
+    container.innerHTML = '';
+    const origin = window.location.origin;
+    const restName = document.getElementById('restaurantDisplayName')?.value.trim() || restaurantInfo.name || 'Restaurant';
+    const logoUrl = restaurantInfo.logo || localStorage.getItem('dineflow_restaurant_logo');
+    const initialChar = escapeHtml(restName.charAt(0).toUpperCase() || 'R');
 
-    // Generate QR codes for history items
-    filteredCodes.forEach(qr => {
-        try {
-            new QRCode(document.getElementById(`qr-${qr.id}`), {
-                text: qr.content,
-                width: 120,
-                height: 120,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        } catch (error) {
-            console.error(`Error generating QR ${qr.id}:`, error);
-        }
+    restaurantTables.forEach((table, index) => {
+        const targetUrl = `${origin}/customer/menu?restaurantId=${RESTAURANT_ID}&tableId=${table.id}`;
+        const rawNum = table.table_number || String(table.id);
+        const tableLabel = rawNum.toLowerCase().startsWith('table') ? rawNum : `Table: ${rawNum}`;
+
+        const brandVisualHtml = logoUrl
+            ? `<img src="${logoUrl}" style="max-height:36px; max-width:100px; object-fit:contain;" alt="Logo" onerror="this.style.display='none'">`
+            : `<div style="width:36px; height:36px; border-radius:8px; background:#0F172A; color:#fff; font-size:18px; font-weight:900; display:flex; align-items:center; justify-content:center; font-family:'Outfit',sans-serif;">${initialChar}</div>`;
+
+        const card = document.createElement('div');
+        card.className = 'batch-card';
+        card.style.border = '2px solid #0F172A';
+        card.style.borderRadius = '18px';
+        card.style.padding = '18px 16px 12px 16px';
+        card.style.gap = '8px';
+        card.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:100%;">
+                ${brandVisualHtml}
+                <div style="font-family:'Outfit',sans-serif; font-size:15px; font-weight:900; color:#0F172A; text-transform:uppercase; letter-spacing:0.3px;">${escapeHtml(restName)}</div>
+            </div>
+            <div style="font-size:11px; color:#475569; font-weight:600;">Scan to View Menu &amp; Order</div>
+            <div id="batchQr_${table.id}" style="width:160px; height:160px; display:flex; align-items:center; justify-content:center; padding:4px; border:1px solid #E2E8F0; border-radius:10px; margin:2px 0;"></div>
+            <div style="background:#0F172A; color:#fff; font-family:'Outfit',sans-serif; font-size:14px; font-weight:800; padding:4px 18px; border-radius:16px;">${escapeHtml(tableLabel.toUpperCase())}</div>
+            <div style="width:100%; height:1px; background:#E2E8F0; margin:6px 0 2px 0;"></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:0 2px;">
+                <span style="font-size:9px; font-weight:600; color:#64748B;">Powered by DineFlow</span>
+                <div style="display:flex; align-items:center; gap:4px;">
+                    <span class="smp-badge" style="font-size:8.5px; font-weight:900; color:#4F46E5; background:#EEF2FF; border:1px solid #C7D2FE; padding:0 4px; border-radius:3px;">SMP</span>
+                    <img src="/images/dineflow_logo.png" style="height:12px; object-fit:contain;" alt="DineFlow" onerror="this.src='/images/dineflow_logo.jpg'">
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:center; width:100%; margin-top:2px;">
+                <a href="https://www.instagram.com/smp.officials/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:4px; text-decoration:none; color:#0F172A; font-size:10px; font-weight:700;">
+                    <i class="fa-brands fa-instagram" style="color:#E1306C; font-size:11px;"></i>
+                    <span>@smp.officials</span>
+                </a>
+            </div>
+            <div style="width:100%; height:1px; background:#E2E8F0; margin:4px 0 2px 0;"></div>
+        `;
+        container.appendChild(card);
+
+        // Generate QR code for this specific card
+        setTimeout(() => {
+            const el = document.getElementById(`batchQr_${table.id}`);
+            if (el) {
+                new QRCode(el, {
+                    text: targetUrl,
+                    width: 150,
+                    height: 150,
+                    colorDark: '#000000',
+                    colorLight: '#FFFFFF',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+        }, 50 * index);
     });
 }
 
-// Filter QR codes
-function filterQRCodes(filter, event) {
-    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-    if (event) event.target.classList.add('active');
-    renderQRHistory(filter);
+function printAllTableCards() {
+    window.open('/admin/qr-poster-batch', '_blank');
 }
 
-// Regenerate and download QR
-function regenerateQR(id) {
-    const qr = generatedQRCodes.find(q => q.id === id);
-    if (qr) {
-        const qrElement = document.querySelector(`#qr-${id}`);
-        const canvas = qrElement.querySelector('canvas');
-        if (canvas) {
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = `qrcode-${qr.label}-${Date.now()}.png`;
-            link.click();
-            console.log('QR Code downloaded:', qr.label);
+function generateCustomQR() {
+    const input = document.getElementById('customQrInput')?.value.trim() || window.location.origin;
+    const label = document.getElementById('customQrLabel')?.value.trim() || 'Promo QR';
+
+    const lbl = document.getElementById('customPreviewLabel');
+    if (lbl) lbl.textContent = label;
+
+    const qrEl = document.getElementById('customQrcode');
+    if (!qrEl) return;
+
+    qrEl.innerHTML = '';
+    customQRInstance = new QRCode(qrEl, {
+        text: input,
+        width: 170,
+        height: 170,
+        colorDark: '#000000',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+function downloadCustomQRPNG() {
+    const qrEl = document.getElementById('customQrcode');
+    if (!qrEl) return;
+
+    const canvas = qrEl.querySelector('canvas');
+    const img = qrEl.querySelector('img');
+    const label = (document.getElementById('customQrLabel')?.value.trim() || 'Custom_QR').replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    if (canvas) {
+        const link = document.createElement('a');
+        link.download = `${label}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } else if (img && img.src) {
+        const link = document.createElement('a');
+        link.download = `${label}.png`;
+        link.href = img.src;
+        link.click();
+    }
+}
+
+function copyMenuUrlToClipboard() {
+    const url = document.getElementById('targetQrUrl')?.value;
+    if (!url) return;
+
+    navigator.clipboard.writeText(url).then(() => {
+        if (typeof Toast !== 'undefined' && Toast.success) {
+            Toast.success('Menu URL copied to clipboard!');
+        } else {
+            alert('✅ Menu URL copied to clipboard:\n' + url);
         }
-    }
+    }).catch(err => {
+        prompt('Copy menu URL manually:', url);
+    });
 }
 
-// Delete QR code
-function deleteQRCode(id) {
-    if (confirm('Are you sure you want to delete this QR code?')) {
-        generatedQRCodes = generatedQRCodes.filter(qr => qr.id !== id);
-        localStorage.setItem('generatedQRCodes', JSON.stringify(generatedQRCodes));
-        renderQRHistory();
-        console.log('QR Code deleted successfully');
-    }
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    });
 }

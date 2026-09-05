@@ -296,9 +296,18 @@
         <div class="paper-exit-viewport">
             <div class="thermal-receipt-paper" id="paperRollCard">
                 <div class="header">
-                    <h2>ULTIMATE DINEFLOW AI</h2>
+                    @php
+                        $logoUrl = $restaurant->getEffectiveLogoUrl();
+                    @endphp
+                    @if(!empty($logoUrl))
+                        <img src="{{ $logoUrl }}" alt="{{ $restaurant->name }}" style="max-height: 40px; max-width: 140px; object-fit: contain; margin-bottom: 6px;" onerror="this.style.display='none'">
+                    @endif
+                    <h2>{{ $restaurant->name }}</h2>
                     <p>{{ $restaurant->address }}</p>
                     <p>Ph: {{ $restaurant->phone }}</p>
+                    @if(!empty($restaurant->gstin))
+                    <p style="font-weight: bold; font-size: 10.5px;">GSTIN: {{ $restaurant->gstin }}</p>
+                    @endif
                 </div>
 
                 <div class="divider"></div>
@@ -310,7 +319,7 @@
                     </tr>
                     <tr>
                         <td><strong>Table:</strong></td>
-                        <td class="text-right">{{ $tableName }}</td>
+                        <td class="text-right">{{ $tableName ?? ($order->table ? ($order->table->table_number ?? $order->table->id) : ('Table #' . ($order->table_id ?? '1'))) }}</td>
                     </tr>
                     <tr>
                         <td><strong>Date:</strong></td>
@@ -382,6 +391,28 @@
                 </table>
 
                 <div class="divider"></div>
+
+                <!-- Signature Section -->
+                <div style="text-align: right; padding: 6px 0; margin-bottom: 4px;">
+                    @if(!empty($isDemo))
+                        <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px;">SMP</div>
+                        <div style="font-size: 8.5px; font-weight: bold; border-top: 1px dashed #000; display: inline-block; padding-top: 2px; margin-top: 2px;">Authorized Signatory (SMP)</div>
+                    @else
+                        @php
+                            $signImg = $restaurant->getEffectiveSignature();
+                            $signName = $restaurant->getEffectiveSignatureName();
+                        @endphp
+                        @if(!empty($signImg))
+                            <div style="margin-bottom: 2px;"><img src="{{ $signImg }}" alt="Signature" style="max-height: 26px; max-width: 110px; object-fit: contain;"></div>
+                            <div style="font-size: 8.5px; font-weight: bold; border-top: 1px dashed #000; display: inline-block; padding-top: 2px;">Authorized Signatory @if(!empty($signName)) ({{ $signName }}) @endif</div>
+                        @elseif(!empty($signName))
+                            <div style="font-family: 'Great Vibes', cursive, sans-serif; font-size: 15px; margin-bottom: 2px;">{{ $signName }}</div>
+                            <div style="font-size: 8.5px; font-weight: bold; border-top: 1px dashed #000; display: inline-block; padding-top: 2px;">Authorized Signatory ({{ $signName }})</div>
+                        @else
+                            <div style="font-size: 8.5px; font-weight: bold; border-top: 1px dashed #000; display: inline-block; padding-top: 2px; margin-top: 12px;">Authorized Signatory</div>
+                        @endif
+                    @endif
+                </div>
 
                 <div class="barcode">
                     <p>*DINEFLOW-{{ $order->id }}*</p>

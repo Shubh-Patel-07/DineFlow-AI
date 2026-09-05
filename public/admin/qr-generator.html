@@ -109,15 +109,15 @@
     /* Interactive QR Preview Card */
     .qr-standee-preview {
       background: #FFFFFF;
-      border-radius: 18px;
-      padding: 24px 20px;
+      border-radius: 20px;
+      padding: 24px 20px 18px 20px;
       color: #0F172A;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       border: 2px solid #E2E8F0;
       max-width: 320px;
@@ -125,24 +125,54 @@
       width: 100%;
     }
 
-    .qr-standee-logo {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 900;
-      font-size: 18px;
-      color: #4F46E5;
-      letter-spacing: -0.3px;
+    .qr-standee-brand-header {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 6px;
+      width: 100%;
+    }
+
+    .qr-standee-logo-container {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-standee-monogram {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4F46E5, #3730A3);
+      color: #FFFFFF;
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
     }
 
     .qr-standee-rest-name {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      color: #64748B;
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: #0F172A;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .qr-standee-instruction-headline {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      letter-spacing: 0.2px;
     }
 
     #qrcode {
@@ -151,9 +181,10 @@
       align-items: center;
       background: #FFFFFF;
       border-radius: 12px;
-      padding: 10px;
-      width: 200px;
-      height: 200px;
+      padding: 8px;
+      width: 190px;
+      height: 190px;
+      border: 1px solid #E2E8F0;
     }
     #qrcode canvas, #qrcode img {
       max-width: 100% !important;
@@ -163,24 +194,84 @@
     }
 
     .qr-standee-table-badge {
-      background: #4F46E5;
+      background: #0F172A;
       color: #FFFFFF;
       font-family: 'Outfit', sans-serif;
-      font-size: 16px;
-      font-weight: 900;
-      padding: 4px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 5px 22px;
       border-radius: 20px;
       letter-spacing: 0.5px;
-      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
     }
 
-    .qr-standee-instructions {
-      font-size: 11.5px;
-      color: #475569;
+    .qr-standee-divider {
+      width: 100%;
+      height: 1px;
+      background: #E2E8F0;
+      margin: 6px 0 2px 0;
+    }
+
+    .qr-standee-powered-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 4px;
+    }
+
+    .powered-by-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
       font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.3px;
+    }
+
+    .powered-by-badges {
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .smp-pill {
+      font-size: 9px;
+      font-weight: 900;
+      color: #4F46E5;
+      background: #EEF2FF;
+      border: 1px solid #C7D2FE;
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .dineflow-tiny-logo {
+      height: 14px;
+      object-fit: contain;
+      opacity: 0.85;
+    }
+
+    .qr-standee-instagram-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 3px;
+    }
+
+    .instagram-preview-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      color: #0F172A;
+      font-size: 11px;
+      font-weight: 700;
+      transition: opacity 0.2s;
+    }
+    .instagram-preview-link:hover {
+      opacity: 0.8;
     }
 
     /* Tab Switcher */
@@ -429,7 +520,7 @@
                   </button>
 
                   <button type="button" onclick="printSingleTableCard()" class="btn-primary" style="flex:1; min-width:140px; padding:11px; border-radius:10px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#fff; font-weight:700; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-                    <i class="fa-solid fa-print"></i> Print Table Stand
+                    <i class="fa-solid fa-print"></i> Print A4 Poster
                   </button>
                 </div>
 
@@ -450,21 +541,39 @@
               
               <div id="printArea" style="width:100%; display:flex; justify-content:center; padding:10px 0;">
                 <div class="qr-standee-preview" id="singleStandeeCard">
-                  <div class="qr-standee-logo">
-                    <i class="fa-solid fa-utensils"></i>
-                    <span>Tendorabuy</span>
+                  <div class="qr-standee-brand-header">
+                    <div id="previewRestLogoWrapper" class="qr-standee-logo-container">
+                      <img id="previewRestLogo" src="" alt="Restaurant Logo" style="display:none; max-height: 48px; max-width: 140px; object-fit: contain;">
+                      <div id="previewRestMonogram" class="qr-standee-monogram">R</div>
+                    </div>
+                    <div class="qr-standee-rest-name" id="previewRestName">DineFlow AI Restaurant</div>
                   </div>
-                  <div class="qr-standee-rest-name" id="previewRestName">DineFlow AI Restaurant</div>
+
+                  <div class="qr-standee-instruction-headline">Scan to View Menu &amp; Order</div>
                   
                   <!-- QR Code Canvas / Img Container -->
                   <div id="qrcode"></div>
 
-                  <div class="qr-standee-table-badge" id="previewTableBadge">TABLE 1</div>
+                  <div class="qr-standee-table-badge" id="previewTableBadge">Table: T-01</div>
                   
-                  <div class="qr-standee-instructions">
-                    <i class="fa-solid fa-camera" style="color:#4F46E5;"></i>
-                    <span>Scan with camera to order</span>
+                  <div class="qr-standee-divider"></div>
+
+                  <div class="qr-standee-powered-footer">
+                    <span class="powered-by-text">Powered by DineFlow</span>
+                    <div class="powered-by-badges">
+                      <span class="smp-pill">SMP</span>
+                      <img src="/images/dineflow_logo.png" alt="DineFlow" class="dineflow-tiny-logo" onerror="this.src='/images/dineflow_logo.jpg'">
+                    </div>
                   </div>
+
+                  <div class="qr-standee-instagram-footer">
+                    <a href="https://www.instagram.com/smp.officials/" target="_blank" rel="noopener noreferrer" class="instagram-preview-link">
+                      <i class="fa-brands fa-instagram" style="color:#E1306C; font-size:12px;"></i>
+                      <span id="previewInstaHandle">@smp.officials</span>
+                    </a>
+                  </div>
+
+                  <div class="qr-standee-divider"></div>
                 </div>
               </div>
             </div>

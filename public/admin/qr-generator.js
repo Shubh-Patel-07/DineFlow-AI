@@ -6,6 +6,10 @@ let restaurantTables = [];
 let activeQRInstance = null;
 let customQRInstance = null;
 let currentTable = null;
+let restaurantInfo = {
+    name: 'DineFlow AI Restaurant',
+    logo: ''
+};
 
 const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
 
@@ -14,15 +18,58 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 async function initQRGenerator() {
-    // 1. Set default restaurant name from local storage or fallback
-    const savedName = localStorage.getItem('dineflow_restaurant_name') || 'DineFlow AI Restaurant';
+    // 1. Fetch Restaurant details from API
+    try {
+        const response = await fetch(`/api/restaurants/${RESTAURANT_ID}/settings`);
+        const result = await response.json();
+        if (result.success && result.data) {
+            restaurantInfo.name = result.data.name || restaurantInfo.name;
+            restaurantInfo.logo = result.data.logo || '';
+            localStorage.setItem('dineflow_restaurant_name', restaurantInfo.name);
+            if (restaurantInfo.logo) {
+                localStorage.setItem('dineflow_restaurant_logo', restaurantInfo.logo);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not fetch restaurant settings, using local cache:', e);
+    }
+
+    const savedName = localStorage.getItem('dineflow_restaurant_name') || restaurantInfo.name || 'DineFlow AI Restaurant';
     const nameInput = document.getElementById('restaurantDisplayName');
     if (nameInput) nameInput.value = savedName;
-    const previewName = document.getElementById('previewRestName');
-    if (previewName) previewName.textContent = savedName;
+
+    if (window.DINEFLOW_CONFIG && window.DINEFLOW_CONFIG.instagramHandle) {
+        const handleEl = document.getElementById('previewInstaHandle');
+        if (handleEl) handleEl.textContent = window.DINEFLOW_CONFIG.instagramHandle;
+    }
+
+    updateBrandVisuals();
 
     // 2. Fetch Restaurant's actual tables
     await loadRestaurantTables();
+}
+
+function updateBrandVisuals() {
+    const nameInput = document.getElementById('restaurantDisplayName');
+    const previewName = document.getElementById('previewRestName');
+    const text = (nameInput?.value.trim()) || restaurantInfo.name || 'DineFlow AI Restaurant';
+    if (previewName) previewName.textContent = text;
+
+    const logoImg = document.getElementById('previewRestLogo');
+    const monogram = document.getElementById('previewRestMonogram');
+    const logoUrl = restaurantInfo.logo || localStorage.getItem('dineflow_restaurant_logo');
+
+    if (logoUrl && logoImg) {
+        logoImg.src = logoUrl;
+        logoImg.style.display = 'block';
+        if (monogram) monogram.style.display = 'none';
+    } else {
+        if (logoImg) logoImg.style.display = 'none';
+        if (monogram) {
+            monogram.style.display = 'flex';
+            monogram.textContent = text.charAt(0).toUpperCase() || 'R';
+        }
+    }
 }
 
 async function loadRestaurantTables() {
@@ -39,7 +86,7 @@ async function loadRestaurantTables() {
             restaurantTables = result.data;
             selector.innerHTML = '';
 
-            restaurantTables.forEach((table, idx) => {
+            restaurantTables.forEach((table) => {
                 const opt = document.createElement('option');
                 opt.value = table.id;
                 opt.textContent = `🍽️ ${table.table_number || 'Table ' + table.id} (${table.status || 'Active'})`;
@@ -80,9 +127,11 @@ function onTableSelected() {
     const testLink = document.getElementById('testScanLink');
     if (testLink) testLink.href = targetUrl;
 
-    // Update preview table badge
+    // Update preview table badge (e.g. Table: T-01 or Table: 1)
     const badge = document.getElementById('previewTableBadge');
-    if (badge) badge.textContent = (currentTable.table_number || `TABLE ${currentTable.id}`).toUpperCase();
+    const rawNum = currentTable.table_number || String(currentTable.id);
+    const tableLabel = rawNum.toLowerCase().startsWith('table') ? rawNum : `Table: ${rawNum}`;
+    if (badge) badge.textContent = tableLabel.toUpperCase();
 
     // Render QR Code
     renderQRCode(targetUrl);
@@ -90,11 +139,11 @@ function onTableSelected() {
 
 function updateQRPreview() {
     const nameInput = document.getElementById('restaurantDisplayName');
-    const previewName = document.getElementById('previewRestName');
-    if (nameInput && previewName) {
+    if (nameInput) {
         const text = nameInput.value.trim() || 'DineFlow AI Restaurant';
-        previewName.textContent = text;
+        restaurantInfo.name = text;
         localStorage.setItem('dineflow_restaurant_name', text);
+        updateBrandVisuals();
     }
 }
 
@@ -108,8 +157,8 @@ function renderQRCode(url) {
     try {
         activeQRInstance = new QRCode(qrContainer, {
             text: url,
-            width: 200,
-            height: 200,
+            width: 190,
+            height: 190,
             colorDark: '#000000',
             colorLight: '#FFFFFF',
             correctLevel: QRCode.CorrectLevel.H
@@ -153,108 +202,8 @@ function downloadQRCodePNG() {
 }
 
 function printSingleTableCard() {
-    const restName = document.getElementById('previewRestName')?.textContent || 'Restaurant';
-    const tableBadge = document.getElementById('previewTableBadge')?.textContent || 'TABLE';
-    const qrContainer = document.getElementById('qrcode');
-    const canvas = qrContainer?.querySelector('canvas');
-    const img = qrContainer?.querySelector('img');
-    const qrSrc = canvas ? canvas.toDataURL('image/png') : (img ? img.src : '');
-
-    if (!qrSrc) {
-        alert('QR Code is not ready for printing.');
-        return;
-    }
-
-    const printWin = window.open('', '_blank', 'width=450,height=600');
-    if (!printWin) {
-        alert('Please allow popups to print table stand card.');
-        return;
-    }
-
-    printWin.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Print QR — ${tableBadge}</title>
-            <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
-            <style>
-                @page { size: portrait; margin: 10mm; }
-                body {
-                    font-family: 'Inter', sans-serif;
-                    background: #fff;
-                    color: #0F172A;
-                    margin: 0;
-                    padding: 20px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    min-height: 90vh;
-                }
-                .standee-box {
-                    width: 320px;
-                    border: 3px solid #0F172A;
-                    border-radius: 24px;
-                    padding: 30px 24px;
-                    text-align: center;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 14px;
-                }
-                .brand-title {
-                    font-family: 'Outfit', sans-serif;
-                    font-size: 22px;
-                    font-weight: 900;
-                    color: #4338CA;
-                    letter-spacing: -0.5px;
-                }
-                .rest-name {
-                    font-size: 13px;
-                    font-weight: 700;
-                    color: #64748B;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                }
-                .qr-img {
-                    width: 210px;
-                    height: 210px;
-                    margin: 4px auto;
-                }
-                .table-pill {
-                    background: #4338CA;
-                    color: #FFFFFF;
-                    font-family: 'Outfit', sans-serif;
-                    font-size: 20px;
-                    font-weight: 900;
-                    padding: 6px 28px;
-                    border-radius: 30px;
-                    letter-spacing: 0.5px;
-                }
-                .subtext {
-                    font-size: 12px;
-                    color: #475569;
-                    font-weight: 600;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="standee-box">
-                <div class="brand-title">🍽️ Tendorabuy</div>
-                <div class="rest-name">${escapeHtml(restName)}</div>
-                <img src="${qrSrc}" class="qr-img" alt="QR Code">
-                <div class="table-pill">${escapeHtml(tableBadge)}</div>
-                <div class="subtext">Scan with Phone Camera to View Menu &amp; Order</div>
-            </div>
-            <script>
-                window.onload = function() {
-                    window.print();
-                    setTimeout(() => window.close(), 1000);
-                };
-            <\/script>
-        </body>
-        </html>
-    `);
-    printWin.document.close();
+    const tableId = currentTable ? currentTable.id : '1';
+    window.open(`/admin/qr-poster/${tableId}`, '_blank');
 }
 
 function switchQRTab(tab) {
@@ -296,20 +245,48 @@ function renderBatchTableCards() {
 
     container.innerHTML = '';
     const origin = window.location.origin;
-    const restName = document.getElementById('restaurantDisplayName')?.value.trim() || 'DineFlow Restaurant';
+    const restName = document.getElementById('restaurantDisplayName')?.value.trim() || restaurantInfo.name || 'Restaurant';
+    const logoUrl = restaurantInfo.logo || localStorage.getItem('dineflow_restaurant_logo');
+    const initialChar = escapeHtml(restName.charAt(0).toUpperCase() || 'R');
 
     restaurantTables.forEach((table, index) => {
         const targetUrl = `${origin}/customer/menu?restaurantId=${RESTAURANT_ID}&tableId=${table.id}`;
-        const tableLabel = (table.table_number || `TABLE ${table.id}`).toUpperCase();
+        const rawNum = table.table_number || String(table.id);
+        const tableLabel = rawNum.toLowerCase().startsWith('table') ? rawNum : `Table: ${rawNum}`;
+
+        const brandVisualHtml = logoUrl
+            ? `<img src="${logoUrl}" style="max-height:36px; max-width:100px; object-fit:contain;" alt="Logo" onerror="this.style.display='none'">`
+            : `<div style="width:36px; height:36px; border-radius:8px; background:#0F172A; color:#fff; font-size:18px; font-weight:900; display:flex; align-items:center; justify-content:center; font-family:'Outfit',sans-serif;">${initialChar}</div>`;
 
         const card = document.createElement('div');
         card.className = 'batch-card';
+        card.style.border = '2px solid #0F172A';
+        card.style.borderRadius = '18px';
+        card.style.padding = '18px 16px 12px 16px';
+        card.style.gap = '8px';
         card.innerHTML = `
-            <div style="font-family:'Outfit',sans-serif; font-size:15px; font-weight:900; color:#4338CA;">🍽️ Tendorabuy</div>
-            <div style="font-size:11px; font-weight:700; color:#64748B; text-transform:uppercase;">${escapeHtml(restName)}</div>
-            <div id="batchQr_${table.id}" style="width:160px; height:160px; display:flex; align-items:center; justify-content:center; margin:4px 0;"></div>
-            <div style="background:#4338CA; color:#fff; font-family:'Outfit',sans-serif; font-size:14px; font-weight:800; padding:3px 18px; border-radius:20px;">${escapeHtml(tableLabel)}</div>
-            <div style="font-size:10.5px; color:#475569; font-weight:600;">Scan with Phone Camera to Order</div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:100%;">
+                ${brandVisualHtml}
+                <div style="font-family:'Outfit',sans-serif; font-size:15px; font-weight:900; color:#0F172A; text-transform:uppercase; letter-spacing:0.3px;">${escapeHtml(restName)}</div>
+            </div>
+            <div style="font-size:11px; color:#475569; font-weight:600;">Scan to View Menu &amp; Order</div>
+            <div id="batchQr_${table.id}" style="width:160px; height:160px; display:flex; align-items:center; justify-content:center; padding:4px; border:1px solid #E2E8F0; border-radius:10px; margin:2px 0;"></div>
+            <div style="background:#0F172A; color:#fff; font-family:'Outfit',sans-serif; font-size:14px; font-weight:800; padding:4px 18px; border-radius:16px;">${escapeHtml(tableLabel.toUpperCase())}</div>
+            <div style="width:100%; height:1px; background:#E2E8F0; margin:6px 0 2px 0;"></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:0 2px;">
+                <span style="font-size:9px; font-weight:600; color:#64748B;">Powered by DineFlow</span>
+                <div style="display:flex; align-items:center; gap:4px;">
+                    <span class="smp-badge" style="font-size:8.5px; font-weight:900; color:#4F46E5; background:#EEF2FF; border:1px solid #C7D2FE; padding:0 4px; border-radius:3px;">SMP</span>
+                    <img src="/images/dineflow_logo.png" style="height:12px; object-fit:contain;" alt="DineFlow" onerror="this.src='/images/dineflow_logo.jpg'">
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:center; width:100%; margin-top:2px;">
+                <a href="https://www.instagram.com/smp.officials/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:4px; text-decoration:none; color:#0F172A; font-size:10px; font-weight:700;">
+                    <i class="fa-brands fa-instagram" style="color:#E1306C; font-size:11px;"></i>
+                    <span>@smp.officials</span>
+                </a>
+            </div>
+            <div style="width:100%; height:1px; background:#E2E8F0; margin:4px 0 2px 0;"></div>
         `;
         container.appendChild(card);
 
@@ -331,11 +308,11 @@ function renderBatchTableCards() {
 }
 
 function printAllTableCards() {
-    window.print();
+    window.open('/admin/qr-poster-batch', '_blank');
 }
 
 function generateCustomQR() {
-    const input = document.getElementById('customQrInput')?.value.trim() || 'https://tendorabuy.in';
+    const input = document.getElementById('customQrInput')?.value.trim() || window.location.origin;
     const label = document.getElementById('customQrLabel')?.value.trim() || 'Promo QR';
 
     const lbl = document.getElementById('customPreviewLabel');

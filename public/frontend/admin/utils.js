@@ -827,8 +827,13 @@ window.savePromoStrategySettings = function() {
 
 window.saveProfileAndTaxSettings = function() {
   const rName = (document.getElementById('settingRestaurantName')?.value || '').trim();
+  const rAddress = (document.getElementById('settingRestaurantAddress')?.value || '').trim();
+  const rPhone = (document.getElementById('settingRestaurantPhone')?.value || '').trim();
+  const logo = (document.getElementById('settingLogoUrl')?.value || '').trim();
+  const signature = (document.getElementById('settingSignatureUrl')?.value || '').trim();
+  const signatureName = (document.getElementById('settingSignatureName')?.value || '').trim();
   const gstin = (document.getElementById('settingGstin')?.value || '').trim();
-  const gstRate = (document.getElementById('settingGstRate')?.value || '18').trim();
+  const gstRate = (document.getElementById('settingGstRate')?.value || '5').trim();
   const svcCharge = (document.getElementById('settingServiceCharge')?.value || '5').trim();
 
   if (rName) localStorage.setItem('dineflow_restaurant_name', rName);
@@ -841,6 +846,11 @@ window.saveProfileAndTaxSettings = function() {
 
   const payload = {
     name: rName || undefined,
+    address: rAddress || undefined,
+    phone: rPhone || undefined,
+    logo: logo !== '' ? logo : null,
+    signature: signature !== '' ? signature : null,
+    signature_name: signatureName !== '' ? signatureName : null,
     gstin: gstin || undefined,
     gst_rate: parseFloat(gstRate) || 5.0,
     service_charge: parseFloat(svcCharge) || 5.0,

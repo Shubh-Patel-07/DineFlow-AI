@@ -132,4 +132,71 @@ class TableController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Table deleted successfully']);
     }
+
+    public function showA4QrPoster(Request $request, $tableId = null)
+    {
+        $user = auth()->user();
+        $restaurantId = $user ? ($user->restaurant_id ?? 1) : ($request->query('restaurant_id') ?? 1);
+        if ($user && $user->role === 'superadmin' && $request->query('restaurant_id')) {
+            $restaurantId = $request->query('restaurant_id');
+        }
+
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        if (!$restaurant) {
+            abort(404, 'Restaurant not found');
+        }
+
+        $table = null;
+        if ($tableId) {
+            $table = Table::where('restaurant_id', $restaurant->id)
+                ->where(function($q) use ($tableId) {
+                    $q->where('id', $tableId)->orWhere('table_number', $tableId);
+                })->first();
+        }
+        if (!$table) {
+            $table = Table::where('restaurant_id', $restaurant->id)->first();
+        }
+        if (!$table) {
+            $table = Table::firstOrCreate(
+                ['restaurant_id' => $restaurant->id, 'table_number' => 'T-01'],
+                ['status' => 'available']
+            );
+        }
+
+        $tables = Table::where('restaurant_id', $restaurant->id)->orderBy('id')->get();
+        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $isBatch = false;
+
+        return view('pos.qr_poster_a4', compact('restaurant', 'table', 'tables', 'isBatch', 'baseUrl'));
+    }
+
+    public function showA4QrPosterBatch(Request $request)
+    {
+        $user = auth()->user();
+        $restaurantId = $user ? ($user->restaurant_id ?? 1) : ($request->query('restaurant_id') ?? 1);
+        if ($user && $user->role === 'superadmin' && $request->query('restaurant_id')) {
+            $restaurantId = $request->query('restaurant_id');
+        }
+
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+        if (!$restaurant) {
+            abort(404, 'Restaurant not found');
+        }
+
+        $tables = Table::where('restaurant_id', $restaurant->id)->orderBy('id')->get();
+        if ($tables->isEmpty()) {
+            $defaultTable = Table::firstOrCreate(
+                ['restaurant_id' => $restaurant->id, 'table_number' => 'T-01'],
+                ['status' => 'available']
+            );
+            $tables = collect([$defaultTable]);
+        }
+
+        $baseUrl = rtrim(config('app.url') ?: url('/'), '/');
+        $isBatch = true;
+        $table = $tables->first();
+
+        return view('pos.qr_poster_a4', compact('restaurant', 'table', 'tables', 'isBatch', 'baseUrl'));
+    }
 }
+

@@ -1626,14 +1626,23 @@
 <!-- ══════════════════════════════════════════════
      SIDEBAR
 ══════════════════════════════════════════════ -->
+@php
+  $posRest = $restaurant ?? (auth()->user() ? auth()->user()->restaurant : null) ?? \App\Models\Restaurant::find($restaurantId ?? 1);
+  $posRestName = $posRest ? $posRest->name : 'DineFlow AI POS';
+  $posRestLogo = $posRest ? $posRest->getEffectiveLogoUrl() : null;
+@endphp
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
     <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
-      <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+      @if($posRestLogo)
+        <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 100%; height: 100%; object-fit: contain; background: #fff; padding: 2px; border-radius: 6px;">
+      @else
+        <div style="width: 100%; height: 100%; border-radius: 6px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; font-family: 'Outfit', sans-serif;">{{ substr($posRestName, 0, 1) }}</div>
+      @endif
     </div>
     <div class="brand-text">
-      <h2>DineFlow AI POS</h2>
-      <span>Restaurant Suite v2.0</span>
+      <h2 style="font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="{{ $posRestName }}">{{ $posRestName }}</h2>
+      <span style="font-size: 10.5px; opacity: 0.7;">POS Terminal &bull; DineFlow</span>
     </div>
     <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
       <i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i>
@@ -1677,10 +1686,10 @@
 
   <div class="sidebar-footer">
     <div class="user-card">
-      <div class="user-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
+      <div class="user-avatar">{{ substr(auth()->user()?->name ?? 'Admin', 0, 1) }}</div>
       <div class="user-info">
-        <h4>{{ auth()->user()->name }}</h4>
-        <p style="text-transform:capitalize;">{{ auth()->user()->role ?? 'User' }}</p>
+        <h4>{{ auth()->user()?->name ?? 'Administrator' }}</h4>
+        <p style="text-transform:capitalize;">{{ auth()->user()?->role ?? 'User' }}</p>
       </div>
       <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:auto;">
         @csrf
@@ -1708,8 +1717,12 @@
     <div class="topbar-title-group">
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover;">
-          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
+          @if($posRestLogo)
+            <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 28px; height: 28px; border-radius: 6px; object-fit: contain; background: #fff; padding: 2px;">
+          @else
+            <div style="width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; font-family: 'Outfit', sans-serif;">{{ substr($posRestName, 0, 1) }}</div>
+          @endif
+          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">{{ $posRestName }}</div>
         </div>
         <div id="liveClockBadge">--:--:-- --</div>
         <div id="localWeatherBadge"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>

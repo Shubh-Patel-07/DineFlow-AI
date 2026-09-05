@@ -330,21 +330,75 @@
         <!-- Grid Container -->
         <div class="settings-main-grid">
           
-          <!-- 1. Restaurant Profile & Tax -->
-          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:var(--shadow-sm);">
+          <!-- 1. Restaurant Profile, Branding & Signature -->
+          <div class="settings-card" style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:16px; box-shadow:var(--shadow-sm);">
             <div style="display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
               <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(99,102,241,0.2), rgba(79,70,229,0.1)); color:#6366F1; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
                 <i class="fa-solid fa-store"></i>
               </div>
               <div>
-                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Restaurant Profile & Tax</h3>
-                <span style="font-size:11.5px; color:var(--text-muted);">Business name, GSTIN & service charge</span>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:17px; font-weight:800; margin:0; color:var(--text-primary);">Restaurant Profile, Branding & Signature</h3>
+                <span style="font-size:11.5px; color:var(--text-muted);">Logo, bill signature, legal identity & tax</span>
               </div>
             </div>
 
             <div class="form-group">
-              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Restaurant Legal Name</label>
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Restaurant Name (Display & Bills)</label>
               <input type="text" id="settingRestaurantName" class="form-input" value="DineFlow AI Gourmet Restaurant" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:600;">
+            </div>
+
+            <div style="display:flex; gap:14px; flex-wrap:wrap;">
+              <div class="form-group" style="flex:1; min-width:140px;">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Address (Printed on Bills)</label>
+                <input type="text" id="settingRestaurantAddress" class="form-input" placeholder="e.g. Near City Center, Station Road" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px;">
+              </div>
+              <div class="form-group" style="flex:1; min-width:120px;">
+                <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Phone (Printed on Bills)</label>
+                <input type="text" id="settingRestaurantPhone" class="form-input" placeholder="+91 9876543210" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13px;">
+              </div>
+            </div>
+
+            <!-- Logo Upload -->
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Restaurant Brand Logo</span>
+                <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">PNG, JPG, WebP &bull; Max 2MB</span>
+              </label>
+              <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                <div id="logoPreviewBox" style="width:64px; height:64px; border-radius:12px; border:1px dashed var(--border); background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                  <img id="settingLogoPreview" src="" alt="Logo" style="display:none; width:100%; height:100%; object-fit:contain;">
+                  <i id="settingLogoPlaceholder" class="fa-solid fa-image" style="font-size:22px; color:var(--text-muted);"></i>
+                </div>
+                <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:6px;">
+                  <input type="file" id="settingLogoFile" accept="image/png, image/jpeg, image/webp" onchange="uploadRestaurantBranding('logo')" style="font-size:12px; color:var(--text-muted);">
+                  <input type="hidden" id="settingLogoUrl" value="">
+                  <button type="button" onclick="removeRestaurantBranding('logo')" style="width:fit-content; background:transparent; border:none; color:#EF4444; font-size:11px; cursor:pointer; padding:0; text-decoration:underline;">Remove Logo</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Signature Upload & Signatory Name -->
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Official Bill & Invoice Signature</span>
+                <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">PNG / Transparent recommended</span>
+              </label>
+              <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                <div id="signaturePreviewBox" style="width:90px; height:50px; border-radius:10px; border:1px dashed var(--border); background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                  <img id="settingSignaturePreview" src="" alt="Signature" style="display:none; width:100%; height:100%; object-fit:contain;">
+                  <i id="settingSignaturePlaceholder" class="fa-solid fa-signature" style="font-size:20px; color:var(--text-muted);"></i>
+                </div>
+                <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:6px;">
+                  <input type="file" id="settingSignatureFile" accept="image/png, image/jpeg, image/webp" onchange="uploadRestaurantBranding('signature')" style="font-size:12px; color:var(--text-muted);">
+                  <input type="hidden" id="settingSignatureUrl" value="">
+                  <button type="button" onclick="removeRestaurantBranding('signature')" style="width:fit-content; background:transparent; border:none; color:#EF4444; font-size:11px; cursor:pointer; padding:0; text-decoration:underline;">Remove Signature</button>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Authorized Signatory Name / Title</label>
+                <input type="text" id="settingSignatureName" class="form-input" placeholder="e.g. Authorized Signatory / Branch Manager" style="padding:10px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:12.5px;">
+              </div>
             </div>
 
             <div style="display:flex; gap:14px; flex-wrap:wrap;">
@@ -354,7 +408,7 @@
               </div>
               <div class="form-group" style="flex:1; min-width:120px;">
                 <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">GST Tax Rate (%)</label>
-                <input type="number" id="settingGstRate" class="form-input" value="18" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
+                <input type="number" id="settingGstRate" class="form-input" value="5" style="padding:12px 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--text-primary); font-size:13.5px; font-weight:700;">
               </div>
             </div>
 
@@ -736,6 +790,92 @@
 
     const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
 
+    async function uploadRestaurantBranding(type) {
+      const fileInput = document.getElementById(type === 'logo' ? 'settingLogoFile' : 'settingSignatureFile');
+      const previewImg = document.getElementById(type === 'logo' ? 'settingLogoPreview' : 'settingSignaturePreview');
+      const placeholder = document.getElementById(type === 'logo' ? 'settingLogoPlaceholder' : 'settingSignaturePlaceholder');
+      const urlInput = document.getElementById(type === 'logo' ? 'settingLogoUrl' : 'settingSignatureUrl');
+
+      const file = fileInput?.files?.[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert('File size exceeds 2MB limit. Please choose a smaller image.');
+        fileInput.value = '';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('type', type);
+
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || window.CSRF_TOKEN || '';
+
+      try {
+        const res = await fetch('/api/upload/image', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+          },
+          body: formData
+        });
+        const result = await res.json();
+        if (result.success && result.url) {
+          urlInput.value = result.url;
+          previewImg.src = result.url;
+          previewImg.style.display = 'block';
+          if (placeholder) placeholder.style.display = 'none';
+
+          if (type === 'logo') {
+            localStorage.setItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`, result.url);
+            localStorage.setItem('dineflow_restaurant_logo', result.url);
+          } else {
+            localStorage.setItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`, result.url);
+            localStorage.setItem('dineflow_restaurant_signature', result.url);
+          }
+
+          if (typeof Toast !== 'undefined' && Toast.success) {
+            Toast.success(`${type === 'logo' ? 'Logo' : 'Signature'} uploaded successfully!`);
+          } else {
+            alert(`✅ ${type === 'logo' ? 'Logo' : 'Signature'} uploaded successfully! Click "Save All Settings" to apply.`);
+          }
+        } else {
+          alert(result.message || 'Image upload failed');
+        }
+      } catch (err) {
+        console.error('Branding upload error:', err);
+        alert('Failed to upload file. Please try again.');
+      }
+    }
+
+    function removeRestaurantBranding(type) {
+      const fileInput = document.getElementById(type === 'logo' ? 'settingLogoFile' : 'settingSignatureFile');
+      const previewImg = document.getElementById(type === 'logo' ? 'settingLogoPreview' : 'settingSignaturePreview');
+      const placeholder = document.getElementById(type === 'logo' ? 'settingLogoPlaceholder' : 'settingSignaturePlaceholder');
+      const urlInput = document.getElementById(type === 'logo' ? 'settingLogoUrl' : 'settingSignatureUrl');
+
+      if (fileInput) fileInput.value = '';
+      if (urlInput) urlInput.value = '';
+      if (previewImg) {
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+      }
+      if (placeholder) placeholder.style.display = 'block';
+
+      if (type === 'logo') {
+        localStorage.removeItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`);
+        localStorage.removeItem('dineflow_restaurant_logo');
+      } else {
+        localStorage.removeItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`);
+        localStorage.removeItem('dineflow_restaurant_signature');
+      }
+
+      if (typeof Toast !== 'undefined' && Toast.success) {
+        Toast.success(`${type === 'logo' ? 'Logo' : 'Signature'} removed.`);
+      }
+    }
+
     async function loadSystemSettingsFromApi() {
       // 1. Initial populate from local cache if present
       populateFormFromLocal();
@@ -752,6 +892,38 @@
           if (s.name && document.getElementById('settingRestaurantName')) {
             document.getElementById('settingRestaurantName').value = s.name;
             localStorage.setItem('dineflow_restaurant_name', s.name);
+          }
+          if (s.address && document.getElementById('settingRestaurantAddress')) {
+            document.getElementById('settingRestaurantAddress').value = s.address;
+            localStorage.setItem(`dineflow_restaurant_address_${RESTAURANT_ID}`, s.address);
+          }
+          if (s.phone && document.getElementById('settingRestaurantPhone')) {
+            document.getElementById('settingRestaurantPhone').value = s.phone;
+            localStorage.setItem(`dineflow_restaurant_phone_${RESTAURANT_ID}`, s.phone);
+          }
+          if (s.logo) {
+            const logoUrl = document.getElementById('settingLogoUrl');
+            const logoPrev = document.getElementById('settingLogoPreview');
+            const logoPlace = document.getElementById('settingLogoPlaceholder');
+            if (logoUrl) logoUrl.value = s.logo;
+            if (logoPrev) { logoPrev.src = s.logo; logoPrev.style.display = 'block'; }
+            if (logoPlace) logoPlace.style.display = 'none';
+            localStorage.setItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`, s.logo);
+            localStorage.setItem('dineflow_restaurant_logo', s.logo);
+          }
+          if (s.signature) {
+            const sigUrl = document.getElementById('settingSignatureUrl');
+            const sigPrev = document.getElementById('settingSignaturePreview');
+            const sigPlace = document.getElementById('settingSignaturePlaceholder');
+            if (sigUrl) sigUrl.value = s.signature;
+            if (sigPrev) { sigPrev.src = s.signature; sigPrev.style.display = 'block'; }
+            if (sigPlace) sigPlace.style.display = 'none';
+            localStorage.setItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`, s.signature);
+            localStorage.setItem('dineflow_restaurant_signature', s.signature);
+          }
+          if (s.signature_name && document.getElementById('settingSignatureName')) {
+            document.getElementById('settingSignatureName').value = s.signature_name;
+            localStorage.setItem(`dineflow_signature_name_${RESTAURANT_ID}`, s.signature_name);
           }
           if (s.gstin && document.getElementById('settingGstin')) {
             document.getElementById('settingGstin').value = s.gstin;
@@ -837,6 +1009,34 @@
     function populateFormFromLocal() {
       const rName = localStorage.getItem('dineflow_restaurant_name');
       if (rName && document.getElementById('settingRestaurantName')) document.getElementById('settingRestaurantName').value = rName;
+      const rAddr = localStorage.getItem(`dineflow_restaurant_address_${RESTAURANT_ID}`);
+      if (rAddr && document.getElementById('settingRestaurantAddress')) document.getElementById('settingRestaurantAddress').value = rAddr;
+      const rPhone = localStorage.getItem(`dineflow_restaurant_phone_${RESTAURANT_ID}`);
+      if (rPhone && document.getElementById('settingRestaurantPhone')) document.getElementById('settingRestaurantPhone').value = rPhone;
+
+      const savedLogo = localStorage.getItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`) || localStorage.getItem('dineflow_restaurant_logo');
+      if (savedLogo) {
+        const logoUrl = document.getElementById('settingLogoUrl');
+        const logoPrev = document.getElementById('settingLogoPreview');
+        const logoPlace = document.getElementById('settingLogoPlaceholder');
+        if (logoUrl) logoUrl.value = savedLogo;
+        if (logoPrev) { logoPrev.src = savedLogo; logoPrev.style.display = 'block'; }
+        if (logoPlace) logoPlace.style.display = 'none';
+      }
+      const savedSig = localStorage.getItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`) || localStorage.getItem('dineflow_restaurant_signature');
+      if (savedSig) {
+        const sigUrl = document.getElementById('settingSignatureUrl');
+        const sigPrev = document.getElementById('settingSignaturePreview');
+        const sigPlace = document.getElementById('settingSignaturePlaceholder');
+        if (sigUrl) sigUrl.value = savedSig;
+        if (sigPrev) { sigPrev.src = savedSig; sigPrev.style.display = 'block'; }
+        if (sigPlace) sigPlace.style.display = 'none';
+      }
+      const savedSigName = localStorage.getItem(`dineflow_signature_name_${RESTAURANT_ID}`);
+      if (savedSigName && document.getElementById('settingSignatureName')) {
+        document.getElementById('settingSignatureName').value = savedSigName;
+      }
+
       const gstin = localStorage.getItem('dineflow_gstin');
       if (gstin && document.getElementById('settingGstin')) document.getElementById('settingGstin').value = gstin;
       const gstRate = localStorage.getItem('dineflow_gst_rate');

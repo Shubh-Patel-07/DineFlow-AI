@@ -17,10 +17,13 @@
     <header class="menu-hero-header">
       <div class="hero-top-bar">
         <div class="brand-badge">
-          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" class="brand-logo" id="restaurantLogo">
+          <div id="restLogoContainer" class="hero-brand-logo-wrap">
+            <img src="" alt="Restaurant Logo" class="brand-logo" id="restaurantLogo" style="display:none;">
+            <div id="restaurantMonogram" class="hero-brand-monogram" style="display:flex;">R</div>
+          </div>
           <div>
-            <h1 class="logo">Dine<span>Flow</span> AI</h1>
-            <p class="eyebrow" data-i18n="welcome">Smart QR Restaurant Ordering</p>
+            <h1 class="logo restaurant-primary-name" id="restaurantMainTitle">Restaurant Menu</h1>
+            <p class="eyebrow" id="restaurantEyebrow" data-i18n="welcome">Smart QR Restaurant Ordering</p>
           </div>
         </div>
 
@@ -172,6 +175,15 @@
 
     <!-- Main Food Grid -->
     <section id="foodGrid" class="food-grid" aria-live="polite"></section>
+
+    <!-- Customer Menu Secondary Footer -->
+    <footer class="customer-menu-footer">
+      <div class="powered-by-line">Powered by <strong>DineFlow</strong></div>
+      <div class="footer-badges">
+        <span class="smp-badge">SMP</span>
+        <img src="/images/dineflow_logo.png" alt="DineFlow Logo" class="dineflow-footer-logo" onerror="this.src='/images/dineflow_logo.jpg'">
+      </div>
+    </footer>
 
   </main>
 

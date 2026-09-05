@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DineFlow AI - Kitchen Display System</title>
+@php
+  $kdsRest = $restaurant ?? (auth()->user() ? auth()->user()->restaurant : null) ?? \App\Models\Restaurant::find($restaurantId ?? 1);
+  $kdsRestName = $kdsRest ? $kdsRest->name : 'DineFlow';
+  $kdsRestLogo = $kdsRest ? $kdsRest->getEffectiveLogoUrl() : null;
+@endphp
+  <title>{{ $kdsRestName }} — Kitchen Display System</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -240,7 +244,17 @@
   </div>
 
   <header>
-    <h1><img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 28px; height: 28px; border-radius: 6px; vertical-align: middle; margin-right: 8px;"> KOT Monitor</h1>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      @if($kdsRestLogo)
+        <img src="{{ $kdsRestLogo }}" alt="{{ $kdsRestName }}" style="width: 34px; height: 34px; border-radius: 8px; object-fit: contain; background: #fff; padding: 2px;">
+      @else
+        <div style="width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, #10B981, #059669); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; font-family: 'Outfit', sans-serif;">{{ substr($kdsRestName, 0, 1) }}</div>
+      @endif
+      <div>
+        <h1 style="font-size: 19px; line-height: 1.1; margin: 0; color: #34D399; font-family: 'Outfit', sans-serif; font-weight: 800;">{{ $kdsRestName }}</h1>
+        <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">Kitchen Display System &bull; KOT Monitor</span>
+      </div>
+    </div>
     <div style="display: flex; align-items: center; gap: 12px;">
       <!-- Gujarati Voice Soundbox Mute/Unmute Toggle Button -->
       <button id="voiceMuteToggleBtn" onclick="toggleVoiceMute()" style="background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); color: #F8FAFC; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">

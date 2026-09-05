@@ -1916,6 +1916,31 @@
               </div>
             </div>
 
+            <!-- Restaurant Branding & Verification Status -->
+            <div style="display: flex; gap: 14px; margin-top: 14px; padding: 12px 14px; background: var(--bg-primary); border-radius: 10px; align-items: center; justify-content: space-between; border: 1px solid var(--border-color); flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                  ${r.logo ? `<img src="${r.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">` : `<span style="font-weight: 800; font-size: 16px; color: #4F46E5;">${escapeHtml(r.name ? r.name.charAt(0).toUpperCase() : 'R')}</span>`}
+                </div>
+                <div>
+                  <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Brand Logo: <span style="font-weight: 600; color: ${r.logo ? 'var(--success)' : 'var(--text-muted)'};">${r.logo ? 'Uploaded ✅' : 'Default Initial'}</span></div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">GSTIN: <strong>${escapeHtml(r.gstin || 'Unregistered')}</strong></div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="text-align: right;">
+                  <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Bill Signature: <span style="font-weight: 600; color: ${r.signature ? 'var(--success)' : 'var(--text-muted)'};">${r.signature ? 'Uploaded ✅' : (Number(r.id) === 1 ? 'Demo SMP' : 'Default Line')}</span></div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Signatory: <strong>${escapeHtml(r.signature_name || (Number(r.id) === 1 ? 'Authorized Signatory (SMP)' : 'Manager / Authorized'))}</strong></div>
+                </div>
+                ${r.signature ? `
+                  <div style="width: 60px; height: 32px; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 2px;">
+                    <img src="${r.signature}" alt="Signature" style="width: 100%; height: 100%; object-fit: contain;">
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
             <!-- Action Buttons Inside Modal -->
             <div style="display: flex; gap: 8px; margin: 16px 0; padding: 12px; background: var(--bg-primary); border-radius: 10px;">
               ${isSuspended ? `
