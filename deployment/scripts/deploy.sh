@@ -6,10 +6,14 @@
 set -e
 
 APP_DIR="/var/www/tendorabuy"
-PHP_FPM_SERVICE="php8.2-fpm"
+
+# Detect installed PHP-FPM version dynamically (e.g. php8.3-fpm or php8.2-fpm)
+PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.3")
+PHP_FPM_SERVICE="php${PHP_VER}-fpm"
 
 echo "=========================================================="
 echo " Starting Tendorabuy Production Deployment...             "
+echo " Detected PHP Version: $PHP_VER (Service: $PHP_FPM_SERVICE)"
 echo "=========================================================="
 
 cd $APP_DIR
@@ -48,9 +52,13 @@ chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
 
 # 8. Reload PHP-FPM to flush opcache
 echo ">> Reloading PHP-FPM..."
-systemctl reload $PHP_FPM_SERVICE
+systemctl reload $PHP_FPM_SERVICE 2>/dev/null || systemctl restart $PHP_FPM_SERVICE 2>/dev/null || systemctl reload php8.3-fpm 2>/dev/null || systemctl reload php8.2-fpm 2>/dev/null || true
 
-# 9. Bring application back live
+# 9. Reload Nginx
+echo ">> Reloading Nginx..."
+systemctl reload nginx 2>/dev/null || true
+
+# 10. Bring application back live
 echo ">> Bringing application back online..."
 php artisan up
 
