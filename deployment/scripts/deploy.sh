@@ -40,6 +40,7 @@ php artisan storage:link || true
 
 # 6. Clear and Cache Laravel Configurations for Maximum Performance
 echo ">> Optimizing Laravel cache..."
+php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
