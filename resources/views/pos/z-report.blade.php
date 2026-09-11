@@ -65,6 +65,14 @@
   <div class="z-card">
     <div class="z-header">
       <div>
+        @if(isset($restaurant))
+          <div style="font-size: 16px; font-weight: 800; text-transform: uppercase; color: var(--primary); margin-bottom: 2px;">
+            {{ $restaurant->name }}
+          </div>
+          <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">
+            {{ $restaurant->address }} | Ph: {{ $restaurant->phone }} @if(!empty($restaurant->gstin)) | GSTIN: {{ $restaurant->gstin }} @endif
+          </div>
+        @endif
         <h1 style="font-family:'Outfit',sans-serif; font-size:22px; margin:0 0 4px; color:var(--text);">📊 Daily Sales Z-Report</h1>
         <p style="margin:0; font-size:12px; color:var(--muted);">End of Day Financial Summary — {{ \Carbon\Carbon::parse($reportDate)->format('d M Y') }}</p>
       </div>

@@ -287,21 +287,51 @@ class OrderController extends Controller
 
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
-        $isDemo = (bool)($restaurant->is_demo || session('is_demo') || ($user && $user->restaurant && $user->restaurant->is_demo));
+        $isDemo = (bool)($restaurant->is_demo);
 
         return view('pos.receipt', compact('order', 'restaurant', 'tableName', 'isDemo'));
     }
 
     public function showA4Invoice(Request $request, $id)
     {
+        $user = auth()->user();
         $order = null;
         if (is_numeric($id) && $id > 0) {
-            $user = auth()->user();
             $query = Order::with('items.menuItem');
             if ($user && $user->restaurant_id) {
                 $query->where('restaurant_id', $user->restaurant_id);
             }
             $order = $query->find($id);
+        } elseif ($id === 'live' && $user && $user->restaurant_id) {
+            // Support previewing live A4 invoice from current POS cart
+            $tableParam = $request->query('table', 'Walk-In');
+            $itemsJson = $request->query('items', '[]');
+            $itemsArr = json_decode($itemsJson, true) ?: [];
+
+            $order = new Order([
+                'id' => 0,
+                'restaurant_id' => $user->restaurant_id,
+                'total_amount' => 0,
+                'status' => 'active',
+                'payment_status' => 'pending',
+                'payment_method' => 'cash',
+                'created_at' => now(),
+            ]);
+            $subtotal = 0;
+            $orderItems = collect();
+            foreach ($itemsArr as $rawItem) {
+                $qty = (int)($rawItem['qty'] ?? 1);
+                $price = (float)($rawItem['price'] ?? 0);
+                $subtotal += $price * $qty;
+                $orderItems->push(new \App\Models\OrderItem([
+                    'name' => $rawItem['name'] ?? 'Item',
+                    'quantity' => $qty,
+                    'price' => $price,
+                ]));
+            }
+            $order->total_amount = $subtotal;
+            $order->setRelation('items', $orderItems);
+            $tableName = $tableParam;
         }
 
         if (!$order) {
@@ -319,9 +349,11 @@ class OrderController extends Controller
             ]);
         }
 
-        $table = \App\Models\Table::find($order->table_id);
-        $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
-        $isDemo = (bool)($restaurant->is_demo || session('is_demo') || ($user && $user->restaurant && $user->restaurant->is_demo));
+        if (!isset($tableName)) {
+            $table = \App\Models\Table::find($order->table_id);
+            $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
+        }
+        $isDemo = (bool)($restaurant->is_demo);
 
         return view('pos.invoice_a4', compact('order', 'restaurant', 'tableName', 'isDemo'));
     }
@@ -338,18 +370,36 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        if (!$restaurant) {
+            $restaurant = new \App\Models\Restaurant([
+                'name' => 'Restaurant #' . $order->restaurant_id,
+                'address' => 'Local Address',
+                'phone' => '+91 99999 00000',
+                'email' => 'contact@restaurant.com'
+            ]);
+        }
+
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
-        $kitchenItems = $order->items->filter(function($item) {
-            $cat = strtolower($item->menuItem?->category ?? 'food');
-            return in_array($cat, ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup', 'main course', 'food']);
+        $barCategories = [
+            'beverages', 'beverage', 'drinks', 'drink', 'cold drinks', 'cold drink',
+            'soft drinks', 'soft drink', 'milk shek', 'milk shake', 'milk shakes',
+            'milkshake', 'milkshakes', 'bar', 'cocktail', 'cocktails', 'mocktail',
+            'mocktails', 'juices', 'juice', 'shakes', 'shake', 'ice cream', 'ice creams',
+            'icecream', 'dessert', 'desserts'
+        ];
+
+        $kitchenItems = $order->items->filter(function($item) use ($barCategories) {
+            $cat = strtolower(trim($item->menuItem?->category ?? ''));
+            return !in_array($cat, $barCategories);
         });
 
         $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);
         $kotDict = \App\Services\KotLanguageService::getKotDictionary($lang);
 
-        return view('pos.kot_kitchen', compact('order', 'kitchenItems', 'tableName', 'lang', 'kotDict'));
+        return view('pos.kot_kitchen', compact('order', 'restaurant', 'kitchenItems', 'tableName', 'lang', 'kotDict'));
     }
 
     public function showBarKOT($id)
@@ -364,18 +414,36 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        if (!$restaurant) {
+            $restaurant = new \App\Models\Restaurant([
+                'name' => 'Restaurant #' . $order->restaurant_id,
+                'address' => 'Local Address',
+                'phone' => '+91 99999 00000',
+                'email' => 'contact@restaurant.com'
+            ]);
+        }
+
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
-        $barItems = $order->items->filter(function($item) {
-            $cat = strtolower($item->menuItem?->category ?? '');
-            return in_array($cat, ['beverages', 'desserts', 'drinks', 'dessert']);
+        $barCategories = [
+            'beverages', 'beverage', 'drinks', 'drink', 'cold drinks', 'cold drink',
+            'soft drinks', 'soft drink', 'milk shek', 'milk shake', 'milk shakes',
+            'milkshake', 'milkshakes', 'bar', 'cocktail', 'cocktails', 'mocktail',
+            'mocktails', 'juices', 'juice', 'shakes', 'shake', 'ice cream', 'ice creams',
+            'icecream', 'dessert', 'desserts'
+        ];
+
+        $barItems = $order->items->filter(function($item) use ($barCategories) {
+            $cat = strtolower(trim($item->menuItem?->category ?? ''));
+            return in_array($cat, $barCategories);
         });
 
         $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);
         $kotDict = \App\Services\KotLanguageService::getKotDictionary($lang);
 
-        return view('pos.kot_bar', compact('order', 'barItems', 'tableName', 'lang', 'kotDict'));
+        return view('pos.kot_bar', compact('order', 'restaurant', 'barItems', 'tableName', 'lang', 'kotDict'));
     }
 
     public function showCombinedKOT($id)
@@ -390,12 +458,22 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
+        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        if (!$restaurant) {
+            $restaurant = new \App\Models\Restaurant([
+                'name' => 'Restaurant #' . $order->restaurant_id,
+                'address' => 'Local Address',
+                'phone' => '+91 99999 00000',
+                'email' => 'contact@restaurant.com'
+            ]);
+        }
+
         $table = \App\Models\Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);
         $kotDict = \App\Services\KotLanguageService::getKotDictionary($lang);
 
-        return view('pos.kot_combined', compact('order', 'tableName', 'lang', 'kotDict'));
+        return view('pos.kot_combined', compact('order', 'restaurant', 'tableName', 'lang', 'kotDict'));
     }
 }
