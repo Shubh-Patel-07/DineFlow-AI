@@ -420,7 +420,7 @@
                 </div>
 
                 <div class="footer">
-                    <p>Thank You for Dining With Us!</p>
+                    <p>Thank You for Dining at {{ $restaurant->name }}!</p>
                     <p>Please Visit Again!</p>
                 </div>
             </div>

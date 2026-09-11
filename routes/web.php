@@ -257,7 +257,9 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
             ->groupBy(\DB::raw("COALESCE(menu_items.category, 'General')"))
             ->get();
 
-        return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown'));
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+
+        return view('pos.z-report', compact('reportDate', 'grossRevenue', 'netSubtotal', 'taxTotal', 'totalOrdersCount', 'paymentSplit', 'categoryBreakdown', 'restaurant'));
     })->name('pos.z-report');
 
     // Admin Page Routes (With RBAC Role Injection & Role Protection)
