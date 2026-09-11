@@ -36,7 +36,9 @@ async function loadMenuItems() {
     allMenuItems = getStaticMenuItems();
   } finally {
     if (loader) loader.style.display = 'none';
+    renderCategoryPills();
     renderMenuItems();
+    populateCategoryDropdown();
   }
 }
 
@@ -55,7 +57,6 @@ function getStaticMenuItems() {
   ];
 }
 
-
 function updateStatsHeader() {
   const total = allMenuItems.length;
   const veg = allMenuItems.filter(i => i.is_veg).length;
@@ -73,6 +74,75 @@ function updateStatsHeader() {
   if (outEl) outEl.textContent = unavailable;
 }
 
+function normalizeCatName(name) {
+  if (!name) return '';
+  let s = String(name).trim().toLowerCase();
+  if (s.endsWith('s') && s.length > 3) {
+    s = s.slice(0, -1);
+  }
+  return s;
+}
+
+function areCategoriesMatching(itemCatRaw, targetCatRaw) {
+  if (!targetCatRaw || targetCatRaw.toLowerCase() === 'all') return true;
+  if (!itemCatRaw) return false;
+
+  const itemCat = String(itemCatRaw).trim().toLowerCase();
+  const targetCat = String(targetCatRaw).trim().toLowerCase();
+
+  if (itemCat === targetCat) return true;
+
+  const nItem = normalizeCatName(itemCat);
+  const nTarget = normalizeCatName(targetCat);
+  if (nItem === nTarget) return true;
+
+  const synonymGroups = [
+    ['drink', 'drinks', 'beverage', 'beverages', 'cold drink', 'cold drinks', 'milk shek'],
+    ['starter', 'starters', 'appetizer', 'appetizers', 'snack', 'snacks'],
+    ['main', 'mains', 'main course', 'curry', 'curries'],
+    ['bread', 'breads', 'roti', 'rotis', 'naan'],
+    ['dessert', 'desserts', 'sweet', 'sweets', 'ice cream', 'ice creams'],
+    ['soup', 'soups'],
+    ['rice', 'biryani']
+  ];
+
+  for (const group of synonymGroups) {
+    const hasItem = group.some(g => g === itemCat || g === nItem);
+    const hasTarget = group.some(g => g === targetCat || g === nTarget);
+    if (hasItem && hasTarget) return true;
+  }
+
+  return false;
+}
+
+function renderCategoryPills() {
+  const container = document.getElementById('categoryPills');
+  if (!container) return;
+
+  const cats = [];
+  const seen = new Set();
+  allMenuItems.forEach(item => {
+    const cat = (item.category || '').trim();
+    if (cat && !seen.has(cat.toLowerCase())) {
+      seen.add(cat.toLowerCase());
+      cats.push(cat);
+    }
+  });
+
+  const total = allMenuItems.length;
+  const isAllActive = !activeCategory || activeCategory.toLowerCase() === 'all';
+
+  let html = `<button class="cat-pill ${isAllActive ? 'active' : ''}" data-category="all" onclick="setCategoryFilter('all')">All Items (${total})</button>`;
+
+  cats.forEach(cat => {
+    const count = allMenuItems.filter(i => areCategoriesMatching(i.category, cat)).length;
+    const isAct = !isAllActive && areCategoriesMatching(cat, activeCategory);
+    html += `<button class="cat-pill ${isAct ? 'active' : ''}" data-category="${escapeHtml(cat)}" onclick="setCategoryFilter(this.dataset.category)">${escapeHtml(cat)} (${count})</button>`;
+  });
+
+  container.innerHTML = html;
+}
+
 function renderMenuItems() {
   updateStatsHeader();
   const container = document.getElementById('menuGridContainer');
@@ -81,7 +151,7 @@ function renderMenuItems() {
   const searchQuery = document.getElementById('menuSearchInput')?.value.trim().toLowerCase() || '';
 
   const filtered = allMenuItems.filter(item => {
-    const matchesCat = activeCategory === 'all' || item.category?.toLowerCase() === activeCategory.toLowerCase();
+    const matchesCat = areCategoriesMatching(item.category, activeCategory);
     const matchesSearch = !searchQuery || `${item.name} ${item.category} ${item.description}`.toLowerCase().includes(searchQuery);
     return matchesCat && matchesSearch;
   });
@@ -135,9 +205,16 @@ function renderMenuItems() {
 }
 
 function setCategoryFilter(cat) {
-  activeCategory = cat;
-  document.querySelectorAll('.cat-pill').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.toLowerCase() === cat.toLowerCase() || (cat === 'all' && btn.textContent.includes('All')));
+  activeCategory = cat || 'all';
+  const pills = document.querySelectorAll('.cat-pill');
+  pills.forEach(btn => {
+    const btnCat = btn.dataset.category || btn.textContent.replace(/\s*\(\d+\)$/, '').trim();
+    if (activeCategory.toLowerCase() === 'all') {
+      btn.classList.toggle('active', btnCat.toLowerCase() === 'all' || btnCat.toLowerCase().startsWith('all items'));
+    } else {
+      const isMatch = areCategoriesMatching(btnCat, activeCategory);
+      btn.classList.toggle('active', isMatch);
+    }
   });
   renderMenuItems();
 }
@@ -146,11 +223,60 @@ function filterMenuItems() {
   renderMenuItems();
 }
 
+function populateCategoryDropdown(selectedCategory = '') {
+  const select = document.getElementById('itemCategory');
+  if (!select) return;
+
+  const cats = [];
+  const seen = new Set();
+  allMenuItems.forEach(item => {
+    const cat = (item.category || '').trim();
+    if (cat && !seen.has(cat.toLowerCase())) {
+      seen.add(cat.toLowerCase());
+      cats.push(cat);
+    }
+  });
+
+  const defaults = ['Starters', 'Mains', 'Rice', 'Breads', 'Desserts', 'Drinks', 'Soups'];
+  defaults.forEach(d => {
+    if (!seen.has(d.toLowerCase())) {
+      seen.add(d.toLowerCase());
+      cats.push(d);
+    }
+  });
+
+  if (selectedCategory && !seen.has(selectedCategory.toLowerCase())) {
+    cats.unshift(selectedCategory);
+  }
+
+  select.innerHTML = cats.map(c => `
+    <option value="${escapeHtml(c)}" ${selectedCategory && selectedCategory.toLowerCase() === c.toLowerCase() ? 'selected' : ''}>
+      ${escapeHtml(c)}
+    </option>
+  `).join('') + `<option value="__new__">+ Add New Category...</option>`;
+}
+
+function handleCategorySelectChange(select) {
+  if (select.value === '__new__') {
+    const newCat = prompt('Enter new category name:');
+    if (newCat && newCat.trim()) {
+      const clean = newCat.trim();
+      const opt = document.createElement('option');
+      opt.value = clean;
+      opt.textContent = clean;
+      opt.selected = true;
+      select.insertBefore(opt, select.lastElementChild);
+    } else {
+      select.selectedIndex = 0;
+    }
+  }
+}
+
 function openAddItemModal() {
   document.getElementById('modalTitle').textContent = 'Add New Menu Item';
   document.getElementById('itemId').value = '';
   document.getElementById('itemName').value = '';
-  document.getElementById('itemCategory').value = 'Mains';
+  populateCategoryDropdown();
   document.getElementById('itemPrice').value = '';
   document.getElementById('itemImage').value = '';
   document.getElementById('itemDesc').value = '';
@@ -167,7 +293,10 @@ function openEditItemModal(id) {
   document.getElementById('modalTitle').textContent = 'Edit Menu Item';
   document.getElementById('itemId').value = item.id;
   document.getElementById('itemName').value = item.name || '';
-  document.getElementById('itemCategory').value = item.category || 'Mains';
+  populateCategoryDropdown(item.category || '');
+  if (item.category) {
+    document.getElementById('itemCategory').value = item.category;
+  }
   document.getElementById('itemPrice').value = item.price || '';
   document.getElementById('itemImage').value = item.image || '';
   document.getElementById('itemDesc').value = item.description || '';

@@ -36,7 +36,9 @@ async function loadMenuItems() {
     allMenuItems = getStaticMenuItems();
   } finally {
     if (loader) loader.style.display = 'none';
+    renderCategoryPills();
     renderMenuItems();
+    populateCategoryDropdown();
   }
 }
 
@@ -55,7 +57,6 @@ function getStaticMenuItems() {
   ];
 }
 
-
 function updateStatsHeader() {
   const total = allMenuItems.length;
   const veg = allMenuItems.filter(i => i.is_veg).length;
@@ -73,6 +74,75 @@ function updateStatsHeader() {
   if (outEl) outEl.textContent = unavailable;
 }
 
+function normalizeCatName(name) {
+  if (!name) return '';
+  let s = String(name).trim().toLowerCase();
+  if (s.endsWith('s') && s.length > 3) {
+    s = s.slice(0, -1);
+  }
+  return s;
+}
+
+function areCategoriesMatching(itemCatRaw, targetCatRaw) {
+  if (!targetCatRaw || targetCatRaw.toLowerCase() === 'all') return true;
+  if (!itemCatRaw) return false;
+
+  const itemCat = String(itemCatRaw).trim().toLowerCase();
+  const targetCat = String(targetCatRaw).trim().toLowerCase();
+
+  if (itemCat === targetCat) return true;
+
+  const nItem = normalizeCatName(itemCat);
+  const nTarget = normalizeCatName(targetCat);
+  if (nItem === nTarget) return true;
+
+  const synonymGroups = [
+    ['drink', 'drinks', 'beverage', 'beverages', 'cold drink', 'cold drinks', 'milk shek'],
+    ['starter', 'starters', 'appetizer', 'appetizers', 'snack', 'snacks'],
+    ['main', 'mains', 'main course', 'curry', 'curries'],
+    ['bread', 'breads', 'roti', 'rotis', 'naan'],
+    ['dessert', 'desserts', 'sweet', 'sweets', 'ice cream', 'ice creams'],
+    ['soup', 'soups'],
+    ['rice', 'biryani']
+  ];
+
+  for (const group of synonymGroups) {
+    const hasItem = group.some(g => g === itemCat || g === nItem);
+    const hasTarget = group.some(g => g === targetCat || g === nTarget);
+    if (hasItem && hasTarget) return true;
+  }
+
+  return false;
+}
+
+function renderCategoryPills() {
+  const container = document.getElementById('categoryPills');
+  if (!container) return;
+
+  const cats = [];
+  const seen = new Set();
+  allMenuItems.forEach(item => {
+    const cat = (item.category || '').trim();
+    if (cat && !seen.has(cat.toLowerCase())) {
+      seen.add(cat.toLowerCase());
+      cats.push(cat);
+    }
+  });
+
+  const total = allMenuItems.length;
+  const isAllActive = !activeCategory || activeCategory.toLowerCase() === 'all';
+
+  let html = `<button class="cat-pill ${isAllActive ? 'active' : ''}" data-category="all" onclick="setCategoryFilter('all')">All Items (${total})</button>`;
+
+  cats.forEach(cat => {
+    const count = allMenuItems.filter(i => areCategoriesMatching(i.category, cat)).length;
+    const isAct = !isAllActive && areCategoriesMatching(cat, activeCategory);
+    html += `<button class="cat-pill ${isAct ? 'active' : ''}" data-category="${escapeHtml(cat)}" onclick="setCategoryFilter(this.dataset.category)">${escapeHtml(cat)} (${count})</button>`;
+  });
+
+  container.innerHTML = html;
+}
+
 function renderMenuItems() {
   updateStatsHeader();
   const container = document.getElementById('menuGridContainer');
@@ -81,7 +151,7 @@ function renderMenuItems() {
   const searchQuery = document.getElementById('menuSearchInput')?.value.trim().toLowerCase() || '';
 
   const filtered = allMenuItems.filter(item => {
-    const matchesCat = activeCategory === 'all' || item.category?.toLowerCase() === activeCategory.toLowerCase();
+    const matchesCat = areCategoriesMatching(item.category, activeCategory);
     const matchesSearch = !searchQuery || `${item.name} ${item.category} ${item.description}`.toLowerCase().includes(searchQuery);
     return matchesCat && matchesSearch;
   });
@@ -135,9 +205,16 @@ function renderMenuItems() {
 }
 
 function setCategoryFilter(cat) {
-  activeCategory = cat;
-  document.querySelectorAll('.cat-pill').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.toLowerCase() === cat.toLowerCase() || (cat === 'all' && btn.textContent.includes('All')));
+  activeCategory = cat || 'all';
+  const pills = document.querySelectorAll('.cat-pill');
+  pills.forEach(btn => {
+    const btnCat = btn.dataset.category || btn.textContent.replace(/\s*\(\d+\)$/, '').trim();
+    if (activeCategory.toLowerCase() === 'all') {
+      btn.classList.toggle('active', btnCat.toLowerCase() === 'all' || btnCat.toLowerCase().startsWith('all items'));
+    } else {
+      const isMatch = areCategoriesMatching(btnCat, activeCategory);
+      btn.classList.toggle('active', isMatch);
+    }
   });
   renderMenuItems();
 }
@@ -146,11 +223,60 @@ function filterMenuItems() {
   renderMenuItems();
 }
 
+function populateCategoryDropdown(selectedCategory = '') {
+  const select = document.getElementById('itemCategory');
+  if (!select) return;
+
+  const cats = [];
+  const seen = new Set();
+  allMenuItems.forEach(item => {
+    const cat = (item.category || '').trim();
+    if (cat && !seen.has(cat.toLowerCase())) {
+      seen.add(cat.toLowerCase());
+      cats.push(cat);
+    }
+  });
+
+  const defaults = ['Starters', 'Mains', 'Rice', 'Breads', 'Desserts', 'Drinks', 'Soups'];
+  defaults.forEach(d => {
+    if (!seen.has(d.toLowerCase())) {
+      seen.add(d.toLowerCase());
+      cats.push(d);
+    }
+  });
+
+  if (selectedCategory && !seen.has(selectedCategory.toLowerCase())) {
+    cats.unshift(selectedCategory);
+  }
+
+  select.innerHTML = cats.map(c => `
+    <option value="${escapeHtml(c)}" ${selectedCategory && selectedCategory.toLowerCase() === c.toLowerCase() ? 'selected' : ''}>
+      ${escapeHtml(c)}
+    </option>
+  `).join('') + `<option value="__new__">+ Add New Category...</option>`;
+}
+
+function handleCategorySelectChange(select) {
+  if (select.value === '__new__') {
+    const newCat = prompt('Enter new category name:');
+    if (newCat && newCat.trim()) {
+      const clean = newCat.trim();
+      const opt = document.createElement('option');
+      opt.value = clean;
+      opt.textContent = clean;
+      opt.selected = true;
+      select.insertBefore(opt, select.lastElementChild);
+    } else {
+      select.selectedIndex = 0;
+    }
+  }
+}
+
 function openAddItemModal() {
   document.getElementById('modalTitle').textContent = 'Add New Menu Item';
   document.getElementById('itemId').value = '';
   document.getElementById('itemName').value = '';
-  document.getElementById('itemCategory').value = 'Mains';
+  populateCategoryDropdown();
   document.getElementById('itemPrice').value = '';
   document.getElementById('itemImage').value = '';
   document.getElementById('itemDesc').value = '';
@@ -167,7 +293,10 @@ function openEditItemModal(id) {
   document.getElementById('modalTitle').textContent = 'Edit Menu Item';
   document.getElementById('itemId').value = item.id;
   document.getElementById('itemName').value = item.name || '';
-  document.getElementById('itemCategory').value = item.category || 'Mains';
+  populateCategoryDropdown(item.category || '');
+  if (item.category) {
+    document.getElementById('itemCategory').value = item.category;
+  }
   document.getElementById('itemPrice').value = item.price || '';
   document.getElementById('itemImage').value = item.image || '';
   document.getElementById('itemDesc').value = item.description || '';
@@ -294,4 +423,384 @@ async function deleteMenuItem(id) {
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
   return str.replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[match]);
+}
+
+// ─────────────────────────────────────────────────────────────
+// BULK IMPORT EXCEL / CSV CONTROLLER
+// ─────────────────────────────────────────────────────────────
+
+let parsedCsvItems = [];
+
+function downloadSampleMenuCsv() {
+  const rows = [
+    ["Name", "Category", "Price", "Is_Veg", "Description", "Is_Available"],
+    ["Paneer Butter Masala", "Main Course", "240", "Yes", "Rich tomato and cashew butter gravy", "Yes"],
+    ["Butter Naan", "Breads", "45", "Yes", "Crispy tandoori baked bread with butter", "Yes"],
+    ["Veg Biryani", "Rice & Biryani", "190", "Yes", "Aromatic basmati rice with spices", "Yes"],
+    ["Masala Dosa", "South Indian", "120", "Yes", "Crispy crepe with spiced potato masala", "Yes"],
+    ["Cold Coffee with Ice Cream", "Beverages", "90", "Yes", "Chilled brewed coffee with vanilla ice cream", "Yes"],
+    ["Chicken Tikka Masala", "Non-Veg", "280", "No", "Tandoor roasted chicken in spicy gravy", "Yes"],
+    ["Margherita Pizza", "Pizza", "220", "Yes", "Classic cheese and herb pizza", "Yes"],
+    ["Gulab Jamun (2 Pcs)", "Desserts", "60", "Yes", "Hot sweet syrup dumplings", "Yes"]
+  ];
+
+  let csvContent = "\uFEFF"; // UTF-8 BOM
+  rows.forEach(row => {
+    csvContent += row.map(val => `"${val.replace(/"/g, '""')}"`).join(",") + "\r\n";
+  });
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "sample_menu_template.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function openBulkImportModal() {
+  parsedCsvItems = [];
+  const modal = document.getElementById('bulkImportModal');
+  const preview = document.getElementById('csvPreviewSection');
+  const fileInput = document.getElementById('csvFileInput');
+  const label = document.getElementById('uploadFileLabel');
+  
+  if (fileInput) fileInput.value = '';
+  if (preview) preview.style.display = 'none';
+  if (label) label.textContent = 'Click or Drag & Drop CSV File Here';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeBulkImportModal() {
+  const modal = document.getElementById('bulkImportModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleCsvFileSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const label = document.getElementById('uploadFileLabel');
+  if (label) label.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    parseCsvClientSide(text);
+  };
+  reader.readAsText(file);
+}
+
+function parseCsvClientSide(csvText) {
+  parsedCsvItems = [];
+  const lines = csvText.split(/\r\n|\n/);
+  if (lines.length < 2) return;
+
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+  const nameIdx = headers.findIndex(h => h.includes('name'));
+  const catIdx = headers.findIndex(h => h.includes('cat'));
+  const priceIdx = headers.findIndex(h => h.includes('price'));
+  const vegIdx = headers.findIndex(h => h.includes('veg'));
+  const descIdx = headers.findIndex(h => h.includes('desc'));
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Split by comma ignoring commas inside quotes
+    const row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+    if (row.length === 0 || !row[nameIdx >= 0 ? nameIdx : 0]) continue;
+
+    const name = row[nameIdx >= 0 ? nameIdx : 0];
+    const category = catIdx >= 0 && row[catIdx] ? row[catIdx] : 'General';
+    const rawPrice = priceIdx >= 0 && row[priceIdx] ? row[priceIdx].replace(/[^0-9.]/g, '') : '0';
+    const price = parseFloat(rawPrice) || 0;
+    const rawVeg = vegIdx >= 0 && row[vegIdx] ? row[vegIdx].toLowerCase() : 'yes';
+    const isVeg = !(rawVeg === 'no' || rawVeg === '0' || rawVeg === 'false' || rawVeg === 'non-veg' || rawVeg === 'nonveg');
+    const desc = descIdx >= 0 && row[descIdx] ? row[descIdx] : '';
+
+    parsedCsvItems.push({ name, category, price, is_veg: isVeg, description: desc, is_available: true });
+  }
+
+  const preview = document.getElementById('csvPreviewSection');
+  const tbody = document.getElementById('csvPreviewTableBody');
+  const countEl = document.getElementById('csvParsedCount');
+
+  if (countEl) countEl.textContent = parsedCsvItems.length;
+  if (tbody) {
+    tbody.innerHTML = parsedCsvItems.slice(0, 10).map(item => `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px 12px; font-weight:600; color:var(--text-primary);">${escapeHtml(item.name)}</td>
+        <td style="padding:8px 12px; color:var(--text-secondary);">${escapeHtml(item.category)}</td>
+        <td style="padding:8px 12px; font-weight:700; color:#10B981;">₹${item.price.toFixed(2)}</td>
+        <td style="padding:8px 12px;">${item.is_veg ? '<span style="color:#34D399;">🟢 Veg</span>' : '<span style="color:#F87171;">🔴 Non-Veg</span>'}</td>
+      </tr>
+    `).join('') + (parsedCsvItems.length > 10 ? `<tr><td colspan="4" style="padding:8px; text-align:center; color:var(--text-muted); font-size:11px;">...and ${parsedCsvItems.length - 10} more items</td></tr>` : '');
+  }
+
+  if (preview) preview.style.display = 'block';
+}
+
+async function handleBulkImportSubmit(event) {
+  event.preventDefault();
+  const fileInput = document.getElementById('csvFileInput');
+  const btn = document.getElementById('btnConfirmBulkImport');
+
+  if (parsedCsvItems.length === 0 && (!fileInput || !fileInput.files[0])) {
+    alert('Please select a valid CSV file with menu items first.');
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importing Items...';
+  }
+
+  try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    let res;
+
+    if (parsedCsvItems.length > 0) {
+      res = await fetch('/api/menu/bulk-import', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({ items: parsedCsvItems })
+      });
+    } else {
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      res = await fetch('/api/menu/bulk-import', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        body: formData
+      });
+    }
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      alert(`🎉 Success! ${data.count || parsedCsvItems.length} menu items imported successfully!`);
+      closeBulkImportModal();
+      loadMenuItems();
+    } else {
+      alert(data.message || 'Failed to import menu items. Please check your plan limits or CSV format.');
+    }
+  } catch (err) {
+    console.error('Bulk import error:', err);
+    alert('Network error while uploading menu items. Please try again.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Confirm &amp; Import Items';
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// AI PHOTO MENU SCANNER CONTROLLER
+// ─────────────────────────────────────────────────────────────
+
+let aiDetectedDishesList = [];
+
+function openAiMenuScanModal() {
+  aiDetectedDishesList = [];
+  const modal = document.getElementById('aiScanModal');
+  const results = document.getElementById('aiScanResultsSection');
+  const saveBtn = document.getElementById('btnSaveAiDishes');
+  const fileInput = document.getElementById('menuPhotoInput');
+  const rawText = document.getElementById('rawMenuText');
+  const label = document.getElementById('aiPhotoLabel');
+
+  if (fileInput) fileInput.value = '';
+  if (rawText) rawText.value = '';
+  if (results) results.style.display = 'none';
+  if (saveBtn) saveBtn.style.display = 'none';
+  if (label) label.textContent = 'Click or Drag Menu Card Photo Here';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAiMenuScanModal() {
+  const modal = document.getElementById('aiScanModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleMenuPhotoSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const label = document.getElementById('aiPhotoLabel');
+  if (label) label.innerHTML = `📸 <b>${escapeHtml(file.name)}</b> (${(file.size / 1024).toFixed(1)} KB) Selected!`;
+}
+
+async function runAiMenuScan() {
+  const fileInput = document.getElementById('menuPhotoInput');
+  const rawText = document.getElementById('rawMenuText')?.value || '';
+  const btn = document.getElementById('btnScanMenuAi');
+
+  if ((!fileInput || !fileInput.files[0]) && !rawText.trim()) {
+    alert('Please upload a photo of your menu card or paste the menu text first.');
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> AI Analyzing Dishes &amp; Prices...';
+  }
+
+  try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const formData = new FormData();
+    if (fileInput && fileInput.files[0]) {
+      formData.append('image', fileInput.files[0]);
+    }
+    if (rawText.trim()) {
+      formData.append('raw_text', rawText);
+    }
+
+    const res = await fetch('/api/menu/ai-scan', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success && Array.isArray(data.items) && data.items.length > 0) {
+      aiDetectedDishesList = data.items;
+      renderAiScanResultsTable();
+    } else {
+      alert(data.message || 'No dishes detected. Please ensure the menu photo is clear with legible text and prices.');
+    }
+  } catch (err) {
+    console.error('AI Scan error:', err);
+    alert('Failed to process menu photo. Please try again.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-microchip"></i> Start AI Dish Detection';
+    }
+  }
+}
+
+function renderAiScanResultsTable() {
+  const section = document.getElementById('aiScanResultsSection');
+  const tbody = document.getElementById('aiScanTableBody');
+  const countEl = document.getElementById('aiDetectedCount');
+  const saveBtn = document.getElementById('btnSaveAiDishes');
+
+  if (countEl) countEl.textContent = aiDetectedDishesList.length;
+
+  if (tbody) {
+    tbody.innerHTML = aiDetectedDishesList.map((item, idx) => `
+      <tr style="border-bottom:1px solid var(--border);" id="aiRow_${idx}">
+        <td style="padding:6px 8px; text-align:center;">
+          <input type="checkbox" class="ai-item-check" data-index="${idx}" checked style="accent-color:#6366F1; width:15px; height:15px;">
+        </td>
+        <td style="padding:6px 8px;">
+          <input type="text" value="${escapeHtml(item.name)}" oninput="updateAiItemField(${idx}, 'name', this.value)" style="width:100%; box-sizing:border-box; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); font-size:12px;">
+        </td>
+        <td style="padding:6px 8px;">
+          <input type="text" value="${escapeHtml(item.category)}" oninput="updateAiItemField(${idx}, 'category', this.value)" style="width:100%; box-sizing:border-box; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text-secondary); font-size:12px;">
+        </td>
+        <td style="padding:6px 8px;">
+          <input type="number" step="0.5" value="${item.price}" oninput="updateAiItemField(${idx}, 'price', parseFloat(this.value) || 0)" style="width:100%; box-sizing:border-box; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:#10B981; font-weight:700; font-size:12px;">
+        </td>
+        <td style="padding:6px 8px; text-align:center;">
+          <button type="button" onclick="toggleAiItemVeg(${idx})" style="border:none; background:transparent; cursor:pointer; font-size:16px;" title="Click to toggle Veg / Non-Veg">
+            ${item.is_veg ? '🟢' : '🔴'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  if (section) section.style.display = 'block';
+  if (saveBtn) saveBtn.style.display = 'inline-flex';
+}
+
+function updateAiItemField(idx, field, val) {
+  if (aiDetectedDishesList[idx]) {
+    aiDetectedDishesList[idx][field] = val;
+  }
+}
+
+function toggleAiItemVeg(idx) {
+  if (aiDetectedDishesList[idx]) {
+    aiDetectedDishesList[idx].is_veg = !aiDetectedDishesList[idx].is_veg;
+    renderAiScanResultsTable();
+  }
+}
+
+function toggleSelectAllAiItems(master) {
+  const checks = document.querySelectorAll('.ai-item-check');
+  checks.forEach(c => c.checked = master.checked);
+}
+
+function addCustomRowToAiTable() {
+  aiDetectedDishesList.unshift({
+    name: 'New Custom Dish',
+    category: 'Main Course',
+    price: 150,
+    is_veg: true,
+    description: '',
+    is_available: true
+  });
+  renderAiScanResultsTable();
+}
+
+async function saveAiDetectedDishes() {
+  const checks = document.querySelectorAll('.ai-item-check:checked');
+  const selectedIndices = Array.from(checks).map(c => parseInt(c.getAttribute('data-index')));
+  const itemsToSave = selectedIndices.map(idx => aiDetectedDishesList[idx]).filter(Boolean);
+
+  if (itemsToSave.length === 0) {
+    alert('Please select at least one item from the table to save.');
+    return;
+  }
+
+  const saveBtn = document.getElementById('btnSaveAiDishes');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving Items to Menu...';
+  }
+
+  try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const res = await fetch('/api/menu/bulk-import', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({ items: itemsToSave })
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      alert(`🎉 Awesome! ${data.count || itemsToSave.length} dishes have been added to your menu!`);
+      closeAiMenuScanModal();
+      loadMenuItems();
+    } else {
+      alert(data.message || 'Failed to save menu items.');
+    }
+  } catch (err) {
+    console.error('Save AI dishes error:', err);
+    alert('Network error while saving dishes.');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save All Selected Items (1-Click)';
+    }
+  }
 }
