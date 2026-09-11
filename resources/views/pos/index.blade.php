@@ -2732,7 +2732,7 @@
       </div>
 
       <!-- Receiver Merchant VPA Handle Input -->
-      <div style="margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:var(--text-muted); background:var(--bg); padding:6px 12px; border-radius:12px; border:1px solid var(--border);">
+      <div id="merchantVpaRow" style="margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:var(--text-muted); background:var(--bg); padding:6px 12px; border-radius:12px; border:1px solid var(--border);">
         <i class="fa-solid fa-building-columns" style="color:#10B981;"></i>
         <span style="font-weight:700; color:var(--text-primary);">UPI ID:</span>
         <input type="text" id="merchantVpaInput" value="7777938338@omni" onchange="updateUpiQrCodeFromInput()" onkeyup="updateUpiQrCodeFromInput()" style="background:var(--card); color:var(--text-primary); border:1px solid var(--border); padding:4px 8px; border-radius:8px; font-weight:800; font-size:12px; width:170px; text-align:center; outline:none;" placeholder="7777938338@omni" />
@@ -4108,6 +4108,11 @@
     printBill();
   }
 
+  const RESTAURANT_UPI_QR = @json($restaurant ? $restaurant->getEffectiveUpiQr() : null);
+  const RESTAURANT_UPI_VPA = @json($restaurant ? $restaurant->getEffectiveUpiVpa() : null);
+  const RESTAURANT_IS_DEMO = @json($restaurant ? $restaurant->isDemo() : false);
+  const RESTAURANT_NAME = @json($restaurant ? $restaurant->name : 'Restaurant');
+
   let currentUpiPayAmount = 0;
 
   function copyUpiVpa() {
@@ -4120,16 +4125,56 @@
 
   function updateUpiQrCodeFromInput() {
     try {
-      const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || '7777938338@omni';
-      localStorage.setItem('dineflow_merchant_vpa', inputVal);
+      const imgEl = document.getElementById('upiQrImg');
+      const container = imgEl?.parentElement;
+      const vpaRow = document.getElementById('merchantVpaRow');
+
+      // 1. If restaurant has uploaded its own static UPI QR image
+      if (RESTAURANT_UPI_QR) {
+        if (imgEl) {
+          imgEl.src = RESTAURANT_UPI_QR;
+          imgEl.style.display = 'block';
+        }
+        if (vpaRow && !RESTAURANT_UPI_VPA) {
+          vpaRow.style.display = 'none';
+        }
+        const notConfiguredMsg = document.getElementById('upiNotConfiguredMsg');
+        if (notConfiguredMsg) notConfiguredMsg.style.display = 'none';
+        return;
+      }
+
+      // 2. If real restaurant without uploaded QR or VPA
+      if (!RESTAURANT_IS_DEMO && !RESTAURANT_UPI_QR && !RESTAURANT_UPI_VPA) {
+        if (imgEl) imgEl.style.display = 'none';
+        let notConfiguredMsg = document.getElementById('upiNotConfiguredMsg');
+        if (!notConfiguredMsg && container) {
+          notConfiguredMsg = document.createElement('div');
+          notConfiguredMsg.id = 'upiNotConfiguredMsg';
+          notConfiguredMsg.style.cssText = 'padding:20px 10px; text-align:center; color:#EF4444; font-weight:700; font-size:12.5px;';
+          notConfiguredMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="font-size:24px; display:block; margin-bottom:8px;"></i>UPI QR is not configured for this restaurant.<br><span style="font-size:11px; color:var(--text-muted); font-weight:normal;">Configure in Settings &rarr; Payments</span>';
+          container.appendChild(notConfiguredMsg);
+        }
+        if (notConfiguredMsg) notConfiguredMsg.style.display = 'block';
+        if (vpaRow) vpaRow.style.display = 'none';
+        return;
+      }
+
+      // 3. Dynamic QR with VPA (For Demo or configured restaurant VPA)
+      const notConfiguredMsg = document.getElementById('upiNotConfiguredMsg');
+      if (notConfiguredMsg) notConfiguredMsg.style.display = 'none';
+      if (imgEl) imgEl.style.display = 'block';
+      if (vpaRow) vpaRow.style.display = 'flex';
+
+      const inputVal = document.getElementById('merchantVpaInput')?.value.trim() || RESTAURANT_UPI_VPA || (RESTAURANT_IS_DEMO ? '7777938338@omni' : '');
+      if (inputVal) localStorage.setItem('dineflow_merchant_vpa', inputVal);
       const tableNumber = document.getElementById('selectedTableNo')?.textContent || document.getElementById('selectedTableLabel')?.textContent || 'Walk-In';
       
       const payAmount = (currentUpiPayAmount && currentUpiPayAmount > 0) ? Math.round(currentUpiPayAmount) : 1;
+      const merchantName = RESTAURANT_NAME || 'DineFlow Restaurant';
       
-      const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent('DineFlow AI Restaurant')}&am=${payAmount}&cu=INR&tn=${encodeURIComponent('Bill Payment ' + tableNumber)}`;
+      const upiString = `upi://pay?pa=${encodeURIComponent(inputVal)}&pn=${encodeURIComponent(merchantName)}&am=${payAmount}&cu=INR&tn=${encodeURIComponent('Bill Payment ' + tableNumber)}`;
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(upiString)}`;
       
-      const imgEl = document.getElementById('upiQrImg');
       if (imgEl) {
         imgEl.src = qrUrl;
         imgEl.onerror = function() {
@@ -4227,7 +4272,8 @@
 
       const brkEl = document.getElementById('upiModalBreakdownTotal');
       if (brkEl) brkEl.textContent = '₹' + finalGrandTotal.toFixed(2);
-      const savedVpa = localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni';
+      const defaultVpa = RESTAURANT_UPI_VPA || (RESTAURANT_IS_DEMO ? '7777938338@omni' : '');
+      const savedVpa = RESTAURANT_IS_DEMO ? (localStorage.getItem('dineflow_merchant_vpa') || '7777938338@omni') : defaultVpa;
       if (document.getElementById('merchantVpaInput')) {
         document.getElementById('merchantVpaInput').value = savedVpa;
       }

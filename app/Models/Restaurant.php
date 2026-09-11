@@ -14,6 +14,8 @@ class Restaurant extends Model
         'logo',
         'signature',
         'signature_name',
+        'upi_qr',
+        'upi_vpa',
         'gstin',
         'gst_rate',
         'service_charge',
@@ -198,6 +200,34 @@ class Restaurant extends Model
         }
         if (!empty($this->settings['signature_name'])) {
             return $this->settings['signature_name'];
+        }
+        return null;
+    }
+
+    public function getEffectiveUpiQr(): ?string
+    {
+        if ($this->isDemo()) {
+            return null;
+        }
+        if (!empty($this->upi_qr)) {
+            return $this->upi_qr;
+        }
+        if (!empty($this->settings['upi_qr'])) {
+            return $this->settings['upi_qr'];
+        }
+        return null;
+    }
+
+    public function getEffectiveUpiVpa(): ?string
+    {
+        if ($this->isDemo()) {
+            return '7777938338@omni';
+        }
+        if (!empty($this->upi_vpa)) {
+            return $this->upi_vpa;
+        }
+        if (!empty($this->settings['upi_vpa'])) {
+            return $this->settings['upi_vpa'];
         }
         return null;
     }
