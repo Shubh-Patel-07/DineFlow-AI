@@ -136,9 +136,9 @@ class TableController extends Controller
     public function showA4QrPoster(Request $request, $tableId = null)
     {
         $user = auth()->user();
-        $restaurantId = $user ? ($user->restaurant_id ?? null) : ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? null);
-        if ($user && $user->role === 'superadmin' && ($request->query('restaurant_id') ?? $request->query('restaurantId'))) {
-            $restaurantId = $request->query('restaurant_id') ?? $request->query('restaurantId');
+        $restaurantId = $user ? ($user->restaurant_id ?? null) : ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? $request->input('restaurant_id') ?? $request->input('restaurantId') ?? null);
+        if ($user && $user->role === 'superadmin' && ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? $request->input('restaurant_id') ?? $request->input('restaurantId'))) {
+            $restaurantId = $request->query('restaurant_id') ?? $request->query('restaurantId') ?? $request->input('restaurant_id') ?? $request->input('restaurantId');
         }
 
         $restaurant = null;
@@ -179,9 +179,9 @@ class TableController extends Controller
     public function showA4QrPosterBatch(Request $request)
     {
         $user = auth()->user();
-        $restaurantId = $user ? ($user->restaurant_id ?? null) : ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? null);
-        if ($user && $user->role === 'superadmin' && ($request->query('restaurant_id') ?? $request->query('restaurantId'))) {
-            $restaurantId = $request->query('restaurant_id') ?? $request->query('restaurantId');
+        $restaurantId = $user ? ($user->restaurant_id ?? null) : ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? $request->input('restaurant_id') ?? $request->input('restaurantId') ?? null);
+        if ($user && $user->role === 'superadmin' && ($request->query('restaurant_id') ?? $request->query('restaurantId') ?? $request->input('restaurant_id') ?? $request->input('restaurantId'))) {
+            $restaurantId = $request->query('restaurant_id') ?? $request->query('restaurantId') ?? $request->input('restaurant_id') ?? $request->input('restaurantId');
         }
 
         $restaurant = null;
