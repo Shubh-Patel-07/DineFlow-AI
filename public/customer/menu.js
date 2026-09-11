@@ -1,6 +1,6 @@
 const params = new URLSearchParams(window.location.search);
-const restaurantId = params.get('restaurantId') || '1';
-let tableId = params.get('tableId') || params.get('table') || '1';
+const restaurantId = params.get('restaurantId') || params.get('restaurant_id') || params.get('restaurant') || '1';
+let tableId = params.get('tableId') || params.get('table_id') || params.get('table') || '1';
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
 const translations = {
@@ -14,6 +14,7 @@ let menuItems = [];
 let category = 'All';
 let diet = 'all';
 let activeView = 'all';
+let activeFilters = new Set();
 let activeSuggestionIndex = -1;
 const FAVORITES_STORAGE_KEY = `dineflow-favorites-${restaurantId}`;
 const RECENT_STORAGE_KEY = `dineflow-recent-items-${restaurantId}`;
@@ -293,6 +294,12 @@ function normalizeItem(item) {
     isVeg = !String(item.type).toLowerCase().includes('non');
   }
 
+  let badgeText = item.badge || '';
+  if (isAvail && (badgeText.toLowerCase().includes('sold out') || badgeText.toLowerCase().includes('out of stock'))) {
+    badgeText = isPop ? 'Popular' : 'Special';
+  }
+  if (!badgeText) badgeText = cat;
+
   return {
     ...item,
     id: item.id || item._id,
@@ -301,7 +308,7 @@ function normalizeItem(item) {
     available: isAvail,
     isVeg: isVeg,
     rating: String(item.rating || '4.8'),
-    badge: item.badge || cat,
+    badge: badgeText,
     popular: isPop
   };
 }
@@ -1048,39 +1055,93 @@ async function handleCheckout() {
 
 let currentCustomerUpiOrderId = null;
 
+function getEffectiveCustomerUpiConfig() {
+  const rest = window.restaurant || {};
+  const isDemo = Boolean(rest.is_demo || rest.demo_session_id || String(restaurantId) === '1');
+  const customQr = rest.upi_qr || rest.settings?.upi_qr || null;
+  const customVpa = rest.upi_vpa || rest.settings?.upi_vpa || null;
+  const demoVpa = '7777938338@omni';
+
+  if (!isDemo) {
+    if (customQr) {
+      return { type: 'static_image', qrUrl: resolveImagePath(customQr), vpa: customVpa, name: rest.name || 'Restaurant' };
+    }
+    if (customVpa) {
+      return { type: 'vpa', vpa: customVpa, name: rest.name || 'Restaurant' };
+    }
+    return { type: 'unconfigured', message: 'UPI QR is not configured for this restaurant. Please pay at billing counter.' };
+  }
+
+  // Demo restaurant fallback
+  if (customQr) {
+    return { type: 'static_image', qrUrl: resolveImagePath(customQr), vpa: customVpa || demoVpa, name: rest.name || 'DineFlow AI Restaurant' };
+  }
+  return { type: 'vpa', vpa: customVpa || demoVpa, name: rest.name || 'DineFlow AI Restaurant' };
+}
+
 function openCustomerUpiModal(orderId, amount) {
   currentCustomerUpiOrderId = orderId;
   const modal = $('#customerUpiModal');
   const amountEl = $('#customerUpiAmount');
   const qrImg = $('#customerUpiQrImg');
+  const deepLink = $('#customerUpiDeepLink');
 
   const formattedAmount = Number(amount || 0).toFixed(2);
   if (amountEl) amountEl.textContent = `₹${formattedAmount}`;
-  
-  const merchantUpi = '7777938338@omni';
-  const merchantName = 'DineFlow AI Restaurant';
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent('Order #' + orderId)}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
 
-  if (qrImg) {
-    qrImg.src = qrUrl;
-    qrImg.onerror = () => {
+  const config = getEffectiveCustomerUpiConfig();
+
+  if (config.type === 'unconfigured') {
+    if (qrImg) {
+      qrImg.style.display = 'none';
       const parent = qrImg.parentElement;
       if (parent) {
         parent.innerHTML = `
-          <div style="padding:16px;text-align:center;">
-            <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
-            <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${merchantUpi}</p>
-            <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Amount: ₹${formattedAmount}</p>
+          <div style="padding:20px 16px;text-align:center;">
+            <p style="font-size:28px;margin:0 0 8px;">⚠️</p>
+            <p style="color:#F59E0B;font-weight:700;font-size:14px;margin:0 0 6px;">Payment QR Not Configured</p>
+            <p style="color:#94A3B8;font-size:12px;margin:0;">${config.message}</p>
           </div>`;
       }
-    };
-  }
-
-  // Update deep link button if present
-  const deepLink = $('#customerUpiDeepLink');
-  if (deepLink) {
-    deepLink.href = upiUrl;
+    }
+    if (deepLink) deepLink.style.display = 'none';
+  } else if (config.type === 'static_image') {
+    if (qrImg) {
+      qrImg.style.display = 'block';
+      qrImg.src = config.qrUrl;
+    }
+    if (deepLink) {
+      if (config.vpa) {
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(config.vpa)}&pn=${encodeURIComponent(config.name)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent('Order #' + orderId)}`;
+        deepLink.href = upiUrl;
+        deepLink.style.display = 'inline-flex';
+      } else {
+        deepLink.style.display = 'none';
+      }
+    }
+  } else {
+    // Dynamic generated QR via VPA
+    const upiUrl = `upi://pay?pa=${encodeURIComponent(config.vpa)}&pn=${encodeURIComponent(config.name)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent('Order #' + orderId)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+    if (qrImg) {
+      qrImg.style.display = 'block';
+      qrImg.src = qrUrl;
+      qrImg.onerror = () => {
+        const parent = qrImg.parentElement;
+        if (parent) {
+          parent.innerHTML = `
+            <div style="padding:16px;text-align:center;">
+              <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
+              <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${config.vpa}</p>
+              <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Amount: ₹${formattedAmount}</p>
+            </div>`;
+        }
+      };
+    }
+    if (deepLink) {
+      deepLink.href = upiUrl;
+      deepLink.style.display = 'inline-flex';
+    }
   }
 
   if (modal) modal.hidden = false;
@@ -1322,8 +1383,12 @@ async function loadMenu() {
       menuItems = apiRawItems.map(apiItem => {
         const match = staticFoodItems.find(s => s.name.toLowerCase() === apiItem.name.toLowerCase() || String(s.id) === String(apiItem.id));
         const merged = match ? { ...match, ...apiItem, image: apiItem.image || match.image } : { ...apiItem };
-        merged.is_available = apiItem.is_available !== undefined ? apiItem.is_available : (apiItem.available !== undefined ? apiItem.available : true);
-        merged.available = parseBoolean(merged.is_available, true);
+        const isApiAvail = parseBoolean(apiItem.is_available ?? apiItem.available, true);
+        merged.is_available = isApiAvail;
+        merged.available = isApiAvail;
+        if (isApiAvail && merged.badge && (merged.badge.toLowerCase().includes('sold') || merged.badge.toLowerCase().includes('stock'))) {
+          merged.badge = match?.badge && !match.badge.toLowerCase().includes('sold') && !match.badge.toLowerCase().includes('stock') ? match.badge : 'Special';
+        }
         return normalizeItem(merged);
       });
       renderCategories();
@@ -1743,27 +1808,40 @@ function recalculateSplit() {
   setEl('#splitTax', `₹${tax.toFixed(2)}`);
   setEl('#splitTotal', `₹${total.toFixed(2)}`);
 
-  const merchantUpi = '7777938338@omni';
-  const merchantName = 'DineFlow AI Restaurant';
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
-
+  const config = getEffectiveCustomerUpiConfig();
   const qrImg = $('#splitUpiQrImg');
+
   if (qrImg) {
-    if (total > 0) {
-      qrImg.src = qrUrl;
+    if (total > 0 && config.type !== 'unconfigured') {
       qrImg.style.display = 'block';
-      qrImg.onerror = () => {
-        const parent = qrImg.parentElement;
-        if (parent) {
-          parent.innerHTML = `
-            <div style="padding:16px;text-align:center;">
-              <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
-              <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${merchantUpi}</p>
-              <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Your Share: ₹${total.toFixed(2)}</p>
-            </div>`;
-        }
-      };
+      if (config.type === 'static_image') {
+        qrImg.src = config.qrUrl;
+      } else {
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(config.vpa)}&pn=${encodeURIComponent(config.name)}&am=${total.toFixed(2)}&cu=INR&tn=SplitBillTable${tableId}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+        qrImg.src = qrUrl;
+        qrImg.onerror = () => {
+          const parent = qrImg.parentElement;
+          if (parent) {
+            parent.innerHTML = `
+              <div style="padding:16px;text-align:center;">
+                <p style="color:#818CF8;font-weight:700;font-size:13px;margin:0 0 4px;">Pay via UPI ID</p>
+                <p style="color:#34D399;font-size:16px;font-weight:800;margin:0;">${config.vpa}</p>
+                <p style="opacity:0.6;font-size:11px;margin:6px 0 0;">Your Share: ₹${total.toFixed(2)}</p>
+              </div>`;
+          }
+        };
+      }
+    } else if (total > 0 && config.type === 'unconfigured') {
+      qrImg.style.display = 'none';
+      const parent = qrImg.parentElement;
+      if (parent) {
+        parent.innerHTML = `
+          <div style="padding:16px;text-align:center;">
+            <p style="color:#F59E0B;font-weight:700;font-size:13px;margin:0 0 4px;">⚠️ UPI Not Configured</p>
+            <p style="color:#94A3B8;font-size:11px;margin:0;">Please pay your share at billing counter.</p>
+          </div>`;
+      }
     } else {
       qrImg.src = '';
       qrImg.style.display = 'none';
@@ -1808,25 +1886,38 @@ async function openPayFullBillModal() {
 
     if (total <= 0) { if (upiSection) upiSection.style.display = 'none'; return; }
 
-    const merchantUpi = '7777938338@omni';
-    const merchantName = 'DineFlow AI Restaurant';
-    const note = orderId ? `Table${tableId}Order${orderId}` : `Table${tableId}Cart`;
-    const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantUpi)}&pn=${encodeURIComponent(merchantName)}&am=${total.toFixed(2)}&cu=INR&tn=${note}`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+    const config = getEffectiveCustomerUpiConfig();
 
     if (qrImg) {
-      qrImg.style.display = 'block';
-      qrImg.src = qrUrl;
-      qrImg.onerror = () => {
-        // Fallback if QR server unreachable
+      if (config.type === 'unconfigured') {
+        qrImg.style.display = 'none';
         const parent = qrImg.parentElement;
-        if (parent) parent.innerHTML = `
-          <div style="padding:20px;text-align:center;">
-            <p style="color:#818CF8;font-weight:800;font-size:13px;margin:0 0 6px;">Pay via UPI ID</p>
-            <p style="color:#34D399;font-size:18px;font-weight:800;margin:0;">${merchantUpi}</p>
-            <p style="opacity:0.6;font-size:11px;margin:8px 0 0;">Amount: ₹${total.toFixed(2)}</p>
-          </div>`;
-      };
+        if (parent) {
+          parent.innerHTML = `
+            <div style="padding:16px;text-align:center;">
+              <p style="color:#F59E0B;font-weight:700;font-size:13px;margin:0 0 4px;">⚠️ UPI Not Configured</p>
+              <p style="color:#94A3B8;font-size:11px;margin:0;">Please pay total bill at cashier counter.</p>
+            </div>`;
+        }
+      } else if (config.type === 'static_image') {
+        qrImg.style.display = 'block';
+        qrImg.src = config.qrUrl;
+      } else {
+        const note = orderId ? `Table${tableId}Order${orderId}` : `Table${tableId}Cart`;
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(config.vpa)}&pn=${encodeURIComponent(config.name)}&am=${total.toFixed(2)}&cu=INR&tn=${note}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+        qrImg.style.display = 'block';
+        qrImg.src = qrUrl;
+        qrImg.onerror = () => {
+          const parent = qrImg.parentElement;
+          if (parent) parent.innerHTML = `
+            <div style="padding:20px;text-align:center;">
+              <p style="color:#818CF8;font-weight:800;font-size:13px;margin:0 0 6px;">Pay via UPI ID</p>
+              <p style="color:#34D399;font-size:18px;font-weight:800;margin:0;">${config.vpa}</p>
+              <p style="opacity:0.6;font-size:11px;margin:8px 0 0;">Amount: ₹${total.toFixed(2)}</p>
+            </div>`;
+        };
+      }
     }
     if (upiSection) upiSection.style.display = 'block';
   }

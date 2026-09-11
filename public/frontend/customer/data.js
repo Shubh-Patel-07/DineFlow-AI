@@ -117,11 +117,11 @@ window.foodItems = [
     category: "Drinks",
     price: 80,
     rating: 4.5,
-    badge: "Out of Stock",
-    popular: false,
+    badge: "Chilled",
+    popular: true,
     image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&q=75&auto=format",
     description: "Chilled soft drink served cold with your meal.",
-    available: false,
+    available: true,
     isVeg: true
 },
 {
@@ -143,11 +143,11 @@ window.foodItems = [
     category: "Drinks",
     price: 140,
     rating: 4.7,
-    badge: "Sold Out",
-    popular: false,
+    badge: "Special",
+    popular: true,
     image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&q=75&auto=format",
     description: "Refreshing mocktail crafted with fruit and mint.",
-    available: false,
+    available: true,
     isVeg: true
 },
 {

@@ -832,11 +832,14 @@ window.saveProfileAndTaxSettings = function() {
   const logo = (document.getElementById('settingLogoUrl')?.value || '').trim();
   const signature = (document.getElementById('settingSignatureUrl')?.value || '').trim();
   const signatureName = (document.getElementById('settingSignatureName')?.value || '').trim();
+  const upiQr = (document.getElementById('settingUpiQrUrl')?.value || '').trim();
+  const upiVpa = (document.getElementById('settingUpiVpa')?.value || '').trim();
   const gstin = (document.getElementById('settingGstin')?.value || '').trim();
   const gstRate = (document.getElementById('settingGstRate')?.value || '5').trim();
   const svcCharge = (document.getElementById('settingServiceCharge')?.value || '5').trim();
 
   if (rName) localStorage.setItem('dineflow_restaurant_name', rName);
+  if (upiVpa) localStorage.setItem(`dineflow_restaurant_upi_vpa_${restaurantId}`, upiVpa);
   if (gstin) localStorage.setItem('dineflow_gstin', gstin);
   if (gstRate) localStorage.setItem('dineflow_gst_rate', gstRate);
   if (svcCharge) localStorage.setItem('dineflow_service_charge', svcCharge);
@@ -851,6 +854,8 @@ window.saveProfileAndTaxSettings = function() {
     logo: logo !== '' ? logo : null,
     signature: signature !== '' ? signature : null,
     signature_name: signatureName !== '' ? signatureName : null,
+    upi_qr: upiQr !== '' ? upiQr : null,
+    upi_vpa: upiVpa !== '' ? upiVpa : null,
     gstin: gstin || undefined,
     gst_rate: parseFloat(gstRate) || 5.0,
     service_charge: parseFloat(svcCharge) || 5.0,
