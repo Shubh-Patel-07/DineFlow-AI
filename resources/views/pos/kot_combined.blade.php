@@ -101,6 +101,18 @@
     </div>
 
     <div class="header">
+        @php
+            $logoUrl = isset($restaurant) ? $restaurant->getEffectiveLogoUrl() : null;
+        @endphp
+        @if(!empty($logoUrl))
+            <img src="{{ $logoUrl }}" alt="{{ $restaurant->name ?? 'Restaurant' }}" style="max-height: 36px; max-width: 130px; object-fit: contain; margin-bottom: 4px;" onerror="this.style.display='none'">
+        @endif
+        @if(!empty($restaurant->name))
+            <h3 style="font-size: 15px; font-weight: 800; text-transform: uppercase; margin: 0 0 2px;">{{ $restaurant->name }}</h3>
+        @endif
+        @if(!empty($restaurant->phone))
+            <p style="font-size: 10px; margin: 0 0 5px;">Ph: {{ $restaurant->phone }}</p>
+        @endif
         <h2>{{ $kotDict['order_kot'] ?? 'ORDER KOT' }}</h2>
         <p style="margin-top: 5px; font-weight: bold; font-size: 11px;">{{ $kotDict['all_items'] ?? '*** ALL ITEMS ***' }}</p>
     </div>
@@ -156,7 +168,8 @@
     @endif
 
     <div class="header" style="margin-top: 12px;">
-        <p style="font-size: 9px; opacity: 0.7;">DineFlow AI POS - Combined Order Slip</p>
+        <p style="font-size: 9.5px; font-weight: 700;">{{ $restaurant->name ?? 'DineFlow POS' }} - Order Slip</p>
+        <p style="font-size: 8px; opacity: 0.6;">Powered by DineFlow AI POS</p>
     </div>
 
     <script>
