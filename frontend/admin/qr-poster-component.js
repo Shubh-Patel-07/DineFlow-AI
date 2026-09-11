@@ -67,20 +67,30 @@
 
     return `
       <div class="dineflow-qr-poster-card ${sizeClass} ${extraClass}">
+        <!-- 0. TOP ACCENT PILL -->
+        <div class="dineflow-qr-accent-pill"></div>
+
         <!-- 1. TOP SECTION: RESTAURANT BRANDING -->
         <div class="dineflow-qr-poster-header">
           ${logoHtml}
           <h2 class="dineflow-qr-rest-name">${escapeHtml(restName)}</h2>
-          <p class="dineflow-qr-tagline">Scan to View Menu &amp; Order</p>
+          <div class="dineflow-qr-tagline">
+            <span class="dineflow-qr-sparkle">✨</span> Scan to View Menu &amp; Order &bull; Digital Menu
+          </div>
         </div>
 
-        <!-- 2. MIDDLE SECTION: QR CODE & TABLE BADGE -->
+        <!-- 2. MIDDLE SECTION: HERO QR CARD CONTAINER -->
         <div class="dineflow-qr-body">
-          <div class="dineflow-qr-frame">
-            ${qrHtml}
-          </div>
-          <div class="dineflow-qr-table-badge">
-            Table: ${escapeHtml(tableNumber)}
+          <div class="dineflow-qr-card-container">
+            <div class="dineflow-qr-frame">
+              ${qrHtml}
+            </div>
+            <div class="dineflow-qr-table-badge">
+              Table: ${escapeHtml(tableNumber)}
+            </div>
+            <p class="dineflow-qr-instruction">
+              <i class="fa-solid fa-camera"></i> Point your phone camera to scan &amp; view menu
+            </p>
           </div>
         </div>
 
@@ -100,6 +110,7 @@
               <span>@smp.officials</span>
             </a>
           </div>
+          <p class="dineflow-qr-subtext">Thank you for dining with us! No app download required.</p>
         </div>
       </div>
     `;

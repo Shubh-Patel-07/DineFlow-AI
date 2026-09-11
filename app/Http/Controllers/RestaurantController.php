@@ -24,7 +24,6 @@ class RestaurantController extends Controller
 
         return response()->json(['success' => true, 'data' => $restaurant], 201);
     }
-
     public function show($id)
     {
         $restaurant = Restaurant::find($id);
@@ -33,7 +32,13 @@ class RestaurantController extends Controller
             return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
         }
 
-        return response()->json(['success' => true, 'data' => $restaurant]);
+        $data = $restaurant->toArray();
+        $data['logo'] = $restaurant->getEffectiveLogoUrl() ?: ($restaurant->logo ?? null);
+        $data['upi_qr'] = $restaurant->getEffectiveUpiQr();
+        $data['upi_vpa'] = $restaurant->getEffectiveUpiVpa();
+        $data['is_demo'] = $restaurant->isDemo();
+
+        return response()->json(['success' => true, 'data' => $data]);
     }
 
     public function getSettings($id)
@@ -58,6 +63,8 @@ class RestaurantController extends Controller
                 'logo' => $restaurant->getEffectiveLogoUrl(),
                 'signature' => $restaurant->getEffectiveSignature(),
                 'signature_name' => $restaurant->getEffectiveSignatureName(),
+                'upi_qr' => $restaurant->getEffectiveUpiQr(),
+                'upi_vpa' => $restaurant->getEffectiveUpiVpa(),
                 'gstin' => $restaurant->gstin,
                 'gst_rate' => $restaurant->gst_rate,
                 'service_charge' => $restaurant->service_charge,
@@ -85,6 +92,8 @@ class RestaurantController extends Controller
             'logo' => 'nullable|string|max:500',
             'signature' => 'nullable|string|max:500',
             'signature_name' => 'nullable|string|max:255',
+            'upi_qr' => 'nullable|string|max:500',
+            'upi_vpa' => 'nullable|string|max:100',
             'gstin' => 'nullable|string|max:50',
             'gst_rate' => 'nullable|numeric|min:0|max:100',
             'service_charge' => 'nullable|numeric|min:0|max:100',
@@ -96,6 +105,8 @@ class RestaurantController extends Controller
         if ($request->has('logo')) $currentSettings['logo'] = $request->logo;
         if ($request->has('signature')) $currentSettings['signature'] = $request->signature;
         if ($request->has('signature_name')) $currentSettings['signature_name'] = $request->signature_name;
+        if ($request->has('upi_qr')) $currentSettings['upi_qr'] = $request->upi_qr;
+        if ($request->has('upi_vpa')) $currentSettings['upi_vpa'] = $request->upi_vpa;
         if ($request->has('settings') && is_array($request->settings)) {
             $currentSettings = array_merge($currentSettings, $request->settings);
         }
@@ -121,6 +132,8 @@ class RestaurantController extends Controller
                 'logo' => $restaurant->getEffectiveLogoUrl(),
                 'signature' => $restaurant->getEffectiveSignature(),
                 'signature_name' => $restaurant->getEffectiveSignatureName(),
+                'upi_qr' => $restaurant->getEffectiveUpiQr(),
+                'upi_vpa' => $restaurant->getEffectiveUpiVpa(),
                 'gstin' => $restaurant->gstin,
                 'gst_rate' => $restaurant->gst_rate,
                 'service_charge' => $restaurant->service_charge,
@@ -135,7 +148,7 @@ class RestaurantController extends Controller
         $user = auth()->user();
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'type' => 'nullable|string|in:logo,signature,general'
+            'type' => 'nullable|string|in:logo,signature,upi_qr,general'
         ]);
 
         if ($request->hasFile('image')) {

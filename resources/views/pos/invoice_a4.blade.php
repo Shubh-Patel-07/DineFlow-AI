@@ -48,12 +48,11 @@
     /* A4 Container */
     .invoice-card {
       max-width: 800px;
-      min-height: 1100px;
       margin: 0 auto;
       background: #FFFFFF;
       border-radius: 16px;
       box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
-      padding: 40px;
+      padding: 28px 32px;
       position: relative;
     }
 
@@ -235,11 +234,84 @@
       }
     }
 
-    /* Print Setup for Clean A4 */
+    /* Print Setup for Clean A4 (Strict 1-Page Guarantee for Standard Invoices) */
+    @page {
+      size: A4 portrait;
+      margin: 8mm 10mm;
+    }
+
     @media print {
-      body { background: #fff; padding: 0; }
-      .action-bar { display: none !important; }
-      .invoice-card { box-shadow: none; border-radius: 0; padding: 0; width: 100%; max-width: 100%; min-height: auto; }
+      html, body {
+        background: #FFFFFF !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #0F172A !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .no-print, .action-bar {
+        display: none !important;
+      }
+
+      .invoice-card {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: auto !important;
+      }
+
+      .header-grid {
+        padding-bottom: 12px !important;
+        margin-bottom: 14px !important;
+      }
+
+      .meta-grid {
+        padding: 10px 14px !important;
+        margin-bottom: 14px !important;
+        gap: 12px !important;
+      }
+
+      .table-container {
+        margin-bottom: 14px !important;
+      }
+
+      .items-table th, .items-table td {
+        padding: 7px 10px !important;
+        font-size: 11.5px !important;
+      }
+
+      .items-table tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .calc-grid {
+        margin-bottom: 14px !important;
+        gap: 16px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .notes-box, .totals-box {
+        padding: 10px 14px !important;
+      }
+
+      .footer-sign-grid {
+        margin-top: 16px !important;
+        padding-top: 12px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .watermark-footer {
+        margin-top: 10px !important;
+        font-size: 9px !important;
+      }
     }
   </style>
 </head>
@@ -266,6 +338,7 @@
 
   <!-- A4 Invoice Container -->
   <div class="invoice-card">
+    <div style="width: 48px; height: 4px; border-radius: 4px; background: linear-gradient(135deg, #4F46E5, #06B6D4); margin-bottom: 14px;"></div>
     
     <!-- Header -->
     <div class="header-grid">

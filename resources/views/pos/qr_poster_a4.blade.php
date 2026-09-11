@@ -110,7 +110,7 @@
       background: #FFFFFF;
       box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
       border-radius: 4px;
-      padding: 14mm 16mm;
+      padding: 10mm 12mm;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -119,13 +119,7 @@
       position: relative;
       page-break-inside: avoid;
       break-inside: avoid;
-      page-break-after: always;
-      break-after: page;
-    }
-
-    .poster-page:last-child {
-      page-break-after: avoid !important;
-      break-after: avoid !important;
+      overflow: hidden;
     }
 
     /* Internal Decorative Border Frame */
@@ -157,34 +151,44 @@
     .poster-card::before { top: 8px; left: 8px; }
     .poster-card::after { bottom: 8px; right: 8px; }
 
+    /* Top Accent Pill */
+    .top-accent-pill {
+      width: 48px;
+      height: 4px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #4F46E5, #06B6D4);
+      margin: 0 auto 4px;
+      flex-shrink: 0;
+    }
+
     /* --- 1. TOP SECTION: RESTAURANT BRANDING --- */
     .top-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       width: 100%;
     }
 
     .rest-logo-container {
-      height: 64px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 2px;
     }
     .rest-logo-img {
-      max-height: 60px;
+      max-height: 54px;
       max-width: 180px;
       object-fit: contain;
     }
     .rest-monogram {
-      width: 54px;
-      height: 54px;
+      width: 50px;
+      height: 50px;
       border-radius: 14px;
       background: #0F172A;
       color: #FFFFFF;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 900;
       display: flex;
       align-items: center;
@@ -195,7 +199,7 @@
 
     .rest-name {
       font-family: 'Outfit', sans-serif;
-      font-size: 25px;
+      font-size: 24px;
       font-weight: 900;
       color: #0F172A;
       text-transform: uppercase;
@@ -203,14 +207,32 @@
       line-height: 1.2;
       word-break: break-word;
       max-width: 90%;
+      margin: 0;
+    }
+
+    .tagline-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      padding: 3px 12px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
     }
 
     .instruction-text {
       font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #475569;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       margin-top: 2px;
     }
 
@@ -219,13 +241,22 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
-      margin: 10px 0;
+      gap: 10px;
+      margin: 6px 0;
+      width: 100%;
+    }
+
+    .qr-card-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
     }
 
     .qr-frame {
-      width: 220px;
-      height: 220px;
+      width: 210px;
+      height: 210px;
       background: #FFFFFF;
       border: 2px solid #E2E8F0;
       border-radius: 18px;
@@ -263,14 +294,30 @@
       font-weight: 900;
       padding: 6px 30px;
       border-radius: 24px;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
     }
 
+    .micro-instruction {
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #475569;
+      margin: 2px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .micro-instruction i {
+      color: #4F46E5;
+      font-size: 13px;
+    }
+
     /* Dividers */
     .divider-line {
-      width: 82%;
+      width: 80%;
       height: 1.5px;
       background: #E2E8F0;
       margin: 4px 0;
@@ -346,10 +393,19 @@
       color: #E1306C;
     }
 
-    /* --- PRINT OPTIMIZATION (EXACT A4 PORTRAIT) --- */
+    .thank-you-subtext {
+      font-family: 'Inter', sans-serif;
+      font-size: 10.5px;
+      color: #94A3B8;
+      font-weight: 600;
+      margin-top: 3px;
+      text-align: center;
+    }
+
+    /* --- PRINT OPTIMIZATION (EXACT A4 PORTRAIT - STRICT 1-PAGE GUARANTEE) --- */
     @page {
       size: A4 portrait;
-      margin: 8mm;
+      margin: 0;
     }
 
     @media print {
@@ -357,8 +413,12 @@
         background: #FFFFFF !important;
         margin: 0 !important;
         padding: 0 !important;
-        min-height: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       .no-print, .screen-action-bar {
@@ -366,24 +426,53 @@
       }
 
       .a4-container {
+        display: block !important;
+        width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
         gap: 0 !important;
       }
 
       .poster-page {
         box-shadow: none !important;
         border-radius: 0 !important;
-        margin: 0 auto !important;
-        padding: 8mm !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 275mm !important;
-        max-height: 275mm !important;
+        margin: 0 !important;
+        padding: 8mm 12mm !important;
+        width: 210mm !important;
+        max-width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        min-height: 297mm !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        @if(!$isBatch)
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        @else
+        page-break-after: always !important;
+        break-after: page !important;
+        @endif
+      }
+
+      .poster-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
       }
 
       .poster-card {
         border-width: 2.5px !important;
         border-color: #0F172A !important;
-        border-radius: 24px !important;
+        border-radius: 26px !important;
+        padding: 20px 22px 18px !important;
+        height: 100% !important;
+        max-height: 100% !important;
       }
     }
 
@@ -459,7 +548,7 @@
 
     @foreach($postersList as $t)
       @php
-        $targetTableUrl = $baseUrl . "/customer/menu?restaurantId={$restaurant->id}&tableId={$t->id}";
+        $targetTableUrl = $baseUrl . "/customer/menu?restaurantId={$restaurant->id}&tableId={$t->id}&restaurant_id={$restaurant->id}&table_id={$t->id}";
         $rawNum = $t->table_number ?: (string)$t->id;
         $tBadge = stripos($rawNum, 'table') !== false ? strtoupper($rawNum) : 'TABLE: ' . strtoupper($rawNum);
         $logoUrl = $restaurant->getEffectiveLogoUrl();
@@ -468,6 +557,9 @@
       <div class="poster-page">
         <div class="poster-card">
           
+          <!-- 0. TOP ACCENT PILL -->
+          <div class="top-accent-pill"></div>
+
           <!-- 1. TOP SECTION: RESTAURANT BRANDING (PRIMARY) -->
           <div class="top-section">
             <div class="rest-logo-container">
@@ -480,21 +572,30 @@
             </div>
 
             <h1 class="rest-name">{{ $restaurant->name }}</h1>
-            <p class="instruction-text">Scan to View Menu &amp; Order</p>
+            <div class="tagline-badge">
+              <span>✨</span> Scan to View Menu &amp; Order &bull; Digital Menu
+            </div>
+            <p class="instruction-text" style="display:none;">Scan to View Menu &amp; Order</p>
           </div>
 
           <!-- 2. MIDDLE SECTION: QR CODE & TABLE BADGE (PRIMARY FUNCTIONAL) -->
           <div class="middle-section">
-            <div class="qr-frame">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=1&data={{ urlencode($targetTableUrl) }}" 
-                   alt="Table QR Code" 
-                   class="qr-img" 
-                   id="qrImg_{{ $t->id }}"
-                   onerror="renderQrFallback('{{ $t->id }}', '{{ $targetTableUrl }}')">
-              <div id="qrCanvas_{{ $t->id }}" class="qr-canvas-fallback" style="display:none;"></div>
-            </div>
+            <div class="qr-card-box">
+              <div class="qr-frame">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=1&data={{ urlencode($targetTableUrl) }}" 
+                     alt="Table QR Code" 
+                     class="qr-img" 
+                     id="qrImg_{{ $t->id }}"
+                     onerror="renderQrFallback('{{ $t->id }}', '{{ $targetTableUrl }}')">
+                <div id="qrCanvas_{{ $t->id }}" class="qr-canvas-fallback" style="display:none;"></div>
+              </div>
 
-            <div class="table-badge">{{ $tBadge }}</div>
+              <div class="table-badge">{{ $tBadge }}</div>
+
+              <p class="micro-instruction">
+                <i class="fa-solid fa-camera"></i> Point your phone camera to scan &amp; view menu
+              </p>
+            </div>
           </div>
 
           <!-- 3. DIVIDER -->
@@ -516,10 +617,9 @@
                 <span>{{ $instaHandle }}</span>
               </a>
             </div>
-          </div>
 
-          <!-- 5. BOTTOM DIVIDER -->
-          <div class="divider-line"></div>
+            <p class="thank-you-subtext">Thank you for dining with us! No app download required.</p>
+          </div>
 
         </div>
       </div>

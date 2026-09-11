@@ -401,6 +401,31 @@
               </div>
             </div>
 
+            <!-- UPI Payment QR Code Upload & Merchant VPA -->
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+              <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Restaurant UPI Payment QR & VPA</span>
+                <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">PNG, JPG, WebP &bull; Max 2MB</span>
+              </label>
+              <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                <div id="upiQrPreviewBox" style="width:72px; height:72px; border-radius:12px; border:1px dashed var(--border); background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                  <img id="settingUpiQrPreview" src="" alt="UPI QR" style="display:none; width:100%; height:100%; object-fit:contain;">
+                  <i id="settingUpiQrPlaceholder" class="fa-solid fa-qrcode" style="font-size:26px; color:#10B981;"></i>
+                </div>
+                <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:6px;">
+                  <input type="file" id="settingUpiQrFile" accept="image/png, image/jpeg, image/webp" onchange="uploadRestaurantBranding('upi_qr')" style="font-size:12px; color:var(--text-muted);">
+                  <input type="hidden" id="settingUpiQrUrl" value="">
+                  <div style="display:flex; gap:10px; align-items:center;">
+                    <button type="button" onclick="removeRestaurantBranding('upi_qr')" style="background:transparent; border:none; color:#EF4444; font-size:11px; cursor:pointer; padding:0; text-decoration:underline;">Remove UPI QR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:4px; margin-bottom:0;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Merchant UPI ID / VPA (For Dynamic POS & Menu QR)</label>
+                <input type="text" id="settingUpiVpa" class="form-input" placeholder="e.g. asopalav@okhdfcbank or 9558106440@paytm" style="padding:10px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:12.5px; font-weight:700;">
+              </div>
+            </div>
+
             <div style="display:flex; gap:14px; flex-wrap:wrap;">
               <div class="form-group" style="flex:1; min-width:140px;">
                 <label style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">GSTIN Number</label>
@@ -791,10 +816,23 @@
     const RESTAURANT_ID = window.AUTH_USER_RESTAURANT_ID || new URLSearchParams(window.location.search).get('restaurant_id') || '1';
 
     async function uploadRestaurantBranding(type) {
-      const fileInput = document.getElementById(type === 'logo' ? 'settingLogoFile' : 'settingSignatureFile');
-      const previewImg = document.getElementById(type === 'logo' ? 'settingLogoPreview' : 'settingSignaturePreview');
-      const placeholder = document.getElementById(type === 'logo' ? 'settingLogoPlaceholder' : 'settingSignaturePlaceholder');
-      const urlInput = document.getElementById(type === 'logo' ? 'settingLogoUrl' : 'settingSignatureUrl');
+      let fileInput, previewImg, placeholder, urlInput;
+      if (type === 'logo') {
+        fileInput = document.getElementById('settingLogoFile');
+        previewImg = document.getElementById('settingLogoPreview');
+        placeholder = document.getElementById('settingLogoPlaceholder');
+        urlInput = document.getElementById('settingLogoUrl');
+      } else if (type === 'signature') {
+        fileInput = document.getElementById('settingSignatureFile');
+        previewImg = document.getElementById('settingSignaturePreview');
+        placeholder = document.getElementById('settingSignaturePlaceholder');
+        urlInput = document.getElementById('settingSignatureUrl');
+      } else if (type === 'upi_qr') {
+        fileInput = document.getElementById('settingUpiQrFile');
+        previewImg = document.getElementById('settingUpiQrPreview');
+        placeholder = document.getElementById('settingUpiQrPlaceholder');
+        urlInput = document.getElementById('settingUpiQrUrl');
+      }
 
       const file = fileInput?.files?.[0];
       if (!file) return;
@@ -830,9 +868,12 @@
           if (type === 'logo') {
             localStorage.setItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`, result.url);
             localStorage.setItem('dineflow_restaurant_logo', result.url);
-          } else {
+          } else if (type === 'signature') {
             localStorage.setItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`, result.url);
             localStorage.setItem('dineflow_restaurant_signature', result.url);
+          } else if (type === 'upi_qr') {
+            localStorage.setItem(`dineflow_restaurant_upi_qr_${RESTAURANT_ID}`, result.url);
+            localStorage.setItem('dineflow_restaurant_upi_qr', result.url);
           }
 
           // Auto-persist directly to database immediately
@@ -852,10 +893,11 @@
             console.log('Branding auto-save error:', e);
           }
 
+          const label = type === 'logo' ? 'Logo' : (type === 'signature' ? 'Signature' : 'UPI QR');
           if (typeof Toast !== 'undefined' && Toast.success) {
-            Toast.success(`✅ ${type === 'logo' ? 'Logo' : 'Signature'} uploaded and saved!`);
+            Toast.success(`✅ ${label} uploaded and saved!`);
           } else {
-            alert(`✅ ${type === 'logo' ? 'Logo' : 'Signature'} uploaded and saved successfully!`);
+            alert(`✅ ${label} uploaded and saved successfully!`);
           }
         } else {
           alert(result.message || 'Image upload failed');
@@ -867,10 +909,29 @@
     }
 
     function removeRestaurantBranding(type) {
-      const fileInput = document.getElementById(type === 'logo' ? 'settingLogoFile' : 'settingSignatureFile');
-      const previewImg = document.getElementById(type === 'logo' ? 'settingLogoPreview' : 'settingSignaturePreview');
-      const placeholder = document.getElementById(type === 'logo' ? 'settingLogoPlaceholder' : 'settingSignaturePlaceholder');
-      const urlInput = document.getElementById(type === 'logo' ? 'settingLogoUrl' : 'settingSignatureUrl');
+      let fileInput, previewImg, placeholder, urlInput;
+      if (type === 'logo') {
+        fileInput = document.getElementById('settingLogoFile');
+        previewImg = document.getElementById('settingLogoPreview');
+        placeholder = document.getElementById('settingLogoPlaceholder');
+        urlInput = document.getElementById('settingLogoUrl');
+        localStorage.removeItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`);
+        localStorage.removeItem('dineflow_restaurant_logo');
+      } else if (type === 'signature') {
+        fileInput = document.getElementById('settingSignatureFile');
+        previewImg = document.getElementById('settingSignaturePreview');
+        placeholder = document.getElementById('settingSignaturePlaceholder');
+        urlInput = document.getElementById('settingSignatureUrl');
+        localStorage.removeItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`);
+        localStorage.removeItem('dineflow_restaurant_signature');
+      } else if (type === 'upi_qr') {
+        fileInput = document.getElementById('settingUpiQrFile');
+        previewImg = document.getElementById('settingUpiQrPreview');
+        placeholder = document.getElementById('settingUpiQrPlaceholder');
+        urlInput = document.getElementById('settingUpiQrUrl');
+        localStorage.removeItem(`dineflow_restaurant_upi_qr_${RESTAURANT_ID}`);
+        localStorage.removeItem('dineflow_restaurant_upi_qr');
+      }
 
       if (fileInput) fileInput.value = '';
       if (urlInput) urlInput.value = '';
@@ -879,14 +940,6 @@
         previewImg.style.display = 'none';
       }
       if (placeholder) placeholder.style.display = 'block';
-
-      if (type === 'logo') {
-        localStorage.removeItem(`dineflow_restaurant_logo_${RESTAURANT_ID}`);
-        localStorage.removeItem('dineflow_restaurant_logo');
-      } else {
-        localStorage.removeItem(`dineflow_restaurant_signature_${RESTAURANT_ID}`);
-        localStorage.removeItem('dineflow_restaurant_signature');
-      }
 
       // Auto-persist removal directly to database
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || window.CSRF_TOKEN || '';
@@ -902,8 +955,9 @@
         })
       }).catch(err => console.log('Remove branding server sync:', err));
 
+      const label = type === 'logo' ? 'Logo' : (type === 'signature' ? 'Signature' : 'UPI QR');
       if (typeof Toast !== 'undefined' && Toast.success) {
-        Toast.success(`${type === 'logo' ? 'Logo' : 'Signature'} removed.`);
+        Toast.success(`${label} removed.`);
       }
     }
 
@@ -955,6 +1009,19 @@
           if (s.signature_name && document.getElementById('settingSignatureName')) {
             document.getElementById('settingSignatureName').value = s.signature_name;
             localStorage.setItem(`dineflow_signature_name_${RESTAURANT_ID}`, s.signature_name);
+          }
+          if (s.upi_qr) {
+            const upiUrl = document.getElementById('settingUpiQrUrl');
+            const upiPrev = document.getElementById('settingUpiQrPreview');
+            const upiPlace = document.getElementById('settingUpiQrPlaceholder');
+            if (upiUrl) upiUrl.value = s.upi_qr;
+            if (upiPrev) { upiPrev.src = s.upi_qr; upiPrev.style.display = 'block'; }
+            if (upiPlace) upiPlace.style.display = 'none';
+            localStorage.setItem(`dineflow_restaurant_upi_qr_${RESTAURANT_ID}`, s.upi_qr);
+          }
+          if (s.upi_vpa && document.getElementById('settingUpiVpa')) {
+            document.getElementById('settingUpiVpa').value = s.upi_vpa;
+            localStorage.setItem(`dineflow_restaurant_upi_vpa_${RESTAURANT_ID}`, s.upi_vpa);
           }
           if (s.gstin && document.getElementById('settingGstin')) {
             document.getElementById('settingGstin').value = s.gstin;
@@ -1066,6 +1133,20 @@
       const savedSigName = localStorage.getItem(`dineflow_signature_name_${RESTAURANT_ID}`);
       if (savedSigName && document.getElementById('settingSignatureName')) {
         document.getElementById('settingSignatureName').value = savedSigName;
+      }
+
+      const savedUpiQr = localStorage.getItem(`dineflow_restaurant_upi_qr_${RESTAURANT_ID}`) || localStorage.getItem('dineflow_restaurant_upi_qr');
+      if (savedUpiQr) {
+        const upiUrl = document.getElementById('settingUpiQrUrl');
+        const upiPrev = document.getElementById('settingUpiQrPreview');
+        const upiPlace = document.getElementById('settingUpiQrPlaceholder');
+        if (upiUrl) upiUrl.value = savedUpiQr;
+        if (upiPrev) { upiPrev.src = savedUpiQr; upiPrev.style.display = 'block'; }
+        if (upiPlace) upiPlace.style.display = 'none';
+      }
+      const savedUpiVpa = localStorage.getItem(`dineflow_restaurant_upi_vpa_${RESTAURANT_ID}`);
+      if (savedUpiVpa && document.getElementById('settingUpiVpa')) {
+        document.getElementById('settingUpiVpa').value = savedUpiVpa;
       }
 
       const gstin = localStorage.getItem('dineflow_gstin');
