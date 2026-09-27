@@ -189,7 +189,8 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
         }
         $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
         $restaurant = \App\Models\Restaurant::find($restaurantId);
-        return view('pos.index', compact('todayOrdersCount', 'restaurantId', 'restaurant'));
+        $menuItems = \App\Models\MenuItem::where('restaurant_id', $restaurantId)->get();
+        return view('pos.index', compact('todayOrdersCount', 'restaurantId', 'restaurant', 'menuItems'));
     })->name('pos.index')->middleware('role:admin,manager,cashier,waiter');
 
     Route::get('/kitchen', function () {

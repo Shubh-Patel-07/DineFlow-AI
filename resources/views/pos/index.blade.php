@@ -683,6 +683,133 @@
       box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
     }
 
+    /* POS Menu Skeleton Loader */
+    .pos-skeleton-card {
+      background: rgba(30, 41, 59, 0.55);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 165px;
+      position: relative;
+    }
+    .pos-skeleton-img {
+      height: 84px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: posShimmer 1.5s infinite;
+    }
+    .pos-skeleton-body {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex: 1;
+    }
+    .pos-skeleton-line {
+      height: 11px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: posShimmer 1.5s infinite;
+    }
+    .pos-skeleton-line.short { width: 45%; }
+    .pos-skeleton-line.price { width: 35%; height: 15px; margin-top: auto; }
+
+    @keyframes posShimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* POS Menu Empty & Error States */
+    .pos-empty-state, .pos-error-state {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      text-align: center;
+      background: rgba(30, 41, 59, 0.35);
+      border: 1.5px dashed var(--border);
+      border-radius: 20px;
+      margin: 16px 0;
+    }
+    .pos-empty-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 14px;
+    }
+    .pos-empty-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .pos-empty-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 360px;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .pos-empty-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s;
+    }
+    .pos-empty-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+    }
+    .item-category-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-card-unavailable {
+      opacity: 0.65;
+      filter: grayscale(0.4);
+    }
+    .item-soldout-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      color: #EF4444;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.8px;
+    }
+
     /* ─── RIGHT PANEL (CART) ──────────────────── */
     .pos-right {
       width: 320px; min-width: 300px;
@@ -1904,6 +2031,59 @@
 
       <!-- Menu Grid -->
       <div class="menu-grid" id="menuGrid">
+        @if(isset($menuItems) && count($menuItems) > 0)
+          @foreach($menuItems as $item)
+            @php
+              $isVeg = $item->is_veg ?? true;
+              $isAvailable = $item->is_available ?? true;
+              $category = $item->category ?? 'Mains';
+              $price = (float)($item->price ?? 0);
+            @endphp
+            <div class="item-card {{ !$isAvailable ? 'item-card-unavailable' : '' }}" onclick="{{ $isAvailable ? "addQuickItem('{$item->id}')" : "showToast('" . addslashes($item->name) . " is Out of Stock!', 'error')" }}">
+              <div class="item-img">
+                @if(!empty($item->image))
+                  <img src="{{ $item->image }}" alt="{{ $item->name }}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <span style="display:none; font-size:34px;">🍛</span>
+                @else
+                  <span>🍛</span>
+                @endif
+                @if(!$isAvailable)
+                  <span class="item-badge out">SOLD OUT</span>
+                  <div class="item-soldout-overlay">OUT OF STOCK</div>
+                @elseif($isVeg)
+                  <span class="item-badge veg">VEG</span>
+                @else
+                  <span class="item-badge nonveg">NON-VEG</span>
+                @endif
+              </div>
+              <div class="item-body">
+                <div class="item-category-tag">{{ strtoupper($category) }}</div>
+                <div class="item-name" title="{{ $item->name }}">{{ $item->name }}</div>
+                <div class="item-footer">
+                  <div class="item-price">₹ {{ number_format($price, 0) }}<small>/dish</small></div>
+                  <div class="item-footer-actions">
+                    @if($isAvailable)
+                      <button class="item-add-btn" type="button" onclick="event.stopPropagation();addQuickItem('{{ $item->id }}')" title="Add to Cart">+</button>
+                    @else
+                      <span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i></span>
+                    @endif
+                  </div>
+                </div>
+              </div>
+            </div>
+          @endforeach
+        @else
+          @for($s = 0; $s < 12; $s++)
+            <div class="pos-skeleton-card">
+              <div class="pos-skeleton-img"></div>
+              <div class="pos-skeleton-body">
+                <div class="pos-skeleton-line short"></div>
+                <div class="pos-skeleton-line" style="width:85%;"></div>
+                <div class="pos-skeleton-line price"></div>
+              </div>
+            </div>
+          @endfor
+        @endif
       </div>
     </div>
 
@@ -2811,7 +2991,8 @@
 <div class="cart-backdrop" id="cartBackdrop" onclick="toggleMobileCart()"></div>
 
 <script>
-  const RESTAURANT_ID = '{{ Auth::user()?->restaurant_id ?? '' }}';
+  const RESTAURANT_ID = '{{ $restaurantId ?? (Auth::user()?->restaurant_id ?? '') }}';
+  const SERVER_MENU_ITEMS = @json($menuItems ?? []);
 
   function escapeHtml(str) {
       if (!str) return '';
@@ -3176,80 +3357,187 @@
   }
 
 
-  /* ─── DATA ─────────────────────────────────── */
   /* ─── DATA & API SYNC ────────────────────────── */
-  let MENU = [
-    { id:1,  name:'Paneer Butter Masala', cat:'mains',     price:240, emoji:'🍛', badge:'veg',    desc:'Creamy tomato butter curry',   qty:0 },
-    { id:2,  name:'Chicken Tikka Masala',  cat:'mains',     price:320, emoji:'🍗', badge:'nonveg', desc:'Smoky grilled chicken curry',   qty:0 },
-    { id:3,  name:'Garlic Naan',           cat:'breads',    price:60,  emoji:'🫓', badge:'veg',    desc:'Soft buttery garlic flatbread', qty:0 },
-    { id:4,  name:'Veg Spring Rolls',      cat:'starters',  price:180, emoji:'🥢', badge:'veg',    desc:'Crispy vegetable rolls',        qty:0 },
-    { id:5,  name:'Chicken Biryani',       cat:'rice',      price:380, emoji:'🍚', badge:'nonveg', desc:'Fragrant basmati rice',         qty:0 },
-    { id:6,  name:'Mango Lassi',           cat:'beverages', price:120, emoji:'🥭', badge:'veg',    desc:'Chilled mango yogurt drink',    qty:0 },
-    { id:7,  name:'Gulab Jamun',           cat:'desserts',  price:80,  emoji:'🍮', badge:'new',    desc:'Soft milk solid dumplings',     qty:0 },
-    { id:8,  name:'Dal Tadka',             cat:'mains',     price:180, emoji:'🫕', badge:'veg',    desc:'Tempered yellow lentils',       qty:0 },
-    { id:9,  name:'Fish Fry',              cat:'starters',  price:280, emoji:'🐟', badge:'nonveg', desc:'Spiced crispy coastal fish',    qty:0 },
-    { id:10, name:'Laccha Paratha',        cat:'breads',    price:70,  emoji:'🥙', badge:'veg',    desc:'Layered whole wheat bread',     qty:0 },
-    { id:11, name:'Veg Biryani',           cat:'rice',      price:280, emoji:'🍙', badge:'best',   desc:'Aromatic vegetable biryani',    qty:0 },
-    { id:12, name:'Cold Coffee',           cat:'beverages', price:140, emoji:'☕', badge:'veg',    desc:'Rich blended cold coffee',      qty:0 },
-  ];
+  function normalizeCatName(name) {
+    if (!name) return '';
+    let s = String(name).trim().toLowerCase();
+    s = s.replace(/[\-_]/g, ' ');
+    if (s.endsWith('s') && s.length > 3) {
+      s = s.slice(0, -1);
+    }
+    return s;
+  }
+
+  function areCategoriesMatching(itemCatRaw, targetCatRaw) {
+    if (!targetCatRaw || targetCatRaw.toLowerCase() === 'all') return true;
+    if (!itemCatRaw) return false;
+
+    const itemCat = String(itemCatRaw).trim().toLowerCase();
+    const targetCat = String(targetCatRaw).trim().toLowerCase();
+
+    if (itemCat === targetCat) return true;
+
+    const nItem = normalizeCatName(itemCat);
+    const nTarget = normalizeCatName(targetCat);
+    if (nItem === nTarget) return true;
+
+    const synonymGroups = [
+      ['drink', 'drinks', 'beverage', 'beverages', 'cold drink', 'cold drinks', 'milk shek', 'shake', 'lassi'],
+      ['starter', 'starters', 'appetizer', 'appetizers', 'snack', 'snacks', 'subh sharuat'],
+      ['main', 'mains', 'main course', 'curry', 'curries', 'panjabi', 'paneer', 'dal', 'kofta', 'kaju special', 'special cheese'],
+      ['bread', 'breads', 'roti', 'rotis', 'naan', 'paratha', 'kulcha'],
+      ['dessert', 'desserts', 'sweet', 'sweets', 'ice cream', 'ice creams'],
+      ['soup', 'soups'],
+      ['rice', 'biryani', 'chinese rice', 'pulao']
+    ];
+
+    for (const group of synonymGroups) {
+      const hasItem = group.some(g => g === itemCat || g === nItem);
+      const hasTarget = group.some(g => g === targetCat || g === nTarget);
+      if (hasItem && hasTarget) return true;
+    }
+
+    return false;
+  }
+
+  function getCatEmoji(category) {
+    const c = String(category || '').toLowerCase();
+    if (c.includes('soup')) return '🥣';
+    if (c.includes('starter') || c.includes('sharuat') || c.includes('appetizer')) return '🥢';
+    if (c.includes('paneer') || c.includes('cheese')) return '🧀';
+    if (c.includes('panjabi') || c.includes('main') || c.includes('curry')) return '🍛';
+    if (c.includes('dal')) return '🫕';
+    if (c.includes('roti') || c.includes('bread') || c.includes('naan')) return '🫓';
+    if (c.includes('rice') || c.includes('biryani')) return '🍚';
+    if (c.includes('sizzler')) return '♨️';
+    if (c.includes('drink') || c.includes('beverage') || c.includes('lassi')) return '🥤';
+    if (c.includes('shek') || c.includes('shake') || c.includes('milk')) return '🥛';
+    if (c.includes('ice cream') || c.includes('dessert') || c.includes('sweet')) return '🍨';
+    if (c.includes('backed') || c.includes('bake')) return '🥘';
+    if (c.includes('kofta')) return '🥟';
+    if (c.includes('kaju')) return '🥜';
+    if (c.includes('pentry') || c.includes('salad') || c.includes('papad')) return '🥗';
+    return '🍽️';
+  }
+
+  function formatCatTitle(str) {
+    if (!str) return 'Other';
+    return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  function transformMenuItem(item) {
+    const rawCat = (item.category || item.cat || 'Mains').trim();
+    const name = item.name || 'Dish';
+    const nameLower = name.toLowerCase();
+    const isVeg = (item.is_veg === true || item.is_veg === 1 || item.is_veg === '1' || item.is_veg === 'true' || item.is_veg === null);
+    const isAvailable = (item.is_available !== false && item.is_available !== 0 && item.is_available !== '0');
+
+    let emoji = getCatEmoji(rawCat);
+    if (nameLower.includes('naan') || nameLower.includes('roti') || nameLower.includes('paratha') || nameLower.includes('kulcha')) emoji = '🫓';
+    else if (nameLower.includes('soup')) emoji = '🥣';
+    else if (nameLower.includes('lassi') || nameLower.includes('water') || nameLower.includes('soda')) emoji = '🥤';
+    else if (nameLower.includes('shake') || nameLower.includes('shek')) emoji = '🥛';
+    else if (nameLower.includes('ice cream') || nameLower.includes('kulfi')) emoji = '🍨';
+    else if (nameLower.includes('biryani') || nameLower.includes('pulao') || nameLower.includes('rice')) emoji = '🍚';
+    else if (nameLower.includes('sizzler')) emoji = '♨️';
+    else if (nameLower.includes('dal')) emoji = '🫕';
+    else if (nameLower.includes('paneer')) emoji = '🧀';
+
+    let badge = isVeg ? 'veg' : 'nonveg';
+    if (!isAvailable) badge = 'out';
+
+    return {
+      id: item.id,
+      name: name,
+      cat: rawCat,
+      category: rawCat,
+      price: parseFloat(item.price || 0),
+      image: item.image || '',
+      emoji: emoji,
+      badge: badge,
+      desc: item.description || '',
+      qty: 0,
+      is_available: isAvailable,
+      is_veg: isVeg,
+      cookingNote: ''
+    };
+  }
+
+  function renderSkeleton(count = 12) {
+    const grid = document.getElementById('menuGrid');
+    if (!grid) return;
+    let html = '';
+    for (let i = 0; i < count; i++) {
+      html += `
+        <div class="pos-skeleton-card">
+          <div class="pos-skeleton-img"></div>
+          <div class="pos-skeleton-body">
+            <div class="pos-skeleton-line short"></div>
+            <div class="pos-skeleton-line" style="width:85%;"></div>
+            <div class="pos-skeleton-line price"></div>
+          </div>
+        </div>
+      `;
+    }
+    grid.innerHTML = html;
+  }
+
+  // Pre-seed MENU from server-injected items (zero-delay hydration, no fake items)
+  let MENU = Array.isArray(SERVER_MENU_ITEMS) && SERVER_MENU_ITEMS.length > 0
+    ? SERVER_MENU_ITEMS.map(transformMenuItem)
+    : [];
 
   async function syncPosMenuWithDatabase() {
+    if (!MENU || MENU.length === 0) {
+      renderSkeleton(12);
+    }
     try {
       const res = await fetch(`/api/menu?restaurantId=${RESTAURANT_ID}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      if (res.ok && data && (data.success || Array.isArray(data.data))) {
-        const rawItems = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
-        if (rawItems.length > 0) {
-          MENU = rawItems.map(item => {
-            const catLower = (item.category || 'mains').toLowerCase();
-            const nameLower = (item.name || '').toLowerCase();
-            const isVeg = (item.is_veg === true || item.is_veg === 1 || item.is_veg === '1' || item.is_veg === 'true');
-            
-            let catKey = 'mains';
-            if (catLower.includes('starter') || catLower.includes('appetizer')) catKey = 'starters';
-            else if (catLower.includes('bread') || catLower.includes('roti') || catLower.includes('naan')) catKey = 'breads';
-            else if (catLower.includes('rice') || catLower.includes('biryani')) catKey = 'rice';
-            else if (catLower.includes('dessert') || catLower.includes('sweet')) catKey = 'desserts';
-            else if (catLower.includes('drink') || catLower.includes('beverage')) catKey = 'beverages';
-            else if (catLower.includes('pizza')) catKey = 'mains';
-            else if (catLower.includes('burger')) catKey = 'starters';
-            else catKey = catLower;
+      const rawItems = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
 
-            let emoji = isVeg ? '🍛' : '🍗';
-            if (nameLower.includes('naan') || nameLower.includes('roti') || nameLower.includes('paratha')) emoji = '🫓';
-            else if (nameLower.includes('spring roll') || nameLower.includes('starter') || nameLower.includes('roll')) emoji = '🥢';
-            else if (nameLower.includes('biryani') || nameLower.includes('rice')) emoji = '🍚';
-            else if (nameLower.includes('lassi') || nameLower.includes('drink') || nameLower.includes('coffee') || nameLower.includes('shake')) emoji = '🥤';
-            else if (nameLower.includes('pizza')) emoji = '🍕';
-            else if (nameLower.includes('burger')) emoji = '🍔';
-            else if (nameLower.includes('gulab') || nameLower.includes('jamun') || nameLower.includes('sweet') || nameLower.includes('ice')) emoji = '🍮';
-            else if (nameLower.includes('dal')) emoji = '🫕';
-            else if (nameLower.includes('fish')) emoji = '🐟';
-
-            let badgeKey = isVeg ? 'veg' : 'nonveg';
-            if (item.is_available === false) badgeKey = 'out';
-
-            return {
-              id: item.id,
-              name: item.name,
-              cat: catKey,
-              price: parseFloat(item.price || 0),
-              emoji: emoji,
-              badge: badgeKey,
-              desc: item.description || '',
-              qty: 0,
-              is_available: item.is_available !== false
-            };
-          });
-        }
+      // Preserve existing cart quantities & notes
+      const existingQtys = new Map();
+      const existingNotes = new Map();
+      if (Array.isArray(MENU)) {
+        MENU.forEach(i => {
+          if (i.qty > 0) existingQtys.set(String(i.id), i.qty);
+          if (i.cookingNote) existingNotes.set(String(i.id), i.cookingNote);
+        });
       }
-    } catch (err) {
-      console.warn('POS dynamic menu sync warning, keeping fallback', err);
-    } finally {
+
+      MENU = rawItems.map(item => {
+        const transformed = transformMenuItem(item);
+        if (existingQtys.has(String(transformed.id))) {
+          transformed.qty = existingQtys.get(String(transformed.id));
+        }
+        if (existingNotes.has(String(transformed.id))) {
+          transformed.cookingNote = existingNotes.get(String(transformed.id));
+        }
+        return transformed;
+      });
+
+      renderMenu();
       if (typeof renderCatPopup === 'function') {
         renderCatPopup();
       }
-      renderMenu();
+      if (typeof renderCart === 'function') {
+        renderCart();
+      }
+    } catch (err) {
+      console.warn('POS dynamic menu sync warning:', err);
+      const grid = document.getElementById('menuGrid');
+      if (grid && (!MENU || MENU.length === 0)) {
+        grid.innerHTML = `
+          <div class="pos-error-state">
+            <div class="pos-empty-icon" style="background:rgba(239,68,68,0.15); color:#EF4444;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="pos-empty-title">Failed to Load Menu Items</div>
+            <div class="pos-empty-sub">Unable to connect to the server or fetch items. Please check network and retry.</div>
+            <button type="button" class="pos-empty-action" onclick="syncPosMenuWithDatabase()"><i class="fa-solid fa-rotate-right"></i> Retry Loading</button>
+          </div>
+        `;
+      }
     }
   }
 
@@ -3285,48 +3573,110 @@
   let searchTerm = '';
 
   function getCats() {
-    return [
-      { key:'all',       label:'All Items',      emoji:'🍽️', count: MENU.length },
-      { key:'starters',  label:'Starters',       emoji:'🥢', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='starters').length },
-      { key:'mains',     label:'Main Course',    emoji:'🍛', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='mains').length },
-      { key:'breads',    label:'Breads',         emoji:'🫓', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='breads').length },
-      { key:'rice',      label:'Rice & Biryani', emoji:'🍚', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='rice').length },
-      { key:'desserts',  label:'Desserts',       emoji:'🍮', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='desserts').length },
-      { key:'beverages', label:'Beverages',      emoji:'🥭', count: MENU.filter(i=>(i.cat||'').toLowerCase()==='beverages' || (i.cat||'').toLowerCase()==='drinks').length },
+    const catMap = new Map();
+    const cats = [
+      { key: 'all', label: 'All Items', emoji: '🍽️', count: MENU.length }
     ];
+
+    MENU.forEach(item => {
+      const rawCat = (item.category || item.cat || '').trim();
+      if (!rawCat) return;
+      const upperCat = rawCat.toUpperCase();
+      if (!catMap.has(upperCat)) {
+        catMap.set(upperCat, {
+          key: upperCat,
+          label: formatCatTitle(upperCat),
+          emoji: getCatEmoji(upperCat),
+          count: 0
+        });
+      }
+      catMap.get(upperCat).count++;
+    });
+
+    const sortedCats = Array.from(catMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+    return cats.concat(sortedCats);
   }
 
   /* ─── RENDER MENU ────────────────────────── */
   function renderMenu() {
     const grid = document.getElementById('menuGrid');
+    if (!grid) return;
+
+    const query = (searchTerm || '').trim().toLowerCase();
+    const targetCat = (currentCat || 'all').toLowerCase();
+
     const items = MENU.filter(i => {
-      const itemCat = (i.cat || '').toLowerCase();
-      const targetCat = currentCat.toLowerCase();
-      const matchCat  = targetCat === 'all' || itemCat === targetCat || (targetCat === 'beverages' && itemCat === 'drinks');
-      const matchSearch = i.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchCat = targetCat === 'all' || areCategoriesMatching(i.category || i.cat, targetCat);
+      const matchSearch = !query ||
+        (i.name && i.name.toLowerCase().includes(query)) ||
+        (i.category && i.category.toLowerCase().includes(query)) ||
+        (i.desc && i.desc.toLowerCase().includes(query));
       return matchCat && matchSearch;
     });
 
-    grid.innerHTML = items.map(item => `
-      <div class="item-card ${item.qty > 0 ? 'in-cart' : ''}" onclick="addQuickItem('${item.id}')">
-        <div class="item-img">
-          ${item.emoji}
-          ${item.badge ? `<span class="item-badge ${item.badge}">${item.badge.toUpperCase()}</span>` : ''}
-        </div>
-        <div class="item-body">
-          <div class="item-name">${item.name}</div>
-          <div class="item-footer">
-            <div class="item-price">₹ ${item.price}<small>/plate</small></div>
-            <div class="item-footer-actions">
-              ${item.qty > 0
-                ? `<div class="item-in-cart-badge">${item.qty}</div>`
-                : `<button class="item-add-btn" onclick="event.stopPropagation();addQuickItem('${item.id}')">+</button>`
-              }
+    if (items.length === 0) {
+      if (MENU.length === 0) {
+        grid.innerHTML = `
+          <div class="pos-empty-state">
+            <div class="pos-empty-icon"><i class="fa-solid fa-utensils"></i></div>
+            <div class="pos-empty-title">No Menu Items Found</div>
+            <div class="pos-empty-sub">This restaurant doesn't have any menu items configured in the system yet.</div>
+            <a href="/admin/menu-manager" class="pos-empty-action"><i class="fa-solid fa-plus"></i> Add Menu Item</a>
+          </div>`;
+      } else {
+        grid.innerHTML = `
+          <div class="pos-empty-state">
+            <div class="pos-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="pos-empty-title">No Matching Dishes</div>
+            <div class="pos-empty-sub">No dishes found matching "${escapeHtml(searchTerm || currentCat)}". Try clearing your search or category filter.</div>
+            <button type="button" class="pos-empty-action" onclick="resetCat(); const si = document.getElementById('posSearchInput'); if (si) si.value=''; filterItems('');"><i class="fa-solid fa-rotate-left"></i> Reset Filter</button>
+          </div>`;
+      }
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const isSoldOut = !item.is_available;
+      const hasImg = item.image && item.image.trim().length > 5;
+      const cardClass = `item-card ${item.qty > 0 ? 'in-cart' : ''} ${isSoldOut ? 'item-card-unavailable' : ''}`;
+      const clickAction = isSoldOut ? `showToast('${escapeHtml(item.name)} is Out of Stock!', 'error')` : `addQuickItem('${item.id}')`;
+
+      return `
+        <div class="${cardClass}" onclick="${clickAction}">
+          <div class="item-img">
+            ${hasImg ? `
+              <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <span style="display:none; font-size:34px;">${item.emoji}</span>
+            ` : `
+              <span>${item.emoji}</span>
+            `}
+            ${item.badge === 'out'
+              ? `<span class="item-badge out">SOLD OUT</span>`
+              : (item.badge === 'veg'
+                  ? `<span class="item-badge veg">VEG</span>`
+                  : (item.badge === 'nonveg' ? `<span class="item-badge nonveg">NON-VEG</span>` : `<span class="item-badge ${item.badge}">${item.badge.toUpperCase()}</span>`))
+            }
+            ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
+          </div>
+          <div class="item-body">
+            <div class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</div>
+            <div class="item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+            <div class="item-footer">
+              <div class="item-price">₹ ${item.price.toFixed(0)}<small>/dish</small></div>
+              <div class="item-footer-actions">
+                ${isSoldOut
+                  ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i></span>`
+                  : (item.qty > 0
+                      ? `<div class="item-in-cart-badge">${item.qty}</div>`
+                      : `<button class="item-add-btn" type="button" onclick="event.stopPropagation();addQuickItem('${item.id}')" title="Add to Cart">+</button>`
+                    )
+                }
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   /* ─── RENDER CART ────────────────────────── */
@@ -3795,16 +4145,19 @@
     const grid = document.getElementById('catPopupGrid');
     if (!grid) return;
 
-    grid.innerHTML = categories.map(c => `
-      <div class="cat-popup-item ${currentCat === c.key ? 'active' : ''}" onclick="selectCat('${c.key}','${c.label}')">
-        <span class="cpi-emoji" style="font-size:22px;">${c.emoji}</span>
-        <div style="flex:1;">
-          <div class="cpi-name">${c.label}</div>
-          <div class="cpi-count">${c.count} items</div>
+    grid.innerHTML = categories.map(c => {
+      const isAct = currentCat.toLowerCase() === c.key.toLowerCase();
+      return `
+        <div class="cat-popup-item ${isAct ? 'active' : ''}" onclick="selectCat('${escapeHtml(c.key)}','${escapeHtml(c.label)}')">
+          <span class="cpi-emoji" style="font-size:22px;">${c.emoji}</span>
+          <div style="flex:1; min-width:0;">
+            <div class="cpi-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(c.label)}</div>
+            <div class="cpi-count">${c.count} items</div>
+          </div>
+          ${isAct ? '<i class="fa-solid fa-circle-check" style="color:var(--primary); font-size:16px;"></i>' : ''}
         </div>
-        ${currentCat === c.key ? '<i class="fa-solid fa-circle-check" style="color:var(--primary); font-size:16px;"></i>' : ''}
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   function toggleCatPopup() {
@@ -3818,14 +4171,20 @@
   }
 
   function selectCat(key, label) {
-    currentCat = key;
-    document.getElementById('catPopupLabel').textContent = key === 'all' ? 'All Categories' : label;
-    document.getElementById('catPopupBtn').classList.toggle('filtered', key !== 'all');
+    currentCat = key || 'all';
+    const lbl = document.getElementById('catPopupLabel');
+    if (lbl) {
+      lbl.textContent = currentCat.toLowerCase() === 'all' ? 'All Categories' : label;
+    }
+    const btn = document.getElementById('catPopupBtn');
+    if (btn) {
+      btn.classList.toggle('filtered', currentCat.toLowerCase() !== 'all');
+    }
     closeModal('catPopupModal');
     renderMenu();
   }
 
-  function resetCat() { selectCat('all','All Items'); }
+  function resetCat() { selectCat('all','All Categories'); }
 
   /* ─── FILTER ─────────────────────────────── */
   function filterItems(val) {
@@ -4825,8 +5184,11 @@
 
   let activeCallsSet = new Set();
   let isFirstWaiterLoad = true;
+  let isCheckingWaiterCalls = false;
 
   async function checkWaiterCalls() {
+    if (isCheckingWaiterCalls) return;
+    isCheckingWaiterCalls = true;
     try {
       const response = await fetch(`/api/waiter-calls/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
@@ -4869,6 +5231,8 @@
       }
     } catch (err) {
       console.log('Error checking waiter calls:', err);
+    } finally {
+      isCheckingWaiterCalls = false;
     }
   }
 
@@ -4941,8 +5305,8 @@
     showToast(`✅ Attached modifier "${modName}" to ${lastItem.name}!`, 'success');
   }
 
-  // Poll for waiter calls and live notifications every 3 seconds for 100% instant real-time updates!
-  setInterval(() => { if (document.visibilityState === 'hidden') return; checkWaiterCalls(); }, 3000);
+  // Poll for waiter calls and live notifications (throttled to 15s to eliminate server lag)
+  setInterval(() => { if (document.visibilityState === 'hidden') return; checkWaiterCalls(); }, 15000);
   checkWaiterCalls();
   loadTablesData(); // Populate allTablesData array immediately on page load!
 
@@ -5381,8 +5745,11 @@
 
   let knownOrdersSet = new Set();
   let isFirstNotificationSync = true;
+  let isSyncingLiveAlerts = false;
 
   async function syncRealTimeLiveAlerts() {
+    if (isSyncingLiveAlerts) return;
+    isSyncingLiveAlerts = true;
     try {
       const oRes = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
       const oData = await oRes.json();
@@ -5412,13 +5779,15 @@
       isFirstNotificationSync = false;
     } catch (err) {
       console.log('Error syncing live order alerts:', err);
+    } finally {
+      isSyncingLiveAlerts = false;
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     renderPosNotifications();
     syncRealTimeLiveAlerts();
-    setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 3000);
+    setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 15000);
   });
 </script>
 </body>
