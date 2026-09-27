@@ -26,6 +26,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if ($request->has('debug') || config('app.debug')) {
+                return response(
+                    "DIAGNOSTIC ERROR: " . $e->getMessage() . "\n" .
+                    "FILE: " . $e->getFile() . " on line " . $e->getLine() . "\n\n" .
+                    "TRACE:\n" . $e->getTraceAsString(),
+                    500,
+                    ['Content-Type' => 'text/plain']
+                );
+            }
+        });
+
         // Intercept 403 errors: if the user belongs to a suspended/expired restaurant,
         // redirect to the professional subscription status page instead of raw 403.
         $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $e, \Illuminate\Http\Request $request) {
