@@ -359,17 +359,25 @@
       }
     }, 2000);
 
+    let isLoadingKOTs = false;
+
     async function loadKOTs() {
+      if (isLoadingKOTs) return;
+      isLoadingKOTs = true;
       try {
         const statusBadge = document.getElementById('syncStatus');
-        statusBadge.style.color = '#F59E0B';
-        statusBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+        if (statusBadge) {
+          statusBadge.style.color = '#F59E0B';
+          statusBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+        }
 
         const response = await fetch('/api/orders/restaurant/{{ Auth::user()?->restaurant_id ?? '' }}');
         const data = await response.json();
         
-        statusBadge.style.color = 'var(--success)';
-        statusBadge.innerHTML = '<i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring';
+        if (statusBadge) {
+          statusBadge.style.color = 'var(--success)';
+          statusBadge.innerHTML = '<i class="fa-solid fa-circle-dot fa-fade"></i> Live Monitoring';
+        }
 
         const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
         if (data.success && Array.isArray(ordersList)) {
@@ -430,9 +438,10 @@
                 </div>
                 <div class="card-body">
                   ${itemsHtml}
+                  ${order.special_instructions ? `<div style="margin-top:8px; padding:6px 8px; border-radius:6px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); font-size:11.5px; color:#FBBF24;"><i class="fa-solid fa-note-sticky"></i> ${order.special_instructions}</div>` : ''}
                 </div>
                 <div class="card-footer" style="gap: 6px;">
-                  <button class="btn btn-warning" onclick="printKOT(${order.id})" style="padding: 6px 10px; font-size: 12px;">
+                  <button class="btn btn-warning" onclick="printKOT(${order.id})" style="padding: 6px 10px; font-size: 12px;" title="Print Kitchen KOT">
                     <i class="fa-solid fa-print"></i> KOT
                   </button>
                   ${order.status === 'preparing' || order.status === 'cooking' ? `
@@ -444,8 +453,11 @@
                       🍳 Start Cooking
                     </button>
                   `}
-                  <button class="btn btn-success" onclick="completeKOT(${order.id})" style="padding: 6px 10px; font-size: 12px;">
+                  <button class="btn btn-success" onclick="completeKOT(${order.id})" style="padding: 6px 10px; font-size: 12px;" title="Mark Ready">
                     <i class="fa-solid fa-circle-check"></i> Ready
+                  </button>
+                  <button class="btn" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5; padding: 6px 9px; font-size: 12px;" onclick="cancelKOT(${order.id})" title="Reject / Cancel Order">
+                    <i class="fa-solid fa-ban"></i>
                   </button>
                 </div>
               </div>
@@ -454,6 +466,8 @@
         }
       } catch (err) {
         console.log('Error refreshing KDS:', err);
+      } finally {
+        isLoadingKOTs = false;
       }
     }
 
@@ -481,8 +495,33 @@
     }
 
     function printKOT(orderId) {
-      // Opens the combined KOT print dialog directly in a new window/tab
       window.open('/orders/' + orderId + '/receipt/kot-combined', '_blank');
+    }
+
+    async function cancelKOT(orderId) {
+      const reason = prompt('Cancellation reason for Order #' + orderId + ':', 'Kitchen item unavailable / rejected');
+      if (!reason) return;
+      try {
+        const response = await fetch('/api/orders/' + orderId + '/cancel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+          },
+          body: JSON.stringify({ reason: reason })
+        });
+        const data = await response.json();
+        if (data.success) {
+          processedOrders.delete(String(orderId));
+          localStorage.setItem('dineflow_kitchen_processed', JSON.stringify(Array.from(processedOrders)));
+          loadKOTs();
+        } else {
+          alert('Failed to cancel order: ' + (data.message || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Error cancelling order: ' + err.message);
+      }
     }
 
     async function completeKOT(orderId) {
@@ -524,8 +563,11 @@
       }
     }
 
-    // Refresh every 5 seconds
-    setInterval(loadKOTs, 5000);
+    // Refresh every 12 seconds with visibility check to eliminate lag
+    setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
+      loadKOTs();
+    }, 12000);
     // Initial fetch
     loadKOTs();
   </script>

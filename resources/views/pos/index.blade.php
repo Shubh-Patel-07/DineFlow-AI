@@ -2576,6 +2576,8 @@
   </div>
 </div>
 
+@include('partials.order-management')
+
 <!-- Delivery & Online Orders Modal -->
 <div class="modal-overlay" id="deliveryOrdersModal">
   <div class="modal selection-popup-modal" style="width:860px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
@@ -4092,6 +4094,10 @@
   }
 
   function clearCart() {
+    const hasItems = MENU.some(i => (i.qty || 0) > 0);
+    if (hasItems && !confirm('Are you sure you want to clear all items from the cart?')) {
+      return;
+    }
     MENU.forEach(i => i.qty = 0);
     const cartNote = document.getElementById('cartNote');
     if (cartNote) cartNote.value = '';
@@ -4403,12 +4409,14 @@
             </td>
             <td style="padding:12px; font-weight:700; color:${statusColor}; text-transform:capitalize;">${order.status || 'Received'}</td>
             <td style="padding:12px; text-align:right;">
-              <div style="display:inline-flex; gap:6px; align-items:center;">
-                ${!isPaid ? `<button onclick="payOrder(${order.id})" style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); color:#38BDF8; padding:5px 10px; border-radius:8px; font-size:11.5px; font-weight:700; cursor:pointer;" title="Mark Paid"><i class="fa-solid fa-money-bill-wave"></i> Pay</button>` : ''}
-                <a href="/orders/${order.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
-                <a href="/orders/${order.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
-                <a href="/orders/${order.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
-              </div>
+              ${typeof renderOrderActionsHtml === 'function' ? renderOrderActionsHtml(order) : `
+                <div style="display:inline-flex; gap:6px; align-items:center;">
+                  ${!isPaid ? `<button onclick="payOrder(${order.id})" style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); color:#38BDF8; padding:5px 10px; border-radius:8px; font-size:11.5px; font-weight:700; cursor:pointer;" title="Mark Paid"><i class="fa-solid fa-money-bill-wave"></i> Pay</button>` : ''}
+                  <a href="/orders/${order.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
+                  <a href="/orders/${order.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
+                  <a href="/orders/${order.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
+                </div>
+              `}
             </td>
           </tr>
         `;

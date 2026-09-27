@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\MenuItem;
-use App\Models\Inventory;
+use App\Models\Table;
+use App\Models\Restaurant;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
+    public function __construct(protected OrderService $orderService)
+    {
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -28,216 +34,20 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'restaurant_id' => 'required',
-            'table_id' => 'required',
             'items' => 'required|array|min:1',
-            'payment_method' => 'nullable|string',
-            'special_instructions' => 'nullable|string',
         ]);
 
-        $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : $request->restaurant_id;
-
-        if (!$restaurantId || !\App\Models\Restaurant::find($restaurantId)) {
-            return response()->json(['success' => false, 'message' => 'Invalid or missing restaurant ID.'], 422);
+        try {
+            $order = $this->orderService->createOrder($request->all(), auth()->user());
+            return response()->json(['success' => true, 'data' => $order], 201);
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            return response()->json(['success' => false, 'message' => $ve->getMessage(), 'errors' => $ve->errors()], 422);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            Log::error('Order creation error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-        
-        $restaurant = \App\Models\Restaurant::find($restaurantId);
-        if (!$restaurant->isOperational()) {
-            return response()->json(['success' => false, 'message' => 'This restaurant is currently not accepting orders.'], 403);
-        }
-
-        $limitCheck = \App\Services\PlanLimitService::canCreateOrder($restaurantId);
-        if (!$limitCheck['allowed']) {
-            return response()->json([
-                'success' => false,
-                'message' => $limitCheck['message'],
-                'limit_exceeded' => true,
-                'details' => $limitCheck
-            ], 422);
-        }
-
-        return DB::transaction(function () use ($request, $restaurantId) {
-            $totalAmount = 0;
-            $itemsData = [];
-
-            foreach ($request->items as $item) {
-                $menuItemId = $item['menu_item_id'] ?? $item['menuItemId'] ?? null;
-                $quantity = max(1, intval($item['quantity'] ?? 1));
-
-                if (!$menuItemId && !empty($item['name'])) {
-                    $menuItem = MenuItem::where('name', $item['name'])->where('restaurant_id', $restaurantId)->first();
-                } else {
-                    $menuItem = MenuItem::find($menuItemId);
-                }
-
-                if (!$menuItem) {
-                    if (!empty($item['name']) && isset($item['price']) && floatval($item['price']) > 0) {
-                        $price = floatval($item['price']);
-                        $totalAmount += $price * $quantity;
-                        $itemsData[] = [
-                            'menu_item_id' => null,
-                            'name' => (string)$item['name'],
-                            'quantity' => $quantity,
-                            'price' => $price,
-                        ];
-                    } else if (!empty($item['name'])) {
-                        return response()->json(['success' => false, 'message' => 'Custom item price must be greater than 0.'], 422);
-                    }
-                    continue;
-                }
-
-                // Reject sold-out / unavailable items
-                if (!$menuItem->is_available) {
-                    continue;
-                }
-
-                $price = (!empty($item['price']) && floatval($item['price']) >= floatval($menuItem->price)) ? floatval($item['price']) : floatval($menuItem->price);
-                $totalAmount += $price * $quantity;
-
-                $itemsData[] = [
-                    'menu_item_id' => $menuItem->id,
-                    'name' => $menuItem->name,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                ];
-
-                try {
-                    $inventory = Inventory::where('restaurant_id', $restaurantId)
-                        ->where('item_name', 'LIKE', '%' . $menuItem->name . '%')
-                        ->first();
-
-                    if ($inventory) {
-                        if ($inventory->quantity >= $quantity) {
-                            $inventory->decrement('quantity', $quantity);
-                        } else {
-                            \Log::warning("Insufficient inventory for menu item: {$menuItem->name}");
-                        }
-                    }
-                } catch (\Exception $e) {
-                    \Log::error("Error updating inventory for order: " . $e->getMessage());
-                }
-            }
-
-            if (empty($itemsData)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No available menu items could be ordered.'
-                ], 422);
-            }
-
-            // Check if there is already an active (unpaid) order for this table
-            $order = Order::where('table_id', $request->table_id)
-                ->where('restaurant_id', $restaurantId)
-                ->where('payment_status', 'pending')
-                ->first();
-
-            if ($order) {
-                // Reset status to pending so new/appended items reappear on the kitchen display!
-                $order->status = 'pending';
-                $order->special_instructions = $request->special_instructions ?? $order->special_instructions;
-                
-                // Merge/append items
-                foreach ($itemsData as $newItem) {
-                    $existingItem = $order->items()->where('menu_item_id', $newItem['menu_item_id'])->first();
-                    if ($existingItem) {
-                        $existingItem->quantity += $newItem['quantity'];
-                        $existingItem->save();
-                    } else {
-                        $order->items()->create($newItem);
-                    }
-                }
-
-                // Recalculate total amount for all items in the order
-                $newTotal = 0;
-                foreach ($order->items()->get() as $item) {
-                    $newTotal += $item->price * $item->quantity;
-                }
-                $order->total_amount = $newTotal;
-                $order->save();
-            } else {
-                // Resolve current authoritative restaurant language for KOT snapshot
-                $kotLang = \App\Services\KotLanguageService::getRestaurantLanguage($restaurantId);
-
-                // Create new order
-                $order = Order::create([
-                    'restaurant_id' => $restaurantId,
-                    'table_id' => $request->table_id,
-                    'total_amount' => $totalAmount,
-                    'status' => 'pending',
-                    'payment_status' => 'pending',
-                    'payment_method' => $request->payment_method ?? 'cash',
-                    'special_instructions' => $request->special_instructions ?? '',
-                    'kot_language' => $kotLang,
-                ]);
-
-                foreach ($itemsData as $itemData) {
-                    $order->items()->create($itemData);
-                }
-            }
-
-            return response()->json(['success' => true, 'data' => $order->load('items')], 201);
-        });
-    }
-
-    public function updateStatus(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,preparing,ready,served,completed,cancelled',
-        ]);
-
-        $user = auth()->user();
-        $query = Order::query();
-        if ($user && $user->restaurant_id) {
-            $query->where('restaurant_id', $user->restaurant_id);
-        }
-        $order = $query->find($id);
-
-        if (!$order) {
-            return response()->json(['success' => false, 'message' => 'Order not found in your restaurant'], 404);
-        }
-
-        $order->status = $request->status;
-        $order->save();
-
-        return response()->json(['success' => true, 'data' => $order]);
-    }
-
-    public function pay(Request $request, $id)
-    {
-        $user = auth()->user();
-        $query = Order::query();
-        if ($user && $user->restaurant_id) {
-            $query->where('restaurant_id', $user->restaurant_id);
-        }
-        $order = $query->find($id);
-
-        if (!$order) {
-            return response()->json(['success' => false, 'message' => 'Order not found in your restaurant'], 404);
-        }
-
-        $order->payment_status = 'paid';
-        $order->payment_method = $request->payment_method ?? 'online';
-        $order->status = 'completed';
-        $order->save();
-
-        $table = \App\Models\Table::find($order->table_id);
-        if ($table) {
-            $table->status = 'available';
-            $table->save();
-        }
-
-        return response()->json(['success' => true, 'data' => $order]);
-    }
-
-    public function getRestaurantOrders($restaurantId)
-    {
-        $user = auth()->user();
-        if ($user && $user->role !== 'superadmin' && (int)$user->restaurant_id !== (int)$restaurantId) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized tenant orders access.'], 403);
-        }
-        $orders = Order::where('restaurant_id', $restaurantId)->with(['items.menuItem', 'table'])->orderBy('created_at', 'desc')->paginate(50);
-        return response()->json(['success' => true, 'data' => $orders]);
     }
 
     public function show($id = null, $extraId = null)
@@ -247,19 +57,190 @@ class OrderController extends Controller
         }
 
         $user = auth()->user();
-        $query = Order::with('items');
+        $query = Order::with(['items.menuItem', 'table']);
         if ($user && $user->restaurant_id) {
             $query->where('restaurant_id', $user->restaurant_id);
         }
         $order = $query->find($id);
 
         if (!$order) {
-            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Order not found in your restaurant'], 404);
         }
 
-        return response()->json(['success' => true, 'data' => $order])
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-            ->header('Pragma', 'no-cache');
+        $billBreakdown = $this->orderService->calculateBillBreakdown($order);
+
+        return response()->json([
+            'success' => true,
+            'data' => $order,
+            'bill_breakdown' => $billBreakdown,
+        ])
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->header('Pragma', 'no-cache');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        try {
+            $updated = $this->orderService->updateOrder($order, $request->all(), auth()->user());
+            return response()->json([
+                'success' => true,
+                'data' => $updated,
+                'bill_breakdown' => $this->orderService->calculateBillBreakdown($updated),
+                'message' => 'Order updated successfully'
+            ]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function addItem(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        try {
+            $item = $this->orderService->addItem($order, $request->all(), auth()->user());
+            $freshOrder = $order->fresh(['items.menuItem', 'table']);
+            return response()->json([
+                'success' => true,
+                'data' => $item,
+                'order' => $freshOrder,
+                'bill_breakdown' => $this->orderService->calculateBillBreakdown($freshOrder),
+                'message' => 'Item added successfully'
+            ]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateItem(Request $request, $id, $itemId)
+    {
+        $order = Order::findOrFail($id);
+        try {
+            $item = $this->orderService->updateItem($order, $itemId, $request->all(), auth()->user());
+            $freshOrder = $order->fresh(['items.menuItem', 'table']);
+            return response()->json([
+                'success' => true,
+                'data' => $item,
+                'order' => $freshOrder,
+                'bill_breakdown' => $this->orderService->calculateBillBreakdown($freshOrder),
+                'message' => 'Item updated successfully'
+            ]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function removeItem($id, $itemId)
+    {
+        $order = Order::findOrFail($id);
+        try {
+            $this->orderService->removeItem($order, $itemId, auth()->user());
+            $freshOrder = $order->fresh(['items.menuItem', 'table']);
+            return response()->json([
+                'success' => true,
+                'order' => $freshOrder,
+                'bill_breakdown' => $this->orderService->calculateBillBreakdown($freshOrder),
+                'message' => 'Item removed from order'
+            ]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function cancel(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $reason = $request->input('reason', 'Customer Cancelled');
+        try {
+            $cancelled = $this->orderService->cancelOrder($order, $reason, auth()->user());
+            return response()->json([
+                'success' => true,
+                'data' => $cancelled,
+                'message' => 'Order #' . $order->id . ' cancelled successfully'
+            ]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,preparing,cooking,ready,served,completed,cancelled',
+        ]);
+
+        $order = Order::findOrFail($id);
+        try {
+            $updated = $this->orderService->updateStatus($order, $request->status, auth()->user());
+            return response()->json(['success' => true, 'data' => $updated]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function pay(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $method = $request->payment_method ?? 'cash';
+        try {
+            $paid = $this->orderService->processPayment($order, $method, auth()->user(), $request->input('transaction_ref'));
+            return response()->json([
+                'success' => true,
+                'data' => $paid,
+                'bill_breakdown' => $this->orderService->calculateBillBreakdown($paid),
+                'message' => 'Payment recorded successfully'
+            ]);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $order = Order::findOrFail($id);
+        try {
+            $this->orderService->deleteOrder($order, auth()->user());
+            return response()->json(['success' => true, 'message' => 'Order deleted successfully']);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['success' => false, 'message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function history($id)
+    {
+        $order = Order::findOrFail($id);
+        $this->orderService->assertTenantAccess($order, auth()->user());
+        $history = $this->orderService->getOrderHistory($order);
+        return response()->json(['success' => true, 'data' => $history]);
+    }
+
+    public function getRestaurantOrders($restaurantId)
+    {
+        $user = auth()->user();
+        if ($user && $user->role !== 'superadmin' && (int)$user->restaurant_id !== (int)$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized tenant orders access.'], 403);
+        }
+        $orders = Order::where('restaurant_id', $restaurantId)
+            ->with(['items.menuItem', 'table'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(50);
+        return response()->json(['success' => true, 'data' => $orders]);
     }
 
     public function showReceipt($id)
@@ -275,9 +256,9 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        $restaurant = Restaurant::find($order->restaurant_id);
         if (!$restaurant) {
-            $restaurant = new \App\Models\Restaurant([
+            $restaurant = new Restaurant([
                 'name' => 'Restaurant #' . $order->restaurant_id,
                 'address' => 'Local Address',
                 'phone' => '+91 99999 00000',
@@ -285,7 +266,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $table = \App\Models\Table::find($order->table_id);
+        $table = Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
         $isDemo = (bool)($restaurant->is_demo);
 
@@ -303,7 +284,6 @@ class OrderController extends Controller
             }
             $order = $query->find($id);
         } elseif ($id === 'live' && $user && $user->restaurant_id) {
-            // Support previewing live A4 invoice from current POS cart
             $tableParam = $request->query('table', 'Walk-In');
             $itemsJson = $request->query('items', '[]');
             $itemsArr = json_decode($itemsJson, true) ?: [];
@@ -323,7 +303,7 @@ class OrderController extends Controller
                 $qty = (int)($rawItem['qty'] ?? 1);
                 $price = (float)($rawItem['price'] ?? 0);
                 $subtotal += $price * $qty;
-                $orderItems->push(new \App\Models\OrderItem([
+                $orderItems->push(new OrderItem([
                     'name' => $rawItem['name'] ?? 'Item',
                     'quantity' => $qty,
                     'price' => $price,
@@ -338,9 +318,9 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        $restaurant = Restaurant::find($order->restaurant_id);
         if (!$restaurant) {
-            $restaurant = new \App\Models\Restaurant([
+            $restaurant = new Restaurant([
                 'name' => 'Restaurant #' . $order->restaurant_id,
                 'address' => 'Local Address',
                 'phone' => '+91 99999 00000',
@@ -350,7 +330,7 @@ class OrderController extends Controller
         }
 
         if (!isset($tableName)) {
-            $table = \App\Models\Table::find($order->table_id);
+            $table = Table::find($order->table_id);
             $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
         }
         $isDemo = (bool)($restaurant->is_demo);
@@ -370,9 +350,9 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        $restaurant = Restaurant::find($order->restaurant_id);
         if (!$restaurant) {
-            $restaurant = new \App\Models\Restaurant([
+            $restaurant = new Restaurant([
                 'name' => 'Restaurant #' . $order->restaurant_id,
                 'address' => 'Local Address',
                 'phone' => '+91 99999 00000',
@@ -380,7 +360,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $table = \App\Models\Table::find($order->table_id);
+        $table = Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $barCategories = [
@@ -391,7 +371,7 @@ class OrderController extends Controller
             'icecream', 'dessert', 'desserts'
         ];
 
-        $kitchenItems = $order->items->filter(function($item) use ($barCategories) {
+        $kitchenItems = $order->items->filter(function ($item) use ($barCategories) {
             $cat = strtolower(trim($item->menuItem?->category ?? ''));
             return !in_array($cat, $barCategories);
         });
@@ -414,9 +394,9 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        $restaurant = Restaurant::find($order->restaurant_id);
         if (!$restaurant) {
-            $restaurant = new \App\Models\Restaurant([
+            $restaurant = new Restaurant([
                 'name' => 'Restaurant #' . $order->restaurant_id,
                 'address' => 'Local Address',
                 'phone' => '+91 99999 00000',
@@ -424,7 +404,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $table = \App\Models\Table::find($order->table_id);
+        $table = Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $barCategories = [
@@ -435,7 +415,7 @@ class OrderController extends Controller
             'icecream', 'dessert', 'desserts'
         ];
 
-        $barItems = $order->items->filter(function($item) use ($barCategories) {
+        $barItems = $order->items->filter(function ($item) use ($barCategories) {
             $cat = strtolower(trim($item->menuItem?->category ?? ''));
             return in_array($cat, $barCategories);
         });
@@ -458,9 +438,9 @@ class OrderController extends Controller
             abort(404, 'Order not found');
         }
 
-        $restaurant = \App\Models\Restaurant::find($order->restaurant_id);
+        $restaurant = Restaurant::find($order->restaurant_id);
         if (!$restaurant) {
-            $restaurant = new \App\Models\Restaurant([
+            $restaurant = new Restaurant([
                 'name' => 'Restaurant #' . $order->restaurant_id,
                 'address' => 'Local Address',
                 'phone' => '+91 99999 00000',
@@ -468,7 +448,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $table = \App\Models\Table::find($order->table_id);
+        $table = Table::find($order->table_id);
         $tableName = $table ? $table->table_number : 'Table #' . $order->table_id;
 
         $lang = \App\Services\KotLanguageService::resolveKotLanguage($order);

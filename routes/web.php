@@ -106,15 +106,20 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
             return redirect('/onboarding');
         }
 
-        // Today's Orders
-        $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->count();
-        $yesterdayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::yesterday())->count();
+        // Today's & Yesterday's Orders (Index-friendly date ranges)
+        $todayStart = \Carbon\Carbon::today()->startOfDay();
+        $todayEnd = \Carbon\Carbon::today()->endOfDay();
+        $yesterdayStart = \Carbon\Carbon::yesterday()->startOfDay();
+        $yesterdayEnd = \Carbon\Carbon::yesterday()->endOfDay();
+
+        $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereBetween('created_at', [$todayStart, $todayEnd])->count();
+        $yesterdayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->count();
         $ordersDiff = $todayOrdersCount - $yesterdayOrdersCount;
         $ordersDiffText = ($ordersDiff >= 0 ? '+' : '') . $ordersDiff . ' from yesterday';
 
-        // Total Revenue
-        $todayRevenue = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::today())->where('payment_status', 'paid')->sum('total_amount');
-        $yesterdayRevenue = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', \Carbon\Carbon::yesterday())->where('payment_status', 'paid')->sum('total_amount');
+        // Total Revenue (Index-friendly)
+        $todayRevenue = (float)\App\Models\Order::where('restaurant_id', $restaurantId)->whereBetween('created_at', [$todayStart, $todayEnd])->where('payment_status', 'paid')->sum('total_amount');
+        $yesterdayRevenue = (float)\App\Models\Order::where('restaurant_id', $restaurantId)->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->where('payment_status', 'paid')->sum('total_amount');
         if ($yesterdayRevenue > 0) {
             $revenueChange = round((($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100);
         } else {
@@ -133,13 +138,22 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
         // Active Customers
         $activeCustomers = $occupiedTablesCount * 3;
 
-        // Get Last 7 Days Sales Trend
+        // Get Last 7 Days Sales Trend (Optimized to 1 single indexed query instead of 7 full table scans)
+        $sevenDaysStart = \Carbon\Carbon::today()->subDays(6)->startOfDay();
+        $dailySales = \App\Models\Order::where('restaurant_id', $restaurantId)
+            ->where('created_at', '>=', $sevenDaysStart)
+            ->where('payment_status', 'paid')
+            ->selectRaw('DATE(created_at) as order_date, SUM(total_amount) as total')
+            ->groupBy('order_date')
+            ->pluck('total', 'order_date');
+
         $weeklySalesLabels = [];
         $weeklySalesData = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = \Carbon\Carbon::today()->subDays($i);
             $weeklySalesLabels[] = $date->format('D');
-            $weeklySalesData[] = \App\Models\Order::where('restaurant_id', $restaurantId)->whereDate('created_at', $date)->where('payment_status', 'paid')->sum('total_amount');
+            $dateKey = $date->format('Y-m-d');
+            $weeklySalesData[] = floatval($dailySales[$dateKey] ?? 0);
         }
 
         // Get Category Wise Sales Distribution (Paid orders only)
@@ -513,11 +527,25 @@ Route::prefix('api')->group(function () {
         Route::put('/menu/{id}', [MenuItemController::class, 'update'])->middleware('role:admin,manager,kitchen');
         Route::delete('/menu/{id}', [MenuItemController::class, 'destroy'])->middleware('role:admin');
 
-        // Orders Management
+        // Global Orders Management (Centralized CRUD & Action API)
         Route::get('/orders/restaurant/{restaurantId}', [OrderController::class, 'getRestaurantOrders'])
             ->middleware(['role:admin,manager,cashier,kitchen,waiter', 'tenant']);
+        Route::put('/orders/{id}', [OrderController::class, 'update'])
+            ->middleware('role:admin,manager,cashier,waiter');
+        Route::post('/orders/{id}/items', [OrderController::class, 'addItem'])
+            ->middleware('role:admin,manager,cashier,waiter');
+        Route::put('/orders/{id}/items/{itemId}', [OrderController::class, 'updateItem'])
+            ->middleware('role:admin,manager,cashier,waiter');
+        Route::delete('/orders/{id}/items/{itemId}', [OrderController::class, 'removeItem'])
+            ->middleware('role:admin,manager,cashier,waiter');
+        Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])
+            ->middleware('role:admin,manager,cashier,waiter');
         Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])
             ->middleware('role:admin,manager,cashier,kitchen,waiter');
+        Route::delete('/orders/{id}', [OrderController::class, 'destroy'])
+            ->middleware('role:admin,owner,manager');
+        Route::get('/orders/{id}/history', [OrderController::class, 'history'])
+            ->middleware('role:admin,manager,cashier,waiter');
 
         // Inventory Management
         Route::get('/inventory', [InventoryController::class, 'index'])
