@@ -406,6 +406,8 @@ class SuperAdminController extends Controller
                 'suspension_internal_note' => null,
                 'suspended_at' => null,
             ];
+
+            // If subscription_expires_at is in the past, extend by 30 days
             if ($restaurant->subscription_expires_at) {
                 try {
                     if (Carbon::parse($restaurant->subscription_expires_at)->isPast()) {
@@ -413,6 +415,21 @@ class SuperAdminController extends Controller
                     }
                 } catch (\Throwable $e) {}
             }
+
+            // If trial_ends_at is in the past, also extend trial by 30 days so trial expiry doesn't re-expire it
+            if ($restaurant->trial_ends_at) {
+                try {
+                    if (Carbon::parse($restaurant->trial_ends_at)->isPast()) {
+                        $updateData['trial_ends_at'] = Carbon::now()->addDays(30);
+                    }
+                } catch (\Throwable $e) {}
+            }
+
+            // If neither expiry date exists but it was expired/suspended, provide an active 30-day window
+            if (!$restaurant->subscription_expires_at && !$restaurant->trial_ends_at && $oldStatus === 'expired') {
+                $updateData['subscription_expires_at'] = Carbon::now()->addDays(30);
+            }
+
             $this->safeUpdateRestaurant($restaurant, $updateData);
 
             $reason = $request->input('reason', 'Super Admin restored/activated access');

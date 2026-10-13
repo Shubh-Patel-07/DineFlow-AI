@@ -56,9 +56,15 @@ class TenantMiddleware
                 $status = strtolower(trim($restaurant->subscription_status ?? 'active'));
 
                 // Real-time server-authoritative expiration check
-                $effectiveExpiry = $restaurant->subscription_expires_at
-                    ? Carbon::parse($restaurant->subscription_expires_at)
-                    : ($restaurant->trial_ends_at ? Carbon::parse($restaurant->trial_ends_at) : null);
+                // For 'free' plan restaurants without an explicit subscription_expires_at, they are lifetime free and should not expire via trial_ends_at
+                $isLifetimeFree = strtolower(trim($restaurant->plan_type ?? 'free')) === 'free' && empty($restaurant->subscription_expires_at);
+
+                $effectiveExpiry = null;
+                if (!$isLifetimeFree) {
+                    $effectiveExpiry = $restaurant->subscription_expires_at
+                        ? Carbon::parse($restaurant->subscription_expires_at)
+                        : ($restaurant->trial_ends_at ? Carbon::parse($restaurant->trial_ends_at) : null);
+                }
 
                 if ($effectiveExpiry) {
                     $graceDays = !is_null($restaurant->grace_period_days) ? intval($restaurant->grace_period_days) : 7;
