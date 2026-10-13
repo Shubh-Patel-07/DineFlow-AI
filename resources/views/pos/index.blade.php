@@ -5562,12 +5562,14 @@
     const avatar = name.charAt(0).toUpperCase();
 
     try {
+      const posCsrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                            (typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '');
       const res = await fetch('/api/customers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-CSRF-TOKEN': CSRF_TOKEN
+          'X-CSRF-TOKEN': posCsrfToken
         },
         body: JSON.stringify({
           restaurant_id: RESTAURANT_ID,

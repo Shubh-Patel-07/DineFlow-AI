@@ -20,7 +20,10 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $restaurantId = $user ? $user->restaurant_id : ($request->query('restaurant_id') ?? $request->query('restaurantId'));
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to order logs.'], 401);
+        }
+        $restaurantId = $user->restaurant_id;
         if (!$restaurantId) {
             return response()->json(['success' => true, 'data' => []]);
         }

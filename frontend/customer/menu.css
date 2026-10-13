@@ -2222,3 +2222,52 @@ body.light-theme .customer-menu-footer .smp-badge {
   background: #EEF2FF !important;
   border-color: #C7D2FE !important;
 }
+
+/* === LIGHT THEME DIALOG & MODAL CONTRAST ENHANCEMENTS === */
+body.light-theme #splitBillModal .item-modal__content,
+body.light-theme #customerReviewModal > div,
+body.light-theme #tableReservationModal .item-modal__content,
+body.light-theme #payFullBillModal .item-modal__content,
+body.light-theme #waiterModal .item-modal__content,
+body.light-theme #customerUpiModal .item-modal__content {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+body.light-theme #splitBillModal div[style*="background:rgba(15,23,42"],
+body.light-theme #payFullBillModal div[style*="background:rgba(15,23,42"] {
+  background: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+body.light-theme #splitBillModal span,
+body.light-theme #splitBillModal label,
+body.light-theme #payFullBillModal span,
+body.light-theme #payFullBillModal label {
+  color: #0F172A !important;
+}
+
+body.light-theme #splitPeopleCount {
+  color: #0F172A !important;
+}
+
+body.light-theme #splitBillModal button[onclick*="changeSplitPeople"] {
+  color: #0F172A !important;
+}
+
+body.light-theme #splitSubtotal,
+body.light-theme #splitGrandTotal,
+body.light-theme #fullGrandTotal {
+  color: #059669 !important;
+}
+
+body.light-theme #customerReviewModal textarea,
+body.light-theme #customerReviewModal input,
+body.light-theme #customerReviewModal select,
+body.light-theme #tableReservationModal input,
+body.light-theme #tableReservationModal select {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}

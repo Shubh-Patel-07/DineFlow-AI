@@ -266,15 +266,18 @@ class MenuItemController extends Controller
         \DB::beginTransaction();
         try {
             foreach ($items as $it) {
+                if (!is_array($it) || empty($it['name']) || !is_string($it['name'])) {
+                    continue; // Skip invalid entries safely
+                }
                 MenuItem::create([
                     'restaurant_id' => $restaurantId,
-                    'name' => $it['name'],
-                    'category' => $it['category'] ?? 'General',
-                    'price' => $it['price'] ?? 0,
+                    'name' => trim($it['name']),
+                    'category' => !empty($it['category']) ? trim((string)$it['category']) : 'General',
+                    'price' => max(0, floatval($it['price'] ?? 0)),
                     'is_veg' => isset($it['is_veg']) ? filter_var($it['is_veg'], FILTER_VALIDATE_BOOLEAN) : true,
-                    'description' => $it['description'] ?? '',
+                    'description' => !empty($it['description']) ? (string)$it['description'] : '',
                     'is_available' => isset($it['is_available']) ? filter_var($it['is_available'], FILTER_VALIDATE_BOOLEAN) : true,
-                    'image' => $it['image'] ?? '',
+                    'image' => !empty($it['image']) ? (string)$it['image'] : '',
                 ]);
                 $created++;
             }

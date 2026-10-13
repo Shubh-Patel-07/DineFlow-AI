@@ -50,21 +50,30 @@ function handleAddUser(event) {
   const email = document.getElementById('userEmail')?.value;
   const role = document.getElementById('userRole')?.value;
   const status = document.getElementById('userStatus')?.value;
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-  fetch('/api/users', {
+  fetch('/api/staff', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'X-CSRF-TOKEN': csrfToken
     },
     body: JSON.stringify({ name, email, role, status })
   })
-  .then(res => res.json())
+  .then(async (res) => {
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to add staff member.');
+    }
+    return res.json();
+  })
   .then(() => {
     alert('User added successfully!');
     closeAddUserModal();
+    if (typeof loadUsers === 'function') loadUsers();
   })
-  .catch(() => {
-    alert('Failed to add user. Please try again.');
+  .catch((err) => {
+    alert(err.message || 'Failed to add user. Please try again.');
   });
 }

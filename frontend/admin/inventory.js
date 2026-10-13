@@ -98,7 +98,7 @@ function closeStockModal() {
 async function handleSaveStock(e) {
   e.preventDefault();
   const payload = {
-    restaurant_id: 1,
+    restaurant_id: getCurrentRestaurantId(),
     item_name:      (document.getElementById('stockName')?.value || '').trim(),
     category:       (document.getElementById('stockCategory')?.value || 'General'),
     quantity:       parseFloat(document.getElementById('stockQty')?.value || 0),

@@ -80,7 +80,8 @@ class OrderService
                 }
 
                 if (!$menuItem) {
-                    if (!empty($rawItem['name']) && isset($rawItem['price']) && floatval($rawItem['price']) > 0) {
+                    // Only authenticated staff (admin, manager, cashier) can insert custom out-of-catalog items
+                    if ($user && in_array(strtolower($user->role ?? ''), ['superadmin', 'admin', 'manager', 'cashier']) && !empty($rawItem['name']) && isset($rawItem['price']) && floatval($rawItem['price']) > 0) {
                         $price = floatval($rawItem['price']);
                         $totalAmount += $price * $quantity;
                         $itemsData[] = [
@@ -98,9 +99,8 @@ class OrderService
                     continue;
                 }
 
-                $price = (!empty($rawItem['price']) && floatval($rawItem['price']) >= floatval($menuItem->price))
-                    ? floatval($rawItem['price'])
-                    : floatval($menuItem->price);
+                // Strictly enforce official catalog price to prevent price tampering
+                $price = floatval($menuItem->price);
 
                 $totalAmount += $price * $quantity;
                 $itemsData[] = [
@@ -129,11 +129,12 @@ class OrderService
 
             $tableId = $data['table_id'] ?? '1';
 
-            // Check if there is already an active (unpaid) order for this table
+            // Check if there is already an active (unpaid) order for this table with pessimistic locking
             $order = Order::where('table_id', $tableId)
                 ->where('restaurant_id', $restaurantId)
                 ->where('payment_status', 'pending')
                 ->where('status', '!=', 'cancelled')
+                ->lockForUpdate()
                 ->first();
 
             if ($order) {
