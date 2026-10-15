@@ -1,4 +1,10 @@
 <?php
+/**
+ * DineFlow AI - Centralized Order & Financial Billing Engine
+ * Copyright (c) 2026 Patel Shubh / DineFlow. All Rights Reserved.
+ * Author & IP Owner: Patel Shubh (https://github.com/Shubh-Patel-07)
+ * Unauthorized copying, re-selling, or distribution of this file is strictly prohibited.
+ */
 
 namespace App\Services;
 
