@@ -235,5 +235,193 @@ class TableController extends Controller
 
         return rtrim(config('app.url') ?: url('/'), '/');
     }
+
+    public function shiftTable(Request $request)
+    {
+        $request->validate([
+            'from_table_id' => 'required',
+            'to_table_id' => 'required',
+        ]);
+
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? null);
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized restaurant.'], 403);
+        }
+
+        $fromTable = Table::where('restaurant_id', $restaurantId)->find($request->from_table_id)
+            ?: Table::where('restaurant_id', $restaurantId)->where('table_number', $request->from_table_id)->first();
+        $toTable = Table::where('restaurant_id', $restaurantId)->find($request->to_table_id)
+            ?: Table::where('restaurant_id', $restaurantId)->where('table_number', $request->to_table_id)->first();
+
+        if (!$fromTable || !$toTable) {
+            return response()->json(['success' => false, 'message' => 'Invalid source or destination table.'], 404);
+        }
+
+        if ($fromTable->id === $toTable->id) {
+            return response()->json(['success' => false, 'message' => 'Source and destination tables must be different.'], 422);
+        }
+
+        // Check active order on destination
+        $existingOrderOnTarget = \App\Models\Order::where('table_id', $toTable->id)
+            ->where('restaurant_id', $restaurantId)
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->first();
+
+        if ($existingOrderOnTarget) {
+            return response()->json(['success' => false, 'message' => 'Destination table is already occupied! Use Merge Table if you want to combine them.'], 400);
+        }
+
+        // Find active order on source table
+        $sourceOrder = \App\Models\Order::where('table_id', $fromTable->id)
+            ->where('restaurant_id', $restaurantId)
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->latest()
+            ->first();
+
+        if (!$sourceOrder) {
+            return response()->json(['success' => false, 'message' => 'No active order found on table ' . $fromTable->table_number], 404);
+        }
+
+        \DB::transaction(function() use ($sourceOrder, $fromTable, $toTable, $restaurantId, $user) {
+            $sourceOrder->table_id = (string)$toTable->id;
+            $sourceOrder->save();
+
+            $fromTable->status = 'available';
+            $fromTable->save();
+
+            $toTable->status = 'occupied';
+            $toTable->save();
+
+            \App\Models\AuditLog::record(
+                'table_shifted',
+                (int)$restaurantId,
+                'order',
+                $sourceOrder->id,
+                [
+                    'from_table' => $fromTable->table_number,
+                    'to_table' => $toTable->table_number,
+                    'shifted_by' => $user ? $user->name : 'Staff'
+                ]
+            );
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => "Table shifted successfully from {$fromTable->table_number} to {$toTable->table_number}.",
+            'from_table_id' => $fromTable->id,
+            'to_table_id' => $toTable->id
+        ]);
+    }
+
+    public function mergeTables(Request $request)
+    {
+        $request->validate([
+            'source_table_id' => 'required',
+            'target_table_id' => 'required',
+        ]);
+
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? null);
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized restaurant.'], 403);
+        }
+
+        $sourceTable = Table::where('restaurant_id', $restaurantId)->find($request->source_table_id)
+            ?: Table::where('restaurant_id', $restaurantId)->where('table_number', $request->source_table_id)->first();
+        $targetTable = Table::where('restaurant_id', $restaurantId)->find($request->target_table_id)
+            ?: Table::where('restaurant_id', $restaurantId)->where('table_number', $request->target_table_id)->first();
+
+        if (!$sourceTable || !$targetTable) {
+            return response()->json(['success' => false, 'message' => 'Invalid tables selected.'], 404);
+        }
+
+        if ($sourceTable->id === $targetTable->id) {
+            return response()->json(['success' => false, 'message' => 'Cannot merge a table into itself.'], 422);
+        }
+
+        $sourceOrder = \App\Models\Order::where('table_id', $sourceTable->id)
+            ->where('restaurant_id', $restaurantId)
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->with('items')
+            ->latest()
+            ->first();
+
+        $targetOrder = \App\Models\Order::where('table_id', $targetTable->id)
+            ->where('restaurant_id', $restaurantId)
+            ->where('payment_status', 'pending')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->with('items')
+            ->latest()
+            ->first();
+
+        if (!$sourceOrder) {
+            return response()->json(['success' => false, 'message' => 'No active order on table ' . $sourceTable->table_number], 404);
+        }
+
+        if (!$targetOrder) {
+            $sourceOrder->table_id = (string)$targetTable->id;
+            $sourceOrder->save();
+            $sourceTable->status = 'available';
+            $sourceTable->save();
+            $targetTable->status = 'occupied';
+            $targetTable->save();
+            return response()->json([
+                'success' => true,
+                'message' => "Moved order from {$sourceTable->table_number} to {$targetTable->table_number}.",
+            ]);
+        }
+
+        \DB::transaction(function() use ($sourceOrder, $targetOrder, $sourceTable, $targetTable, $restaurantId, $user) {
+            foreach ($sourceOrder->items as $item) {
+                $match = $targetOrder->items()
+                    ->where('name', $item->name)
+                    ->where('notes', $item->notes)
+                    ->first();
+
+                if ($match) {
+                    $match->quantity += $item->quantity;
+                    $match->save();
+                    $item->delete();
+                } else {
+                    $item->order_id = $targetOrder->id;
+                    $item->save();
+                }
+            }
+
+            $targetOrder->load('items');
+            $newTotal = $targetOrder->items->sum(fn($i) => $i->price * $i->quantity);
+            $targetOrder->total_amount = $newTotal;
+            $targetOrder->save();
+
+            $sourceOrder->status = 'cancelled';
+            $sourceOrder->special_instructions = ($sourceOrder->special_instructions ? $sourceOrder->special_instructions . ' | ' : '') . "Merged into Table {$targetTable->table_number} (Order #{$targetOrder->id})";
+            $sourceOrder->save();
+
+            $sourceTable->status = 'available';
+            $sourceTable->save();
+
+            \App\Models\AuditLog::record(
+                'tables_merged',
+                (int)$restaurantId,
+                'order',
+                $targetOrder->id,
+                [
+                    'source_table' => $sourceTable->table_number,
+                    'target_table' => $targetTable->table_number,
+                    'merged_by' => $user ? $user->name : 'Staff'
+                ]
+            );
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => "Successfully merged Table {$sourceTable->table_number} into Table {$targetTable->table_number}.",
+            'target_order_id' => $targetOrder->id
+        ]);
+    }
 }
 

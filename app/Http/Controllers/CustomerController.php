@@ -48,6 +48,8 @@ class CustomerController extends Controller
             'name'          => 'required|string|max:255',
             'phone'         => 'nullable|string|max:30',
             'email'         => 'nullable|email|max:255',
+            'date_of_birth' => 'nullable|date',
+            'anniversary_date' => 'nullable|date',
             'notes'         => 'nullable|string|max:1000',
         ]);
 
@@ -65,6 +67,9 @@ class CustomerController extends Controller
             'name'          => $validated['name'],
             'phone'         => $validated['phone'] ?? null,
             'email'         => $validated['email'] ?? null,
+            'date_of_birth' => $validated['date_of_birth'] ?? null,
+            'anniversary_date' => $validated['anniversary_date'] ?? null,
+            'wallet_balance' => 0.00,
             'notes'         => $validated['notes'] ?? null,
         ]);
 
@@ -88,6 +93,8 @@ class CustomerController extends Controller
             'name'           => 'sometimes|required|string|max:255',
             'phone'          => 'nullable|string|max:30',
             'email'          => 'nullable|email|max:255',
+            'date_of_birth'  => 'nullable|date',
+            'anniversary_date' => 'nullable|date',
             'loyalty_points' => 'nullable|integer|min:0',
             'notes'          => 'nullable|string|max:1000',
         ]);
@@ -140,6 +147,128 @@ class CustomerController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Customer not found']);
+    }
+
+    /**
+     * Lookup customer by phone, returning wallet balance & birthday alerts.
+     */
+    public function lookupCustomer(Request $request)
+    {
+        $phone = $request->query('phone') ?: $request->input('phone');
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? null);
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized restaurant.'], 403);
+        }
+
+        $customer = Customer::where('restaurant_id', $restaurantId)
+            ->where(function($q) use ($phone) {
+                $q->where('phone', $phone)->orWhere('phone', 'LIKE', '%' . $phone);
+            })
+            ->first();
+
+        if (!$customer) {
+            return response()->json(['success' => false, 'message' => 'Customer not found']);
+        }
+
+        $today = now()->format('m-d');
+        $isBirthday = $customer->date_of_birth && (\Carbon\Carbon::parse($customer->date_of_birth)->format('m-d') === $today);
+        $isAnniversary = $customer->anniversary_date && (\Carbon\Carbon::parse($customer->anniversary_date)->format('m-d') === $today);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'phone' => $customer->phone,
+                'wallet_balance' => floatval($customer->wallet_balance ?? 0),
+                'loyalty_points' => intval($customer->loyalty_points ?? 0),
+                'total_visits' => intval($customer->total_visits ?? 0),
+                'is_birthday' => $isBirthday,
+                'is_anniversary' => $isAnniversary,
+            ]
+        ]);
+    }
+
+    /**
+     * Redeem customer wallet balance on bill.
+     */
+    public function redeemWallet(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required',
+            'redeem_amount' => 'required|numeric|min:1',
+        ]);
+
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? null);
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized restaurant.'], 403);
+        }
+
+        $customer = Customer::where('restaurant_id', $restaurantId)->find($request->customer_id);
+        if (!$customer) {
+            return response()->json(['success' => false, 'message' => 'Customer not found.'], 404);
+        }
+
+        $redeemAmt = floatval($request->redeem_amount);
+        $currentBalance = floatval($customer->wallet_balance ?? 0);
+
+        if ($redeemAmt > $currentBalance) {
+            return response()->json(['success' => false, 'message' => "Insufficient wallet balance (Available: ₹{$currentBalance})."], 422);
+        }
+
+        $customer->decrement('wallet_balance', $redeemAmt);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Redeemed ₹{$redeemAmt} from wallet! Remaining: ₹" . ($currentBalance - $redeemAmt),
+            'remaining_balance' => round($currentBalance - $redeemAmt, 2),
+            'redeemed_amount' => $redeemAmt,
+        ]);
+    }
+
+    /**
+     * Credit cashback to customer wallet on completed paid order.
+     */
+    public function creditCashback(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+            'order_amount' => 'required|numeric|min:1',
+        ]);
+
+        $user = auth()->user();
+        $restaurantId = $user ? $user->restaurant_id : ($request->restaurant_id ?? null);
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized restaurant.'], 403);
+        }
+
+        $phone = $request->phone;
+        $customer = Customer::where('restaurant_id', $restaurantId)->where('phone', $phone)->first();
+
+        if (!$customer) {
+            $customer = Customer::create([
+                'restaurant_id' => $restaurantId,
+                'name' => $request->name ?: 'Customer',
+                'phone' => $phone,
+                'wallet_balance' => 0.00,
+            ]);
+        }
+
+        $orderAmount = floatval($request->order_amount);
+        // 5% cashback standard
+        $cashbackRate = 0.05;
+        $cashback = round($orderAmount * $cashbackRate, 2);
+
+        $customer->increment('wallet_balance', $cashback);
+
+        return response()->json([
+            'success' => true,
+            'message' => "🎉 Credited ₹{$cashback} (5% Cashback) to {$customer->name}'s wallet!",
+            'new_balance' => floatval($customer->wallet_balance),
+            'cashback_earned' => $cashback,
+        ]);
     }
 
     public function destroy($id)

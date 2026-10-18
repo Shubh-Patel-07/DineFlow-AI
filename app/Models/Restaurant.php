@@ -9,8 +9,12 @@ class Restaurant extends Model
 {
     protected $fillable = [
         'name',
+        'manager_pin',
         'address',
         'phone',
+        'owner_phone',
+        'fssai_licence',
+        'kitchen_printers_config',
         'logo',
         'signature',
         'signature_name',

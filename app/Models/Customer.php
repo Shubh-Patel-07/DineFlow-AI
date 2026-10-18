@@ -16,6 +16,9 @@ class Customer extends Model
         'total_visits',
         'total_spent',
         'loyalty_points',
+        'wallet_balance',
+        'date_of_birth',
+        'anniversary_date',
         'last_visit',
         'notes',
     ];

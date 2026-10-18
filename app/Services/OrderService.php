@@ -95,6 +95,8 @@ class OrderService
                             'name' => (string)$rawItem['name'],
                             'quantity' => $quantity,
                             'price' => $price,
+                            'notes' => !empty($rawItem['notes']) ? (string)$rawItem['notes'] : (!empty($rawItem['special_instructions']) ? (string)$rawItem['special_instructions'] : null),
+                            'kot_status' => 'pending',
                         ];
                     }
                     continue;
@@ -114,15 +116,31 @@ class OrderService
                     'name' => $menuItem->name,
                     'quantity' => $quantity,
                     'price' => $price,
+                    'notes' => !empty($rawItem['notes']) ? (string)$rawItem['notes'] : (!empty($rawItem['special_instructions']) ? (string)$rawItem['special_instructions'] : null),
+                    'kot_status' => 'pending',
                 ];
 
-                // Inventory decrement
+                // Automatic Inventory & Recipe Deduction (Petpooja Food Costing & BOM Engine)
                 try {
-                    $inventory = Inventory::where('restaurant_id', $restaurantId)
-                        ->where('item_name', 'LIKE', '%' . $menuItem->name . '%')
-                        ->first();
-                    if ($inventory && $inventory->quantity >= $quantity) {
-                        $inventory->decrement('quantity', $quantity);
+                    $recipes = \App\Models\Recipe::where('restaurant_id', $restaurantId)
+                        ->where('menu_item_id', $menuItem->id)
+                        ->get();
+
+                    if ($recipes->isNotEmpty()) {
+                        foreach ($recipes as $rec) {
+                            $inv = Inventory::find($rec->inventory_id);
+                            if ($inv) {
+                                $needed = floatval($rec->quantity_required) * $quantity;
+                                $inv->decrement('quantity', $needed);
+                            }
+                        }
+                    } else {
+                        $inventory = Inventory::where('restaurant_id', $restaurantId)
+                            ->where('item_name', 'LIKE', '%' . $menuItem->name . '%')
+                            ->first();
+                        if ($inventory && $inventory->quantity >= $quantity) {
+                            $inventory->decrement('quantity', $quantity);
+                        }
                     }
                 } catch (\Exception $e) {
                     Log::warning('Inventory deduction warning: ' . $e->getMessage());
@@ -134,14 +152,18 @@ class OrderService
             }
 
             $tableId = $data['table_id'] ?? '1';
+            $orderType = $data['order_type'] ?? 'dinein';
 
-            // Check if there is already an active (unpaid) order for this table with pessimistic locking
-            $order = Order::where('table_id', $tableId)
-                ->where('restaurant_id', $restaurantId)
-                ->where('payment_status', 'pending')
-                ->where('status', '!=', 'cancelled')
-                ->lockForUpdate()
-                ->first();
+            // Check if there is already an active (unpaid) order for this table with pessimistic locking (only for dine-in tables)
+            $order = null;
+            if ($tableId && $tableId !== '0' && $orderType === 'dinein') {
+                $order = Order::where('table_id', $tableId)
+                    ->where('restaurant_id', $restaurantId)
+                    ->where('payment_status', 'pending')
+                    ->where('status', '!=', 'cancelled')
+                    ->lockForUpdate()
+                    ->first();
+            }
 
             if ($order) {
                 // Reset status to pending so kitchen sees new items
@@ -153,8 +175,16 @@ class OrderService
                 }
 
                 foreach ($itemsData as $newItem) {
+                    $notesVal = $newItem['notes'] ?? null;
                     $existingItem = $order->items()
                         ->where('name', $newItem['name'])
+                        ->where(function($q) use ($notesVal) {
+                            if ($notesVal) {
+                                $q->where('notes', $notesVal);
+                            } else {
+                                $q->whereNull('notes')->orWhere('notes', '');
+                            }
+                        })
                         ->first();
 
                     if ($existingItem) {
@@ -177,17 +207,47 @@ class OrderService
                 );
             } else {
                 $kotLang = KotLanguageService::getRestaurantLanguage($restaurantId);
+                $walletDiscount = floatval($data['wallet_discount'] ?? 0);
+                $cashbackEarned = floatval($data['cashback_earned'] ?? 0);
+                $orderTotalVal = max(0, $totalAmount + $deliveryFee - $walletDiscount);
+                $taxableVal = round($orderTotalVal / 1.05, 2);
+                $totalTaxVal = round($orderTotalVal - $taxableVal, 2);
+                $cgstVal = round($totalTaxVal / 2, 2);
+                $sgstVal = round($totalTaxVal - $cgstVal, 2);
 
                 $order = Order::create([
                     'restaurant_id' => $restaurantId,
                     'table_id' => (string)$tableId,
-                    'total_amount' => $totalAmount,
+                    'order_type' => $orderType,
+                    'total_amount' => $orderTotalVal,
+                    'wallet_discount' => $walletDiscount,
+                    'cashback_earned' => $cashbackEarned,
                     'status' => 'pending',
-                    'payment_status' => 'pending',
+                    'payment_status' => $data['payment_status'] ?? 'pending',
                     'payment_method' => $data['payment_method'] ?? 'cash',
+                    'split_data' => $data['split_data'] ?? null,
                     'special_instructions' => $data['special_instructions'] ?? '',
+                    'customer_name' => $data['customer_name'] ?? null,
+                    'customer_phone' => $data['customer_phone'] ?? null,
+                    'customer_address' => $data['customer_address'] ?? null,
+                    'customer_gstin' => $data['customer_gstin'] ?? null,
+                    'customer_company' => $data['customer_company'] ?? null,
+                    'cgst_amount' => $cgstVal,
+                    'sgst_amount' => $sgstVal,
+                    'delivery_fee' => $deliveryFee,
+                    'rider_id' => !empty($data['rider_id']) ? $data['rider_id'] : null,
+                    'delivery_status' => ($orderType === 'delivery') ? 'pending' : null,
                     'kot_language' => $kotLang,
                 ]);
+
+                if (!empty($data['rider_id']) && $orderType === 'delivery') {
+                    $rider = \App\Models\DeliveryRider::where('restaurant_id', $restaurantId)->find($data['rider_id']);
+                    if ($rider) {
+                        $rider->increment('active_orders_count');
+                        $rider->update(['status' => 'on_delivery']);
+                        $order->update(['delivery_status' => 'out_for_delivery']);
+                    }
+                }
 
                 foreach ($itemsData as $itemData) {
                     $order->items()->create($itemData);
@@ -297,6 +357,8 @@ class OrderService
                 throw new ValidationException(validator([], []), ['name' => ['Item name is required']]);
             }
 
+            $notesVal = !empty($itemData['notes']) ? (string)$itemData['notes'] : (!empty($itemData['special_instructions']) ? (string)$itemData['special_instructions'] : null);
+
             $existingItem = $order->items()
                 ->where(function ($q) use ($menuItemId, $name) {
                     if ($menuItemId) {
@@ -304,7 +366,15 @@ class OrderService
                     } else {
                         $q->where('name', $name);
                     }
-                })->first();
+                })
+                ->where(function($q) use ($notesVal) {
+                    if ($notesVal) {
+                        $q->where('notes', $notesVal);
+                    } else {
+                        $q->whereNull('notes')->orWhere('notes', '');
+                    }
+                })
+                ->first();
 
             if ($existingItem) {
                 $existingItem->quantity += $quantity;
@@ -316,6 +386,8 @@ class OrderService
                     'name' => $name,
                     'quantity' => $quantity,
                     'price' => $price,
+                    'notes' => $notesVal,
+                    'kot_status' => 'pending',
                 ]);
             }
 

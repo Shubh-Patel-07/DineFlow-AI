@@ -16,6 +16,10 @@ timeout /t 2 /nobreak >nul
 :: 2. Change directory to project
 cd /d "d:\DineFlow AI"
 
+:: 2.5 Run database migrations
+echo [2/4] Verifying and updating database schema...
+C:\xampp\php\php.exe artisan migrate --force
+
 :: 3. Open browser after 2 seconds
 echo [2/3] Opening DineFlow POS in browser...
 start http://localhost:8000/login

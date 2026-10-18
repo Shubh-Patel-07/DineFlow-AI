@@ -146,7 +146,14 @@
         <tbody>
             @forelse($order->items as $item)
             <tr>
-                <td>{{ $item->name }}</td>
+                <td>
+                    {{ $item->name }}
+                    @if(!empty($item->notes))
+                        <div style="font-size: 11px; font-weight: 700; color: #000; background: #eee; padding: 2px 4px; margin-top: 3px; border-left: 2px solid #000; letter-spacing: 0.3px;">
+                            👉 [NOTE: {{ $item->notes }}]
+                        </div>
+                    @endif
+                </td>
                 <td class="text-right" style="font-size: 16px;">{{ $item->quantity }}</td>
             </tr>
             @empty

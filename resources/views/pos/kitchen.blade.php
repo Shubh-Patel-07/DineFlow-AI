@@ -421,6 +421,7 @@
                 <div>
                   <span class="item-name">${item.name}</span>
                   <span class="item-category">${item.menu_item?.category || 'food'}</span>
+                  ${item.notes ? `<div style="margin-top:3px; font-size:11px; font-weight:700; color:#F59E0B; background:rgba(245,158,11,0.15); padding:2px 6px; border-radius:4px; display:inline-block;"><i class="fa-solid fa-utensils"></i> ${item.notes}</div>` : ''}
                 </div>
                 <span class="item-qty">x${item.quantity}</span>
               </div>

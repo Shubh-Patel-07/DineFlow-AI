@@ -23,4 +23,9 @@ class MenuItem extends Model
     {
         return $this->belongsTo(Restaurant::class, 'restaurant_id');
     }
+
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class, 'menu_item_id');
+    }
 }

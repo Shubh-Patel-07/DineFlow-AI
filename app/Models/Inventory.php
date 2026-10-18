@@ -24,4 +24,14 @@ class Inventory extends Model
     {
         return $this->belongsTo(Restaurant::class, 'restaurant_id');
     }
+
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class, 'inventory_id');
+    }
+
+    public function wastageLogs()
+    {
+        return $this->hasMany(WastageLog::class, 'inventory_id');
+    }
 }

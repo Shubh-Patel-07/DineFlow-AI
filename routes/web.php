@@ -17,6 +17,9 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SubscriptionStatusController;
+use App\Http\Controllers\CashRegisterController;
+use App\Http\Controllers\DeliveryAggregatorController;
+use App\Http\Controllers\RecipeReportController;
 use Illuminate\Support\Facades\Route;
 
 // Public SaaS Registration & Authentication Routes
@@ -251,15 +254,30 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
 
         foreach ($orders as $order) {
             $method = strtolower($order->payment_method ?: 'cash');
-            if (str_contains($method, 'upi') || str_contains($method, 'online') || str_contains($method, 'gpay')) {
-                $method = 'online';
+            if ($method === 'split' && !empty($order->split_data)) {
+                $splitObj = is_string($order->split_data) ? json_decode($order->split_data, true) : $order->split_data;
+                if (!empty($splitObj['cash'])) {
+                    $paymentSplit['cash']['amount'] += floatval($splitObj['cash']);
+                    $paymentSplit['cash']['count']++;
+                }
+                if (!empty($splitObj['upi'])) {
+                    $paymentSplit['online']['amount'] += floatval($splitObj['upi']);
+                    $paymentSplit['online']['count']++;
+                }
+                if (!empty($splitObj['card'])) {
+                    $paymentSplit['card']['amount'] += floatval($splitObj['card']);
+                    $paymentSplit['card']['count']++;
+                }
+            } elseif (str_contains($method, 'upi') || str_contains($method, 'online') || str_contains($method, 'gpay')) {
+                $paymentSplit['online']['count']++;
+                $paymentSplit['online']['amount'] += $order->total_amount;
             } elseif (str_contains($method, 'card')) {
-                $method = 'card';
+                $paymentSplit['card']['count']++;
+                $paymentSplit['card']['amount'] += $order->total_amount;
             } else {
-                $method = 'cash';
+                $paymentSplit['cash']['count']++;
+                $paymentSplit['cash']['amount'] += $order->total_amount;
             }
-            $paymentSplit[$method]['count']++;
-            $paymentSplit[$method]['amount'] += $order->total_amount;
         }
 
         $categoryBreakdown = \DB::table('order_items')
@@ -511,6 +529,65 @@ Route::prefix('api')->group(function () {
         // Tables
         Route::post('/tables', [TableController::class, 'store'])->middleware('role:admin');
         Route::delete('/tables/{id}', [TableController::class, 'destroy'])->middleware('role:admin');
+        Route::post('/tables/shift', [TableController::class, 'shiftTable'])->middleware('role:admin,manager,cashier,waiter');
+        Route::post('/tables/merge', [TableController::class, 'mergeTables'])->middleware('role:admin,manager,cashier,waiter');
+
+        // Cash Register & Shift Management (Petpooja Shift Control & Petty Cash)
+        Route::get('/cash-register/current', [CashRegisterController::class, 'getCurrentShift'])->middleware('role:admin,manager,cashier');
+        Route::post('/cash-register/open', [CashRegisterController::class, 'openShift'])->middleware('role:admin,manager,cashier');
+        Route::post('/cash-register/petty-cash', [CashRegisterController::class, 'addPettyCash'])->middleware('role:admin,manager,cashier');
+        Route::post('/cash-register/close', [CashRegisterController::class, 'closeShift'])->middleware('role:admin,manager,cashier');
+        Route::post('/manager/verify-pin', [CashRegisterController::class, 'verifyManagerPin'])->middleware('role:admin,manager,cashier');
+        Route::post('/orders/cancel-kot-item', [CashRegisterController::class, 'cancelKotItem'])->middleware('role:admin,manager,cashier');
+
+        Route::get('/api/cash-register/current', [CashRegisterController::class, 'getCurrentShift']);
+        Route::post('/api/cash-register/open', [CashRegisterController::class, 'openShift']);
+        Route::post('/api/cash-register/petty-cash', [CashRegisterController::class, 'addPettyCash']);
+        Route::post('/api/cash-register/close', [CashRegisterController::class, 'closeShift']);
+        Route::post('/api/manager/verify-pin', [CashRegisterController::class, 'verifyManagerPin']);
+        Route::post('/api/orders/cancel-kot-item', [CashRegisterController::class, 'cancelKotItem']);
+
+        // Home Delivery & Rider Management (Petpooja Delivery Module)
+        Route::get('/delivery/riders', [DeliveryAggregatorController::class, 'getRiders'])->middleware('role:admin,manager,cashier');
+        Route::post('/delivery/riders', [DeliveryAggregatorController::class, 'storeRider'])->middleware('role:admin,manager,cashier');
+        Route::post('/delivery/assign', [DeliveryAggregatorController::class, 'assignRider'])->middleware('role:admin,manager,cashier');
+        Route::post('/delivery/{id}/delivered', [DeliveryAggregatorController::class, 'markDelivered'])->middleware('role:admin,manager,cashier');
+
+        Route::get('/api/delivery/riders', [DeliveryAggregatorController::class, 'getRiders']);
+        Route::post('/api/delivery/riders', [DeliveryAggregatorController::class, 'storeRider']);
+        Route::post('/api/delivery/assign', [DeliveryAggregatorController::class, 'assignRider']);
+        Route::post('/api/delivery/{id}/delivered', [DeliveryAggregatorController::class, 'markDelivered']);
+
+        // Online Aggregators (Zomato / Swiggy Live Integration)
+        Route::get('/aggregators/orders', [DeliveryAggregatorController::class, 'getAggregatorOrders'])->middleware('role:admin,manager,cashier');
+        Route::post('/aggregators/simulate', [DeliveryAggregatorController::class, 'simulateOnlineOrder'])->middleware('role:admin,manager,cashier');
+        Route::post('/aggregators/orders/{id}/accept', [DeliveryAggregatorController::class, 'acceptOrder'])->middleware('role:admin,manager,cashier');
+        Route::post('/aggregators/orders/{id}/ready', [DeliveryAggregatorController::class, 'markFoodReady'])->middleware('role:admin,manager,cashier');
+        Route::post('/aggregators/orders/{id}/reject', [DeliveryAggregatorController::class, 'rejectOrder'])->middleware('role:admin,manager,cashier');
+
+        Route::get('/api/aggregators/orders', [DeliveryAggregatorController::class, 'getAggregatorOrders']);
+        Route::post('/api/aggregators/simulate', [DeliveryAggregatorController::class, 'simulateOnlineOrder']);
+        Route::post('/api/aggregators/orders/{id}/accept', [DeliveryAggregatorController::class, 'acceptOrder']);
+        Route::post('/api/aggregators/orders/{id}/ready', [DeliveryAggregatorController::class, 'markFoodReady']);
+        Route::post('/api/aggregators/orders/{id}/reject', [DeliveryAggregatorController::class, 'rejectOrder']);
+
+        // Recipe & Food Costing (Petpooja BOM & Auto-Deductions)
+        Route::get('/recipes', [RecipeReportController::class, 'getRecipes'])->middleware('role:admin,manager,cashier');
+        Route::post('/recipes', [RecipeReportController::class, 'saveRecipe'])->middleware('role:admin,manager');
+        Route::get('/api/recipes', [RecipeReportController::class, 'getRecipes']);
+        Route::post('/api/recipes', [RecipeReportController::class, 'saveRecipe']);
+
+        // Food Wastage Management
+        Route::get('/wastage', [RecipeReportController::class, 'getWastageLogs'])->middleware('role:admin,manager,cashier');
+        Route::post('/wastage', [RecipeReportController::class, 'storeWastage'])->middleware('role:admin,manager,cashier');
+        Route::get('/api/wastage', [RecipeReportController::class, 'getWastageLogs']);
+        Route::post('/api/wastage', [RecipeReportController::class, 'storeWastage']);
+
+        // GST & Tax Compliance Reporting (B2B / B2C GSTR-1 & CSV Export)
+        Route::get('/reports/gst-summary', [RecipeReportController::class, 'getGstSummary'])->middleware('role:admin,manager,cashier');
+        Route::get('/reports/gst/export', [RecipeReportController::class, 'exportGstCsv'])->middleware('role:admin,manager,cashier');
+        Route::get('/api/reports/gst-summary', [RecipeReportController::class, 'getGstSummary']);
+        Route::get('/api/reports/gst/export', [RecipeReportController::class, 'exportGstCsv']);
 
         // Table Reservations
         Route::get('/reservations/restaurant/{restaurantId}', [ReservationController::class, 'index'])
@@ -566,6 +643,13 @@ Route::prefix('api')->group(function () {
         Route::get('/customers/{id}', [CustomerController::class, 'show'])->middleware('role:admin,manager,cashier');
         Route::post('/customers', [CustomerController::class, 'store'])->middleware('role:admin,manager,cashier');
         Route::post('/customers/earn-points', [CustomerController::class, 'earnPoints'])->middleware('role:admin,manager,cashier');
+        Route::get('/customers/lookup', [CustomerController::class, 'lookupCustomer'])->middleware('role:admin,manager,cashier');
+        Route::post('/customers/redeem-wallet', [CustomerController::class, 'redeemWallet'])->middleware('role:admin,manager,cashier');
+        Route::post('/customers/credit-cashback', [CustomerController::class, 'creditCashback'])->middleware('role:admin,manager,cashier');
+
+        Route::get('/api/customers/lookup', [CustomerController::class, 'lookupCustomer']);
+        Route::post('/api/customers/redeem-wallet', [CustomerController::class, 'redeemWallet']);
+        Route::post('/api/customers/credit-cashback', [CustomerController::class, 'creditCashback']);
         Route::put('/customers/{id}', [CustomerController::class, 'update'])->middleware('role:admin,manager');
         Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->middleware('role:admin');
 

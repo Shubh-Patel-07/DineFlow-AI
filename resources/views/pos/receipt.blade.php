@@ -306,8 +306,14 @@
                     <p>{{ $restaurant->address }}</p>
                     <p>Ph: {{ $restaurant->phone }}</p>
                     @if(!empty($restaurant->gstin))
-                    <p style="font-weight: bold; font-size: 10.5px;">GSTIN: {{ $restaurant->gstin }}</p>
+                    <p style="font-weight: bold; font-size: 10px;">GSTIN: {{ $restaurant->gstin }}</p>
                     @endif
+                    @if(!empty($restaurant->fssai_licence))
+                    <p style="font-weight: bold; font-size: 9.5px;">FSSAI Lic: {{ $restaurant->fssai_licence }}</p>
+                    @endif
+                    <div style="margin-top:4px; font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; border:1px solid #000; padding:2px 0;">
+                        {{ !empty($order->customer_gstin) ? 'TAX INVOICE (B2B)' : 'RETAIL INVOICE' }}
+                    </div>
                 </div>
 
                 <div class="divider"></div>
@@ -317,6 +323,16 @@
                         <td><strong>Order ID:</strong></td>
                         <td class="text-right">#{{ $order->id }}</td>
                     </tr>
+                    @if(!empty($order->customer_gstin))
+                    <tr>
+                        <td><strong>Billed To:</strong></td>
+                        <td class="text-right">{{ $order->customer_company ?: ($order->customer_name ?: 'B2B Client') }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Client GSTIN:</strong></td>
+                        <td class="text-right"><strong>{{ $order->customer_gstin }}</strong></td>
+                    </tr>
+                    @endif
                     <tr>
                         <td><strong>Table:</strong></td>
                         <td class="text-right">{{ $tableName ?? ($order->table ? ($order->table->table_number ?? $order->table->id) : ('Table #' . ($order->table_id ?? '1'))) }}</td>
@@ -349,7 +365,12 @@
                     <tbody>
                         @foreach($order->items as $item)
                         <tr>
-                            <td>{{ $item->name }}</td>
+                            <td>
+                                {{ $item->name }}
+                                @if(!empty($item->notes))
+                                    <div style="font-size: 8.5px; font-weight: bold; color: #444;">* {{ $item->notes }}</div>
+                                @endif
+                            </td>
                             <td class="text-right">{{ $item->quantity }}</td>
                             <td class="text-right">₹{{ number_format($item->price, 2) }}</td>
                             <td class="text-right">₹{{ number_format($item->price * $item->quantity, 2) }}</td>
@@ -366,12 +387,19 @@
                         $serviceCharge = $subtotal * 0.05;
                         $cgst = ($subtotal + $serviceCharge) * 0.09;
                         $sgst = ($subtotal + $serviceCharge) * 0.09;
-                        $grandTotal = $subtotal + $serviceCharge + $cgst + $sgst;
+                        $walletDiscount = floatval($order->wallet_discount ?? 0);
+                        $grandTotal = max(0, $subtotal + $serviceCharge + $cgst + $sgst - $walletDiscount);
                     @endphp
                     <tr>
                         <td>Subtotal:</td>
                         <td class="text-right">₹{{ number_format($subtotal, 2) }}</td>
                     </tr>
+                    @if($walletDiscount > 0)
+                    <tr style="color: #059669; font-weight: bold;">
+                        <td>Wallet Redeemed:</td>
+                        <td class="text-right">-₹{{ number_format($walletDiscount, 2) }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td>Service Charge (5%):</td>
                         <td class="text-right">₹{{ number_format($serviceCharge, 2) }}</td>
@@ -388,6 +416,28 @@
                         <td>GRAND TOTAL:</td>
                         <td class="text-right">₹{{ number_format($grandTotal, 2) }}</td>
                     </tr>
+                    @if(!empty($order->cashback_earned) && $order->cashback_earned > 0)
+                    <tr style="border-top: 1px dotted #10B981; font-size: 9.5px; color: #047857;">
+                        <td colspan="2" class="text-center" style="padding-top: 3px;">
+                            🎉 <strong>Cashback Earned: ₹{{ number_format($order->cashback_earned, 2) }}</strong> credited to Wallet!
+                        </td>
+                    </tr>
+                    @endif
+                    @if($order->payment_method === 'split' && !empty($order->split_data))
+                        @php
+                            $splitObj = is_string($order->split_data) ? json_decode($order->split_data, true) : $order->split_data;
+                        @endphp
+                        @if(!empty($splitObj))
+                            <tr style="border-top: 1px dashed #666;">
+                                <td colspan="2" style="font-size:9.5px; padding-top:4px; color:#222;">
+                                    <strong>Split Paid:</strong> 
+                                    @if(!empty($splitObj['cash'])) Cash: ₹{{ number_format($splitObj['cash'], 2) }} @endif
+                                    @if(!empty($splitObj['upi'])) | UPI: ₹{{ number_format($splitObj['upi'], 2) }} @endif
+                                    @if(!empty($splitObj['card'])) | Card: ₹{{ number_format($splitObj['card'], 2) }} @endif
+                                </td>
+                            </tr>
+                        @endif
+                    @endif
                 </table>
 
                 <div class="divider"></div>

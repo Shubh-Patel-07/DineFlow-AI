@@ -404,13 +404,13 @@
     .sidebar-nav::-webkit-scrollbar { width: 4px; }
     .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
     .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
-    .sidebar.collapsed { width: 60px; min-width: 60px; }
+    .sidebar.collapsed { width: 64px; min-width: 64px; }
 
     .sidebar-brand {
-      padding: 14px 12px;
+      padding: 12px 10px;
       display: flex; align-items: center; gap: 10px;
       border-bottom: 1px solid rgba(255,255,255,.08);
-      flex-shrink: 0; position: relative; min-height: 58px;
+      flex-shrink: 0; position: relative; min-height: 56px;
     }
     .brand-icon {
       width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
@@ -421,7 +421,7 @@
     .brand-text h2 { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: .3px; }
     .brand-text span { font-size: 11px; color: rgba(255,255,255,.45); }
     .sidebar.collapsed .brand-text { opacity: 0; width: 0; overflow: hidden; }
-    .sidebar.collapsed .brand-icon { display: none; }
+    .sidebar.collapsed .brand-icon { display: flex; margin: 0 auto; }
 
     /* Collapse toggle button */
     .sidebar-toggle {
@@ -433,11 +433,10 @@
     }
     .sidebar-toggle:hover { background: rgba(255,255,255,.25); }
     .sidebar-toggle i { font-size: 11px; color: rgba(255,255,255,.9); transition: transform .25s; }
-    .sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
-    .sidebar.collapsed .sidebar-brand { justify-content: center; }
-    .sidebar.collapsed .sidebar-toggle { margin-left: 0; }
+    .sidebar.collapsed .sidebar-toggle { display: none; }
+    .sidebar.collapsed .sidebar-brand { justify-content: center; padding: 10px 0; }
 
-    .sidebar-section { padding: 14px 8px 4px; overflow: hidden; }
+    .sidebar-section { padding: 12px 8px 4px; overflow: hidden; }
     .sidebar-section-label {
       font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
       color: rgba(255,255,255,.3); padding: 0 6px; white-space: nowrap;
@@ -458,13 +457,41 @@
     .nav-item.active { background: var(--sidebar-active); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,.4); }
     .nav-item i { width: 20px; min-width: 20px; text-align: center; font-size: 14px; }
     .nav-item .nav-label { transition: opacity .2s; }
-    .sidebar.collapsed .nav-item .nav-label { opacity: 0; }
+    .sidebar.collapsed .nav-item { justify-content: center; padding: 10px 0; }
+    .sidebar.collapsed .nav-item i { font-size: 16px; margin: 0; }
+    .sidebar.collapsed .nav-item .nav-label { opacity: 0; width: 0; display: none; }
     .nav-badge { margin-left: auto; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 20px; transition: opacity .2s; }
     .nav-badge.green { background: var(--success); }
-    .sidebar.collapsed .nav-badge { opacity: 0; }
+    .sidebar.collapsed .nav-badge { opacity: 0; display: none; }
+
+    /* Collapsed Sidebar Hover Tooltips */
+    .sidebar.collapsed .nav-item:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: #1E293B;
+      color: #F8FAFC;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      z-index: 99999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      border: 1px solid #334155;
+      pointer-events: none;
+    }
+    body.light-theme .sidebar.collapsed .nav-item:hover::after {
+      background: #FFFFFF;
+      color: #0F172A;
+      border-color: #E2E8F0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
 
     .sidebar-footer {
-      flex-shrink: 0; padding: 14px 8px;
+      flex-shrink: 0; padding: 10px 8px;
       border-top: 1px solid rgba(255,255,255,.07); overflow: hidden;
     }
     .user-card {
@@ -477,28 +504,251 @@
     .user-info { transition: opacity .2s; }
     .user-info h4 { font-size: 13px; font-weight: 600; color: #fff; }
     .user-info p  { font-size: 11px; color: rgba(255,255,255,.4); }
-    .sidebar.collapsed .user-info { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .user-info { opacity: 0; width: 0; overflow: hidden; display: none; }
+    .sidebar.collapsed .sidebar-footer { padding: 10px 0; display: flex; justify-content: center; }
+    .sidebar.collapsed .user-card { padding: 0; justify-content: center; }
+    .sidebar.collapsed .user-card form { display: none; }
 
     /* ─── MAIN LAYOUT ─────────────────────────── */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
+    /* ─── PETPOOJA STYLE TOPBAR ─── */
     .topbar {
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 0 18px; height: 64px; min-height: 64px; display: flex; align-items: center; gap: 12px;
+      background: var(--card); border-bottom: 1.5px solid var(--border);
+      padding: 0 16px; height: 56px; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
       flex-shrink: 0; box-shadow: var(--shadow-sm); overflow: visible !important;
+      position: relative; z-index: 50;
     }
-    .topbar-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
-    .topbar-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-    .topbar-spacer { flex: 1; }
+    .topbar-title { font-size: 15px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.2px; }
+    .topbar-sub   { font-size: 11px; color: var(--text-muted); }
     .topbar-btn {
-      width: 36px; height: 36px; border-radius: var(--radius-sm);
-      background: var(--bg); border: 1px solid var(--border);
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--bg); border: 1.5px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; color: var(--text-secondary); position: relative;
-      transition: all .15s;
+      transition: all .15s ease;
     }
-    .topbar-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
-    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--card); }
+    .topbar-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
+    .notif-dot { position: absolute; top: 7px; right: 7px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--card); }
+
+    /* Petpooja Quick Action Control Buttons */
+    .pos-quick-tool-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      border: 1.5px solid transparent;
+      user-select: none;
+      white-space: nowrap;
+      position: relative;
+      background: var(--bg);
+    }
+    .pos-quick-tool-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .pos-quick-tool-btn.shift-btn {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10B981;
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+    .pos-quick-tool-btn.shift-btn:hover {
+      background: #10B981;
+      color: #FFFFFF;
+    }
+    .pos-quick-tool-btn.online-btn {
+      background: rgba(245, 158, 11, 0.12);
+      color: #F59E0B;
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .pos-quick-tool-btn.online-btn:hover {
+      background: #F59E0B;
+      color: #FFFFFF;
+    }
+    .pos-quick-tool-btn.hold-btn {
+      background: rgba(236, 72, 153, 0.12);
+      color: #EC4899;
+      border-color: rgba(236, 72, 153, 0.35);
+    }
+    .pos-quick-tool-btn.hold-btn:hover {
+      background: #EC4899;
+      color: #FFFFFF;
+    }
+    .pos-quick-tool-btn.tools-btn {
+      background: rgba(99, 102, 241, 0.12);
+      color: #818CF8;
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+    .pos-quick-tool-btn.tools-btn:hover {
+      background: #6366F1;
+      color: #FFFFFF;
+    }
+    .pos-quick-tool-btn.stock-btn {
+      background: rgba(14, 165, 233, 0.12);
+      color: #0EA5E9;
+      border-color: rgba(14, 165, 233, 0.35);
+    }
+    .pos-quick-tool-btn.stock-btn:hover {
+      background: #0EA5E9;
+      color: #FFFFFF;
+    }
+    .pos-quick-tool-btn.orders-btn {
+      background: rgba(99, 102, 241, 0.12);
+      color: #818CF8;
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+    .pos-quick-tool-btn.orders-btn:hover {
+      background: #6366F1;
+      color: #FFFFFF;
+    }
+    .pos-quick-tool-btn.kds-btn {
+      background: rgba(249, 115, 22, 0.12);
+      color: #F97316;
+      border-color: rgba(249, 115, 22, 0.35);
+      text-decoration: none;
+    }
+    .pos-quick-tool-btn.kds-btn:hover {
+      background: #F97316;
+      color: #FFFFFF;
+    }
+
+    /* Dish Card Interactive Stepper & Add Button */
+    .item-card-stepper {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1.5px solid #10B981;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+    }
+    .card-step-btn {
+      width: 26px;
+      height: 26px;
+      border: none;
+      background: #10B981;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s ease;
+    }
+    .card-step-btn:hover {
+      background: #059669;
+    }
+    .card-step-qty {
+      min-width: 24px;
+      padding: 0 4px;
+      text-align: center;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .item-add-btn-pill {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.35);
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .item-add-btn-pill:hover {
+      background: linear-gradient(135deg, #4F46E5, #4338CA);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(99, 102, 241, 0.45);
+    }
+
+    /* Operations Dropdown */
+    .pos-dropdown-wrap {
+      position: relative;
+    }
+    .pos-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 210px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      z-index: 99999;
+      padding: 6px;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .pos-dropdown-menu.show {
+      display: flex !important;
+      animation: posDropFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes posDropFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pos-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .pos-dropdown-item:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    body.light-theme .pos-dropdown-item:hover {
+      background: #EEF2FF;
+      color: var(--primary);
+    }
+
+    /* Petpooja Standard Veg / Non-Veg Badges */
+    .petpooja-diet-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #10B981;
+      background: rgba(16,185,129,0.08);
+      flex-shrink: 0;
+    }
+    .petpooja-diet-icon.nonveg {
+      border-color: #EF4444;
+      background: rgba(239,68,68,0.08);
+    }
+    .petpooja-diet-icon .diet-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+    .petpooja-diet-icon.nonveg .diet-dot {
+      background: #EF4444;
+    }
 
     /* ─── POS WRAPPER ─────────────────────────── */
     .pos-wrapper {
@@ -513,30 +763,30 @@
 
     /* Order Meta Bar */
     .order-meta {
-      display: flex; gap: 10px; padding: 12px 16px;
-      background: var(--card); border-bottom: 1px solid var(--border);
+      display: flex; gap: 10px; padding: 10px 16px;
+      background: var(--card); border-bottom: 1.5px solid var(--border);
       flex-wrap: wrap; align-items: center;
     }
     .meta-group { display: flex; gap: 8px; align-items: center; }
     .meta-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
 
     /* Delivery Type Tabs */
-    .delivery-tabs { display: flex; background: var(--bg); border-radius: var(--radius-sm); padding: 3px; border: 1px solid var(--border); }
+    .delivery-tabs { display: flex; background: var(--bg); border-radius: 10px; padding: 3px; border: 1.5px solid var(--border); height: 36px; }
     .delivery-tab {
-      padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;
-      cursor: pointer; color: var(--text-secondary); transition: all .15s; display: flex; align-items: center; gap: 5px;
+      padding: 0 14px; border-radius: 7px; font-size: 12px; font-weight: 700;
+      cursor: pointer; color: var(--text-secondary); transition: all .15s; display: flex; align-items: center; gap: 6px;
     }
     .delivery-tab.active { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
     .delivery-tab i { font-size: 11px; }
 
     /* Select Dropdowns */
     .meta-select {
-      height: 32px; padding: 0 10px; border: 1px solid var(--border);
-      border-radius: var(--radius-sm); font-size: 12.5px; font-family: inherit;
+      height: 36px; padding: 0 12px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 12.5px; font-weight: 600; font-family: inherit;
       color: var(--text-primary); background: var(--card); outline: none; cursor: pointer;
-      transition: border-color .15s; min-width: 30px;
+      transition: all .15s ease; min-width: 30px;
     }
-    .meta-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.08); }
+    .meta-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.12); }
     .meta-picker-btn {
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
       text-align: left;
@@ -550,7 +800,7 @@
       display: flex; align-items: center; gap: 7px; min-width: 0;
     }
     .meta-picker-value {
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700;
     }
 
     /* Search + Category */
@@ -812,8 +1062,8 @@
 
     /* ─── RIGHT PANEL (CART) ──────────────────── */
     .pos-right {
-      width: 320px; min-width: 300px;
-      background: var(--card); border-left: 1px solid var(--border);
+      width: 360px; min-width: 340px;
+      background: var(--card); border-left: 1.5px solid var(--border);
       display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
       scrollbar-width: thin;
       -webkit-overflow-scrolling: touch;
@@ -823,31 +1073,34 @@
 
     .cart-header {
       padding: 12px 14px 10px;
-      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      border-bottom: 1.5px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
     }
-    .cart-title { font-size: 15px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .cart-title { font-size: 15px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
     .cart-count { background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
-    .cart-order-no { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .cart-order-no { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
 
     /* Customer Strip */
     .customer-strip {
       padding: 8px 14px;
-      background: var(--bg); border-bottom: 1px solid var(--border);
+      background: var(--card); border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 8px;
     }
     .cust-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-    .cust-info h5 { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+    .cust-info h5 { font-size: 12.5px; font-weight: 700; color: var(--text-primary); }
     .cust-info p  { font-size: 11px; color: var(--text-muted); }
-    .cust-change { margin-left: auto; font-size: 11px; color: var(--primary); font-weight: 600; cursor: pointer; }
+    .cust-change { margin-left: auto; font-size: 11px; color: var(--primary); font-weight: 700; cursor: pointer; }
 
     /* Cart Items */
     .cart-items { flex: none; overflow: visible; padding: 4px 0; }
 
     .cart-item {
-      padding: 8px 14px; border-bottom: 1px solid var(--border);
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
       display: flex; align-items: flex-start;
+      transition: background 0.15s ease;
     }
+    .cart-item:hover { background: rgba(255,255,255,0.02); }
     .ci-info { flex: 1; min-width: 0; }
     .ci-top {
       display: flex;
@@ -856,9 +1109,9 @@
       gap: 10px;
     }
     .ci-main { flex: 1; min-width: 0; }
-    .ci-name { font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .ci-name { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; line-height: 1.3; }
     .ci-variant {
-      font-size: 10.5px; color: var(--text-muted); margin-bottom: 6px;
+      font-size: 10.5px; color: var(--text-muted); margin-bottom: 4px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .ci-note { font-size: 10.5px; color: var(--text-muted); font-style: italic; }
@@ -867,18 +1120,19 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      margin-top: 4px;
     }
-    .ci-controls { display: flex; align-items: center; gap: 0; }
+    .ci-controls { display: flex; align-items: center; gap: 2px; }
     .ci-btn {
-      width: 32px; height: 32px; border: 1px solid var(--border); background: var(--bg);
+      width: 28px; height: 28px; border: 1.5px solid var(--border); background: var(--bg);
       border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 13px; color: var(--text-secondary); transition: all .12s;
+      cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-primary); transition: all .12s;
     }
-    .ci-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
-    .ci-qty { width: 28px; text-align: center; font-size: 13px; font-weight: 700; color: var(--text-primary); }
-    .ci-price { font-size: 13px; font-weight: 700; color: var(--text-primary); flex-shrink: 0; text-align: right; white-space: nowrap; }
-    .ci-del { width: 32px; height: 32px; border: none; background: none; color: var(--text-muted); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: color .12s; }
-    .ci-del:hover { color: var(--danger); }
+    .ci-btn:hover { border-color: var(--primary); color: #fff; background: var(--primary); }
+    .ci-qty { width: 30px; text-align: center; font-size: 13.5px; font-weight: 800; color: var(--text-primary); }
+    .ci-price { font-size: 13.5px; font-weight: 800; color: var(--text-primary); flex-shrink: 0; text-align: right; white-space: nowrap; }
+    .ci-del { width: 28px; height: 28px; border: none; background: none; color: var(--text-muted); cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .12s; border-radius: 6px; }
+    .ci-del:hover { color: var(--danger); background: var(--danger-light); }
 
     /* Cart Note */
     .cart-note-area {
@@ -886,25 +1140,37 @@
       border-top: 1px solid var(--border);
     }
     .cart-note-input {
-      width: 100%; height: 36px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      width: 100%; height: 34px; border: 1px solid var(--border); border-radius: var(--radius-sm);
       padding: 0 10px; font-size: 12px; font-family: inherit; outline: none; color: var(--text-primary);
-      transition: border-color .15s; resize: none;
+      transition: border-color .15s; resize: none; background: var(--bg);
     }
     .cart-note-input::placeholder { color: var(--text-muted); }
     .cart-note-input:focus { border-color: var(--primary); }
 
     /* Totals */
     .cart-totals {
-      padding: 8px 14px 4px;
-      border-top: 1px solid var(--border);
+      padding: 10px 14px 6px;
+      border-top: 1.5px solid var(--border);
+      background: rgba(0,0,0,0.04);
     }
     .tot-row { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 5px; }
-    .tot-row .label { color: var(--text-secondary); }
-    .tot-row .val   { font-weight: 600; color: var(--text-primary); }
-    .tot-row.discount .val { color: var(--danger); }
-    .tot-divider { border: none; border-top: 1px dashed var(--border); margin: 8px 0; }
-    .tot-row.grand .label { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-    .tot-row.grand .val   { font-size: 15px; font-weight: 800; color: var(--primary); }
+    .tot-row .label { color: var(--text-secondary); font-weight: 500; }
+    .tot-row .val   { font-weight: 700; color: var(--text-primary); }
+    .tot-row.discount .val { color: var(--danger); font-weight: 800; }
+    .tot-divider { border: none; border-top: 1px dashed var(--border); margin: 6px 0; }
+    .tot-row.grand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      margin-top: 6px;
+      margin-bottom: 2px;
+    }
+    .tot-row.grand .label { font-size: 13.5px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .tot-row.grand .val   { font-size: 19px; font-weight: 900; color: #10B981; }
 
     /* Coupon */
     .coupon-row {
@@ -912,34 +1178,35 @@
       display: flex; gap: 8px;
     }
     .coupon-input {
-      flex: 1; height: 30px; padding: 0 10px; border: 1px dashed var(--primary);
+      flex: 1; height: 32px; padding: 0 10px; border: 1px dashed var(--primary);
       border-radius: var(--radius-sm); font-size: 12px; font-family: inherit;
       outline: none; color: var(--text-primary); background: var(--primary-light);
     }
     .coupon-btn {
-      height: 30px; padding: 0 12px; border: none; border-radius: var(--radius-sm);
-      background: var(--primary); color: #fff; font-size: 12px; font-weight: 600;
+      height: 32px; padding: 0 12px; border: none; border-radius: var(--radius-sm);
+      background: var(--primary); color: #fff; font-size: 12px; font-weight: 700;
       cursor: pointer; transition: background .15s;
     }
     .coupon-btn:hover { background: var(--primary-dark); }
 
     /* Payment */
     .payment-section {
-      padding: 8px 14px;
+      padding: 10px 14px;
       border-top: 1px solid var(--border);
     }
-    .payment-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 8px; }
-    .pay-methods { display: flex; gap: 6px; flex-wrap: wrap; }
+    .payment-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 8px; }
+    .pay-methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
     .pay-method {
-      flex: 1; min-width: 60px; padding: 7px 6px;
-      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-      text-align: center; cursor: pointer; transition: all .15s;
+      padding: 8px 4px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      text-align: center; cursor: pointer; transition: all .15s ease;
+      background: var(--bg);
     }
-    .pay-method i { font-size: 16px; color: var(--text-muted); display: block; margin-bottom: 3px; }
-    .pay-method span { font-size: 10px; font-weight: 600; color: var(--text-muted); display: block; }
-    .pay-method:hover { border-color: var(--primary); }
-    .pay-method.active { border-color: var(--primary); background: var(--primary-light); }
-    .pay-method.active i, .pay-method.active span { color: var(--primary); }
+    .pay-method i { font-size: 16px; color: var(--text-muted); display: block; margin-bottom: 4px; }
+    .pay-method span { font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; }
+    .pay-method:hover { border-color: var(--primary); transform: translateY(-1px); }
+    .pay-method.active { border-color: #10B981; background: rgba(16,185,129,0.12); }
+    .pay-method.active i, .pay-method.active span { color: #10B981; font-weight: 800; }
 
     /* Split Payment */
     .split-row {
@@ -1232,7 +1499,61 @@
       color: #64748B !important;
     }
 
-    /* ─── RESPONSIVE ─────────────────────────── */
+    /* ─── RESPONSIVE & TOPBAR COMPACT LAYOUT ─────────────────────────── */
+    .pos-quick-tool-btn {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 1600px) {
+      .pos-quick-tool-btn {
+        padding: 0 8px;
+        gap: 5px;
+        font-size: 11px;
+        height: 32px;
+      }
+      .topbar {
+        padding: 0 10px;
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 1400px) {
+      /* Hide text labels on standard topbar action buttons to save space */
+      .pos-quick-tool-btn.shift-btn span,
+      .pos-quick-tool-btn.online-btn span:not(#onlinePendingBadge),
+      .pos-quick-tool-btn.hold-btn span:not(#holdCartsCountBadge),
+      .pos-quick-tool-btn.stock-btn span:not(#topbarLowStockBadge),
+      .pos-quick-tool-btn.orders-btn span,
+      .pos-quick-tool-btn.kds-btn span {
+        display: none !important;
+      }
+      .pos-quick-tool-btn {
+        width: 34px !important;
+        height: 34px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+      }
+      .pos-quick-tool-btn.tools-btn {
+        width: auto !important;
+        padding: 0 8px !important;
+      }
+      .pos-quick-tool-btn.tools-btn span,
+      .pos-quick-tool-btn.tools-btn i.fa-chevron-down {
+        display: inline-block !important;
+      }
+      #posNetworkStatusText {
+        display: none !important;
+      }
+      #posNetworkStatusBadge {
+        width: 34px !important;
+        height: 34px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+      }
+    }
+
     @media (max-width: 1100px) {
       .pos-right { width: 300px; min-width: 300px; }
     }
@@ -1758,7 +2079,7 @@
   $posRestName = $posRest ? $posRest->name : 'DineFlow AI POS';
   $posRestLogo = $posRest ? $posRest->getEffectiveLogoUrl() : null;
 @endphp
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar collapsed" id="sidebar">
   <div class="sidebar-brand">
     <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
       @if($posRestLogo)
@@ -1841,62 +2162,147 @@
 
   <!-- Topbar -->
   <div class="topbar">
-    <div class="topbar-title-group">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          @if($posRestLogo)
-            <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 28px; height: 28px; border-radius: 6px; object-fit: contain; background: #fff; padding: 2px;">
-          @else
-            <div style="width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; font-family: 'Outfit', sans-serif;">{{ substr($posRestName, 0, 1) }}</div>
-          @endif
-          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">{{ $posRestName }}</div>
+    <!-- Left: Sidebar Toggle, Restaurant Brand & Live Clock -->
+    <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+      <button class="topbar-btn" type="button" onclick="toggleSidebar()" title="Toggle Sidebar Navigation" style="cursor:pointer; flex-shrink:0;">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div style="display:flex; align-items:center; gap:10px;">
+        @if($posRestLogo)
+          <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #fff; padding: 2px; border: 1px solid var(--border); flex-shrink:0;">
+        @else
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; font-family: 'Outfit', sans-serif; flex-shrink:0;">{{ substr($posRestName, 0, 1) }}</div>
+        @endif
+        <div style="display:flex; flex-direction:column; justify-content:center; gap:2px;">
+          <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 14px; line-height: 1.2; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+            <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $posRestName }}</span>
+            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981;" title="POS Terminal Live"></span>
+          </div>
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <span id="topbarDate">{{ now()->format('D, M d, Y') }}</span>
+            <span id="liveClockBadge">--:--:--</span>
+          </div>
         </div>
-        <div id="liveClockBadge">--:--:-- --</div>
-        <div id="localWeatherBadge"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
       </div>
-      <div class="topbar-sub" id="topbarDate">{{ now()->format('l, M d, Y') }} • Shift: {{ (now()->hour >= 6 && now()->hour < 16) ? 'Morning (06:00 - 16:00)' : 'Evening (16:00 - 24:00)' }}</div>
-    </div>
-    <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
-      <i class="fa-solid fa-bars"></i>
-    </div>
-    <div class="topbar-spacer"></div>
-    <!-- Light/Dark Mode Theme Switcher -->
-    <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="togglePosTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
-      <i id="posThemeIcon" class="fa-solid fa-sun"></i>
-      <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
     </div>
 
+    <!-- Center: Petpooja Quick Action Control Cluster -->
+    <div style="display:flex; align-items:center; gap:8px;">
+      <!-- Cash Register & Shift Drawer -->
+      <button type="button" class="pos-quick-tool-btn shift-btn" id="posShiftBtn" title="Cash Register & Shift Control" onclick="openShiftRegisterModal()">
+        <i class="fa-solid fa-cash-register"></i>
+        <span id="posShiftText">Shift Drawer</span>
+      </button>
 
-    <div class="topbar-btn topbar-desktop-only" title="Search" onclick="focusItemSearch()" style="cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer; position:relative;">
-      <i class="fa-solid fa-bell"></i>
-      <span class="notif-dot" id="notifDot" style="display:none;"></span>
-      <span id="notifCountBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 5px; border-radius:10px; border:2px solid var(--card);">0</span>
+      <!-- Online Delivery & Aggregator Hub (Zomato / Swiggy / Riders) -->
+      <button type="button" class="pos-quick-tool-btn online-btn" id="posDeliveryHubBtn" title="Online Orders & Delivery Hub" onclick="openDeliveryHubModal()">
+        <i class="fa-solid fa-motorcycle"></i>
+        <span>Online Orders</span>
+        <span id="onlinePendingBadge" style="display:none; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
+      </button>
+
+      <!-- Multi-Cart Hold & Recall Hub (F4) -->
+      <button type="button" class="pos-quick-tool-btn hold-btn" id="posHoldOrdersBtn" title="Hold & Recall Orders (F4)" onclick="openHoldOrdersModal()">
+        <i class="fa-solid fa-circle-pause"></i>
+        <span>Hold Carts</span>
+        <span id="holdCartsCountBadge" style="display:none; background:#EC4899; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
+      </button>
+
+      <!-- Live Stock & Ingredients Inventory Alert (Petpooja Stock Feature) -->
+      <button type="button" class="pos-quick-tool-btn stock-btn" id="posInventoryBtn" title="Live Inventory Stock & Low-Stock Alerts" onclick="openInventoryQuickModal()">
+        <i class="fa-solid fa-boxes-stacked"></i>
+        <span>Stock &amp; Inventory</span>
+        <span id="topbarLowStockBadge" style="display:none; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
+      </button>
+
+      <!-- Today's Orders / Bills (F3) -->
+      <button type="button" class="pos-quick-tool-btn orders-btn" id="posOrdersModalBtn" title="View Today's Bills & Orders (F3)" onclick="openModal('ordersModal')">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Orders (F3)</span>
+      </button>
+
+      <!-- Kitchen Display System (KDS) Direct Link -->
+      <a href="/kitchen" target="_blank" class="pos-quick-tool-btn kds-btn" title="Open Kitchen Display System (KDS) in New Tab">
+        <i class="fa-solid fa-fire-burner"></i>
+        <span>Kitchen KDS</span>
+      </a>
     </div>
-    <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()"><i class="fa-solid fa-expand"></i></div>
-    <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
-    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
-      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
-      <div style="display:flex;flex-direction:column;">
-        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()?->name ?? 'Administrator' }}</span>
-        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()?->role ?? 'staff' }}</span>
-      </div>
-      <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
-        @csrf
-        <button type="submit" title="Logout"
-          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
-                 width:30px; height:30px; border-radius:8px; cursor:pointer;
-                 display:flex; align-items:center; justify-content:center; font-size:13px;"
-          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
-          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
-          <i class="fa-solid fa-right-from-bracket"></i>
+
+    <!-- Right: Operations Dropdown, Network Sentinel & User Menu -->
+    <div style="display:flex; align-items:center; gap:8px;">
+      <!-- Operations Dropdown (Recipe Costing, GST Tax, Shortcuts, Themes) -->
+      <div class="pos-dropdown-wrap">
+        <button type="button" class="pos-quick-tool-btn tools-btn" id="posMoreToolsBtn" onclick="toggleMoreToolsMenu(event)" title="Additional Management Tools">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Tools</span>
+          <i class="fa-solid fa-chevron-down" style="font-size:9px; margin-left:2px;"></i>
         </button>
-      </form>
-    </div>
-    <!-- Mobile-only cart button in topbar -->
-    <div class="topbar-btn topbar-mobile-cart" title="Cart" onclick="toggleMobileCart()" style="position:relative;">
-      <i class="fa-solid fa-cart-shopping"></i>
-      <span class="topbar-cart-badge" id="topbarCartBadge">0</span>
+        <div class="pos-dropdown-menu" id="posMoreToolsMenu">
+          <div class="pos-dropdown-item" id="posRecipeBtn" onclick="openRecipeModal(); closeMoreToolsMenu();">
+            <i class="fa-solid fa-bowl-rice" style="color:#8B5CF6; width:18px;"></i>
+            <span>Recipe & Costing</span>
+          </div>
+          <div class="pos-dropdown-item" id="posGstBtn" onclick="openGstReportModal(); closeMoreToolsMenu();">
+            <i class="fa-solid fa-file-invoice-dollar" style="color:#0EA5E9; width:18px;"></i>
+            <span>GSTR-1 Tax Report</span>
+          </div>
+          <div class="pos-dropdown-item" id="posShortcutsBtn" onclick="openShortcutsModal(); closeMoreToolsMenu();">
+            <i class="fa-solid fa-keyboard" style="color:#38BDF8; width:18px;"></i>
+            <span>Shortcuts Guide</span>
+            <kbd style="font-size:9.5px; background:var(--bg); border:1px solid var(--border); padding:1px 5px; border-radius:4px; margin-left:auto; color:var(--text-muted);">F1</kbd>
+          </div>
+          <div class="pos-dropdown-item" id="posThemeToggleBtn" onclick="togglePosTheme();">
+            <i id="posThemeIcon" class="fa-solid fa-sun" style="color:#F59E0B; width:18px;"></i>
+            <span id="posThemeText">Light Mode</span>
+          </div>
+          <div style="height:1px; background:var(--border); margin:3px 0;"></div>
+          <div class="pos-dropdown-item" onclick="toggleFull(); closeMoreToolsMenu();">
+            <i class="fa-solid fa-expand" style="color:var(--text-secondary); width:18px;"></i>
+            <span>Fullscreen Mode</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offline-Ready Network Sentinel Indicator -->
+      <div class="topbar-btn topbar-desktop-only" id="posNetworkStatusBadge" title="Network: Online & Synced" style="width:auto; padding:0 10px; gap:6px; cursor:default; border-radius:10px; background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.3); color:#10B981;">
+        <i id="posNetworkStatusIcon" class="fa-solid fa-wifi" style="font-size:11px;"></i>
+        <span id="posNetworkStatusText" style="font-size:11px; font-weight:700;">Online</span>
+      </div>
+
+      <!-- Notifications -->
+      <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer; position:relative;">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notif-dot" id="notifDot" style="display:none;"></span>
+        <span id="notifCountBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 5px; border-radius:10px; border:2px solid var(--card);">0</span>
+      </div>
+
+      <!-- Cashier User Pill & Quick Logout -->
+      <div class="topbar-desktop-only" style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--border);">
+        <div class="user-avatar" style="width:30px; height:30px; font-size:12px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+        <div style="display:flex; flex-direction:column; line-height:1.2;">
+          <span style="font-size:12px; font-weight:700; color:var(--text-primary); max-width:85px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ Auth::user()?->name ?? 'Admin' }}</span>
+          <span style="font-size:9.5px; color:var(--text-muted); text-transform:capitalize;">{{ Auth::user()?->role ?? 'cashier' }}</span>
+        </div>
+        <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:2px;">
+          @csrf
+          <button type="submit" title="Logout"
+            style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); color:#F87171;
+                   width:28px; height:28px; border-radius:8px; cursor:pointer;
+                   display:flex; align-items:center; justify-content:center; font-size:12px;
+                   transition:all .18s;"
+            onmouseover="this.style.background='rgba(239,68,68,0.3)'"
+            onmouseout="this.style.background='rgba(239,68,68,0.12)'">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Mobile-only cart button in topbar -->
+      <div class="topbar-btn topbar-mobile-cart" title="Cart" onclick="toggleMobileCart()" style="position:relative;">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="topbar-cart-badge" id="topbarCartBadge">0</span>
+      </div>
     </div>
   </div>
 
@@ -1917,16 +2323,16 @@
   </div>
 
 @if(Auth::user()?->restaurant?->is_demo)
-<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 6px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 99999;">
+<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 4px 16px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 99999; border-bottom: 1px solid rgba(0,0,0,0.15);">
   <div style="display:flex; align-items:center; gap:8px;">
-    <span style="background:#000; color:#FBBF24; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:900;">DEMO POS</span>
+    <span style="background:#000; color:#FBBF24; padding:1px 6px; border-radius:4px; font-size:9.5px; font-weight:900;">DEMO POS</span>
     <span>Isolated sandbox terminal. Real restaurant orders are not affected.</span>
   </div>
-  <div style="display:flex; align-items:center; gap:8px;">
-    <a href="{{ route('demo.reset') }}" onclick="return confirm('Reset demo sandbox to fresh state?');" style="background: rgba(0,0,0,0.15); color: #000; border: 1px solid rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: 800;">
+  <div style="display:flex; align-items:center; gap:6px;">
+    <a href="{{ route('demo.reset') }}" onclick="return confirm('Reset demo sandbox to fresh state?');" style="background: rgba(0,0,0,0.15); color: #000; border: 1px solid rgba(0,0,0,0.3); padding: 2px 7px; border-radius: 4px; text-decoration: none; font-size: 10.5px; font-weight: 800;">
       <i class="fa-solid fa-rotate-left"></i> Reset
     </a>
-    <a href="{{ route('demo.exit') }}" style="background: #000; color: #fff; padding: 3px 10px; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: 800;">
+    <a href="{{ route('demo.exit') }}" style="background: #000; color: #fff; padding: 2px 8px; border-radius: 4px; text-decoration: none; font-size: 10.5px; font-weight: 800;">
       Exit Demo
     </a>
   </div>
@@ -1995,37 +2401,59 @@
         </div>
       </div>
 
-      <!-- Search + Category Popup -->
-      <div class="menu-controls">
-        <div class="search-box">
-          <i class="fa-solid fa-search"></i>
-          <input class="search-input" id="posSearchInput" placeholder="Search items or tap mic to speak…" oninput="filterItems(this.value)" />
-          <button type="button" onclick="togglePosVoiceOrder()" id="posVoiceBtn" title="AI Voice Order (Gujarati/Hindi/English)">
-            <i class="fa-solid fa-microphone"></i>
-          </button>
-        </div>
-        <div class="cat-popup-wrap">
-          <button class="cat-popup-btn" id="catPopupBtn" onclick="toggleCatPopup()">
-            <i class="fa-solid fa-layer-group"></i>
-            <span id="catPopupLabel">All Categories</span>
-            <span class="cat-active-dot"></span>
-            <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px;"></i>
-          </button>
-          <div class="modal-overlay" id="catPopupModal">
-            <div class="modal cat-popup-modal">
-              <div class="modal-header">
-                <div class="modal-title"><i class="fa-solid fa-layer-group" style="color:var(--primary);"></i>&nbsp; Select Category</div>
-                <div class="cat-popup-actions">
-                  <span class="cat-popup-clear" onclick="resetCat()">Clear</span>
-                  <button class="modal-close" onclick="closeModal('catPopupModal')"><i class="fa-solid fa-xmark"></i></button>
+      <!-- Petpooja Fast Search & Quick Filters -->
+      <div class="menu-controls" style="padding: 10px 14px 6px; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; gap:8px; align-items:center; width:100%;">
+          <div class="search-box" style="flex:1;">
+            <i class="fa-solid fa-search"></i>
+            <input class="search-input" id="posSearchInput" placeholder="🔍 Search dishes (name, code, ingredient) or press F1…" oninput="filterItems(this.value)" />
+            <button type="button" onclick="togglePosVoiceOrder()" id="posVoiceBtn" title="AI Voice Order (Gujarati/Hindi/English)">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+          </div>
+
+          <!-- Veg / Non-Veg Quick Dietary Toggles (Petpooja Standard) -->
+          <div style="display:flex; gap:4px; align-items:center;">
+            <button type="button" id="posFilterAllDietBtn" onclick="setDietaryFilter('all')" class="cat-pill active" style="padding:4px 10px; font-size:11px; font-weight:700; border-radius:8px;">
+              All
+            </button>
+            <button type="button" id="posFilterVegBtn" onclick="setDietaryFilter('veg')" class="cat-pill" style="padding:4px 10px; font-size:11px; font-weight:700; color:#10B981; border-color:rgba(16,185,129,0.3); border-radius:8px;">
+              🟢 Veg
+            </button>
+            <button type="button" id="posFilterNonVegBtn" onclick="setDietaryFilter('nonveg')" class="cat-pill" style="padding:4px 10px; font-size:11px; font-weight:700; color:#EF4444; border-color:rgba(239,68,68,0.3); border-radius:8px;">
+              🔴 Non-Veg
+            </button>
+          </div>
+
+          <!-- Category Full Picker Dropdown -->
+          <div class="cat-popup-wrap">
+            <button class="cat-popup-btn" id="catPopupBtn" onclick="toggleCatPopup()" style="height:36px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700;">
+              <i class="fa-solid fa-layer-group"></i>
+              <span id="catPopupLabel">All Categories</span>
+              <span class="cat-active-dot"></span>
+              <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px;"></i>
+            </button>
+            <div class="modal-overlay" id="catPopupModal">
+              <div class="modal cat-popup-modal">
+                <div class="modal-header">
+                  <div class="modal-title"><i class="fa-solid fa-layer-group" style="color:var(--primary);"></i>&nbsp; Select Category</div>
+                  <div class="cat-popup-actions">
+                    <span class="cat-popup-clear" onclick="resetCat()">Clear</span>
+                    <button class="modal-close" onclick="closeModal('catPopupModal')"><i class="fa-solid fa-xmark"></i></button>
+                  </div>
                 </div>
-              </div>
-              <div class="modal-body">
-                <div class="cat-popup-grid" id="catPopupGrid">
+                <div class="modal-body">
+                  <div class="cat-popup-grid" id="catPopupGrid">
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Petpooja Fast Category Ribbon (Scrollable 1-Click Pills) -->
+        <div id="petpoojaCategoryRibbon" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; width:100%;">
+          <!-- Dynamically filled with top categories -->
         </div>
       </div>
 
@@ -2057,7 +2485,10 @@
                 @endif
               </div>
               <div class="item-body">
-                <div class="item-category-tag">{{ strtoupper($category) }}</div>
+                <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
+                  <span class="petpooja-diet-icon {{ $isVeg ? 'veg' : 'nonveg' }}" title="{{ $isVeg ? 'Vegetarian' : 'Non-Vegetarian' }}"><span class="diet-dot"></span></span>
+                  <span class="item-category-tag">{{ strtoupper($category) }}</span>
+                </div>
                 <div class="item-name" title="{{ $item->name }}">{{ $item->name }}</div>
                 <div class="item-footer">
                   <div class="item-price">₹ {{ number_format($price, 0) }}<small>/dish</small></div>
@@ -2101,7 +2532,7 @@
           <div class="cart-order-no">#ORD-20260313-0001 &nbsp;·&nbsp; <span id="cartTableNo">T-01</span></div>
         </div>
         <div style="display:flex;gap:6px;">
-          <div class="topbar-btn" title="Hold Order" onclick="holdOrder()"><i class="fa-solid fa-pause"></i></div>
+          <div class="topbar-btn" title="Hold Order (F4)" onclick="holdCurrentCart()" style="cursor:pointer;"><i class="fa-solid fa-pause"></i></div>
           <div class="topbar-btn" title="Print KOT" onclick="openPrintHub(lastPlacedOrderId)" style="cursor:pointer;"><i class="fa-solid fa-print"></i></div>
           <div class="topbar-btn mobile-close-cart" title="Close Cart" onclick="toggleMobileCart()" style="display:none;"><i class="fa-solid fa-xmark"></i></div>
         </div>
@@ -2117,6 +2548,44 @@
         <span class="cust-change" onclick="openModal('customerModal')">Change</span>
       </div>
 
+      <!-- Customer Loyalty Wallet & Birthday Ribbon -->
+      <div id="customerWalletStrip" style="display:none; margin: 6px 14px 2px; padding: 6px 10px; background: rgba(16,185,129,0.12); border: 1px dashed rgba(16,185,129,0.3); border-radius: 8px; justify-content: space-between; align-items: center;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #10B981; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-wallet"></i>
+          <span>Wallet: <b id="custWalletAmount">₹0.00</b></span>
+          <span id="custBirthdayBadge" style="display:none; font-size:10px; background:#EC4899; color:#fff; padding:1px 6px; border-radius:6px; font-weight:800;">🎂 Birthday Special!</span>
+        </div>
+        <button id="custRedeemWalletBtn" type="button" onclick="applyCustomerWalletDiscount()" style="background: #10B981; color: #fff; border: none; border-radius: 6px; padding: 3px 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
+          Redeem
+        </button>
+      </div>
+
+      <!-- Home Delivery Address & Rider Dispatch Strip (Petpooja Delivery Module) -->
+      <div id="deliveryDetailsStrip" style="display:none; background:rgba(245,158,11,0.06); border-bottom:1px solid rgba(245,158,11,0.25); padding:10px 14px; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:11.5px; font-weight:800; color:#F59E0B; display:flex; align-items:center; gap:5px;">
+            <i class="fa-solid fa-motorcycle"></i> Home Delivery Details
+          </span>
+          <span style="font-size:10.5px; color:var(--text-muted);">Required for Delivery</span>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+          <input type="text" id="deliveryCustName" placeholder="Customer Name *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+          <input type="tel" id="deliveryCustPhone" placeholder="Mobile No. *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+        </div>
+        <input type="text" id="deliveryCustAddress" placeholder="Flat/House, Society/Street, Landmark *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:6px; align-items:center;">
+          <div style="display:flex; align-items:center; gap:4px;">
+            <span style="font-size:11px; color:var(--text-secondary); white-space:nowrap;">Delivery Fee ₹:</span>
+            <input type="number" id="deliveryFeeInput" value="30" min="0" step="5" oninput="updateCartUI()" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:11.5px; color:var(--text-primary);" />
+          </div>
+          <div style="display:flex; align-items:center; gap:4px;">
+            <select id="deliveryRiderSelect" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:11px; color:var(--text-primary);">
+              <option value="">🛵 Auto Assign Rider</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- Cart Items -->
       <div class="cart-items" id="cartItems">
       </div>
@@ -2124,6 +2593,31 @@
       <!-- Cart Note -->
       <div class="cart-note-area">
         <input class="cart-note-input" placeholder="Add order notes (allergies, special requests…)" id="cartNote" />
+      </div>
+
+      <!-- B2B GST Tax Billing (Petpooja B2B Invoicing Feature) -->
+      <div style="padding: 4px 14px 2px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="checkbox" id="b2bInvoiceToggle" onchange="toggleB2bInvoiceForm()" style="accent-color: #0EA5E9;">
+          <span style="color:#0EA5E9;"><i class="fa-solid fa-file-invoice"></i> Add B2B Tax Invoice (Customer GSTIN)</span>
+        </label>
+        <div id="b2bInvoiceForm" style="display: none; margin-top: 6px; background: rgba(14,165,233,0.08); border: 1px dashed rgba(14,165,233,0.3); padding: 8px; border-radius: 8px; flex-direction: column; gap: 6px;">
+          <input type="text" id="b2bCompanyInput" placeholder="Company / Legal Trade Name *" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-primary);" />
+          <input type="text" id="b2bGstinInput" placeholder="Customer 15-digit GSTIN *" maxlength="15" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-primary); text-transform: uppercase;" />
+        </div>
+      </div>
+
+      <!-- Petpooja Fast Quick-Discount Strip -->
+      <div style="padding: 4px 14px 2px; display:flex; align-items:center; justify-content:space-between; gap:6px;">
+        <span style="font-size:10.5px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> Quick Disc:</span>
+        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+          <button type="button" onclick="applyQuickPresetDiscount(5)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">5%</button>
+          <button type="button" onclick="applyQuickPresetDiscount(10)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">10%</button>
+          <button type="button" onclick="applyQuickPresetDiscount(15)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">15%</button>
+          <button type="button" onclick="applyQuickPresetDiscount(0, 50)" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">₹50</button>
+          <button type="button" onclick="applyQuickPresetDiscount(0, 100)" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">₹100</button>
+          <button type="button" onclick="openModal('posOffersModal')" style="background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#818CF8; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;" title="All Offers (F8)"><i class="fa-solid fa-gift"></i></button>
+        </div>
       </div>
 
       <!-- Coupon Row -->
@@ -2159,35 +2653,54 @@
             <i class="fa-solid fa-code-branch" style="pointer-events:none;"></i><span style="pointer-events:none;">Split</span>
           </div>
         </div>
-        <div class="split-row" id="splitRow" style="display:none;">
-          <input class="split-input" placeholder="Cash ₹" value="0" />
-          <input class="split-input" placeholder="Card ₹" value="0" />
+        <div class="split-row" id="splitRow" style="display:none; flex-direction:column; gap:8px; margin-top:10px; background:rgba(99,102,241,0.06); padding:10px; border-radius:10px; border:1px dashed rgba(99,102,241,0.3);">
+          <div style="font-size:11px; font-weight:700; color:var(--text-secondary); display:flex; justify-content:space-between;">
+            <span>Split Payment Allocation</span>
+            <span id="splitStatusNotice" style="color:#F59E0B;">Enter split amounts</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <input class="split-input" id="splitCashInput" placeholder="Cash ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
+            <input class="split-input" id="splitUpiInput" placeholder="UPI ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
+            <input class="split-input" id="splitCardInput" placeholder="Card ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
+          </div>
         </div>
       </div>
 
-      <!-- Clean & Professional POS Action Section -->
-      <div class="cart-actions" style="display:flex; flex-direction:column; gap:10px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.08);">
+      <!-- Clean & Professional Petpooja POS Action Section -->
+      <div class="cart-actions" style="display:flex; flex-direction:column; gap:10px; padding:12px 14px 14px; border-top:1.5px solid var(--border); background:rgba(0,0,0,0.06);">
         
-        <!-- Primary Single Checkout Button -->
-        <button class="btn-checkout" onclick="checkout()" style="width:100%; height:48px; border-radius:14px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#FFFFFF; font-size:15px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 20px rgba(99,102,241,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-          <i class="fa-solid fa-circle-check" style="font-size:18px;"></i>
-          <span>Place Order &nbsp;·&nbsp; <span id="checkoutAmount">₹ 0.00</span></span>
-        </button>
+        <!-- Petpooja Dual Primary Action: Save & Print KOT (F1) + Pay & Place Order (F2) -->
+        <div style="display:grid; grid-template-columns: 1fr 1.35fr; gap:8px; width:100%;">
+          <button type="button" class="btn-checkout" onclick="sendKOT()" style="height:48px; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13.5px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 6px 18px rgba(245,158,11,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'" title="Send KOT to Kitchen without settling payment (F1)">
+            <i class="fa-solid fa-fire-burner" style="font-size:16px;"></i>
+            <span>SAVE &amp; KOT <small style="font-size:10px; opacity:0.85;">(F1)</small></span>
+          </button>
+          
+          <button type="button" class="btn-checkout" onclick="checkout()" style="height:48px; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); color:#FFFFFF; font-size:14px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(16,185,129,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'" title="Settle & Pay Bill (F2)">
+            <i class="fa-solid fa-circle-check" style="font-size:16px;"></i>
+            <span>PAY &amp; BILL &bull; <span id="checkoutAmount">₹ 0.00</span></span>
+          </button>
+        </div>
 
-        <!-- Secondary 3-Button Utility Toolbar -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; width:100%;">
+        <!-- Secondary 4-Button Fast Action Toolbar -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:6px; width:100%;">
+          <!-- Hold Cart Button (F4) -->
+          <button onclick="holdCurrentCart()" style="height:38px; border-radius:8px; background:rgba(236,72,153,0.12); border:1.5px solid rgba(236,72,153,0.3); color:#F472B6; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(236,72,153,0.22)'" onmouseout="this.style.background='rgba(236,72,153,0.12)'" title="Hold Current Cart (F4)">
+            <i class="fa-solid fa-circle-pause" style="color:#EC4899;"></i> Hold <small style="font-size:9.5px; opacity:0.8;">(F4)</small>
+          </button>
+
           <!-- Print & KOT Hub -->
-          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:40px; border-radius:10px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#A5B4FC; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'" title="Print Bill or KOT">
-            <i class="fa-solid fa-print" style="color:#FCD34D;"></i> Print &amp; KOT
+          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:38px; border-radius:8px; background:rgba(99,102,241,0.12); border:1.5px solid rgba(99,102,241,0.3); color:#A5B4FC; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.22)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'" title="Print Bill or KOT (F9)">
+            <i class="fa-solid fa-print" style="color:#FCD34D;"></i> Print <small style="font-size:9.5px; opacity:0.8;">(F9)</small>
           </button>
           
           <!-- WhatsApp Invoice -->
-          <button onclick="sendWhatsAppInvoice()" style="height:40px; border-radius:10px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.3); color:#4ADE80; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(37,211,102,0.2)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Send WhatsApp Bill">
+          <button onclick="sendWhatsAppInvoice()" style="height:38px; border-radius:8px; background:rgba(37,211,102,0.12); border:1.5px solid rgba(37,211,102,0.3); color:#4ADE80; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Send WhatsApp Bill">
             <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp
           </button>
           
           <!-- Clear Cart -->
-          <button onclick="clearCart()" style="height:40px; border-radius:10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#FCA5A5; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'" title="Clear Cart">
+          <button onclick="clearCart()" style="height:38px; border-radius:8px; background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3); color:#FCA5A5; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'" title="Clear Cart">
             <i class="fa-solid fa-trash"></i> Clear
           </button>
         </div>
@@ -2225,6 +2738,62 @@
       <button class="btn-checkout" style="flex:none;padding:0 20px;height:38px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none;" onclick="triggerWhatsAppRedirect()">
         <i class="fa-brands fa-whatsapp"></i> Open WhatsApp
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Live Inventory Stock & Ingredients Modal (Petpooja Stock Management) -->
+<div class="modal-overlay" id="inventoryModal">
+  <div class="modal" style="width:720px; max-width:95vw; max-height:88vh; display:flex; flex-direction:column; border-radius:18px;">
+    <div class="modal-header">
+      <div class="modal-title" style="display:flex; align-items:center; gap:8px; color:var(--text-primary); font-size:15px; font-weight:800;">
+        <i class="fa-solid fa-boxes-stacked" style="color:#0EA5E9;"></i>
+        <span>Live Stock &amp; Ingredient Inventory</span>
+        <span id="invLowStockAlertBadge" style="display:none; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px;">0 Low Stock</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <a href="/admin/inventory" target="_blank" style="padding:6px 12px; background:rgba(14,165,233,0.12); border:1px solid rgba(14,165,233,0.3); border-radius:8px; color:#0EA5E9; font-size:11.5px; font-weight:700; text-decoration:none; display:flex; align-items:center; gap:5px;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Full Manager
+        </a>
+        <button type="button" class="modal-close" onclick="closeModal('inventoryModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" style="flex:1; overflow-y:auto; padding:16px 20px;">
+      <div style="display:flex; gap:10px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; position:relative;">
+          <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:12px;"></i>
+          <input type="text" id="invQuickSearchInput" placeholder="Filter ingredients (e.g. Paneer, Cheese, Milk)…" oninput="filterQuickInventory(this.value)" style="width:100%; height:36px; padding:0 12px 0 34px; background:var(--bg); border:1px solid var(--border); border-radius:8px; font-size:12.5px; color:var(--text-primary); outline:none;">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <span style="font-size:11.5px; font-weight:700; padding:6px 10px; border-radius:8px; background:rgba(16,185,129,0.1); color:#10B981; border:1px solid rgba(16,185,129,0.3);" id="invTotalCountBadge">0 Total Items</span>
+          <span style="font-size:11.5px; font-weight:700; padding:6px 10px; border-radius:8px; background:rgba(239,68,68,0.1); color:#EF4444; border:1px solid rgba(239,68,68,0.3);" id="invLowCountBadge">0 Low / Out</span>
+        </div>
+      </div>
+      
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+          <thead>
+            <tr style="border-bottom:1.5px solid var(--border); text-align:left; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:8px 10px;">Ingredient / Item</th>
+              <th style="padding:8px 10px;">Category</th>
+              <th style="padding:8px 10px; text-align:right;">Current Stock</th>
+              <th style="padding:8px 10px; text-align:right;">Alert Level</th>
+              <th style="padding:8px 10px; text-align:center;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryModalTbody">
+            <tr>
+              <td colspan="5" style="text-align:center; padding:30px; color:var(--text-muted);">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:20px; margin-bottom:8px; display:block; color:var(--primary);"></i> Loading live inventory...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-circle-info"></i> Stock deducts automatically upon KOT placement based on Recipe BOM.</span>
+      <button type="button" class="btn-outline" style="height:34px; padding:0 16px; font-size:12px; border-radius:8px;" onclick="closeModal('inventoryModal')">Close</button>
     </div>
   </div>
 </div>
@@ -2280,6 +2849,16 @@
         <div>
           <label style="display:block; font-size:12px; font-weight:600; color:#94A3B8; margin-bottom:6px;">Email Address (Optional)</label>
           <input type="email" id="newCustEmailInput" placeholder="e.g. ramesh@gmail.com" style="width:100%; height:40px; border-radius:10px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 12px; font-size:13px;" />
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:600; color:#EC4899; margin-bottom:6px;"><i class="fa-solid fa-cake-candles"></i> Birthday (DOB)</label>
+            <input type="date" id="newCustDobInput" style="width:100%; height:38px; border-radius:8px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 10px; font-size:12px;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:600; color:#F59E0B; margin-bottom:6px;"><i class="fa-solid fa-ring"></i> Anniversary</label>
+            <input type="date" id="newCustAnnivInput" style="width:100%; height:38px; border-radius:8px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 10px; font-size:12px;" />
+          </div>
         </div>
       </div>
     </div>
@@ -2467,6 +3046,16 @@
       <button class="modal-close" onclick="closeModal('tableModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body">
+      <!-- Petpooja Shift & Merge Table Quick Bar -->
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <button type="button" class="btn-outline" onclick="openShiftModal()" style="flex:1; height:36px; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; color:#818CF8; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); border-radius:10px; cursor:pointer;">
+          <i class="fa-solid fa-right-left"></i> Shift Table
+        </button>
+        <button type="button" class="btn-outline" onclick="openMergeModal()" style="flex:1; height:36px; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08); border-radius:10px; cursor:pointer;">
+          <i class="fa-solid fa-object-group"></i> Merge Tables
+        </button>
+      </div>
+
       <div style="display:flex;gap:8px;margin-bottom:14px;">
         <select class="meta-select" id="tableFloorSelect" style="flex:1;" onchange="filterTables()">
           <option value="all">All Floors</option>
@@ -2491,6 +3080,525 @@
         <div class="tl-item"><div class="tl-dot" style="background:var(--primary);"></div>Selected</div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Table Shift & Merge Modal (Petpooja Feature) -->
+<div class="modal-overlay" id="shiftMergeModal">
+  <div class="modal" style="width:420px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
+    <div class="modal-header" style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" id="shiftMergeModalTitle" style="font-size:15px; font-weight:800; color:var(--text-primary);"><i class="fa-solid fa-right-left" style="color:var(--primary);"></i>&nbsp; Shift Table</div>
+      <button class="modal-close" onclick="closeModal('shiftMergeModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px 18px;">
+      <input type="hidden" id="shiftMergeAction" value="shift">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Source Table (Currently Occupied):</label>
+        <select id="shiftSourceTable" class="meta-select" style="width:100%; height:40px; border-radius:8px;"></select>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label id="shiftTargetLabel" style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Destination Table (Available):</label>
+        <select id="shiftTargetTable" class="meta-select" style="width:100%; height:40px; border-radius:8px;"></select>
+      </div>
+      <div id="shiftMergeNote" style="font-size:11.5px; color:var(--text-muted); background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px; line-height:1.5;">
+        All active items and bills will be moved seamlessly.
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-outline" onclick="closeModal('shiftMergeModal')" style="height:36px; padding:0 14px; border-radius:8px; cursor:pointer;">Cancel</button>
+      <button class="btn-checkout" id="shiftMergeSubmitBtn" onclick="executeShiftMerge()" style="padding:0 18px; height:36px; border-radius:8px; font-weight:700; cursor:pointer;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cash Register & Shift Modal (Petpooja Feature) -->
+<div class="modal-overlay" id="shiftRegisterModal">
+  <div class="modal" style="width:480px; max-width:94vw; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden;">
+    <div class="modal-header" style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="font-size:16px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-cash-register" style="color:#10B981;"></i>
+        <span>Cash Register &amp; Shift Control</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('shiftRegisterModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px;" id="shiftRegisterModalBody">
+      <!-- Loaded dynamically via JS -->
+      <div style="text-align:center; padding:30px 0;"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px; color:var(--primary);"></i><div style="margin-top:10px; font-size:12px; color:var(--text-muted);">Checking shift status...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Petty Cash Modal (Petpooja Cash-In / Cash-Out) -->
+<div class="modal-overlay" id="pettyCashModal">
+  <div class="modal" style="width:380px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
+    <div class="modal-header" style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="font-size:15px; font-weight:800; color:var(--text-primary);"><i class="fa-solid fa-wallet" style="color:#F59E0B;"></i>&nbsp; Record Petty Cash</div>
+      <button class="modal-close" onclick="closeModal('pettyCashModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px 18px;">
+      <div style="display:flex; gap:10px; margin-bottom:14px;">
+        <label style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; border-radius:10px; border:1px solid var(--border); cursor:pointer; background:rgba(239,68,68,0.08); color:#EF4444; font-weight:700; font-size:12.5px;">
+          <input type="radio" name="pettyType" value="cash_out" checked style="accent-color:#EF4444;"> Cash Out (Expense)
+        </label>
+        <label style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; border-radius:10px; border:1px solid var(--border); cursor:pointer; background:rgba(16,185,129,0.08); color:#10B981; font-weight:700; font-size:12.5px;">
+          <input type="radio" name="pettyType" value="cash_in" style="accent-color:#10B981;"> Cash In (Top Up)
+        </label>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:5px;">Amount (₹):</label>
+        <input type="number" id="pettyAmountInput" class="split-input" placeholder="e.g. 150" style="width:100%; height:40px; border-radius:8px; font-size:14px; font-weight:700;" />
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:5px;">Category:</label>
+        <select id="pettyCategorySelect" class="meta-select" style="width:100%; height:40px; border-radius:8px;">
+          <option value="milk_dairy">🥛 Milk &amp; Dairy</option>
+          <option value="ice">🧊 Ice Purchase</option>
+          <option value="vegetables">🥬 Vegetables / Emergency Groceries</option>
+          <option value="cleaning">🧹 Cleaning / Laundry</option>
+          <option value="courier">📦 Parcel &amp; Transport</option>
+          <option value="salary_advance">💵 Staff Advance</option>
+          <option value="misc" selected>📝 Miscellaneous</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:5px;">Description / Reason:</label>
+        <input type="text" id="pettyReasonInput" class="split-input" placeholder="e.g. 2 packets Amul Gold milk" style="width:100%; height:40px; border-radius:8px;" />
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-outline" onclick="closeModal('pettyCashModal')" style="height:36px; padding:0 14px; border-radius:8px;">Cancel</button>
+      <button class="btn-checkout" onclick="submitPettyCash()" style="height:36px; padding:0 18px; border-radius:8px; font-weight:700;">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Anti-Theft: KOT Item Cancellation with Manager PIN Modal -->
+<div class="modal-overlay" id="cancelKotItemModal">
+  <div class="modal" style="width:400px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
+    <div class="modal-header" style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="font-size:15px; font-weight:800; color:#EF4444; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Manager Security Authorization</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('cancelKotItemModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px 18px;">
+      <input type="hidden" id="cancelKotOrderId">
+      <input type="hidden" id="cancelKotItemId">
+      <div id="cancelKotItemNotice" style="font-size:12.5px; font-weight:700; color:var(--text-primary); margin-bottom:12px; background:rgba(239,68,68,0.1); padding:10px; border-radius:8px; border:1px solid rgba(239,68,68,0.25);">
+        Cancelling Item: <span id="cancelKotItemName" style="color:#EF4444;"></span>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:5px;">Mandatory Cancellation Reason:</label>
+        <select id="cancelKotReasonSelect" class="meta-select" style="width:100%; height:40px; border-radius:8px;">
+          <option value="Customer Changed Mind">Customer Changed Mind</option>
+          <option value="Kitchen Delay / Food Not Prepared">Kitchen Delay / Food Not Prepared</option>
+          <option value="Wrong Item Punched by Staff">Wrong Item Punched by Staff</option>
+          <option value="Ingredient Out of Stock">Ingredient Out of Stock</option>
+          <option value="Quality / Taste Issue">Quality / Taste Issue</option>
+          <option value="Guest Left Without Eating">Guest Left Without Eating</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:5px;">Manager 4-Digit Security PIN:</label>
+        <input type="password" id="cancelKotManagerPin" maxlength="6" class="split-input" placeholder="••••" style="width:100%; height:42px; border-radius:8px; font-size:18px; letter-spacing:6px; text-align:center; font-weight:800;" />
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px; text-align:center;">Default Master PIN is: <b style="color:var(--primary);">1234</b></div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-outline" onclick="closeModal('cancelKotItemModal')" style="height:36px; padding:0 14px; border-radius:8px;">Dismiss</button>
+      <button class="btn-checkout" onclick="confirmCancelKotItem()" style="height:36px; padding:0 18px; border-radius:8px; background:#EF4444; font-weight:700;">Authorize Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════════
+     PETPOOJA ONLINE AGGREGATOR & DELIVERY HUB MODAL (Zomato / Swiggy / Delivery Boys)
+════════════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="deliveryHubModal">
+  <div class="modal" style="width:780px; max-width:96vw; max-height:90vh; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;">
+    
+    <!-- Header -->
+    <div class="modal-header" style="padding:14px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:rgba(245,158,11,0.05);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px;">
+          <i class="fa-solid fa-motorcycle"></i>
+        </div>
+        <div>
+          <div class="modal-title" style="font-size:16px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+            <span>Online Orders &amp; Delivery Hub</span>
+            <span style="font-size:11px; font-weight:700; color:#10B981; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:12px; border:1px solid rgba(16,185,129,0.3);">
+              <i class="fa-solid fa-circle-dot fa-fade"></i> Live Feed
+            </span>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:1px;">Zomato, Swiggy &amp; In-House Delivery Dispatch Control</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="simulateOnlineOrderTest()" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; border-radius:10px; padding:6px 12px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;" title="Simulate incoming order with Siren Alarm">
+          <i class="fa-solid fa-bell fa-shake"></i> Test Order (Alarm)
+        </button>
+        <button class="modal-close" onclick="closeModal('deliveryHubModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div style="display:flex; border-bottom:1px solid var(--border); background:var(--bg); padding:0 20px;">
+      <button id="delivTabAggregators" onclick="switchDeliveryHubTab('aggregators')" style="padding:12px 16px; border:none; background:none; color:var(--primary); font-size:13px; font-weight:800; border-bottom:2px solid var(--primary); cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-utensils"></i> Live Zomato &amp; Swiggy Feed
+        <span id="tabPendingBadge" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; display:none;">0</span>
+      </button>
+      <button id="delivTabRiders" onclick="switchDeliveryHubTab('riders')" style="padding:12px 16px; border:none; background:none; color:var(--text-muted); font-size:13px; font-weight:700; border-bottom:2px solid transparent; cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-person-biking"></i> Delivery Riders &amp; Dispatches
+      </button>
+    </div>
+
+    <!-- Body Panels -->
+    <div class="modal-body" style="padding:18px 20px; overflow-y:auto; flex:1; min-height:360px;">
+      
+      <!-- Panel 1: Live Zomato / Swiggy Orders -->
+      <div id="panelAggregators" style="display:block;">
+        <div id="aggregatorOrdersContainer" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="text-align:center; padding:40px 0; color:var(--text-muted);">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:24px; color:var(--primary);"></i>
+            <div style="margin-top:10px; font-size:13px;">Checking live online orders...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Home Delivery Riders & Dispatch -->
+      <div id="panelRiders" style="display:none;">
+        <!-- Rider Management Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:var(--bg); padding:10px 14px; border-radius:12px; border:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Delivery Fleet</div>
+            <div style="font-size:11px; color:var(--text-muted);">Assign delivery boys &amp; track cash-on-delivery (COD) settlements</div>
+          </div>
+          <button onclick="toggleAddRiderForm()" style="background:var(--primary); color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-plus"></i> Add Rider
+          </button>
+        </div>
+
+        <!-- Add Rider Form (Collapsible) -->
+        <div id="addRiderFormWrap" style="display:none; margin-bottom:14px; padding:12px; background:rgba(99,102,241,0.06); border:1px dashed rgba(99,102,241,0.3); border-radius:12px;">
+          <div style="font-size:12px; font-weight:800; color:var(--primary); margin-bottom:8px;">New Delivery Boy Registration</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:8px;">
+            <input type="text" id="newRiderName" placeholder="Rider Name (e.g. Ramesh Patel)" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--text-primary);" />
+            <input type="tel" id="newRiderPhone" placeholder="Mobile Number" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--text-primary);" />
+            <input type="text" id="newRiderVehicle" placeholder="Vehicle No. (GJ-01-AB-1234)" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--text-primary);" />
+            <button onclick="submitNewRider()" style="background:#10B981; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer;">Save</button>
+          </div>
+        </div>
+
+        <!-- Active Deliveries List -->
+        <div style="font-size:12.5px; font-weight:800; color:var(--text-secondary); margin-bottom:10px;">Ongoing Deliveries &amp; Dispatch</div>
+        <div id="activeDeliveriesContainer" style="display:flex; flex-direction:column; gap:10px;">
+          <!-- Loaded via JS -->
+          <div style="text-align:center; padding:30px 0; color:var(--text-muted); font-size:12.5px;">Loading delivery dispatches...</div>
+        </div>
+
+        <!-- Fleet Overview -->
+        <div style="font-size:12.5px; font-weight:800; color:var(--text-secondary); margin-top:20px; margin-bottom:10px;">Active Rider Roster</div>
+        <div id="ridersRosterContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:10px;">
+          <!-- Loaded via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer" style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg);">
+      <div style="font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-volume-high" style="color:var(--primary);"></i> Siren alert automatically rings when new online order arrives.
+      </div>
+      <button class="btn-outline" onclick="closeModal('deliveryHubModal')" style="height:34px; padding:0 16px; border-radius:8px; font-weight:700; cursor:pointer;">Close</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════════
+     PETPOOJA RECIPE & FOOD COSTING MODAL (BOM, Profit Margins & Kitchen Wastage)
+════════════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="recipeModal">
+  <div class="modal" style="width:860px; max-width:96vw; max-height:90vh; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;">
+    
+    <!-- Header -->
+    <div class="modal-header" style="padding:14px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:rgba(139,92,246,0.06);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #8B5CF6, #6D28D9); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px;">
+          <i class="fa-solid fa-bowl-rice"></i>
+        </div>
+        <div>
+          <div class="modal-title" style="font-size:16px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+            <span>Recipes &amp; Food Costing</span>
+            <span style="font-size:11px; font-weight:700; color:#8B5CF6; background:rgba(139,92,246,0.12); padding:2px 8px; border-radius:12px; border:1px solid rgba(139,92,246,0.3);">
+              BOM Engine
+            </span>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:1px;">Auto-deduct raw materials on sale &amp; track accurate food cost margins</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('recipeModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex; border-bottom:1px solid var(--border); background:var(--bg); padding:0 20px;">
+      <button id="recipeTabMenu" onclick="switchRecipeTab('menu')" style="padding:12px 16px; border:none; background:none; color:var(--primary); font-size:13px; font-weight:800; border-bottom:2px solid var(--primary); cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-list-check"></i> Dish Recipes &amp; Margins
+      </button>
+      <button id="recipeTabWastage" onclick="switchRecipeTab('wastage')" style="padding:12px 16px; border:none; background:none; color:var(--text-muted); font-size:13px; font-weight:700; border-bottom:2px solid transparent; cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-trash-can-arrow-up"></i> Kitchen Food Wastage Log
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body" style="padding:18px 20px; overflow-y:auto; flex:1;">
+      
+      <!-- Panel 1: Recipes & Margins List -->
+      <div id="recipePanelMenu" style="display:block;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <input type="text" id="recipeSearchInput" placeholder="Filter dishes..." oninput="filterRecipeTable(this.value)" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:12px; color:var(--text-primary); width:240px;" />
+          <div style="font-size:11.5px; color:var(--text-muted);">
+            💡 Green margin indicates high profit (>60%). Click <b>Configure</b> to set ingredients.
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+            <thead>
+              <tr style="background:var(--bg); border-bottom:1px solid var(--border); color:var(--text-secondary);">
+                <th style="padding:10px 12px;">Dish Name</th>
+                <th style="padding:10px 12px;">Category</th>
+                <th style="padding:10px 12px; text-align:right;">Selling Price</th>
+                <th style="padding:10px 12px; text-align:right;">Raw Food Cost</th>
+                <th style="padding:10px 12px; text-align:right;">Gross Profit</th>
+                <th style="padding:10px 12px; text-align:center;">Margin %</th>
+                <th style="padding:10px 12px; text-align:center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="recipeTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Loading recipes and food costings...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Panel 2: Wastage Logs -->
+      <div id="recipePanelWastage" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:var(--bg); padding:10px 14px; border-radius:12px; border:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Total Kitchen Loss: <span id="wastageTotalLossLabel" style="color:#EF4444; font-weight:800;">₹0.00</span></div>
+            <div style="font-size:11px; color:var(--text-muted);">Log burnt items, spilled milk, spoiled veggies, or expired stock</div>
+          </div>
+          <button onclick="toggleRecordWastageForm()" style="background:#EF4444; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-plus"></i> Record Wastage
+          </button>
+        </div>
+
+        <!-- Add Wastage Form (Collapsible) -->
+        <div id="recordWastageFormWrap" style="display:none; margin-bottom:14px; padding:12px; background:rgba(239,68,68,0.06); border:1px dashed rgba(239,68,68,0.3); border-radius:12px;">
+          <div style="font-size:12px; font-weight:800; color:#EF4444; margin-bottom:8px;">New Wastage Entry</div>
+          <div style="display:grid; grid-template-columns: 1.5fr 1fr 1.5fr auto; gap:8px;">
+            <select id="wastageInventorySelect" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--text-primary);">
+              <option value="">Select Raw Ingredient</option>
+            </select>
+            <input type="number" id="wastageQtyInput" placeholder="Quantity (e.g. 1.5)" step="0.1" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--text-primary);" />
+            <select id="wastageReasonSelect" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--text-primary);">
+              <option value="Spoiled / Expired">Spoiled / Expired</option>
+              <option value="Burnt in Kitchen">Burnt in Kitchen</option>
+              <option value="Dropped / Spilled">Dropped / Spilled</option>
+              <option value="Quality / Taste Issue">Quality / Taste Issue</option>
+              <option value="Staff Meal / Testing">Staff Meal / Testing</option>
+            </select>
+            <button onclick="submitWastageEntry()" style="background:#EF4444; color:#fff; border:none; border-radius:8px; padding:6px 16px; font-size:12px; font-weight:700; cursor:pointer;">Save</button>
+          </div>
+        </div>
+
+        <!-- Wastage Table -->
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+            <thead>
+              <tr style="background:var(--bg); border-bottom:1px solid var(--border); color:var(--text-secondary);">
+                <th style="padding:8px 12px;">Date &amp; Time</th>
+                <th style="padding:8px 12px;">Ingredient</th>
+                <th style="padding:8px 12px;">Quantity Wasted</th>
+                <th style="padding:8px 12px;">Reason</th>
+                <th style="padding:8px 12px; text-align:right;">Cost Loss (₹)</th>
+                <th style="padding:8px 12px;">Recorded By</th>
+              </tr>
+            </thead>
+            <tbody id="wastageTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer" style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg);">
+      <div style="font-size:11.5px; color:var(--text-muted);">
+        ✨ Raw stock will automatically be deducted from inventory as orders are billed.
+      </div>
+      <button class="btn-outline" onclick="closeModal('recipeModal')" style="height:34px; padding:0 16px; border-radius:8px; font-weight:700; cursor:pointer;">Close</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Inline Recipe Editor Sub-Modal -->
+<div class="modal-overlay" id="editRecipeSubModal">
+  <div class="modal" style="width:620px; max-width:94vw; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
+    <div class="modal-header" style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div class="modal-title" id="editRecipeModalTitle" style="font-size:15px; font-weight:800; color:var(--text-primary);">Configure Dish Recipe</div>
+        <div style="font-size:11px; color:var(--text-muted);">Define raw materials consumed to prepare 1 serving of this dish</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('editRecipeSubModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px 18px;">
+      <input type="hidden" id="editRecipeMenuItemId">
+      
+      <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; font-weight:700; color:var(--text-secondary);">Raw Ingredients Required:</span>
+        <button onclick="addRecipeIngredientRow()" style="background:rgba(139,92,246,0.15); border:1px solid rgba(139,92,246,0.3); color:#8B5CF6; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:700; cursor:pointer;">
+          <i class="fa-solid fa-plus"></i> Add Ingredient
+        </button>
+      </div>
+
+      <div id="recipeIngredientRowsContainer" style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;">
+        <!-- Dynamic rows rendered here -->
+      </div>
+
+      <div id="recipeCostEstimateBox" style="margin-top:14px; padding:10px 14px; background:var(--bg); border-radius:10px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <div>Selling Price: <b id="recipeSellingPriceLabel">₹0</b></div>
+        <div>Estimated Food Cost: <b id="recipeFoodCostLabel" style="color:#F59E0B;">₹0.00</b></div>
+        <div>Estimated Margin: <b id="recipeMarginLabel" style="color:#10B981;">0%</b></div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-outline" onclick="closeModal('editRecipeSubModal')" style="height:36px; padding:0 14px; border-radius:8px;">Cancel</button>
+      <button class="btn-checkout" onclick="submitRecipeIngredients()" style="height:36px; padding:0 20px; border-radius:8px; font-weight:700; background:#8B5CF6;">Save Recipe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════════
+     PETPOOJA GST & TAX COMPLIANCE REPORT MODAL (B2B, B2C GSTR-1 & CSV EXPORT)
+════════════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="gstReportModal">
+  <div class="modal" style="width:900px; max-width:96vw; max-height:90vh; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;">
+    
+    <!-- Header -->
+    <div class="modal-header" style="padding:14px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:rgba(14,165,233,0.06);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #0EA5E9, #0284C7); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px;">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+        </div>
+        <div>
+          <div class="modal-title" style="font-size:16px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+            <span>GST &amp; Tax Compliance Report</span>
+            <span style="font-size:11px; font-weight:700; color:#0EA5E9; background:rgba(14,165,233,0.12); padding:2px 8px; border-radius:12px; border:1px solid rgba(14,165,233,0.3);">
+              GSTR-1 Ready
+            </span>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:1px;">CA-audited tax statements, CGST (2.5%) &amp; SGST (2.5%) summary</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="downloadGstCsvReport()" style="background:#10B981; color:#fff; border:none; border-radius:10px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-file-csv"></i> Download CSV for CA
+        </button>
+        <button class="modal-close" onclick="closeModal('gstReportModal')" style="cursor:pointer; background:none; border:none; color:var(--text-muted); font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+
+    <!-- Date Filter Bar -->
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:var(--bg); border-bottom:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px;">
+        <span style="font-weight:700; color:var(--text-secondary);">Period:</span>
+        <input type="date" id="gstStartDate" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:12px; color:var(--text-primary);" />
+        <span style="color:var(--text-muted);">to</span>
+        <input type="date" id="gstEndDate" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:12px; color:var(--text-primary);" />
+        <button onclick="loadGstReportData()" style="background:var(--primary); color:#fff; border:none; border-radius:8px; padding:5px 12px; font-size:12px; font-weight:700; cursor:pointer;">
+          Filter
+        </button>
+      </div>
+      <div id="gstPeriodLabel" style="font-size:12px; font-weight:700; color:var(--text-muted);">This Month</div>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body" style="padding:18px 20px; overflow-y:auto; flex:1;">
+      
+      <!-- Summary Cards -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:18px;">
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Total Invoices</div>
+          <div id="gstCardTotalInvoices" style="font-size:18px; font-weight:800; color:var(--text-primary); margin-top:4px;">0</div>
+          <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;"><span id="gstCardB2bCount">0</span> B2B | <span id="gstCardB2cCount">0</span> B2C</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Taxable Value</div>
+          <div id="gstCardTaxable" style="font-size:18px; font-weight:800; color:var(--text-primary); margin-top:4px;">₹0.00</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Net sales turnover</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">CGST (2.5%)</div>
+          <div id="gstCardCgst" style="font-size:18px; font-weight:800; color:#0EA5E9; margin-top:4px;">₹0.00</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Central Tax</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">SGST (2.5%)</div>
+          <div id="gstCardSgst" style="font-size:18px; font-weight:800; color:#0EA5E9; margin-top:4px;">₹0.00</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">State Tax</div>
+        </div>
+        <div style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px;">
+          <div style="font-size:11px; color:#10B981; text-transform:uppercase; font-weight:800;">Total Gross Turn.</div>
+          <div id="gstCardGross" style="font-size:18px; font-weight:800; color:#10B981; margin-top:4px;">₹0.00</div>
+          <div style="font-size:10px; color:#10B981; margin-top:2px;">Taxable + 5% GST</div>
+        </div>
+      </div>
+
+      <!-- Invoice Breakdown Table -->
+      <div style="font-size:12.5px; font-weight:800; color:var(--text-secondary); margin-bottom:8px;">GSTR-1 Tax Invoice Register</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:11.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg); border-bottom:1px solid var(--border); color:var(--text-secondary);">
+              <th style="padding:8px 10px;">Invoice #</th>
+              <th style="padding:8px 10px;">Date</th>
+              <th style="padding:8px 10px;">Type</th>
+              <th style="padding:8px 10px;">Customer / Trade Name</th>
+              <th style="padding:8px 10px;">Customer GSTIN</th>
+              <th style="padding:8px 10px; text-align:right;">Taxable ₹</th>
+              <th style="padding:8px 10px; text-align:right;">CGST (2.5%)</th>
+              <th style="padding:8px 10px; text-align:right;">SGST (2.5%)</th>
+              <th style="padding:8px 10px; text-align:right;">Invoice Total ₹</th>
+              <th style="padding:8px 10px; text-align:center;">Mode</th>
+            </tr>
+          </thead>
+          <tbody id="gstInvoicesTableBody">
+            <!-- Loaded via JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer" style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg);">
+      <div style="font-size:11.5px; color:var(--text-muted);">
+        ⚖️ Complies with GST Council composition rules for restaurants (5% GST without input tax credit).
+      </div>
+      <button class="btn-outline" onclick="closeModal('gstReportModal')" style="height:34px; padding:0 16px; border-radius:8px; font-weight:700; cursor:pointer;">Close</button>
+    </div>
+
   </div>
 </div>
 
@@ -2789,6 +3897,97 @@
     <div class="modal-footer" style="padding:14px 20px; display:flex; justify-content:flex-end; gap:10px;">
       <button class="btn-outline" style="height:36px; padding:0 16px; font-size:12.5px;" onclick="closeModal('posCustomCurrencyModal')">Cancel</button>
       <button class="btn-checkout" style="height:36px; padding:0 20px; font-size:12.5px; background:linear-gradient(135deg,#6366F1,#4F46E5);" onclick="saveCustomCurrency()"><i class="fa-solid fa-check"></i>&nbsp; Save &amp; Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PETPOOJA MULTI-CART HOLD & RECALL HUB MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="holdOrdersModal">
+  <div class="modal" style="width:680px; max-width:95vw; max-height:85vh; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; background:var(--card); border:1px solid var(--border); box-shadow:var(--shadow-lg);">
+    <div class="modal-header" style="padding:16px 22px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="font-size:16px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:rgba(236,72,153,0.15); color:#EC4899;">
+          <i class="fa-solid fa-circle-pause"></i>
+        </span>
+        <span>Hold &amp; Recall Carts</span>
+        <span id="holdCartsModalBadge" style="font-size:11px; font-weight:700; color:#EC4899; background:rgba(236,72,153,0.12); padding:2px 8px; border-radius:12px; border:1px solid rgba(236,72,153,0.3);">0 Held</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('holdOrdersModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:18px 22px; overflow-y:auto; flex:1;">
+      <div id="holdCartsListContainer" style="display:flex; flex-direction:column; gap:12px;">
+        <!-- Dynamically populated held carts -->
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 22px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:12px; color:var(--text-muted);"><i class="fa-solid fa-keyboard" style="color:#EC4899;"></i> Press <b>F4</b> to hold current active cart anytime.</span>
+      <button class="btn-outline" onclick="closeModal('holdOrdersModal')" style="height:36px; padding:0 18px; border-radius:10px; font-weight:700; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     KEYBOARD SHORTCUTS CHEAT SHEET MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="shortcutsModal">
+  <div class="modal" style="width:620px; max-width:95vw; max-height:85vh; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; background:var(--card); border:1px solid var(--border); box-shadow:var(--shadow-lg);">
+    <div class="modal-header" style="padding:16px 22px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="font-size:16px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:rgba(56,189,248,0.15); color:#38BDF8;">
+          <i class="fa-solid fa-keyboard"></i>
+        </span>
+        <span>Keyboard Shortcuts &amp; Barcode Scanner</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('shortcutsModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px 22px; overflow-y:auto; flex:1;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-magnifying-glass" style="color:var(--primary); width:18px;"></i> Search Menu / Item</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#38BDF8; box-shadow:0 2px 0 var(--border);">F1</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-circle-check" style="color:#10B981; width:18px;"></i> Place Order / Pay</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#10B981; box-shadow:0 2px 0 var(--border);">F2</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-user" style="color:#F59E0B; width:18px;"></i> Select Customer</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#F59E0B; box-shadow:0 2px 0 var(--border);">F3</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-circle-pause" style="color:#EC4899; width:18px;"></i> Hold Current Cart</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#EC4899; box-shadow:0 2px 0 var(--border);">F4</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-gift" style="color:#8B5CF6; width:18px;"></i> Offers &amp; Discounts</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#8B5CF6; box-shadow:0 2px 0 var(--border);">F8</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-print" style="color:#34D399; width:18px;"></i> Print Hub (Bill/KOT)</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#34D399; box-shadow:0 2px 0 var(--border);">F9</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-trash" style="color:#EF4444; width:18px;"></i> Clear Active Cart</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#EF4444; box-shadow:0 2px 0 var(--border);">Alt + C</kbd>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13px; font-weight:600; color:var(--text-primary);"><i class="fa-solid fa-xmark" style="color:#94A3B8; width:18px;"></i> Close Any Modal</span>
+          <kbd style="background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:12px; font-weight:800; color:#94A3B8; box-shadow:0 2px 0 var(--border);">Esc</kbd>
+        </div>
+      </div>
+      
+      <!-- Barcode Scanner Tip Banner -->
+      <div style="margin-top:16px; padding:12px 16px; background:rgba(56,189,248,0.08); border:1px dashed rgba(56,189,248,0.3); border-radius:14px; display:flex; align-items:center; gap:12px;">
+        <i class="fa-solid fa-barcode" style="font-size:24px; color:#38BDF8;"></i>
+        <div style="font-size:12px; color:var(--text-primary); line-height:1.5;">
+          <b>Hardware Barcode Scanner Supported:</b> Just scan any barcode anytime! The system automatically detects scanner keystrokes and instantly adds the matching item to your cart.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 22px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+      <button class="btn-checkout" onclick="closeModal('shortcutsModal')" style="height:36px; padding:0 20px; font-size:12.5px;">Got It!</button>
     </div>
   </div>
 </div>
@@ -3143,6 +4342,8 @@
       modal.classList.add('show');
       if (id === 'tableModal' && typeof loadTablesData === 'function') loadTablesData();
       if (id === 'ordersModal' && typeof loadOrdersData === 'function') loadOrdersData();
+      if (id === 'customerModal' && typeof fetchAndRenderPosCustomers === 'function') fetchAndRenderPosCustomers();
+      if (id === 'inventoryModal' && typeof openInventoryQuickModal === 'function') openInventoryQuickModal();
       if (id === 'catPopupModal') { const btn = document.getElementById('catPopupBtn'); if (btn) btn.classList.add('open'); }
       if (id === 'posOffersModal') {
         const ptsEl = document.getElementById('modalCustPointsCount');
@@ -3524,6 +4725,9 @@
       if (typeof renderCatPopup === 'function') {
         renderCatPopup();
       }
+      if (typeof renderPetpoojaCategoryRibbon === 'function') {
+        renderPetpoojaCategoryRibbon();
+      }
       if (typeof renderCart === 'function') {
         renderCart();
       }
@@ -3609,11 +4813,14 @@
 
     const items = MENU.filter(i => {
       const matchCat = targetCat === 'all' || areCategoriesMatching(i.category || i.cat, targetCat);
+      const matchDiet = currentDietaryFilter === 'all' 
+        ? true 
+        : (currentDietaryFilter === 'veg' ? (i.badge === 'veg' || i.is_veg === true) : (i.badge === 'nonveg' || i.is_veg === false));
       const matchSearch = !query ||
         (i.name && i.name.toLowerCase().includes(query)) ||
         (i.category && i.category.toLowerCase().includes(query)) ||
         (i.desc && i.desc.toLowerCase().includes(query));
-      return matchCat && matchSearch;
+      return matchCat && matchDiet && matchSearch;
     });
 
     if (items.length === 0) {
@@ -3639,6 +4846,7 @@
 
     grid.innerHTML = items.map(item => {
       const isSoldOut = !item.is_available;
+      const isVeg = item.badge === 'veg' || item.is_veg === true;
       const hasImg = item.image && item.image.trim().length > 5;
       const cardClass = `item-card ${item.qty > 0 ? 'in-cart' : ''} ${isSoldOut ? 'item-card-unavailable' : ''}`;
       const clickAction = isSoldOut ? `showToast('${escapeHtml(item.name)} is Out of Stock!', 'error')` : `addQuickItem('${item.id}')`;
@@ -3652,25 +4860,33 @@
             ` : `
               <span>${item.emoji}</span>
             `}
-            ${item.badge === 'out'
+            ${item.badge === 'out' || isSoldOut
               ? `<span class="item-badge out">SOLD OUT</span>`
-              : (item.badge === 'veg'
-                  ? `<span class="item-badge veg">VEG</span>`
-                  : (item.badge === 'nonveg' ? `<span class="item-badge nonveg">NON-VEG</span>` : `<span class="item-badge ${item.badge}">${item.badge.toUpperCase()}</span>`))
+              : (item.badge === 'new' ? `<span class="item-badge new">NEW</span>` : (item.badge === 'best' ? `<span class="item-badge best">BEST</span>` : ''))
             }
+            ${item.qty > 0 ? `<span class="item-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
             ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
           </div>
           <div class="item-body">
-            <div class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</div>
+            <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
+              <span class="petpooja-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
+              <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
+            </div>
             <div class="item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
             <div class="item-footer">
-              <div class="item-price">₹ ${item.price.toFixed(0)}<small>/dish</small></div>
+              <div class="item-price">₹ ${Number(item.price).toFixed(0)}<small>/dish</small></div>
               <div class="item-footer-actions">
                 ${isSoldOut
-                  ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i></span>`
+                  ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i> Out of Stock</span>`
                   : (item.qty > 0
-                      ? `<div class="item-in-cart-badge">${item.qty}</div>`
-                      : `<button class="item-add-btn" type="button" onclick="event.stopPropagation();addQuickItem('${item.id}')" title="Add to Cart">+</button>`
+                      ? `
+                        <div class="item-card-stepper" onclick="event.stopPropagation()">
+                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', -1)" title="Decrease Qty">−</button>
+                          <span class="card-step-qty">${item.qty}</span>
+                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', 1)" title="Increase Qty">+</button>
+                        </div>
+                      `
+                      : `<button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('${item.id}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>`
                     )
                 }
               </div>
@@ -3681,7 +4897,6 @@
     }).join('');
   }
 
-  /* ─── RENDER CART ────────────────────────── */
   /* ─── RENDER CART WITH ITEM COOKING PREFERENCES ─── */
   function renderCart() {
     const cartItems = MENU.filter(i => i.qty > 0);
@@ -3692,25 +4907,25 @@
         <div class="ci-info">
           <div class="ci-top">
             <div class="ci-main">
-              <div class="ci-name">${item.name}</div>
+              <div class="ci-name">${escapeHtml(item.name)}</div>
               <div class="ci-variant">Regular</div>
               ${item.cookingNote ? `
                 <div style="font-size: 11px; font-weight:700; color: #F59E0B; background: rgba(245,158,11,0.12); padding: 3px 8px; border-radius: 6px; margin-top: 5px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(245,158,11,0.3);">
-                  <i class="fa-solid fa-pen-nib"></i> ${item.cookingNote}
+                  <i class="fa-solid fa-pen-nib"></i> ${escapeHtml(item.cookingNote)}
                 </div>
               ` : ''}
             </div>
-            <div class="ci-price">₹ ${item.price * item.qty}</div>
+            <div class="ci-price">₹ ${(item.price * item.qty).toFixed(0)}</div>
           </div>
           <div class="ci-bottom">
             <div class="ci-controls">
-              <div class="ci-btn" onclick="updateQty('${item.id}',-1)">−</div>
+              <button type="button" class="ci-btn" onclick="updateQty('${item.id}',-1)" title="Decrease Qty">−</button>
               <div class="ci-qty">${item.qty}</div>
-              <div class="ci-btn" onclick="updateQty('${item.id}',1)">+</div>
+              <button type="button" class="ci-btn" onclick="updateQty('${item.id}',1)" title="Increase Qty">+</button>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
               <button class="ci-note-btn" onclick="openItemCustomizerModal('${item.id}')" title="Custom Cooking Preference" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; border-radius:8px; padding:4px 8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;"><i class="fa-solid fa-pen-to-square"></i> Preference</button>
-              <button class="ci-del" onclick="removeItem('${item.id}')"><i class="fa-solid fa-trash-can"></i></button>
+              <button class="ci-del" onclick="removeItem('${item.id}')" title="Remove item"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           </div>
         </div>
@@ -3719,6 +4934,28 @@
 
     updateTotals();
   }
+
+  /* ─── PETPOOJA OPERATIONS DROPDOWN CONTROLLER ─── */
+  function toggleMoreToolsMenu(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const menu = document.getElementById('posMoreToolsMenu');
+    if (menu) {
+      menu.classList.toggle('show');
+    }
+  }
+  function closeMoreToolsMenu() {
+    const menu = document.getElementById('posMoreToolsMenu');
+    if (menu) menu.classList.remove('show');
+  }
+  window.addEventListener('click', (e) => {
+    const wrap = document.querySelector('.pos-dropdown-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      closeMoreToolsMenu();
+    }
+  });
 
   /* ─── POS LIGHT/DARK THEME SWITCHER ─── */
   function initPosTheme() {
@@ -4042,7 +5279,8 @@
     const discountedSubtotal = Math.max(0, subtotal - discountVal);
     const serviceCharge = discountedSubtotal * 0.05;
     const gst = (discountedSubtotal + serviceCharge) * 0.18;
-    const grandTotal = Math.round(discountedSubtotal + serviceCharge + gst);
+    const deliveryFee = (typeof currentOrderType !== 'undefined' && currentOrderType === 'delivery') ? (parseFloat(document.getElementById('deliveryFeeInput')?.value || 0) || 0) : 0;
+    const grandTotal = Math.round(discountedSubtotal + serviceCharge + gst + deliveryFee);
 
     document.getElementById('cartCount').textContent = total;
     document.getElementById('topbarCartBadge').textContent = total;
@@ -4176,6 +5414,54 @@
     openModal('catPopupModal');
   }
 
+  let currentDietaryFilter = 'all'; // 'all', 'veg', 'nonveg'
+
+  function setDietaryFilter(diet) {
+    currentDietaryFilter = diet || 'all';
+    document.getElementById('posFilterAllDietBtn')?.classList.toggle('active', currentDietaryFilter === 'all');
+    document.getElementById('posFilterVegBtn')?.classList.toggle('active', currentDietaryFilter === 'veg');
+    document.getElementById('posFilterNonVegBtn')?.classList.toggle('active', currentDietaryFilter === 'nonveg');
+    renderMenu();
+  }
+
+  function renderPetpoojaCategoryRibbon() {
+    const ribbon = document.getElementById('petpoojaCategoryRibbon');
+    if (!ribbon) return;
+    const categories = typeof getCats === 'function' ? getCats() : [];
+    if (categories.length === 0) return;
+
+    ribbon.innerHTML = categories.map(c => {
+      const isAct = currentCat.toLowerCase() === c.key.toLowerCase();
+      const activeStyle = isAct 
+        ? 'background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; border-color:var(--primary); box-shadow:0 2px 8px rgba(99,102,241,0.3);' 
+        : 'background:var(--card); color:var(--text-secondary); border-color:var(--border);';
+
+      return `
+        <button type="button" onclick="selectCat('${escapeHtml(c.key)}','${escapeHtml(c.label)}')" 
+          style="flex-shrink:0; height:32px; padding:0 12px; border-radius:18px; border:1px solid; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.15s; ${activeStyle}">
+          <span>${c.emoji}</span>
+          <span>${escapeHtml(c.label)}</span>
+          <span style="font-size:9.5px; opacity:0.75; background:rgba(0,0,0,0.2); padding:1px 5px; border-radius:10px;">${c.count}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function applyQuickPresetDiscount(pct = 0, flat = 0) {
+    const cartItems = MENU.filter(i => i.qty > 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    if (subtotal <= 0) {
+      showToast('Cart is empty! Add items first to apply discount.', 'warning');
+      return;
+    }
+
+    if (pct > 0) {
+      applySmartOffer(`QUICK${pct}`, `${pct}% Quick Bill Discount`, 0, pct, 0);
+    } else if (flat > 0) {
+      applySmartOffer(`FLAT${flat}`, `₹${flat} Flat Quick Discount`, flat, 0, 0);
+    }
+  }
+
   function selectCat(key, label) {
     currentCat = key || 'all';
     const lbl = document.getElementById('catPopupLabel');
@@ -4187,10 +5473,14 @@
       btn.classList.toggle('filtered', currentCat.toLowerCase() !== 'all');
     }
     closeModal('catPopupModal');
+    renderPetpoojaCategoryRibbon();
     renderMenu();
   }
 
-  function resetCat() { selectCat('all','All Categories'); }
+  function resetCat() { 
+    currentCat = 'all';
+    selectCat('all','All Categories'); 
+  }
 
   /* ─── FILTER ─────────────────────────────── */
   function filterItems(val) {
@@ -4214,8 +5504,16 @@
     el.classList.add('active');
     const tableGrp  = document.getElementById('tableGroup');
     const coversGrp = document.getElementById('coversGroup');
+    const delivStrip = document.getElementById('deliveryDetailsStrip');
     tableGrp.style.display  = (type === 'dinein') ? 'flex' : 'none';
     coversGrp.style.display = (type === 'dinein') ? 'flex' : 'none';
+    if (delivStrip) {
+      delivStrip.style.display = (type === 'delivery') ? 'flex' : 'none';
+    }
+    if (type === 'delivery' && typeof loadDeliveryRiders === 'function') {
+      loadDeliveryRiders();
+    }
+    updateTotals();
   }
 
   /* ─── TABLE ──────────────────────────────── */
@@ -4307,6 +5605,1450 @@
     
     renderTablesGrid(filtered);
   }
+
+  /* ─── PETPOOJA TABLE SHIFT & MERGE FUNCTIONS ─── */
+  function openShiftModal() {
+    if (!allTablesData || allTablesData.length === 0) {
+      showToast('No table data loaded yet', 'warning');
+      return;
+    }
+    const occupiedTables = allTablesData.filter(t => t.status === 'occupied');
+    const availableTables = allTablesData.filter(t => t.status !== 'occupied');
+
+    if (occupiedTables.length === 0) {
+      showToast('No occupied tables to shift! Start an order on a table first.', 'warning');
+      return;
+    }
+    if (availableTables.length === 0) {
+      showToast('No available tables to shift to!', 'warning');
+      return;
+    }
+
+    document.getElementById('shiftMergeAction').value = 'shift';
+    document.getElementById('shiftMergeModalTitle').innerHTML = '<i class="fa-solid fa-right-left" style="color:var(--primary);"></i>&nbsp; Shift Table (Move Running Order)';
+    document.getElementById('shiftTargetLabel').textContent = 'Destination Table (Available):';
+    document.getElementById('shiftMergeNote').textContent = 'The active order, items, and KOTs will move directly to the destination table.';
+    document.getElementById('shiftMergeSubmitBtn').textContent = 'Confirm Shift';
+
+    const srcSel = document.getElementById('shiftSourceTable');
+    srcSel.innerHTML = occupiedTables.map(t => `<option value="${t.id}">${t.table_number} (Active Bill: ₹${t.active_order_amount || 0})</option>`).join('');
+
+    const tgtSel = document.getElementById('shiftTargetTable');
+    tgtSel.innerHTML = availableTables.map(t => `<option value="${t.id}">${t.table_number} (Available)</option>`).join('');
+
+    openModal('shiftMergeModal');
+  }
+
+  function openMergeModal() {
+    if (!allTablesData || allTablesData.length === 0) {
+      showToast('No table data loaded yet', 'warning');
+      return;
+    }
+    const occupiedTables = allTablesData.filter(t => t.status === 'occupied');
+
+    if (occupiedTables.length < 2) {
+      showToast('Need at least 2 occupied tables to merge orders!', 'warning');
+      return;
+    }
+
+    document.getElementById('shiftMergeAction').value = 'merge';
+    document.getElementById('shiftMergeModalTitle').innerHTML = '<i class="fa-solid fa-object-group" style="color:#10B981;"></i>&nbsp; Merge Tables (Combine Orders)';
+    document.getElementById('shiftTargetLabel').textContent = 'Merge Into Table:';
+    document.getElementById('shiftMergeNote').textContent = 'All items from Source Table will merge into Destination Table, and Source Table will be released.';
+    document.getElementById('shiftMergeSubmitBtn').textContent = 'Confirm Merge';
+
+    const srcSel = document.getElementById('shiftSourceTable');
+    srcSel.innerHTML = occupiedTables.map(t => `<option value="${t.id}">Source: ${t.table_number} (₹${t.active_order_amount || 0})</option>`).join('');
+
+    const tgtSel = document.getElementById('shiftTargetTable');
+    tgtSel.innerHTML = occupiedTables.map(t => `<option value="${t.id}">Target: ${t.table_number} (₹${t.active_order_amount || 0})</option>`).join('');
+    if (tgtSel.options.length > 1) {
+      tgtSel.selectedIndex = 1;
+    }
+
+    openModal('shiftMergeModal');
+  }
+
+  async function executeShiftMerge() {
+    const action = document.getElementById('shiftMergeAction').value;
+    const srcId = document.getElementById('shiftSourceTable').value;
+    const tgtId = document.getElementById('shiftTargetTable').value;
+
+    if (!srcId || !tgtId) {
+      showToast('Please select both tables', 'warning');
+      return;
+    }
+
+    if (srcId === tgtId) {
+      showToast('Source and Destination tables cannot be the same', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('shiftMergeSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+    const url = action === 'shift' ? '/api/tables/shift' : '/api/tables/merge';
+    const payload = action === 'shift' 
+      ? { restaurant_id: RESTAURANT_ID, from_table_id: srcId, to_table_id: tgtId }
+      : { restaurant_id: RESTAURANT_ID, source_table_id: srcId, target_table_id: tgtId };
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message || (action === 'shift' ? 'Table shifted successfully!' : 'Tables merged successfully!'), 'success');
+        closeModal('shiftMergeModal');
+        closeModal('tableModal');
+        if (typeof loadTablesData === 'function') await loadTablesData();
+        if (typeof loadOrdersData === 'function') await loadOrdersData();
+      } else {
+        showToast(data.message || 'Operation failed', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Network error during table operation', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = action === 'shift' ? 'Confirm Shift' : 'Confirm Merge';
+    }
+  }
+
+  /* ─── PETPOOJA SHIFT & CASH REGISTER LOGIC ─── */
+  let currentShiftData = null;
+
+  async function checkShiftStatusOnLoad() {
+    try {
+      const res = await fetch('/api/cash-register/current');
+      const data = await res.json();
+      const shiftBtn = document.getElementById('posShiftBtn');
+      const shiftText = document.getElementById('posShiftText');
+      if (data.success && data.has_open_shift && data.data) {
+        currentShiftData = data.data;
+        if (shiftBtn && shiftText) {
+          shiftBtn.style.color = '#10B981';
+          shiftBtn.style.background = 'rgba(16,185,129,0.15)';
+          shiftBtn.style.borderColor = 'rgba(16,185,129,0.4)';
+          shiftText.textContent = `Shift #${data.data.register.id} Active`;
+        }
+      } else {
+        currentShiftData = null;
+        if (shiftBtn && shiftText) {
+          shiftBtn.style.color = '#F59E0B';
+          shiftBtn.style.background = 'rgba(245,158,11,0.15)';
+          shiftBtn.style.borderColor = 'rgba(245,158,11,0.4)';
+          shiftText.textContent = `Open Shift`;
+        }
+      }
+    } catch (e) {
+      console.log('Error checking shift status:', e);
+    }
+  }
+
+  async function openShiftRegisterModal() {
+    openModal('shiftRegisterModal');
+    const body = document.getElementById('shiftRegisterModalBody');
+    body.innerHTML = `<div style="text-align:center; padding:30px 0;"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px; color:var(--primary);"></i><div style="margin-top:10px; font-size:12px; color:var(--text-muted);">Fetching cash register details...</div></div>`;
+
+    try {
+      const res = await fetch('/api/cash-register/current');
+      const data = await res.json();
+
+      if (!data.success || !data.has_open_shift || !data.data) {
+        body.innerHTML = `
+          <div style="text-align:center; padding:10px 0 20px;">
+            <div style="width:60px; height:60px; border-radius:50%; background:rgba(245,158,11,0.15); color:#F59E0B; font-size:26px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
+              <i class="fa-solid fa-lock-open"></i>
+            </div>
+            <h3 style="font-family:'Outfit',sans-serif; font-size:18px; margin:0 0 6px; color:var(--text-primary);">Start Cashier Shift</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Enter the opening cash float in the cash drawer to start billing.</p>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12.5px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Opening Cash Float (₹):</label>
+            <input type="number" id="openingCashInput" class="split-input" placeholder="e.g. 2000" style="width:100%; height:44px; border-radius:10px; font-size:16px; font-weight:800;" />
+          </div>
+          <div style="margin-bottom:20px;">
+            <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Notes (Optional):</label>
+            <input type="text" id="openingNotesInput" class="split-input" placeholder="e.g. Morning Shift - Cashier" style="width:100%; height:40px; border-radius:8px;" />
+          </div>
+          <button class="btn-checkout" onclick="submitOpenShift()" style="width:100%; height:44px; border-radius:10px; font-weight:700;">
+            <i class="fa-solid fa-play"></i>&nbsp; Open Shift &amp; Start Register
+          </button>
+        `;
+        return;
+      }
+
+      const s = data.data;
+      currentShiftData = s;
+      const openedTime = new Date(s.register.opened_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+          <div>
+            <span style="font-size:11px; font-weight:800; color:#10B981; background:rgba(16,185,129,0.15); padding:3px 10px; border-radius:12px; border:1px solid rgba(16,185,129,0.3);">🟢 SHIFT #${s.register.id} ACTIVE</span>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Cashier: <b>${s.register.user_name}</b> · Started at ${openedTime}</div>
+          </div>
+          <button class="btn-outline" onclick="openPettyCashModal()" style="height:34px; padding:0 12px; font-size:11.5px; font-weight:700; color:#F59E0B; border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.08); display:flex; align-items:center; gap:5px; cursor:pointer;">
+            <i class="fa-solid fa-wallet"></i> Petty Cash
+          </button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Opening Float</div>
+            <div style="font-size:18px; font-weight:800; color:var(--text-primary); margin-top:2px;">₹${s.opening_cash.toFixed(2)}</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Cash Sales</div>
+            <div style="font-size:18px; font-weight:800; color:#10B981; margin-top:2px;">₹${s.cash_sales.toFixed(2)}</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">UPI / Online Sales</div>
+            <div style="font-size:18px; font-weight:800; color:#6366F1; margin-top:2px;">₹${s.upi_sales.toFixed(2)}</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Card Sales</div>
+            <div style="font-size:18px; font-weight:800; color:#F59E0B; margin-top:2px;">₹${s.card_sales.toFixed(2)}</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(99,102,241,0.06); border:1.5px dashed rgba(99,102,241,0.3); border-radius:14px; padding:14px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:11.5px; font-weight:700; color:var(--text-secondary);">EXPECTED CASH IN DRAWER:</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Opening + Cash Sales (${s.cash_sales}) + In (${s.cash_in}) - Out (${s.cash_out})</div>
+          </div>
+          <div style="font-size:24px; font-weight:900; color:#10B981; font-family:'Outfit',sans-serif;">₹${s.expected_cash.toFixed(2)}</div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <a href="/z-report" target="_blank" class="btn-outline" style="flex:1; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:700; text-decoration:none;">
+            <i class="fa-solid fa-chart-line"></i> View Z-Report
+          </a>
+          <button class="btn-checkout" onclick="openCloseShiftForm()" style="flex:1.2; height:40px; border-radius:10px; background:linear-gradient(135deg, #EF4444, #DC2626); font-weight:700; font-size:12.5px; cursor:pointer;">
+            <i class="fa-solid fa-power-off"></i> Close Shift
+          </button>
+        </div>
+      `;
+
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = `<div style="text-align:center; padding:20px; color:#EF4444;">Failed to load shift details. Please check network.</div>`;
+    }
+  }
+
+  async function submitOpenShift() {
+    const cashVal = parseFloat(document.getElementById('openingCashInput')?.value || 0);
+    const notesVal = document.getElementById('openingNotesInput')?.value || '';
+
+    if (isNaN(cashVal) || cashVal < 0) {
+      showToast('Please enter a valid opening cash amount (e.g. 0 or 2000)', 'error');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/cash-register/open', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          opening_cash: cashVal,
+          notes: notesVal
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('✅ ' + data.message, 'success');
+        await checkShiftStatusOnLoad();
+        await openShiftRegisterModal();
+      } else {
+        showToast(data.message || 'Failed to open shift', 'error');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Network error opening shift', 'error');
+    }
+  }
+
+  function openPettyCashModal() {
+    openModal('pettyCashModal');
+    document.getElementById('pettyAmountInput').value = '';
+    document.getElementById('pettyReasonInput').value = '';
+  }
+
+  async function submitPettyCash() {
+    const type = document.querySelector('input[name="pettyType"]:checked')?.value || 'cash_out';
+    const amount = parseFloat(document.getElementById('pettyAmountInput')?.value || 0);
+    const category = document.getElementById('pettyCategorySelect')?.value || 'misc';
+    const reason = document.getElementById('pettyReasonInput')?.value.trim();
+
+    if (isNaN(amount) || amount <= 0) {
+      showToast('Please enter a valid amount', 'warning');
+      return;
+    }
+    if (!reason) {
+      showToast('Please enter a reason or description', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/cash-register/petty-cash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          type,
+          amount,
+          category,
+          reason
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('✅ ' + data.message, 'success');
+        closeModal('pettyCashModal');
+        await openShiftRegisterModal();
+      } else {
+        showToast(data.message || 'Error recording petty cash', 'error');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Network error recording petty cash', 'error');
+    }
+  }
+
+  function openCloseShiftForm() {
+    if (!currentShiftData) return;
+    const body = document.getElementById('shiftRegisterModalBody');
+    body.innerHTML = `
+      <div style="text-align:center; padding:10px 0 16px;">
+        <h3 style="font-family:'Outfit',sans-serif; font-size:18px; margin:0 0 4px; color:var(--text-primary);">Close Shift &amp; Reconcile Drawer</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin:0;">Count the physical currency notes in the cash drawer and enter below.</p>
+      </div>
+
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--text-muted);">SYSTEM EXPECTED CASH:</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">(Float + Sales + In - Out)</div>
+        </div>
+        <div style="font-size:20px; font-weight:800; color:#10B981;">₹${currentShiftData.expected_cash.toFixed(2)}</div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12.5px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Actual Physical Cash Counted (₹):</label>
+        <input type="number" id="closingCountedCashInput" class="split-input" placeholder="e.g. ${currentShiftData.expected_cash}" oninput="updateDrawerDifference()" style="width:100%; height:44px; border-radius:10px; font-size:16px; font-weight:800;" />
+        <div id="drawerDifferenceBadge" style="margin-top:6px; font-size:11.5px; font-weight:700;"></div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Closing Remarks / Notes:</label>
+        <input type="text" id="closingNotesInput" class="split-input" placeholder="e.g. All settled, no discrepancies" style="width:100%; height:40px; border-radius:8px;" />
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn-outline" onclick="openShiftRegisterModal()" style="flex:1; height:42px; border-radius:10px; cursor:pointer;">Back</button>
+        <button class="btn-checkout" onclick="submitCloseShift()" style="flex:1.4; height:42px; border-radius:10px; background:linear-gradient(135deg, #EF4444, #DC2626); font-weight:700; cursor:pointer;">
+          <i class="fa-solid fa-check-double"></i> Confirm &amp; Close Shift
+        </button>
+      </div>
+    `;
+  }
+
+  function updateDrawerDifference() {
+    if (!currentShiftData) return;
+    const counted = parseFloat(document.getElementById('closingCountedCashInput')?.value || 0);
+    const expected = currentShiftData.expected_cash;
+    const diff = counted - expected;
+    const badge = document.getElementById('drawerDifferenceBadge');
+    if (!badge) return;
+
+    if (Math.abs(diff) < 0.5) {
+      badge.style.color = '#10B981';
+      badge.textContent = '✅ Exact Match! Zero discrepancy.';
+    } else if (diff > 0) {
+      badge.style.color = '#3B82F6';
+      badge.textContent = `ℹ️ ₹${diff.toFixed(2)} Excess Cash in Drawer`;
+    } else {
+      badge.style.color = '#EF4444';
+      badge.textContent = `⚠️ ₹${Math.abs(diff).toFixed(2)} Shortage / Missing Cash!`;
+    }
+  }
+
+  async function submitCloseShift() {
+    const counted = parseFloat(document.getElementById('closingCountedCashInput')?.value || 0);
+    const notes = document.getElementById('closingNotesInput')?.value || '';
+
+    if (isNaN(counted) || counted < 0) {
+      showToast('Please enter counted cash in drawer', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/cash-register/close', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          closing_cash: counted,
+          notes: notes
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Shift closed successfully! Opening Z-Report & WhatsApp...', 'success');
+        closeModal('shiftRegisterModal');
+        await checkShiftStatusOnLoad();
+        window.open('/z-report', '_blank');
+
+        if (data.data && data.data.whatsapp_url) {
+          setTimeout(() => {
+            if (confirm('🚀 Would you like to send this Day-End Z-Report Summary directly to Restaurant Owner WhatsApp now?')) {
+              window.open(data.data.whatsapp_url, '_blank');
+            }
+          }, 800);
+        }
+      } else {
+        showToast(data.message || 'Error closing shift', 'error');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Network error closing shift', 'error');
+    }
+  }
+
+  /* ─── PETPOOJA ANTI-THEFT KOT CANCELLATION LOGIC ─── */
+  function openCancelKotItemModal(orderId, itemId, itemName) {
+    document.getElementById('cancelKotOrderId').value = orderId;
+    document.getElementById('cancelKotItemId').value = itemId;
+    document.getElementById('cancelKotItemName').textContent = itemName;
+    document.getElementById('cancelKotManagerPin').value = '';
+    openModal('cancelKotItemModal');
+    setTimeout(() => document.getElementById('cancelKotManagerPin')?.focus(), 200);
+  }
+
+  async function confirmCancelKotItem() {
+    const orderId = document.getElementById('cancelKotOrderId').value;
+    const itemId = document.getElementById('cancelKotItemId').value;
+    const reason = document.getElementById('cancelKotReasonSelect').value;
+    const pin = document.getElementById('cancelKotManagerPin').value.trim();
+
+    if (!pin) {
+      showToast('Please enter Manager Security PIN', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/orders/cancel-kot-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          order_id: orderId,
+          item_id: itemId,
+          reason: reason,
+          manager_pin: pin
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('🛡️ ' + data.message, 'success');
+        closeModal('cancelKotItemModal');
+        if (typeof loadOrdersData === 'function') loadOrdersData();
+        if (typeof loadTablesData === 'function') loadTablesData();
+      } else {
+        showToast(data.message || 'Manager authorization failed', 'error');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Network error authorizing cancellation', 'error');
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════════════
+     PETPOOJA ONLINE AGGREGATOR & DELIVERY HUB JAVASCRIPT MODULE
+  ════════════════════════════════════════════════════════════════════════════════ */
+  let activeDeliveryHubTab = 'aggregators';
+  let lastKnownPendingAggregatorCount = 0;
+  let cachedDeliveryRiders = [];
+
+  function openDeliveryHubModal() {
+    openModal('deliveryHubModal');
+    loadAggregatorOrders();
+    loadDeliveryRiders();
+    loadActiveDeliveries();
+  }
+
+  function switchDeliveryHubTab(tabName) {
+    activeDeliveryHubTab = tabName;
+    const btnAgg = document.getElementById('delivTabAggregators');
+    const btnRiders = document.getElementById('delivTabRiders');
+    const panelAgg = document.getElementById('panelAggregators');
+    const panelRiders = document.getElementById('panelRiders');
+
+    if (tabName === 'aggregators') {
+      btnAgg.style.color = 'var(--primary)';
+      btnAgg.style.borderBottomColor = 'var(--primary)';
+      btnRiders.style.color = 'var(--text-muted)';
+      btnRiders.style.borderBottomColor = 'transparent';
+      panelAgg.style.display = 'block';
+      panelRiders.style.display = 'none';
+      loadAggregatorOrders();
+    } else {
+      btnRiders.style.color = 'var(--primary)';
+      btnRiders.style.borderBottomColor = 'var(--primary)';
+      btnAgg.style.color = 'var(--text-muted)';
+      btnAgg.style.borderBottomColor = 'transparent';
+      panelRiders.style.display = 'block';
+      panelAgg.style.display = 'none';
+      loadDeliveryRiders();
+      loadActiveDeliveries();
+    }
+  }
+
+  // Authentic Web Audio API Synthesizer Siren / Chime
+  function playOnlineOrderSiren() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      
+      const playTone = (freq, startTime, duration) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      };
+
+      const now = ctx.currentTime;
+      playTone(784, now + 0.0, 0.25); // G5
+      playTone(1046, now + 0.25, 0.35); // C6
+      playTone(880, now + 0.65, 0.25); // A5
+      playTone(1174, now + 0.90, 0.45); // D6
+    } catch (e) {
+      console.log('Audio playback not permitted yet:', e);
+    }
+  }
+
+  async function loadAggregatorOrders() {
+    const container = document.getElementById('aggregatorOrdersContainer');
+    try {
+      const res = await fetch('/api/aggregators/orders');
+      const data = await res.json();
+      if (!data.success) return;
+
+      const pendingCount = data.pending_count || 0;
+      const badge = document.getElementById('onlinePendingBadge');
+      const tabBadge = document.getElementById('tabPendingBadge');
+
+      if (badge) {
+        if (pendingCount > 0) {
+          badge.style.display = 'inline-block';
+          badge.textContent = pendingCount;
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+      if (tabBadge) {
+        if (pendingCount > 0) {
+          tabBadge.style.display = 'inline-block';
+          tabBadge.textContent = pendingCount;
+        } else {
+          tabBadge.style.display = 'none';
+        }
+      }
+
+      if (pendingCount > lastKnownPendingAggregatorCount) {
+        playOnlineOrderSiren();
+        showToast('🔔 New Online Food Order Received!', 'success');
+      }
+      lastKnownPendingAggregatorCount = pendingCount;
+
+      const orders = data.data || [];
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:50px 0; color:var(--text-muted);">
+            <div style="width:64px; height:64px; border-radius:50%; background:rgba(245,158,11,0.12); color:#F59E0B; font-size:26px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
+              <i class="fa-solid fa-utensils"></i>
+            </div>
+            <div style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">No Online Orders Yet</div>
+            <div style="font-size:12px;">Live incoming Zomato &amp; Swiggy orders will stream here instantly.</div>
+            <button onclick="simulateOnlineOrderTest()" style="margin-top:16px; background:var(--primary); color:#fff; border:none; border-radius:10px; padding:8px 16px; font-size:12.5px; font-weight:700; cursor:pointer;">
+              <i class="fa-solid fa-bell"></i> Simulate Test Order
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map(ord => {
+        const isZomato = (ord.order_type || '').toLowerCase().includes('zomato');
+        const brandColor = isZomato ? '#E23744' : '#FC8019';
+        const brandName = isZomato ? 'Zomato' : ((ord.order_type || '').toLowerCase().includes('swiggy') ? 'Swiggy' : 'Delivery');
+        const code = ord.aggregator_order_id || ('#ORD-' + ord.id);
+        const status = ord.status || 'pending';
+
+        const itemsHtml = (ord.items || []).map(it => `
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12.5px; padding:4px 0; border-bottom:1px dashed var(--border);">
+            <div>
+              <span style="font-weight:700; color:var(--text-primary);">${it.quantity}x</span>
+              <span style="color:var(--text-secondary); margin-left:6px;">${it.name}</span>
+              ${it.notes ? `<span style="font-size:11px; color:#F59E0B; margin-left:6px;">(${it.notes})</span>` : ''}
+            </div>
+            <div style="font-weight:700; color:var(--text-primary);">₹${(it.price * it.quantity).toFixed(0)}</div>
+          </div>
+        `).join('');
+
+        let actionArea = '';
+        if (status === 'pending') {
+          actionArea = `
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:11.5px; font-weight:700; color:var(--text-secondary);">Prep Time:</span>
+                <select id="prepSelect_${ord.id}" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:12px; color:var(--text-primary); font-weight:700;">
+                  <option value="15">15 Mins</option>
+                  <option value="20" selected>20 Mins</option>
+                  <option value="30">30 Mins</option>
+                  <option value="45">45 Mins</option>
+                </select>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button onclick="rejectOnlineOrder(${ord.id})" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer;">
+                  Reject
+                </button>
+                <button onclick="acceptOnlineOrder(${ord.id})" style="background:#10B981; color:#fff; border:none; border-radius:8px; padding:6px 16px; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                  <i class="fa-solid fa-check"></i> Accept Order
+                </button>
+              </div>
+            </div>
+          `;
+        } else if (status === 'preparing') {
+          actionArea = `
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+              <div style="font-size:12px; color:#F59E0B; font-weight:700;">
+                <i class="fa-solid fa-fire-burner"></i> In Kitchen Preparation (${ord.prep_time_minutes || 20}m)
+              </div>
+              <button onclick="markOnlineFoodReady(${ord.id})" style="background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:12.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-bell-concierge"></i> Food Ready (Notify Rider)
+              </button>
+            </div>
+          `;
+        } else if (status === 'ready') {
+          actionArea = `
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+              <div style="font-size:12px; color:#10B981; font-weight:800; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-circle-check"></i> Food Packed &amp; Ready for Pickup
+              </div>
+              <button onclick="markOrderDelivered(${ord.id})" style="background:#10B981; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer;">
+                Handed Over to Rider
+              </button>
+            </div>
+          `;
+        }
+
+        return `
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; border-left:4px solid ${brandColor};">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="background:${brandColor}; color:#fff; font-size:11px; font-weight:800; padding:2px 8px; border-radius:6px; letter-spacing:0.5px;">${brandName.toUpperCase()}</span>
+                <span style="font-size:14px; font-weight:800; color:var(--text-primary); font-family:'Outfit',sans-serif;">${code}</span>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:15px; font-weight:800; color:#10B981;">₹${parseFloat(ord.total_amount).toFixed(0)}</div>
+                <div style="font-size:10px; color:#10B981; font-weight:700;">PREPAID ONLINE</div>
+              </div>
+            </div>
+
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px; display:flex; flex-direction:column; gap:2px;">
+              <div><i class="fa-solid fa-user" style="width:14px; color:var(--text-muted);"></i> <b>${ord.customer_name || 'Online Customer'}</b> &nbsp;•&nbsp; 📞 ${ord.customer_phone || 'N/A'}</div>
+              <div><i class="fa-solid fa-location-dot" style="width:14px; color:var(--text-muted);"></i> ${ord.customer_address || 'Delivery Address'}</div>
+              ${ord.special_instructions ? `<div style="color:#F59E0B; margin-top:2px;"><i class="fa-solid fa-comment-dots" style="width:14px;"></i> Note: "${ord.special_instructions}"</div>` : ''}
+            </div>
+
+            <div style="background:var(--card); padding:8px 10px; border-radius:8px; border:1px solid var(--border); margin-bottom:4px;">
+              ${itemsHtml}
+            </div>
+
+            ${actionArea}
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error('Aggregator orders error:', err);
+    }
+  }
+
+  async function simulateOnlineOrderTest() {
+    try {
+      showToast('Simulating incoming online order...', 'info');
+      const res = await fetch('/api/aggregators/simulate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ restaurant_id: RESTAURANT_ID })
+      });
+      const data = await res.json();
+      if (data.success) {
+        playOnlineOrderSiren();
+        showToast(data.message, 'success');
+        loadAggregatorOrders();
+      } else {
+        showToast(data.message || 'Simulation failed', 'error');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error simulating order', 'error');
+    }
+  }
+
+  async function acceptOnlineOrder(orderId) {
+    const prepSelect = document.getElementById(`prepSelect_${orderId}`);
+    const prepTime = prepSelect ? prepSelect.value : 20;
+
+    try {
+      const res = await fetch(`/api/aggregators/orders/${orderId}/accept`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ prep_time: prepTime })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        loadAggregatorOrders();
+      } else {
+        showToast(data.message || 'Failed to accept order', 'error');
+      }
+    } catch (e) {
+      showToast('Network error accepting order', 'error');
+    }
+  }
+
+  async function markOnlineFoodReady(orderId) {
+    try {
+      const res = await fetch(`/api/aggregators/orders/${orderId}/ready`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        loadAggregatorOrders();
+      } else {
+        showToast(data.message || 'Failed to mark ready', 'error');
+      }
+    } catch (e) {
+      showToast('Network error updating order', 'error');
+    }
+  }
+
+  async function rejectOnlineOrder(orderId) {
+    const reason = prompt('Please enter rejection reason (e.g. Kitchen overloaded):', 'Kitchen Overloaded');
+    if (!reason) return;
+
+    try {
+      const res = await fetch(`/api/aggregators/orders/${orderId}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ reason: reason })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'warning');
+        loadAggregatorOrders();
+      } else {
+        showToast(data.message || 'Failed to reject order', 'error');
+      }
+    } catch (e) {
+      showToast('Network error rejecting order', 'error');
+    }
+  }
+
+  async function loadDeliveryRiders() {
+    try {
+      const res = await fetch('/api/delivery/riders');
+      const data = await res.json();
+      if (!data.success) return;
+
+      cachedDeliveryRiders = data.data || [];
+
+      // Update POS cart dropdown
+      const sel = document.getElementById('deliveryRiderSelect');
+      if (sel) {
+        sel.innerHTML = '<option value="">🛵 Auto Assign Rider</option>' + cachedDeliveryRiders.map(r => `
+          <option value="${r.id}">${r.name} (${r.status === 'available' ? 'Available' : 'Busy'})</option>
+        `).join('');
+      }
+
+      // Update Roster list in Delivery Hub
+      const roster = document.getElementById('ridersRosterContainer');
+      if (roster) {
+        roster.innerHTML = cachedDeliveryRiders.map(r => `
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <div style="font-size:12.5px; font-weight:800; color:var(--text-primary);">${r.name}</div>
+              <div style="font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-phone"></i> ${r.phone}</div>
+              <div style="font-size:10.5px; color:var(--text-secondary); margin-top:2px;">🛵 ${r.vehicle_number || 'N/A'}</div>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; background:${r.status === 'available' ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)'}; color:${r.status === 'available' ? '#10B981' : '#F59E0B'};">
+                ${r.status === 'available' ? 'Available' : 'On Run'}
+              </span>
+              <div style="font-size:10.5px; color:var(--text-muted); margin-top:4px;">${r.active_orders_count || 0} active</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+    } catch (e) {
+      console.error('Riders load error:', e);
+    }
+  }
+
+  async function loadActiveDeliveries() {
+    const container = document.getElementById('activeDeliveriesContainer');
+    if (!container) return;
+
+    try {
+      const res = await fetch('/api/orders/restaurant/' + RESTAURANT_ID);
+      const data = await res.json();
+      if (!data.success) return;
+
+      const allOrders = data.data || [];
+      const deliveryOrders = allOrders.filter(o => o.order_type === 'delivery' && o.status !== 'completed' && o.status !== 'cancelled');
+
+      if (deliveryOrders.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:30px 0; color:var(--text-muted); font-size:12.5px;">
+            <i class="fa-solid fa-circle-check" style="color:#10B981; font-size:22px; margin-bottom:6px; display:block;"></i>
+            All home deliveries are dispatched and completed!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = deliveryOrders.map(ord => {
+        const riderOptions = cachedDeliveryRiders.map(r => `
+          <option value="${r.id}" ${ord.rider_id == r.id ? 'selected' : ''}>${r.name}</option>
+        `).join('');
+
+        return `
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:13px; font-weight:800; color:var(--text-primary);">#ORD-${ord.id}</span>
+                <span style="font-size:10.5px; font-weight:800; background:rgba(245,158,11,0.15); color:#F59E0B; padding:2px 6px; border-radius:6px; text-transform:uppercase;">${ord.delivery_status || 'Pending'}</span>
+              </div>
+              <div style="font-size:12px; color:var(--text-secondary); margin-top:3px;">
+                👤 <b>${ord.customer_name || 'Customer'}</b> • 📞 ${ord.customer_phone || 'N/A'}
+              </div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+                📍 ${ord.customer_address || 'No address provided'}
+              </div>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="text-align:right; margin-right:8px;">
+                <div style="font-size:14px; font-weight:800; color:#10B981;">₹${parseFloat(ord.total_amount).toFixed(0)}</div>
+                <div style="font-size:10px; color:var(--text-muted);">${ord.payment_status === 'paid' ? 'Paid' : 'COD (Cash on Delivery)'}</div>
+              </div>
+              
+              <select onchange="assignRiderToOrder(${ord.id}, this.value)" style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);">
+                <option value="">Select Rider</option>
+                ${riderOptions}
+              </select>
+
+              <button onclick="markOrderDelivered(${ord.id})" style="background:#10B981; color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer;" title="Settle bill & mark delivered">
+                <i class="fa-solid fa-check"></i> Delivered
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (e) {
+      console.error('Active deliveries error:', e);
+    }
+  }
+
+  async function assignRiderToOrder(orderId, riderId) {
+    if (!riderId) return;
+    try {
+      const res = await fetch('/api/delivery/assign', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ order_id: orderId, rider_id: riderId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        loadActiveDeliveries();
+        loadDeliveryRiders();
+      } else {
+        showToast(data.message || 'Assignment failed', 'error');
+      }
+    } catch (e) {
+      showToast('Network error assigning rider', 'error');
+    }
+  }
+
+  async function markOrderDelivered(orderId) {
+    try {
+      const res = await fetch(`/api/delivery/${orderId}/delivered`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        loadActiveDeliveries();
+        loadDeliveryRiders();
+        loadAggregatorOrders();
+      } else {
+        showToast(data.message || 'Failed to settle delivery', 'error');
+      }
+    } catch (e) {
+      showToast('Network error settling delivery', 'error');
+    }
+  }
+
+  function toggleAddRiderForm() {
+    const wrap = document.getElementById('addRiderFormWrap');
+    if (wrap) wrap.style.display = (wrap.style.display === 'none' || !wrap.style.display) ? 'block' : 'none';
+  }
+
+  async function submitNewRider() {
+    const name = document.getElementById('newRiderName')?.value.trim();
+    const phone = document.getElementById('newRiderPhone')?.value.trim();
+    const vehicle = document.getElementById('newRiderVehicle')?.value.trim();
+
+    if (!name || !phone) {
+      showToast('Rider Name & Phone are required', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/delivery/riders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ name: name, phone: phone, vehicle_number: vehicle })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        document.getElementById('newRiderName').value = '';
+        document.getElementById('newRiderPhone').value = '';
+        document.getElementById('newRiderVehicle').value = '';
+        toggleAddRiderForm();
+        loadDeliveryRiders();
+      } else {
+        showToast(data.message || 'Failed to add rider', 'error');
+      }
+    } catch (e) {
+      showToast('Network error saving rider', 'error');
+    }
+  }
+
+  // Background Auto-Polling for Incoming Aggregator Orders (every 20 seconds)
+  setInterval(() => {
+    fetch('/api/aggregators/orders')
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) return;
+        const pendingCount = data.pending_count || 0;
+        const badge = document.getElementById('onlinePendingBadge');
+        if (badge) {
+          if (pendingCount > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = pendingCount;
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+        if (pendingCount > lastKnownPendingAggregatorCount) {
+          playOnlineOrderSiren();
+          showToast(`🔔 Incoming Online Order (${pendingCount} pending)!`, 'success');
+          // If modal is open, auto refresh
+          const modal = document.getElementById('deliveryHubModal');
+          if (modal && modal.classList.contains('active')) {
+            loadAggregatorOrders();
+          }
+        }
+        lastKnownPendingAggregatorCount = pendingCount;
+      })
+      .catch(e => {});
+  }, 20000);
+
+  /* ════════════════════════════════════════════════════════════════════════════════
+     PETPOOJA RECIPE, FOOD COSTING, WASTAGE & GST REPORT JAVASCRIPT MODULE
+  ════════════════════════════════════════════════════════════════════════════════ */
+  let cachedRecipeItems = [];
+  let cachedRecipeInventory = [];
+  let activeRecipeTab = 'menu';
+
+  function toggleB2bInvoiceForm() {
+    const isChecked = document.getElementById('b2bInvoiceToggle')?.checked;
+    const form = document.getElementById('b2bInvoiceForm');
+    if (form) form.style.display = isChecked ? 'flex' : 'none';
+  }
+
+  function openRecipeModal() {
+    openModal('recipeModal');
+    loadRecipeData();
+  }
+
+  function switchRecipeTab(tab) {
+    activeRecipeTab = tab;
+    const btnMenu = document.getElementById('recipeTabMenu');
+    const btnWastage = document.getElementById('recipeTabWastage');
+    const panelMenu = document.getElementById('recipePanelMenu');
+    const panelWastage = document.getElementById('recipePanelWastage');
+
+    if (tab === 'menu') {
+      btnMenu.style.color = 'var(--primary)';
+      btnMenu.style.borderBottomColor = 'var(--primary)';
+      btnWastage.style.color = 'var(--text-muted)';
+      btnWastage.style.borderBottomColor = 'transparent';
+      panelMenu.style.display = 'block';
+      panelWastage.style.display = 'none';
+      loadRecipeData();
+    } else {
+      btnWastage.style.color = 'var(--primary)';
+      btnWastage.style.borderBottomColor = 'var(--primary)';
+      btnMenu.style.color = 'var(--text-muted)';
+      btnMenu.style.borderBottomColor = 'transparent';
+      panelWastage.style.display = 'block';
+      panelMenu.style.display = 'none';
+      loadWastageData();
+    }
+  }
+
+  async function loadRecipeData() {
+    const tbody = document.getElementById('recipeTableBody');
+    try {
+      const res = await fetch('/api/recipes');
+      const data = await res.json();
+      if (!data.success) return;
+
+      cachedRecipeItems = data.data || [];
+      cachedRecipeInventory = data.inventory || [];
+      renderRecipeTable(cachedRecipeItems);
+    } catch (e) {
+      console.error('Error loading recipes:', e);
+      if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#EF4444;">Failed to load recipes.</td></tr>`;
+    }
+  }
+
+  function renderRecipeTable(items) {
+    const tbody = document.getElementById('recipeTableBody');
+    if (!tbody) return;
+
+    if (items.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">No menu items found.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map(item => {
+      const marginColor = item.margin_percentage >= 60 ? '#10B981' : (item.margin_percentage >= 40 ? '#F59E0B' : '#EF4444');
+      const statusBadge = item.has_recipe
+        ? `<span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; background:rgba(16,185,129,0.15); color:#10B981;">Configured (${item.ingredients.length} items)</span>`
+        : `<span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; background:rgba(239,68,68,0.12); color:#EF4444;">No Recipe</span>`;
+
+      return `
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 12px; font-weight:700; color:var(--text-primary);">
+            <div>${item.menu_item_name}</div>
+            <div style="margin-top:2px;">${statusBadge}</div>
+          </td>
+          <td style="padding:10px 12px; color:var(--text-secondary); text-transform:capitalize;">${item.category || 'General'}</td>
+          <td style="padding:10px 12px; text-align:right; font-weight:800; color:var(--text-primary);">₹${item.selling_price.toFixed(2)}</td>
+          <td style="padding:10px 12px; text-align:right; font-weight:700; color:#F59E0B;">₹${item.raw_food_cost.toFixed(2)}</td>
+          <td style="padding:10px 12px; text-align:right; font-weight:800; color:${marginColor};">₹${item.gross_profit.toFixed(2)}</td>
+          <td style="padding:10px 12px; text-align:center;">
+            <b style="color:${marginColor}; font-size:12.5px;">${item.margin_percentage}%</b>
+          </td>
+          <td style="padding:10px 12px; text-align:center;">
+            <button onclick="openRecipeEditor(${item.menu_item_id}, '${escape(item.menu_item_name)}', ${item.selling_price})" style="background:rgba(139,92,246,0.15); border:1px solid rgba(139,92,246,0.3); color:#8B5CF6; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:700; cursor:pointer;">
+              <i class="fa-solid fa-pen-to-square"></i> Configure
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function filterRecipeTable(query) {
+    const q = (query || '').toLowerCase().trim();
+    if (!q) {
+      renderRecipeTable(cachedRecipeItems);
+      return;
+    }
+    const filtered = cachedRecipeItems.filter(i => 
+      (i.menu_item_name || '').toLowerCase().includes(q) || 
+      (i.category || '').toLowerCase().includes(q)
+    );
+    renderRecipeTable(filtered);
+  }
+
+  function openRecipeEditor(menuItemId, encodedName, price) {
+    const itemName = unescape(encodedName);
+    document.getElementById('editRecipeMenuItemId').value = menuItemId;
+    document.getElementById('editRecipeModalTitle').textContent = 'Recipe: ' + itemName;
+    document.getElementById('recipeSellingPriceLabel').textContent = '₹' + parseFloat(price).toFixed(2);
+
+    const container = document.getElementById('recipeIngredientRowsContainer');
+    container.innerHTML = '';
+
+    const currentItem = cachedRecipeItems.find(i => i.menu_item_id == menuItemId);
+    if (currentItem && currentItem.ingredients && currentItem.ingredients.length > 0) {
+      currentItem.ingredients.forEach(ing => {
+        addRecipeIngredientRow(ing);
+      });
+    } else {
+      addRecipeIngredientRow();
+    }
+
+    calcRecipeFoodCost();
+    openModal('editRecipeSubModal');
+  }
+
+  function addRecipeIngredientRow(existingData = null) {
+    const container = document.getElementById('recipeIngredientRowsContainer');
+    const row = document.createElement('div');
+    row.className = 'recipe-ing-row';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '2fr 1fr 1fr auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const invOptions = cachedRecipeInventory.map(inv => {
+      const isSelected = existingData && existingData.inventory_id == inv.id ? 'selected' : '';
+      return `<option value="${inv.id}" data-cost="${inv.cost_per_unit || 0}" data-unit="${inv.unit || 'pcs'}" ${isSelected}>${inv.item_name} (₹${inv.cost_per_unit || 0}/${inv.unit || 'u'})</option>`;
+    }).join('');
+
+    row.innerHTML = `
+      <select class="recipe-inv-select" onchange="onRecipeInvSelectChange(this)" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);">
+        <option value="">Select Raw Ingredient</option>
+        ${invOptions}
+      </select>
+      <input type="number" step="0.01" class="recipe-qty-input" value="${existingData ? existingData.quantity_required : '1'}" oninput="calcRecipeFoodCost()" placeholder="Quantity" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+      <input type="text" class="recipe-unit-input" value="${existingData ? existingData.unit : 'pcs'}" placeholder="Unit (kg/gm/ml)" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+      <button type="button" onclick="removeRecipeIngredientRow(this)" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; border-radius:6px; width:28px; height:28px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+        <i class="fa-solid fa-trash-can" style="font-size:11px;"></i>
+      </button>
+    `;
+
+    container.appendChild(row);
+    calcRecipeFoodCost();
+  }
+
+  function onRecipeInvSelectChange(selectEl) {
+    const selectedOpt = selectEl.options[selectEl.selectedIndex];
+    const defaultUnit = selectedOpt.getAttribute('data-unit');
+    const row = selectEl.closest('.recipe-ing-row');
+    if (row && defaultUnit) {
+      const unitInput = row.querySelector('.recipe-unit-input');
+      if (unitInput && !unitInput.value) unitInput.value = defaultUnit;
+    }
+    calcRecipeFoodCost();
+  }
+
+  function removeRecipeIngredientRow(btn) {
+    const row = btn.closest('.recipe-ing-row');
+    if (row) {
+      row.remove();
+      calcRecipeFoodCost();
+    }
+  }
+
+  function calcRecipeFoodCost() {
+    let totalCost = 0;
+    const rows = document.querySelectorAll('.recipe-ing-row');
+
+    rows.forEach(row => {
+      const select = row.querySelector('.recipe-inv-select');
+      const qtyInput = row.querySelector('.recipe-qty-input');
+      if (!select || !qtyInput) return;
+
+      const opt = select.options[select.selectedIndex];
+      const costPerUnit = parseFloat(opt ? opt.getAttribute('data-cost') : 0) || 0;
+      const qty = parseFloat(qtyInput.value) || 0;
+      totalCost += (costPerUnit * qty);
+    });
+
+    const priceText = document.getElementById('recipeSellingPriceLabel')?.textContent || '0';
+    const sellingPrice = parseFloat(priceText.replace('₹', '')) || 0;
+    const profit = Math.max(0, sellingPrice - totalCost);
+    const margin = sellingPrice > 0 ? Math.round((profit / sellingPrice) * 100) : 0;
+
+    const costLabel = document.getElementById('recipeFoodCostLabel');
+    const marginLabel = document.getElementById('recipeMarginLabel');
+    if (costLabel) costLabel.textContent = '₹' + totalCost.toFixed(2);
+    if (marginLabel) {
+      marginLabel.textContent = margin + '%';
+      marginLabel.style.color = margin >= 60 ? '#10B981' : (margin >= 40 ? '#F59E0B' : '#EF4444');
+    }
+  }
+
+  async function submitRecipeIngredients() {
+    const menuItemId = document.getElementById('editRecipeMenuItemId').value;
+    const rows = document.querySelectorAll('.recipe-ing-row');
+    const ingredients = [];
+
+    rows.forEach(row => {
+      const select = row.querySelector('.recipe-inv-select');
+      const qtyInput = row.querySelector('.recipe-qty-input');
+      const unitInput = row.querySelector('.recipe-unit-input');
+      if (select && select.value && qtyInput && parseFloat(qtyInput.value) > 0) {
+        ingredients.push({
+          inventory_id: select.value,
+          quantity_required: parseFloat(qtyInput.value),
+          unit: unitInput ? unitInput.value.trim() : 'pcs'
+        });
+      }
+    });
+
+    try {
+      const res = await fetch('/api/recipes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          menu_item_id: menuItemId,
+          ingredients: ingredients
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        closeModal('editRecipeSubModal');
+        loadRecipeData();
+      } else {
+        showToast(data.message || 'Failed to save recipe', 'error');
+      }
+    } catch (e) {
+      showToast('Network error saving recipe', 'error');
+    }
+  }
+
+  async function loadWastageData() {
+    const tbody = document.getElementById('wastageTableBody');
+    const totalLossLabel = document.getElementById('wastageTotalLossLabel');
+    const invSelect = document.getElementById('wastageInventorySelect');
+
+    try {
+      // Populate raw ingredients in wastage form
+      if (invSelect && cachedRecipeInventory.length > 0) {
+        invSelect.innerHTML = '<option value="">Select Raw Ingredient</option>' + cachedRecipeInventory.map(i => `
+          <option value="${i.id}">${i.item_name} (${i.quantity} ${i.unit} in stock)</option>
+        `).join('');
+      }
+
+      const res = await fetch('/api/wastage');
+      const data = await res.json();
+      if (!data.success) return;
+
+      if (totalLossLabel) totalLossLabel.textContent = '₹' + parseFloat(data.total_loss || 0).toFixed(2);
+
+      const logs = data.data || [];
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">No kitchen wastage recorded yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => `
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 12px; color:var(--text-muted);">${new Date(l.created_at).toLocaleDateString()} ${new Date(l.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+          <td style="padding:8px 12px; font-weight:700; color:var(--text-primary);">${l.inventory?.item_name || 'Item'}</td>
+          <td style="padding:8px 12px; font-weight:700; color:#EF4444;">${l.quantity} ${l.unit}</td>
+          <td style="padding:8px 12px; color:var(--text-secondary);">${l.reason}</td>
+          <td style="padding:8px 12px; text-align:right; font-weight:800; color:#EF4444;">₹${parseFloat(l.cost_loss).toFixed(2)}</td>
+          <td style="padding:8px 12px; color:var(--text-muted);">${l.recorded_by || 'Staff'}</td>
+        </tr>
+      `).join('');
+
+    } catch (e) {
+      console.error('Wastage load error:', e);
+    }
+  }
+
+  function toggleRecordWastageForm() {
+    const wrap = document.getElementById('recordWastageFormWrap');
+    if (wrap) wrap.style.display = (wrap.style.display === 'none' || !wrap.style.display) ? 'block' : 'none';
+  }
+
+  async function submitWastageEntry() {
+    const invId = document.getElementById('wastageInventorySelect')?.value;
+    const qty = document.getElementById('wastageQtyInput')?.value;
+    const reason = document.getElementById('wastageReasonSelect')?.value;
+
+    if (!invId || !qty || parseFloat(qty) <= 0) {
+      showToast('Please select ingredient and enter quantity', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/wastage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          restaurant_id: RESTAURANT_ID,
+          inventory_id: invId,
+          quantity: qty,
+          reason: reason
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        document.getElementById('wastageQtyInput').value = '';
+        toggleRecordWastageForm();
+        loadWastageData();
+      } else {
+        showToast(data.message || 'Failed to record wastage', 'error');
+      }
+    } catch (e) {
+      showToast('Network error recording wastage', 'error');
+    }
+  }
+
+  /* ─── GST & TAX REPORT (GSTR-1 COMPLIANCE) ─── */
+  function openGstReportModal() {
+    const today = new Date().toISOString().split('T')[0];
+    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+
+    if (!document.getElementById('gstStartDate').value) {
+      document.getElementById('gstStartDate').value = firstDay;
+      document.getElementById('gstEndDate').value = today;
+    }
+
+    openModal('gstReportModal');
+    loadGstReportData();
+  }
+
+  async function loadGstReportData() {
+    const startDate = document.getElementById('gstStartDate')?.value;
+    const endDate = document.getElementById('gstEndDate')?.value;
+    const tbody = document.getElementById('gstInvoicesTableBody');
+
+    try {
+      const res = await fetch(`/api/reports/gst-summary?start_date=${startDate}&end_date=${endDate}`);
+      const data = await res.json();
+      if (!data.success) return;
+
+      const s = data.summary;
+      document.getElementById('gstCardTotalInvoices').textContent = s.total_invoices;
+      document.getElementById('gstCardB2bCount').textContent = s.b2b_invoices;
+      document.getElementById('gstCardB2cCount').textContent = s.b2c_invoices;
+      document.getElementById('gstCardTaxable').textContent = '₹' + s.total_taxable_value.toFixed(2);
+      document.getElementById('gstCardCgst').textContent = '₹' + s.total_cgst.toFixed(2);
+      document.getElementById('gstCardSgst').textContent = '₹' + s.total_sgst.toFixed(2);
+      document.getElementById('gstCardGross').textContent = '₹' + s.total_gross_turnover.toFixed(2);
+      document.getElementById('gstPeriodLabel').textContent = s.period;
+
+      const invs = data.invoices || [];
+      if (invs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-muted);">No finalized invoices in this period.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = invs.map(i => `
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 10px; font-weight:800; color:var(--text-primary);">${i.invoice_number}</td>
+          <td style="padding:8px 10px; color:var(--text-muted);">${i.date}</td>
+          <td style="padding:8px 10px;">
+            <span style="font-size:10px; font-weight:800; padding:2px 6px; border-radius:6px; background:${i.invoice_type === 'B2B' ? 'rgba(14,165,233,0.15)' : 'rgba(100,116,139,0.15)'}; color:${i.invoice_type === 'B2B' ? '#0EA5E9' : '#64748B'};">${i.invoice_type}</span>
+          </td>
+          <td style="padding:8px 10px; font-weight:700; color:var(--text-primary);">${i.customer_company !== '-' ? i.customer_company : i.customer_name}</td>
+          <td style="padding:8px 10px; font-family:monospace; font-weight:700; color:#0EA5E9;">${i.customer_gstin}</td>
+          <td style="padding:8px 10px; text-align:right;">₹${i.taxable_amount.toFixed(2)}</td>
+          <td style="padding:8px 10px; text-align:right; color:#0EA5E9;">₹${i.cgst.toFixed(2)}</td>
+          <td style="padding:8px 10px; text-align:right; color:#0EA5E9;">₹${i.sgst.toFixed(2)}</td>
+          <td style="padding:8px 10px; text-align:right; font-weight:800; color:#10B981;">₹${i.total_amount.toFixed(2)}</td>
+          <td style="padding:8px 10px; text-align:center; font-size:10.5px; color:var(--text-muted);">${i.payment_method}</td>
+        </tr>
+      `).join('');
+
+    } catch (e) {
+      console.error('GST load error:', e);
+    }
+  }
+
+  function downloadGstCsvReport() {
+    const startDate = document.getElementById('gstStartDate')?.value || '';
+    const endDate = document.getElementById('gstEndDate')?.value || '';
+    window.location.href = `/api/reports/gst/export?start_date=${startDate}&end_date=${endDate}`;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(checkShiftStatusOnLoad, 500);
+    setTimeout(loadDeliveryRiders, 800);
+  });
 
   function clearCartSilent() {
     MENU.forEach(i => i.qty = 0);
@@ -4412,6 +7154,7 @@
               ${typeof renderOrderActionsHtml === 'function' ? renderOrderActionsHtml(order) : `
                 <div style="display:inline-flex; gap:6px; align-items:center;">
                   ${!isPaid ? `<button onclick="payOrder(${order.id})" style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); color:#38BDF8; padding:5px 10px; border-radius:8px; font-size:11.5px; font-weight:700; cursor:pointer;" title="Mark Paid"><i class="fa-solid fa-money-bill-wave"></i> Pay</button>` : ''}
+                  ${!isPaid ? `<button onclick="viewOrderItemsModal(${order.id})" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#F87171; padding:5px 10px; border-radius:8px; font-size:11.5px; font-weight:700; cursor:pointer;" title="Cancel KOT Item with Manager PIN"><i class="fa-solid fa-ban"></i> Cancel Item</button>` : ''}
                   <a href="/orders/${order.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
                   <a href="/orders/${order.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
                   <a href="/orders/${order.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
@@ -4424,6 +7167,43 @@
     } catch (err) {
       console.log('Error loading orders:', err);
       tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#F87171;"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px; margin-bottom:6px; display:block;"></i>Failed to load orders data.</td></tr>`;
+    }
+  }
+
+  async function viewOrderItemsModal(orderId) {
+    try {
+      const res = await fetch(`/api/orders/${orderId}`);
+      const data = await res.json();
+      if (!data.success || !data.data) {
+        showToast('Could not load order items', 'error');
+        return;
+      }
+      const order = data.data;
+      const activeItems = (order.items || []).filter(i => i.kot_status !== 'cancelled');
+      if (activeItems.length === 0) {
+        showToast('No active items to cancel in this order', 'info');
+        return;
+      }
+
+      let promptHtml = activeItems.map(item => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-weight:700; color:var(--text-primary); font-size:13.5px;">${item.name}</div>
+            <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Quantity: <b>${item.quantity}</b> · Price: <b>₹${item.price}</b></div>
+            ${item.notes ? `<div style="font-size:11px; color:#F59E0B; margin-top:2px;">Note: ${item.notes}</div>` : ''}
+          </div>
+          <button onclick="closeModal('metaPopupModal'); openCancelKotItemModal(${order.id}, ${item.id}, '${escapeHtml(item.name)}')" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">
+            <i class="fa-solid fa-trash-can"></i> Cancel
+          </button>
+        </div>
+      `).join('');
+
+      document.getElementById('metaPopupTitle').innerHTML = `<i class="fa-solid fa-shield-halved" style="color:#EF4444;"></i> Select Item to Cancel (#${order.id})`;
+      document.getElementById('metaPopupList').innerHTML = promptHtml;
+      openModal('metaPopupModal');
+    } catch (e) {
+      console.error(e);
+      showToast('Error loading order items', 'error');
     }
   }
 
@@ -4729,36 +7509,452 @@
       const labelText = targetDiv ? (targetDiv.textContent || '').trim() : '';
       const splitRow = document.getElementById('splitRow');
       if (splitRow) {
-        splitRow.style.display = labelText.toLowerCase().includes('split') ? 'flex' : 'none';
+        const isSplit = labelText.toLowerCase().includes('split');
+        splitRow.style.display = isSplit ? 'flex' : 'none';
+        if (isSplit) {
+          calculateSplitRemaining();
+        }
       }
     } catch (err) {
       console.error('Error in selectPay:', err);
     }
   }
 
+  function calculateSplitRemaining() {
+    const totalEl = document.getElementById('checkoutAmount');
+    const totalText = totalEl ? totalEl.textContent.replace(/[^\d.]/g, '') : '0';
+    const total = parseFloat(totalText) || 0;
+
+    const cash = parseFloat(document.getElementById('splitCashInput')?.value || 0) || 0;
+    const upi = parseFloat(document.getElementById('splitUpiInput')?.value || 0) || 0;
+    const card = parseFloat(document.getElementById('splitCardInput')?.value || 0) || 0;
+
+    const entered = cash + upi + card;
+    const diff = total - entered;
+    const notice = document.getElementById('splitStatusNotice');
+    if (!notice) return;
+
+    if (entered === 0) {
+      notice.style.color = '#F59E0B';
+      notice.textContent = 'Enter amounts for Cash, UPI & Card';
+    } else if (Math.abs(diff) < 0.5) {
+      notice.style.color = '#10B981';
+      notice.innerHTML = '✅ Matched exact ₹' + total.toFixed(0);
+    } else if (diff > 0) {
+      notice.style.color = '#F59E0B';
+      notice.innerHTML = '⚠️ ₹' + diff.toFixed(0) + ' remaining';
+    } else {
+      notice.style.color = '#EF4444';
+      notice.innerHTML = '❌ Over by ₹' + Math.abs(diff).toFixed(0);
+    }
+  }
+
   /* ─── COUPON ─────────────────────────────── */
   // Real applyCoupon() is defined above with backend API validation
 
-  /* ─── KOT ────────────────────────────────── */
+  /* ─── KOT (PETPOOJA LIVE KITCHEN PIPELINE) ────────────────── */
   function sendKOT() {
     const cartItems = MENU.filter(i => i.qty > 0);
     if (cartItems.length === 0) {
-      showToast('Cart is empty', 'error');
+      showToast('Cart is empty! Select items to send KOT.', 'error');
       return;
     }
-    
-    let kotHTML = '';
-    cartItems.forEach(item => {
-      kotHTML += `<div class="kot-item-row"><span><b>${item.qty}x</b> ${item.name}</span><span></span></div>`;
+
+    const isDelivery = (typeof currentOrderType !== 'undefined' && currentOrderType === 'delivery');
+    const isTakeaway = (typeof currentOrderType !== 'undefined' && currentOrderType === 'takeaway');
+
+    const payload = {
+      restaurant_id: RESTAURANT_ID,
+      table_id: (isDelivery || isTakeaway) ? '0' : String(selectedTableId),
+      order_type: currentOrderType || 'dinein',
+      customer_name: isDelivery ? (document.getElementById('deliveryCustName')?.value.trim() || selectedCustomerData?.name || 'Home Delivery') : (selectedCustomerData?.name || ''),
+      customer_phone: isDelivery ? (document.getElementById('deliveryCustPhone')?.value.trim() || selectedCustomerData?.phone || '') : (selectedCustomerData?.phone || ''),
+      customer_address: isDelivery ? (document.getElementById('deliveryCustAddress')?.value.trim() || '') : '',
+      special_instructions: document.getElementById('cartNote')?.value || '',
+      items: cartItems.map(item => ({
+        menu_item_id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.qty,
+        notes: item.cookingNote || ''
+      }))
+    };
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const orderIdVal = (data.data && typeof data.data === 'object' && data.data.id) ? data.data.id : (data.data || lastPlacedOrderId);
+        lastPlacedOrderId = orderIdVal;
+        showToast('🔥 KOT #' + lastPlacedOrderId + ' sent to Kitchen!', 'success');
+        clearCart();
+        closeModal('kotModal');
+        if (typeof loadOrdersData === 'function') loadOrdersData();
+        if (typeof loadTablesData === 'function') loadTablesData();
+        // Auto open KOT print slip
+        if (typeof openPrintHub === 'function') {
+          setTimeout(() => openPrintHub(lastPlacedOrderId), 200);
+        }
+      } else {
+        showToast(data.message || 'Failed to send KOT', 'error');
+      }
+    })
+    .catch(err => {
+      console.error('KOT error:', err);
+      showToast('Network error sending KOT', 'error');
     });
-    document.getElementById('kotList').innerHTML = kotHTML;
-    
-    showToast('KOT sent to kitchen!', 'success');
-    closeModal('kotModal');
   }
 
-  /* ─── ACTIONS ────────────────────────────── */
-  function holdOrder() { showToast('Order placed on hold', 'warning'); }
+  /* ─── PETPOOJA MULTI-CART HOLD & RECALL ENGINE ─── */
+  const HOLD_CARTS_STORAGE_KEY = `dineflow_held_carts_${RESTAURANT_ID}`;
+
+  function getHeldCarts() {
+    try {
+      const data = localStorage.getItem(HOLD_CARTS_STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveHeldCarts(carts) {
+    try {
+      localStorage.setItem(HOLD_CARTS_STORAGE_KEY, JSON.stringify(carts));
+      updateHeldCartsCountBadge();
+    } catch(e) {
+      console.error('Failed to save held carts:', e);
+    }
+  }
+
+  function updateHeldCartsCountBadge() {
+    const carts = getHeldCarts();
+    const count = carts.length;
+    const badge = document.getElementById('holdCartsCountBadge');
+    const modalBadge = document.getElementById('holdCartsModalBadge');
+    if (badge) {
+      badge.textContent = count;
+      badge.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+    if (modalBadge) {
+      modalBadge.textContent = `${count} Held`;
+    }
+  }
+
+  // Alias for backward compatibility with topbar / cart triggers
+  function holdOrder() {
+    holdCurrentCart();
+  }
+
+  // ─── LIVE PETPOOJA-STYLE INVENTORY QUICK VIEW IN POS ───
+  let posInventoryCache = [];
+
+  async function openInventoryQuickModal() {
+    const tbody = document.getElementById('inventoryModalTbody');
+    const searchInput = document.getElementById('invQuickSearchInput');
+    if (searchInput) searchInput.value = '';
+
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center; padding:32px; color:var(--text-muted);">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:22px; margin-bottom:10px; display:block; color:var(--primary);"></i>
+            Fetching live ingredient & stock levels...
+          </td>
+        </tr>
+      `;
+    }
+
+    try {
+      const restId = CURRENT_RESTAURANT_ID || '{{ Auth::user()->restaurant_id ?? 1 }}';
+      const res = await fetch(`/inventory?restaurant_id=${encodeURIComponent(restId)}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.data)) {
+        posInventoryCache = data.data;
+      } else if (Array.isArray(data)) {
+        posInventoryCache = data;
+      } else {
+        posInventoryCache = [];
+      }
+      renderQuickInventoryTable(posInventoryCache);
+      updateInventoryBadgeCounts(posInventoryCache);
+    } catch (err) {
+      console.warn('Inventory fetch error, checking local fallback:', err);
+      // Fallback: derive from items in current menu with low stock indicator if available
+      renderQuickInventoryTable(posInventoryCache);
+    }
+  }
+
+  function updateInventoryBadgeCounts(items) {
+    const lowCount = items.filter(i => {
+      const qty = parseFloat(i.quantity ?? 0);
+      const alert = parseFloat(i.low_stock_alert ?? 10);
+      return qty <= alert;
+    }).length;
+
+    const topBadge = document.getElementById('posInventoryLowCountBadge');
+    if (topBadge) {
+      topBadge.textContent = lowCount;
+      topBadge.style.display = lowCount > 0 ? 'inline-block' : 'none';
+    }
+
+    const modalAlertBadge = document.getElementById('invLowStockAlertBadge');
+    if (modalAlertBadge) {
+      modalAlertBadge.textContent = `${lowCount} Low Stock`;
+      modalAlertBadge.style.display = lowCount > 0 ? 'inline-block' : 'none';
+    }
+
+    const totalBadge = document.getElementById('invTotalCountBadge');
+    if (totalBadge) totalBadge.textContent = `${items.length} Total Items`;
+
+    const modalLowBadge = document.getElementById('invLowCountBadge');
+    if (modalLowBadge) modalLowBadge.textContent = `${lowCount} Low / Out`;
+  }
+
+  function renderQuickInventoryTable(items) {
+    const tbody = document.getElementById('inventoryModalTbody');
+    if (!tbody) return;
+
+    if (!items || items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">
+            <i class="fa-solid fa-box-open" style="font-size:28px; margin-bottom:8px; display:block; opacity:0.4;"></i>
+            No inventory items or ingredients found for this branch.<br>
+            <a href="/admin/inventory" target="_blank" style="color:var(--primary); font-weight:700; text-decoration:underline; font-size:12px; display:inline-block; margin-top:8px;">Manage in Full Inventory &rarr;</a>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = items.map(item => {
+      const qty = parseFloat(item.quantity ?? 0);
+      const alertLevel = parseFloat(item.low_stock_alert ?? 10);
+      const unit = item.unit || 'units';
+      const isOut = qty <= 0;
+      const isLow = !isOut && qty <= alertLevel;
+
+      let statusBadge = `<span style="background:rgba(16,185,129,0.12); color:#10B981; font-weight:700; font-size:11px; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check" style="font-size:8px;"></i> In Stock</span>`;
+      if (isOut) {
+        statusBadge = `<span style="background:rgba(239,68,68,0.14); color:#EF4444; font-weight:800; font-size:11px; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-xmark" style="font-size:8px;"></i> Out of Stock</span>`;
+      } else if (isLow) {
+        statusBadge = `<span style="background:rgba(245,158,11,0.14); color:#D97706; font-weight:800; font-size:11px; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-triangle-exclamation" style="font-size:8px;"></i> Low Alert</span>`;
+      }
+
+      return `
+        <tr style="border-bottom:1px solid var(--border); transition:background 0.15s ease;" onmouseover="this.style.background='var(--hover-bg, rgba(0,0,0,0.02))'" onmouseout="this.style.background='transparent'">
+          <td style="padding:10px 10px; font-weight:700; color:var(--text-primary);">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:${isOut ? '#EF4444' : isLow ? '#F59E0B' : '#10B981'}; display:inline-block;"></span>
+              <span>${escapeHtml(item.item_name || 'Unnamed')}</span>
+            </div>
+          </td>
+          <td style="padding:10px 10px; color:var(--text-muted); font-size:12px;">
+            ${escapeHtml(item.category || 'General')}
+          </td>
+          <td style="padding:10px 10px; text-align:right; font-weight:800; font-size:13px; color:${isOut ? '#EF4444' : isLow ? '#D97706' : 'var(--text-primary)'};">
+            ${qty.toLocaleString()} <span style="font-size:10.5px; font-weight:500; color:var(--text-muted);">${escapeHtml(unit)}</span>
+          </td>
+          <td style="padding:10px 10px; text-align:right; color:var(--text-muted); font-size:12px;">
+            ${alertLevel} ${escapeHtml(unit)}
+          </td>
+          <td style="padding:10px 10px; text-align:center;">
+            ${statusBadge}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function filterQuickInventory(query) {
+    const q = (query || '').toLowerCase().trim();
+    if (!q) {
+      renderQuickInventoryTable(posInventoryCache);
+      return;
+    }
+    const filtered = posInventoryCache.filter(item => 
+      (item.item_name || '').toLowerCase().includes(q) ||
+      (item.category || '').toLowerCase().includes(q)
+    );
+    renderQuickInventoryTable(filtered);
+  }
+
+  function holdCurrentCart() {
+    const activeItems = MENU.filter(i => i.qty > 0);
+    if (activeItems.length === 0) {
+      showToast('Cannot hold an empty cart! Add items first.', 'warning');
+      return;
+    }
+
+    const cartSubtotal = activeItems.reduce((sum, item) => sum + (parseFloat(item.price || 0) * item.qty), 0);
+    const holdTitle = prompt('Enter a label/note for this held cart (e.g. "Table 4 Phone Call" or "Rahul Bhai"):', 
+      (selectedCustomerData?.name && selectedCustomerData.name !== 'Walk-in Customer') ? selectedCustomerData.name : `Cart #${Date.now().toString().slice(-4)}`
+    );
+
+    if (holdTitle === null) return; // User cancelled prompt
+
+    const heldCartObj = {
+      id: 'hold_' + Date.now(),
+      title: holdTitle.trim() || `Held Cart (${new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })})`,
+      timestamp: new Date().toISOString(),
+      timeFormatted: new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
+      tableId: selectedTableId || 1,
+      orderType: currentOrderType || 'dinein',
+      customer: selectedCustomerData ? { ...selectedCustomerData } : null,
+      note: document.getElementById('cartNote')?.value || '',
+      items: activeItems.map(i => ({
+        id: i.id,
+        name: i.name,
+        price: i.price,
+        qty: i.qty,
+        cookingNote: i.cookingNote || ''
+      })),
+      totalAmount: cartSubtotal
+    };
+
+    const carts = getHeldCarts();
+    carts.unshift(heldCartObj);
+    saveHeldCarts(carts);
+
+    clearCart();
+    showToast(`⏸️ Cart "${heldCartObj.title}" placed on Hold!`, 'success');
+    addPosNotification({
+      id: `hold-${Date.now()}`,
+      title: `⏸️ Cart Held: ${heldCartObj.title}`,
+      message: `${heldCartObj.items.length} items saved. You can recall it anytime from Hold Carts (F4).`,
+      time: 'Just now',
+      type: 'warning',
+      icon: 'fa-solid fa-circle-pause'
+    });
+  }
+
+  function openHoldOrdersModal() {
+    renderHoldOrdersList();
+    openModal('holdOrdersModal');
+  }
+
+  function renderHoldOrdersList() {
+    const container = document.getElementById('holdCartsListContainer');
+    if (!container) return;
+    const carts = getHeldCarts();
+    updateHeldCartsCountBadge();
+
+    if (carts.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:48px 16px; color:var(--text-muted);">
+          <i class="fa-solid fa-circle-pause" style="font-size:36px; margin-bottom:12px; display:block; color:#EC4899; opacity:0.6;"></i>
+          <h4 style="margin:0 0 4px; font-size:15px; color:var(--text-primary);">No Carts On Hold</h4>
+          <p style="font-size:12.5px; margin:0;">When a customer pauses their order, click <b>Hold (F4)</b> in the cart to hold it here.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = carts.map((c, idx) => {
+      const itemsListText = c.items.map(i => `${i.qty}x ${escapeHtml(i.name)}`).join(', ');
+      return `
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:16px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(236,72,153,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+              <span style="font-size:14px; font-weight:800; color:var(--text-primary);">${escapeHtml(c.title)}</span>
+              <span style="font-size:10px; font-weight:700; color:#EC4899; background:rgba(236,72,153,0.12); padding:1px 6px; border-radius:6px;">🕒 ${c.timeFormatted}</span>
+              ${c.customer?.name && c.customer.name !== 'Walk-in Customer' ? `<span style="font-size:10px; font-weight:700; color:#6366F1; background:rgba(99,102,241,0.12); padding:1px 6px; border-radius:6px;">👤 ${escapeHtml(c.customer.name)}</span>` : ''}
+            </div>
+            <div style="font-size:11.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${itemsListText}
+            </div>
+            <div style="font-size:12px; font-weight:700; color:#10B981; margin-top:4px;">
+              Subtotal: ₹${parseFloat(c.totalAmount || 0).toFixed(2)} (${c.items.reduce((s,i)=>s+i.qty,0)} items)
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            <button onclick="recallHeldCart('${c.id}')" style="background:linear-gradient(135deg, #EC4899, #DB2777); border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(236,72,153,0.3);">
+              <i class="fa-solid fa-arrow-rotate-left"></i> Recall
+            </button>
+            <button onclick="deleteHeldCart('${c.id}')" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#EF4444; border-radius:10px; width:34px; height:34px; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Discard this held cart">
+              <i class="fa-solid fa-trash-can" style="font-size:12px;"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function recallHeldCart(holdId) {
+    const carts = getHeldCarts();
+    const cartIdx = carts.findIndex(c => c.id === holdId);
+    if (cartIdx === -1) {
+      showToast('Held cart not found', 'error');
+      return;
+    }
+
+    const currentActiveItems = MENU.filter(i => i.qty > 0);
+    if (currentActiveItems.length > 0) {
+      if (!confirm('Current active cart has items. Replacing it with the recalled cart. Do you want to proceed?')) {
+        return;
+      }
+    }
+
+    const targetCart = carts[cartIdx];
+
+    // Reset MENU qty
+    MENU.forEach(item => { item.qty = 0; item.cookingNote = ''; });
+
+    // Populate recalled items
+    targetCart.items.forEach(hItem => {
+      const match = MENU.find(m => String(m.id) === String(hItem.id));
+      if (match) {
+        match.qty = hItem.qty;
+        if (hItem.cookingNote) match.cookingNote = hItem.cookingNote;
+      }
+    });
+
+    // Restore table & customer
+    if (targetCart.tableId) selectedTableId = targetCart.tableId;
+    if (targetCart.customer) {
+      selectedCustomerData = targetCart.customer;
+      const strip = document.querySelector('.customer-strip');
+      if (strip) {
+        const avatarEl = strip.querySelector('.cust-avatar');
+        const nameEl = strip.querySelector('.cust-info h5');
+        const subEl = strip.querySelector('.cust-info p');
+        if (avatarEl) avatarEl.textContent = selectedCustomerData.avatar || 'WC';
+        if (nameEl) nameEl.textContent = selectedCustomerData.name;
+        if (subEl) subEl.innerHTML = `${selectedCustomerData.phone || 'Walk-in'} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points || 0} pts</span>`;
+      }
+    }
+
+    const noteEl = document.getElementById('cartNote');
+    if (noteEl && targetCart.note) noteEl.value = targetCart.note;
+
+    // Remove from held carts list
+    carts.splice(cartIdx, 1);
+    saveHeldCarts(carts);
+
+    closeModal('holdOrdersModal');
+    renderMenu();
+    renderCart();
+    showToast(`⚡ Recalled cart "${targetCart.title}"! Ready for checkout.`, 'success');
+  }
+
+  function deleteHeldCart(holdId) {
+    if (!confirm('Are you sure you want to discard this held cart?')) return;
+    let carts = getHeldCarts();
+    carts = carts.filter(c => c.id !== holdId);
+    saveHeldCarts(carts);
+    renderHoldOrdersList();
+    showToast('Held cart discarded', 'info');
+  }
   
   let lastPlacedOrderId = null;
   let activeOrderHasKitchen = true; // Fallback to true if manually clicked
@@ -4772,25 +7968,58 @@
       return;
     }
 
+    const isDelivery = (typeof currentOrderType !== 'undefined' && currentOrderType === 'delivery');
+    const isTakeaway = (typeof currentOrderType !== 'undefined' && currentOrderType === 'takeaway');
+    const deliveryFee = isDelivery ? (parseFloat(document.getElementById('deliveryFeeInput')?.value || 0) || 0) : 0;
+
     // Calculate exact cart total before clearing cart
     const cartSubtotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price || 0) * item.qty), 0);
     const cartServiceCharge = cartSubtotal * 0.05;
     const cartGst = (cartSubtotal + cartServiceCharge) * 0.18;
-    const calculatedOrderTotal = Math.round(cartSubtotal + cartServiceCharge + cartGst);
+    const calculatedOrderTotal = Math.round(cartSubtotal + cartServiceCharge + cartGst + deliveryFee);
 
     // Determine if we need to print Kitchen KOT or Bar KOT based on cart categories
     activeOrderHasKitchen = cartItems.some(item => ['mains', 'starters', 'breads', 'rice', 'pizza', 'burger', 'pasta', 'soup'].includes((item.cat || '').toLowerCase()));
     activeOrderHasBar = cartItems.some(item => ['beverages', 'desserts', 'drinks', 'dessert'].includes((item.cat || '').toLowerCase()));
 
+    const activePayMethod = document.querySelector('.pay-method.active')?.textContent.trim() || 'Cash';
+    const isSplit = activePayMethod.toLowerCase().includes('split');
+    let splitDataObj = null;
+
+    if (isSplit) {
+      const cash = parseFloat(document.getElementById('splitCashInput')?.value || 0) || 0;
+      const upi = parseFloat(document.getElementById('splitUpiInput')?.value || 0) || 0;
+      const card = parseFloat(document.getElementById('splitCardInput')?.value || 0) || 0;
+      const totalSplit = cash + upi + card;
+      if (Math.abs(totalSplit - calculatedOrderTotal) > 1) {
+        showToast(`Split total (₹${totalSplit.toFixed(0)}) does not match bill total (₹${calculatedOrderTotal.toFixed(0)})!`, 'error');
+        return;
+      }
+      splitDataObj = { cash, upi, card };
+    }
+
     const payload = {
       restaurant_id: RESTAURANT_ID,
-      table_id: String(selectedTableId),
+      table_id: (isDelivery || isTakeaway) ? '0' : String(selectedTableId),
+      order_type: currentOrderType || 'dinein',
+      payment_method: isSplit ? 'split' : (activePayMethod.toLowerCase().includes('upi') ? 'upi' : (activePayMethod.toLowerCase().includes('card') ? 'card' : 'cash')),
+      split_data: splitDataObj ? JSON.stringify(splitDataObj) : null,
+      customer_name: isDelivery ? (document.getElementById('deliveryCustName')?.value.trim() || selectedCustomerData?.name || 'Home Delivery') : (selectedCustomerData?.name || ''),
+      customer_phone: isDelivery ? (document.getElementById('deliveryCustPhone')?.value.trim() || selectedCustomerData?.phone || '') : (selectedCustomerData?.phone || ''),
+      customer_address: isDelivery ? (document.getElementById('deliveryCustAddress')?.value.trim() || '') : '',
+      customer_gstin: document.getElementById('b2bInvoiceToggle')?.checked ? (document.getElementById('b2bGstinInput')?.value.trim().toUpperCase() || null) : null,
+      customer_company: document.getElementById('b2bInvoiceToggle')?.checked ? (document.getElementById('b2bCompanyInput')?.value.trim() || null) : null,
+      delivery_fee: deliveryFee,
+      wallet_discount: appliedWalletDiscount || 0,
+      cashback_earned: Math.round(calculatedOrderTotal * 0.05 * 100) / 100,
+      rider_id: isDelivery ? (document.getElementById('deliveryRiderSelect')?.value || null) : null,
       special_instructions: document.getElementById('cartNote')?.value || '',
       items: cartItems.map(item => ({
         menu_item_id: item.id,
         name: item.name,
         price: item.price,
-        quantity: item.qty
+        quantity: item.qty,
+        notes: item.cookingNote || ''
       }))
     };
 
@@ -4809,6 +8038,38 @@
         const orderIdVal = (data.data && typeof data.data === 'object' && data.data.id) ? data.data.id : (data.data || lastPlacedOrderId);
         lastPlacedOrderId = orderIdVal;
         showToast('Order placed successfully! ID: #' + lastPlacedOrderId, 'success');
+
+        // 🌟 Auto-credit 5% Digital Cashback to Customer Wallet
+        const custPhone = payload.customer_phone;
+        if (custPhone && custPhone !== '') {
+          fetch('/api/customers/credit-cashback', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify({
+              restaurant_id: RESTAURANT_ID,
+              phone: custPhone,
+              order_amount: calculatedOrderTotal,
+              name: payload.customer_name || 'Customer'
+            })
+          })
+          .then(r => r.json())
+          .then(cData => {
+            if (cData.success) {
+              showToast(`🎁 Credited ₹${cData.cashback_earned} (5% Cashback) to customer wallet!`, 'success');
+              if (selectedCustomerData) {
+                selectedCustomerData.wallet_balance = cData.new_balance;
+                const wAmt = document.getElementById('custWalletAmount');
+                if (wAmt) wAmt.textContent = `₹${cData.new_balance.toFixed(2)}`;
+              }
+            }
+          })
+          .catch(e => console.log('Cashback credit error:', e));
+        }
+
         // 🌟 Auto-Calculate & Award Customer Loyalty Points based on System Settings Rate
         const earnRate = Math.max(1, parseInt(localStorage.getItem('dineflow_point_earn_rate')) || 100);
         const earnedPts = Math.floor((calculatedOrderTotal || 0) / earnRate);
@@ -4846,6 +8107,8 @@
           })
           .catch(e => console.log('Auto points error:', e));
         }
+
+        appliedWalletDiscount = 0;
 
         clearCart();
         if (typeof loadOrdersData === 'function') loadOrdersData();
@@ -5334,21 +8597,21 @@
       clock.textContent = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
     }
     
-    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
     const dateString = now.toLocaleDateString('en-US', options);
     
     let shift = 'General';
     const curHour = now.getHours();
     if (curHour >= 8 && curHour < 16) {
-      shift = 'Morning (08:00 - 16:00)';
+      shift = 'Morning';
     } else if (curHour >= 16 && curHour < 24) {
-      shift = 'Evening (16:00 - 24:00)';
+      shift = 'Evening';
     } else {
-      shift = 'Night (00:00 - 08:00)';
+      shift = 'Night';
     }
     
     if (dateSub) {
-      dateSub.innerHTML = `${dateString} &nbsp;·&nbsp; Shift: ${shift}`;
+      dateSub.innerHTML = `<span>${dateString} &bull; Shift: ${shift}</span>`;
     }
   }
   updateLiveClock();
@@ -5525,13 +8788,15 @@
     fetchAndRenderPosWaiters();
   });
 
+  let appliedWalletDiscount = 0;
+
   function selectCustomerItem(el, name, phone, points, avatar, isNew = false, ordersCount = null) {
     document.querySelectorAll('#custModalList .cust-row').forEach(r => r.classList.remove('selected'));
     el.classList.add('selected');
-    selectedCustomerData = { name, phone, points, avatar, isNew, ordersCount };
+    selectedCustomerData = { name, phone, points, avatar, isNew, ordersCount, wallet_balance: 0 };
   }
 
-  function confirmCustomerSelection() {
+  async function confirmCustomerSelection() {
     if (!selectedCustomerData) return;
     const strip = document.querySelector('.customer-strip');
     if (strip) {
@@ -5540,21 +8805,97 @@
       const subEl = strip.querySelector('.cust-info p');
       if (avatarEl) avatarEl.textContent = selectedCustomerData.avatar;
       if (nameEl) nameEl.textContent = selectedCustomerData.name;
-      if (subEl) subEl.innerHTML = `${selectedCustomerData.phone || 'Walk-in'} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points} pts</span>`;
+      if (subEl) subEl.innerHTML = `${selectedCustomerData.phone || 'Walk-in'} &nbsp;·&nbsp; <span style="color:var(--primary);">⭐ ${selectedCustomerData.points || 0} pts</span>`;
     }
+
+    // Lookup customer from backend to get live wallet balance & birthday/anniversary promo status
+    if (selectedCustomerData.phone) {
+      try {
+        const lookupRes = await fetch(`/api/customers/lookup?phone=${encodeURIComponent(selectedCustomerData.phone)}&restaurant_id=${RESTAURANT_ID}`);
+        const lookupJson = await lookupRes.json();
+        if (lookupJson.success && lookupJson.data) {
+          const cData = lookupJson.data;
+          selectedCustomerData.id = cData.id;
+          selectedCustomerData.wallet_balance = parseFloat(cData.wallet_balance || 0);
+          selectedCustomerData.is_birthday = !!cData.is_birthday;
+          selectedCustomerData.is_anniversary = !!cData.is_anniversary;
+
+          // Render Wallet Strip
+          const walletStrip = document.getElementById('customerWalletStrip');
+          const walletAmtEl = document.getElementById('custWalletAmount');
+          const bdayBadge = document.getElementById('custBirthdayBadge');
+          if (walletStrip && walletAmtEl) {
+            walletAmtEl.textContent = `₹${selectedCustomerData.wallet_balance.toFixed(2)}`;
+            walletStrip.style.display = 'flex';
+            if (bdayBadge) {
+              if (selectedCustomerData.is_birthday) {
+                bdayBadge.style.display = 'inline-block';
+                bdayBadge.textContent = '🎂 Birthday Special!';
+                showToast(`🎉 Today is ${selectedCustomerData.name}'s Birthday! Special Treats available!`, 'info');
+              } else if (selectedCustomerData.is_anniversary) {
+                bdayBadge.style.display = 'inline-block';
+                bdayBadge.textContent = '💍 Anniversary Special!';
+                showToast(`💖 Happy Anniversary to ${selectedCustomerData.name}!`, 'info');
+              } else {
+                bdayBadge.style.display = 'none';
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.log('Customer lookup error:', err);
+      }
+    }
+
     showToast(`✅ Customer selected: ${selectedCustomerData.name}`, 'success');
     closeModal('customerModal');
     // Auto detect new vs returning and apply offer
     autoDetectCustomerDiscount(selectedCustomerData);
   }
 
+  function applyCustomerWalletDiscount() {
+    if (!selectedCustomerData || !selectedCustomerData.phone) {
+      showToast('Please select a customer first!', 'warning');
+      return;
+    }
+    const available = parseFloat(selectedCustomerData.wallet_balance || 0);
+    if (available <= 0) {
+      showToast('No wallet balance available to redeem.', 'warning');
+      return;
+    }
+
+    const cartItems = MENU.filter(i => i.qty > 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    if (subtotal <= 0) {
+      showToast('Please add items to cart before redeeming wallet!', 'warning');
+      return;
+    }
+
+    // Apply up to available or up to subtotal
+    const redeemAmount = Math.min(available, Math.floor(subtotal));
+    appliedWalletDiscount = redeemAmount;
+
+    applySmartOffer(`WALLET-${redeemAmount}`, `Customer Wallet Cashback Redeemed`, redeemAmount, 0, 0);
+    showToast(`💰 Redeemed ₹${redeemAmount} from Customer Wallet!`, 'success');
+
+    const redeemBtn = document.getElementById('custRedeemWalletBtn');
+    if (redeemBtn) {
+      redeemBtn.textContent = 'Applied ✓';
+      redeemBtn.style.background = '#059669';
+    }
+  }
+
   async function saveNewCustomer() {
     const nameInput = document.getElementById('newCustNameInput');
     const phoneInput = document.getElementById('newCustPhoneInput');
     const emailInput = document.getElementById('newCustEmailInput');
+    const dobInput = document.getElementById('newCustDobInput');
+    const annivInput = document.getElementById('newCustAnnivInput');
     const name = nameInput ? nameInput.value.trim() : '';
     const phone = phoneInput ? phoneInput.value.trim() : '';
     const email = emailInput ? emailInput.value.trim() : '';
+    const dob = dobInput ? dobInput.value : null;
+    const anniv = annivInput ? annivInput.value : null;
     if (!name || !phone) {
       showToast('Name and Mobile Number are required!', 'error');
       return;
@@ -5575,12 +8916,14 @@
           restaurant_id: RESTAURANT_ID,
           name: name,
           phone: phone,
-          email: email
+          email: email,
+          date_of_birth: dob,
+          anniversary_date: anniv
         })
       });
       const resData = await res.json();
       if (resData.success) {
-        selectedCustomerData = { name, phone, email, points: 0, avatar, isNew: true, ordersCount: 0 };
+        selectedCustomerData = { name, phone, email, points: 0, avatar, isNew: true, ordersCount: 0, wallet_balance: 0 };
         const strip = document.querySelector('.customer-strip');
         if (strip) {
           const avatarEl = strip.querySelector('.cust-avatar');
@@ -5593,6 +8936,8 @@
         if (nameInput) nameInput.value = '';
         if (phoneInput) phoneInput.value = '';
         if (emailInput) emailInput.value = '';
+        if (dobInput) dobInput.value = '';
+        if (annivInput) annivInput.value = '';
         closeModal('newCustomerModal');
         closeModal('customerModal');
         showToast(`🎉 Customer ${name} registered successfully!`, 'success');
@@ -5794,8 +9139,169 @@
     }
   }
 
+  /* ─── PETPOOJA KEYBOARD SHORTCUTS & BARCODE SCANNER ENGINE ─── */
+  function openShortcutsModal() {
+    openModal('shortcutsModal');
+  }
+
+  // Barcode scanner buffer & timer
+  let barcodeBuffer = '';
+  let lastKeyTime = Date.now();
+
+  window.addEventListener('keydown', (e) => {
+    // If user is typing in an input/textarea and it's NOT an F-key or Alt shortcut, let default input happen
+    const activeTagName = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+    const isTyping = (activeTagName === 'input' || activeTagName === 'textarea' || activeTagName === 'select');
+
+    // F1: Save & Send KOT (if cart has items), or Focus Search Bar
+    if (e.key === 'F1') {
+      e.preventDefault();
+      const cartCount = MENU.filter(i => i.qty > 0).length;
+      if (cartCount > 0) {
+        sendKOT();
+      } else {
+        focusItemSearch();
+      }
+      return;
+    }
+
+    // F2: Place Order / Checkout
+    if (e.key === 'F2') {
+      e.preventDefault();
+      checkout();
+      return;
+    }
+
+    // F3: Select Customer Modal
+    if (e.key === 'F3') {
+      e.preventDefault();
+      openModal('customerModal');
+      return;
+    }
+
+    // F4: Hold Current Cart
+    if (e.key === 'F4') {
+      e.preventDefault();
+      holdCurrentCart();
+      return;
+    }
+
+    // F8: Smart Offers & Discounts
+    if (e.key === 'F8') {
+      e.preventDefault();
+      openModal('posOffersModal');
+      return;
+    }
+
+    // F9: Print Hub
+    if (e.key === 'F9') {
+      e.preventDefault();
+      openPrintHub(lastPlacedOrderId);
+      return;
+    }
+
+    // Alt + C: Clear Cart
+    if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+      e.preventDefault();
+      clearCart();
+      return;
+    }
+
+    // Press '?' (Shift + /) for Shortcuts Cheat Sheet when not typing in an input
+    if (e.key === '?' && !isTyping) {
+      e.preventDefault();
+      openShortcutsModal();
+      return;
+    }
+
+    // Escape: Close topmost modal
+    if (e.key === 'Escape') {
+      const openModals = document.querySelectorAll('.modal-overlay.show, .modal-overlay[style*="display: flex"]');
+      if (openModals.length > 0) {
+        e.preventDefault();
+        openModals.forEach(m => {
+          m.classList.remove('show');
+          m.style.display = 'none';
+        });
+      }
+      return;
+    }
+
+    // ─── HARDWARE BARCODE SCANNER DETECTOR ───
+    // Fast keystroke stream (<50ms between keys) ending with Enter
+    const currentTime = Date.now();
+    if (currentTime - lastKeyTime > 120) {
+      barcodeBuffer = '';
+    }
+    lastKeyTime = currentTime;
+
+    if (e.key === 'Enter') {
+      if (barcodeBuffer.length >= 3 && !isTyping) {
+        e.preventDefault();
+        const scannedCode = barcodeBuffer.trim();
+        barcodeBuffer = '';
+        handleBarcodeScannedItem(scannedCode);
+      }
+    } else if (e.key.length === 1) {
+      barcodeBuffer += e.key;
+    }
+  });
+
+  function handleBarcodeScannedItem(code) {
+    const item = MENU.find(m => 
+      (m.barcode && String(m.barcode).toLowerCase() === code.toLowerCase()) ||
+      (m.sku && String(m.sku).toLowerCase() === code.toLowerCase()) ||
+      String(m.id) === code
+    );
+
+    if (item) {
+      addQuickItem(item.id);
+      showToast(`🎯 Barcode Scanned: Added ${item.name} (₹${item.price}) to cart!`, 'success');
+    } else {
+      showToast(`⚠️ Scanned Barcode "${code}" not found in Menu!`, 'warning');
+    }
+  }
+
+  /* ─── OFFLINE-READY NETWORK SENTINEL ─── */
+  function updateNetworkStatusDisplay(isOnline) {
+    const badge = document.getElementById('posNetworkStatusBadge');
+    const icon = document.getElementById('posNetworkStatusIcon');
+    const text = document.getElementById('posNetworkStatusText');
+    if (!badge || !icon || !text) return;
+
+    if (isOnline) {
+      badge.style.color = '#10B981';
+      badge.style.borderColor = 'rgba(16,185,129,0.3)';
+      badge.style.background = 'rgba(16,185,129,0.1)';
+      badge.title = 'Network Sentinel: Online & Synced';
+      icon.className = 'fa-solid fa-wifi';
+      text.textContent = 'Online';
+    } else {
+      badge.style.color = '#EF4444';
+      badge.style.borderColor = 'rgba(239,68,68,0.4)';
+      badge.style.background = 'rgba(239,68,68,0.18)';
+      badge.title = 'Network Sentinel: Offline Mode Active. Local data preserved.';
+      icon.className = 'fa-solid fa-triangle-exclamation fa-fade';
+      text.textContent = 'Offline Mode';
+      showToast('⚠️ Network connection lost! Offline Mode active — local billing continues safely.', 'warning');
+    }
+  }
+
+  window.addEventListener('online', () => {
+    updateNetworkStatusDisplay(true);
+    showToast('🟢 Internet connection restored! Online sync resumed.', 'success');
+    if (typeof syncRealTimeLiveAlerts === 'function') syncRealTimeLiveAlerts();
+  });
+
+  window.addEventListener('offline', () => {
+    updateNetworkStatusDisplay(false);
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
     renderPosNotifications();
+    updateHeldCartsCountBadge();
+    updateNetworkStatusDisplay(navigator.onLine);
+    if (typeof renderPetpoojaCategoryRibbon === 'function') renderPetpoojaCategoryRibbon();
     syncRealTimeLiveAlerts();
     setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 15000);
   });
