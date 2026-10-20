@@ -1718,6 +1718,9 @@
                   <button class="action-btn" title="Record Manual Payment" onclick="openPaymentModal(${r.id})">
                     <i class="fa-solid fa-receipt"></i>
                   </button>
+                  <button class="action-btn" title="Delete Restaurant (Permanent)" onclick="deleteRestaurantPrompt(${r.id}, '${(r.name || '').replace(/'/g, "\\'")}')" style="background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.35);">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -1764,6 +1767,9 @@
                   </button>
                   <button class="action-btn" title="Record Payment" onclick="openPaymentModal(${r.id})">
                     <i class="fa-solid fa-indian-rupee-sign"></i>
+                  </button>
+                  <button class="action-btn" title="Delete Restaurant (Permanent)" onclick="deleteRestaurantPrompt(${r.id}, '${(r.name || '').replace(/'/g, "\\'")}')" style="background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.35);">
+                    <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
               </td>
@@ -1857,6 +1863,31 @@
         }
       } catch (err) {
         showToast('Activation failed', 'error');
+      }
+    }
+
+    async function deleteRestaurantPrompt(id, name) {
+      const promptName = name ? `"${name}"` : `Restaurant #${id}`;
+      if (!confirm(`⚠️ PERMANENT DELETE WARNING:\n\nAre you sure you want to delete ${promptName} (#${id})?\n\nThis will permanently delete the restaurant, its users, menus, tables, and orders from the database. This action CANNOT be undone!`)) {
+        return;
+      }
+      try {
+        const res = await fetch(`/api/superadmin/restaurants/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast(json.message || 'Restaurant permanently deleted!', 'success');
+          closeModal('detailsModal');
+          fetchRestaurants();
+          fetchSubscriptions();
+          if (typeof fetchPlatformStats === 'function') fetchPlatformStats();
+        } else {
+          showToast(json.message || 'Deletion failed', 'error');
+        }
+      } catch (err) {
+        showToast('Network error during deletion', 'error');
       }
     }
 

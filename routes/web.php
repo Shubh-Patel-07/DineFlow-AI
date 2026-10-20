@@ -721,6 +721,7 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
         Route::get('/restaurants/{id}', [SuperAdminController::class, 'restaurantDetails']);
         Route::post('/restaurants', [SuperAdminController::class, 'createRestaurant']);
         Route::put('/restaurants/{id}', [SuperAdminController::class, 'updateRestaurant']);
+        Route::delete('/restaurants/{id}', [SuperAdminController::class, 'deleteRestaurant']);
         Route::post('/restaurants/{id}/activate', [SuperAdminController::class, 'activateRestaurant']);
         Route::post('/restaurants/{id}/suspend', [SuperAdminController::class, 'suspendRestaurant']);
         Route::post('/restaurants/{id}/plan', [SuperAdminController::class, 'updatePlan']);

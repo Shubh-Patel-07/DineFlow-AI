@@ -1185,4 +1185,37 @@ class SuperAdminController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Permanently delete a restaurant and cascade its associated data (Spam cleanup)
+     */
+    public function deleteRestaurant(Request $request, $id)
+    {
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
+            return response()->json(['success' => false, 'message' => 'Restaurant not found'], 404);
+        }
+
+        $resData = [
+            'id' => $restaurant->id,
+            'name' => $restaurant->name,
+            'email' => $restaurant->users->first()?->email,
+        ];
+
+        // Cascade delete related records
+        \App\Models\User::where('restaurant_id', $id)->delete();
+        \App\Models\MenuItem::where('restaurant_id', $id)->delete();
+        \App\Models\Table::where('restaurant_id', $id)->delete();
+        \App\Models\Order::where('restaurant_id', $id)->delete();
+        \App\Models\Expense::where('restaurant_id', $id)->delete();
+        \App\Models\Customer::where('restaurant_id', $id)->delete();
+        $restaurant->delete();
+
+        AuditLog::record('restaurant_deleted', null, 'restaurant', $id, $resData);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Restaurant #{$id} and all related records deleted permanently."
+        ]);
+    }
 }
