@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -512,7 +512,7 @@
     /* ─── MAIN LAYOUT ─────────────────────────── */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
-    /* ─── PETPOOJA STYLE TOPBAR ─── */
+    /* ─── DINEFLOW STYLE TOPBAR ─── */
     .topbar {
       background: var(--card); border-bottom: 1.5px solid var(--border);
       padding: 0 16px; height: 56px; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -531,7 +531,7 @@
     .topbar-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
     .notif-dot { position: absolute; top: 7px; right: 7px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--card); }
 
-    /* Petpooja Quick Action Control Buttons */
+    /* DineFlow Quick Action Control Buttons */
     .pos-quick-tool-btn {
       display: inline-flex;
       align-items: center;
@@ -724,8 +724,8 @@
       color: var(--primary);
     }
 
-    /* Petpooja Standard Veg / Non-Veg Badges */
-    .petpooja-diet-icon {
+    /* DineFlow Standard Veg / Non-Veg Badges */
+    .pos-diet-icon {
       width: 14px;
       height: 14px;
       border-radius: 3px;
@@ -736,17 +736,17 @@
       background: rgba(16,185,129,0.08);
       flex-shrink: 0;
     }
-    .petpooja-diet-icon.nonveg {
+    .pos-diet-icon.nonveg {
       border-color: #EF4444;
       background: rgba(239,68,68,0.08);
     }
-    .petpooja-diet-icon .diet-dot {
+    .pos-diet-icon .diet-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: #10B981;
     }
-    .petpooja-diet-icon.nonveg .diet-dot {
+    .pos-diet-icon.nonveg .diet-dot {
       background: #EF4444;
     }
 
@@ -2188,7 +2188,7 @@
       </div>
     </div>
 
-    <!-- Center: Petpooja Quick Action Control Cluster -->
+    <!-- Center: DineFlow Quick Action Control Cluster -->
     <div style="display:flex; align-items:center; gap:8px;">
       <!-- Cash Register & Shift Drawer -->
       <button type="button" class="pos-quick-tool-btn shift-btn" id="posShiftBtn" title="Cash Register & Shift Control" onclick="openShiftRegisterModal()">
@@ -2210,7 +2210,7 @@
         <span id="holdCartsCountBadge" style="display:none; background:#EC4899; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
       </button>
 
-      <!-- Live Stock & Ingredients Inventory Alert (Petpooja Stock Feature) -->
+      <!-- Live Stock & Ingredients Inventory Alert (DineFlow Stock Feature) -->
       <button type="button" class="pos-quick-tool-btn stock-btn" id="posInventoryBtn" title="Live Inventory Stock & Low-Stock Alerts" onclick="openInventoryQuickModal()">
         <i class="fa-solid fa-boxes-stacked"></i>
         <span>Stock &amp; Inventory</span>
@@ -2402,7 +2402,7 @@
         </div>
       </div>
 
-      <!-- Petpooja Fast Search & Quick Filters -->
+      <!-- DineFlow Fast Search & Quick Filters -->
       <div class="menu-controls" style="padding: 10px 14px 6px; display:flex; flex-direction:column; gap:8px;">
         <div style="display:flex; gap:8px; align-items:center; width:100%;">
           <div class="search-box" style="flex:1;">
@@ -2413,7 +2413,7 @@
             </button>
           </div>
 
-          <!-- Veg / Non-Veg Quick Dietary Toggles (Petpooja Standard) -->
+          <!-- Veg / Non-Veg Quick Dietary Toggles (DineFlow Standard) -->
           <div style="display:flex; gap:4px; align-items:center;">
             <button type="button" id="posFilterAllDietBtn" onclick="setDietaryFilter('all')" class="cat-pill active" style="padding:4px 10px; font-size:11px; font-weight:700; border-radius:8px;">
               All
@@ -2452,8 +2452,8 @@
           </div>
         </div>
 
-        <!-- Petpooja Fast Category Ribbon (Scrollable 1-Click Pills) -->
-        <div id="petpoojaCategoryRibbon" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; width:100%;">
+        <!-- DineFlow Fast Category Ribbon (Scrollable 1-Click Pills) -->
+        <div id="posCategoryRibbon" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; width:100%;">
           <!-- Dynamically filled with top categories -->
         </div>
       </div>
@@ -2487,7 +2487,7 @@
               </div>
               <div class="item-body">
                 <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
-                  <span class="petpooja-diet-icon {{ $isVeg ? 'veg' : 'nonveg' }}" title="{{ $isVeg ? 'Vegetarian' : 'Non-Vegetarian' }}"><span class="diet-dot"></span></span>
+                  <span class="pos-diet-icon {{ $isVeg ? 'veg' : 'nonveg' }}" title="{{ $isVeg ? 'Vegetarian' : 'Non-Vegetarian' }}"><span class="diet-dot"></span></span>
                   <span class="item-category-tag">{{ strtoupper($category) }}</span>
                 </div>
                 <div class="item-name" title="{{ $item->name }}">{{ $item->name }}</div>
@@ -2561,7 +2561,7 @@
         </button>
       </div>
 
-      <!-- Home Delivery Address & Rider Dispatch Strip (Petpooja Delivery Module) -->
+      <!-- Home Delivery Address & Rider Dispatch Strip (DineFlow Delivery Module) -->
       <div id="deliveryDetailsStrip" style="display:none; background:rgba(245,158,11,0.06); border-bottom:1px solid rgba(245,158,11,0.25); padding:10px 14px; flex-direction:column; gap:8px;">
         <div style="display:flex; align-items:center; justify-content:space-between;">
           <span style="font-size:11.5px; font-weight:800; color:#F59E0B; display:flex; align-items:center; gap:5px;">
@@ -2596,7 +2596,7 @@
         <input class="cart-note-input" placeholder="Add order notes (allergies, special requests…)" id="cartNote" />
       </div>
 
-      <!-- B2B GST Tax Billing (Petpooja B2B Invoicing Feature) -->
+      <!-- B2B GST Tax Billing (DineFlow B2B Invoicing Feature) -->
       <div style="padding: 4px 14px 2px;">
         <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer;">
           <input type="checkbox" id="b2bInvoiceToggle" onchange="toggleB2bInvoiceForm()" style="accent-color: #0EA5E9;">
@@ -2608,7 +2608,7 @@
         </div>
       </div>
 
-      <!-- Petpooja Fast Quick-Discount Strip -->
+      <!-- DineFlow Fast Quick-Discount Strip -->
       <div style="padding: 4px 14px 2px; display:flex; align-items:center; justify-content:space-between; gap:6px;">
         <span style="font-size:10.5px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> Quick Disc:</span>
         <div style="display:flex; gap:4px; flex-wrap:wrap;">
@@ -2667,10 +2667,10 @@
         </div>
       </div>
 
-      <!-- Clean & Professional Petpooja POS Action Section -->
+      <!-- Clean & Professional DineFlow POS Action Section -->
       <div class="cart-actions" style="display:flex; flex-direction:column; gap:10px; padding:12px 14px 14px; border-top:1.5px solid var(--border); background:rgba(0,0,0,0.06);">
         
-        <!-- Petpooja Dual Primary Action: Save & Print KOT (F1) + Pay & Place Order (F2) -->
+        <!-- DineFlow Dual Primary Action: Save & Print KOT (F1) + Pay & Place Order (F2) -->
         <div style="display:grid; grid-template-columns: 1fr 1.35fr; gap:8px; width:100%;">
           <button type="button" class="btn-checkout" onclick="sendKOT()" style="height:48px; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13.5px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 6px 18px rgba(245,158,11,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'" title="Send KOT to Kitchen without settling payment (F1)">
             <i class="fa-solid fa-fire-burner" style="font-size:16px;"></i>
@@ -2743,7 +2743,7 @@
   </div>
 </div>
 
-<!-- Live Inventory Stock & Ingredients Modal (Petpooja Stock Management) -->
+<!-- Live Inventory Stock & Ingredients Modal (DineFlow Stock Management) -->
 <div class="modal-overlay" id="inventoryModal">
   <div class="modal" style="width:720px; max-width:95vw; max-height:88vh; display:flex; flex-direction:column; border-radius:18px;">
     <div class="modal-header">
@@ -3047,7 +3047,7 @@
       <button class="modal-close" onclick="closeModal('tableModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body">
-      <!-- Petpooja Shift & Merge Table Quick Bar -->
+      <!-- DineFlow Shift & Merge Table Quick Bar -->
       <div style="display:flex; gap:8px; margin-bottom:12px;">
         <button type="button" class="btn-outline" onclick="openShiftModal()" style="flex:1; height:36px; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; color:#818CF8; border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.08); border-radius:10px; cursor:pointer;">
           <i class="fa-solid fa-right-left"></i> Shift Table
@@ -3084,7 +3084,7 @@
   </div>
 </div>
 
-<!-- Table Shift & Merge Modal (Petpooja Feature) -->
+<!-- Table Shift & Merge Modal (DineFlow Feature) -->
 <div class="modal-overlay" id="shiftMergeModal">
   <div class="modal" style="width:420px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
     <div class="modal-header" style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
@@ -3112,7 +3112,7 @@
   </div>
 </div>
 
-<!-- Cash Register & Shift Modal (Petpooja Feature) -->
+<!-- Cash Register & Shift Modal (DineFlow Feature) -->
 <div class="modal-overlay" id="shiftRegisterModal">
   <div class="modal" style="width:480px; max-width:94vw; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden;">
     <div class="modal-header" style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
@@ -3129,7 +3129,7 @@
   </div>
 </div>
 
-<!-- Petty Cash Modal (Petpooja Cash-In / Cash-Out) -->
+<!-- Petty Cash Modal (DineFlow Cash-In / Cash-Out) -->
 <div class="modal-overlay" id="pettyCashModal">
   <div class="modal" style="width:380px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
     <div class="modal-header" style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
@@ -3214,7 +3214,7 @@
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════════
-     PETPOOJA ONLINE AGGREGATOR & DELIVERY HUB MODAL (Zomato / Swiggy / Delivery Boys)
+     DINEFLOW ONLINE AGGREGATOR & DELIVERY HUB MODAL (Zomato / Swiggy / Delivery Boys)
 ════════════════════════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="deliveryHubModal">
   <div class="modal" style="width:780px; max-width:96vw; max-height:90vh; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;">
@@ -3319,7 +3319,7 @@
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════════
-     PETPOOJA RECIPE & FOOD COSTING MODAL (BOM, Profit Margins & Kitchen Wastage)
+     DINEFLOW RECIPE & FOOD COSTING MODAL (BOM, Profit Margins & Kitchen Wastage)
 ════════════════════════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="recipeModal">
   <div class="modal" style="width:860px; max-width:96vw; max-height:90vh; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;">
@@ -3491,7 +3491,7 @@
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════════
-     PETPOOJA GST & TAX COMPLIANCE REPORT MODAL (B2B, B2C GSTR-1 & CSV EXPORT)
+     DINEFLOW GST & TAX COMPLIANCE REPORT MODAL (B2B, B2C GSTR-1 & CSV EXPORT)
 ════════════════════════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="gstReportModal">
   <div class="modal" style="width:900px; max-width:96vw; max-height:90vh; background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;">
@@ -3903,7 +3903,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
-     PETPOOJA MULTI-CART HOLD & RECALL HUB MODAL
+     DINEFLOW MULTI-CART HOLD & RECALL HUB MODAL
 ══════════════════════════════════════════════ -->
 <div class="modal-overlay" id="holdOrdersModal">
   <div class="modal" style="width:680px; max-width:95vw; max-height:85vh; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; background:var(--card); border:1px solid var(--border); box-shadow:var(--shadow-lg);">
@@ -4788,7 +4788,7 @@
           </div>
           <div class="item-body">
             <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
-              <span class="petpooja-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
+              <span class="pos-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
               <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
             </div>
             <div class="item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
@@ -4851,8 +4851,8 @@
       if (typeof renderCatPopup === 'function') {
         renderCatPopup();
       }
-      if (typeof renderPetpoojaCategoryRibbon === 'function') {
-        renderPetpoojaCategoryRibbon();
+      if (typeof renderPosCategoryRibbon === 'function') {
+        renderPosCategoryRibbon();
       }
       if (typeof renderCart === 'function') {
         renderCart();
@@ -4877,7 +4877,7 @@
   if (Array.isArray(MENU) && MENU.length > 0) {
     try {
       renderMenu();
-      if (typeof renderPetpoojaCategoryRibbon === 'function') renderPetpoojaCategoryRibbon();
+      if (typeof renderPosCategoryRibbon === 'function') renderPosCategoryRibbon();
     } catch (e) {
       console.warn('Initial renderMenu error:', e);
     }
@@ -4965,7 +4965,7 @@
     updateTotals();
   }
 
-  /* ─── PETPOOJA OPERATIONS DROPDOWN CONTROLLER ─── */
+  /* ─── DINEFLOW OPERATIONS DROPDOWN CONTROLLER ─── */
   function toggleMoreToolsMenu(event) {
     if (event) {
       event.preventDefault();
@@ -5452,8 +5452,8 @@
     renderMenu();
   }
 
-  function renderPetpoojaCategoryRibbon() {
-    const ribbon = document.getElementById('petpoojaCategoryRibbon');
+  function renderPosCategoryRibbon() {
+    const ribbon = document.getElementById('posCategoryRibbon');
     if (!ribbon) return;
     const categories = typeof getCats === 'function' ? getCats() : [];
     if (categories.length === 0) return;
@@ -5501,7 +5501,7 @@
       btn.classList.toggle('filtered', currentCat.toLowerCase() !== 'all');
     }
     closeModal('catPopupModal');
-    renderPetpoojaCategoryRibbon();
+    renderPosCategoryRibbon();
     renderMenu();
   }
 
@@ -5634,7 +5634,7 @@
     renderTablesGrid(filtered);
   }
 
-  /* ─── PETPOOJA TABLE SHIFT & MERGE FUNCTIONS ─── */
+  /* ─── DINEFLOW TABLE SHIFT & MERGE FUNCTIONS ─── */
   function openShiftModal() {
     if (!allTablesData || allTablesData.length === 0) {
       showToast('No table data loaded yet', 'warning');
@@ -5750,7 +5750,7 @@
     }
   }
 
-  /* ─── PETPOOJA SHIFT & CASH REGISTER LOGIC ─── */
+  /* ─── DINEFLOW SHIFT & CASH REGISTER LOGIC ─── */
   let currentShiftData = null;
 
   async function checkShiftStatusOnLoad() {
@@ -6063,7 +6063,7 @@
     }
   }
 
-  /* ─── PETPOOJA ANTI-THEFT KOT CANCELLATION LOGIC ─── */
+  /* ─── DINEFLOW ANTI-THEFT KOT CANCELLATION LOGIC ─── */
   function openCancelKotItemModal(orderId, itemId, itemName) {
     document.getElementById('cancelKotOrderId').value = orderId;
     document.getElementById('cancelKotItemId').value = itemId;
@@ -6116,7 +6116,7 @@
   }
 
   /* ════════════════════════════════════════════════════════════════════════════════
-     PETPOOJA ONLINE AGGREGATOR & DELIVERY HUB JAVASCRIPT MODULE
+     DINEFLOW ONLINE AGGREGATOR & DELIVERY HUB JAVASCRIPT MODULE
   ════════════════════════════════════════════════════════════════════════════════ */
   let activeDeliveryHubTab = 'aggregators';
   let lastKnownPendingAggregatorCount = 0;
@@ -6670,7 +6670,7 @@
   }, 20000);
 
   /* ════════════════════════════════════════════════════════════════════════════════
-     PETPOOJA RECIPE, FOOD COSTING, WASTAGE & GST REPORT JAVASCRIPT MODULE
+     DINEFLOW RECIPE, FOOD COSTING, WASTAGE & GST REPORT JAVASCRIPT MODULE
   ════════════════════════════════════════════════════════════════════════════════ */
   let cachedRecipeItems = [];
   let cachedRecipeInventory = [];
@@ -7587,7 +7587,7 @@
   /* ─── COUPON ─────────────────────────────── */
   // Real applyCoupon() is defined above with backend API validation
 
-  /* ─── KOT (PETPOOJA LIVE KITCHEN PIPELINE) ────────────────── */
+  /* ─── KOT (DINEFLOW LIVE KITCHEN PIPELINE) ────────────────── */
   function sendKOT() {
     const cartItems = MENU.filter(i => i.qty > 0);
     if (cartItems.length === 0) {
@@ -7648,7 +7648,7 @@
     });
   }
 
-  /* ─── PETPOOJA MULTI-CART HOLD & RECALL ENGINE ─── */
+  /* ─── DINEFLOW MULTI-CART HOLD & RECALL ENGINE ─── */
   const HOLD_CARTS_STORAGE_KEY = `dineflow_held_carts_${RESTAURANT_ID}`;
 
   function getHeldCarts() {
@@ -7688,7 +7688,7 @@
     holdCurrentCart();
   }
 
-  // ─── LIVE PETPOOJA-STYLE INVENTORY QUICK VIEW IN POS ───
+  // ─── LIVE DINEFLOW-STYLE INVENTORY QUICK VIEW IN POS ───
   let posInventoryCache = [];
 
   async function openInventoryQuickModal() {
@@ -9179,7 +9179,7 @@
     }
   }
 
-  /* ─── PETPOOJA KEYBOARD SHORTCUTS & BARCODE SCANNER ENGINE ─── */
+  /* ─── DINEFLOW KEYBOARD SHORTCUTS & BARCODE SCANNER ENGINE ─── */
   function openShortcutsModal() {
     openModal('shortcutsModal');
   }
@@ -9341,7 +9341,7 @@
     renderPosNotifications();
     updateHeldCartsCountBadge();
     updateNetworkStatusDisplay(navigator.onLine);
-    if (typeof renderPetpoojaCategoryRibbon === 'function') renderPetpoojaCategoryRibbon();
+    if (typeof renderPosCategoryRibbon === 'function') renderPosCategoryRibbon();
     syncRealTimeLiveAlerts();
     setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 15000);
   });

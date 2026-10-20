@@ -539,7 +539,7 @@ Route::prefix('api')->group(function () {
         Route::post('/tables/shift', [TableController::class, 'shiftTable'])->middleware('role:admin,manager,cashier,waiter');
         Route::post('/tables/merge', [TableController::class, 'mergeTables'])->middleware('role:admin,manager,cashier,waiter');
 
-        // Cash Register & Shift Management (Petpooja Shift Control & Petty Cash)
+        // Cash Register & Shift Management (DineFlow Shift Control & Petty Cash)
         Route::get('/cash-register/current', [CashRegisterController::class, 'getCurrentShift'])->middleware('role:admin,manager,cashier');
         Route::post('/cash-register/open', [CashRegisterController::class, 'openShift'])->middleware('role:admin,manager,cashier');
         Route::post('/cash-register/petty-cash', [CashRegisterController::class, 'addPettyCash'])->middleware('role:admin,manager,cashier');
@@ -554,7 +554,7 @@ Route::prefix('api')->group(function () {
         Route::post('/api/manager/verify-pin', [CashRegisterController::class, 'verifyManagerPin']);
         Route::post('/api/orders/cancel-kot-item', [CashRegisterController::class, 'cancelKotItem']);
 
-        // Home Delivery & Rider Management (Petpooja Delivery Module)
+        // Home Delivery & Rider Management (DineFlow Delivery Module)
         Route::get('/delivery/riders', [DeliveryAggregatorController::class, 'getRiders'])->middleware('role:admin,manager,cashier');
         Route::post('/delivery/riders', [DeliveryAggregatorController::class, 'storeRider'])->middleware('role:admin,manager,cashier');
         Route::post('/delivery/assign', [DeliveryAggregatorController::class, 'assignRider'])->middleware('role:admin,manager,cashier');
@@ -578,7 +578,7 @@ Route::prefix('api')->group(function () {
         Route::post('/api/aggregators/orders/{id}/ready', [DeliveryAggregatorController::class, 'markFoodReady']);
         Route::post('/api/aggregators/orders/{id}/reject', [DeliveryAggregatorController::class, 'rejectOrder']);
 
-        // Recipe & Food Costing (Petpooja BOM & Auto-Deductions)
+        // Recipe & Food Costing (DineFlow BOM & Auto-Deductions)
         Route::get('/recipes', [RecipeReportController::class, 'getRecipes'])->middleware('role:admin,manager,cashier');
         Route::post('/recipes', [RecipeReportController::class, 'saveRecipe'])->middleware('role:admin,manager');
         Route::get('/api/recipes', [RecipeReportController::class, 'getRecipes']);

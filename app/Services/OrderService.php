@@ -120,7 +120,7 @@ class OrderService
                     'kot_status' => 'pending',
                 ];
 
-                // Automatic Inventory & Recipe Deduction (Petpooja Food Costing & BOM Engine)
+                // Automatic Inventory & Recipe Deduction (DineFlow Food Costing & BOM Engine)
                 try {
                     $recipes = \App\Models\Recipe::where('restaurant_id', $restaurantId)
                         ->where('menu_item_id', $menuItem->id)
