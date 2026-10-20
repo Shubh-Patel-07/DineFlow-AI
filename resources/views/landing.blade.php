@@ -1061,6 +1061,15 @@
     <!-- 1. HERO SECTION -->
     <section class="hero-section">
         <div class="container hero-content">
+            <!-- Commercial Code Sale Announcement Banner -->
+            <a href="/buy-source-code" style="text-decoration:none; display:inline-block; margin-bottom: 20px;">
+                <div style="display:inline-flex; align-items:center; gap:10px; padding:8px 22px; background: linear-gradient(135deg, rgba(236,72,153,0.18), rgba(99,102,241,0.18)); border: 1.5px solid rgba(236,72,153,0.45); border-radius:30px; color:#F472B6; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; box-shadow: 0 0 22px rgba(236,72,153,0.3); transition: all 0.3s ease;">
+                    <span style="width:8px; height:8px; background:#EC4899; border-radius:50%; display:inline-block; box-shadow:0 0 10px #EC4899;"></span>
+                    <span>🔥 Commercial Source Code &amp; White-Label Sale Active • 50% Off</span>
+                    <i class="fa-solid fa-arrow-right" style="font-size:11px; margin-left:4px;"></i>
+                </div>
+            </a>
+
             <div class="section-tag"><i class="fa-solid fa-bolt"></i> Complete Restaurant Platform</div>
             <h1 class="hero-title">Complete Restaurant Management, POS, QR Ordering & Kitchen in One Platform.</h1>
             <p class="hero-desc">
@@ -1068,6 +1077,10 @@
             </p>
 
             <div class="hero-ctas">
+                <a href="/buy-source-code" class="btn-primary" style="background: linear-gradient(135deg, #EC4899, #8B5CF6); box-shadow: 0 6px 22px rgba(236,72,153,0.45); font-weight: 800; padding: 10px 22px;">
+                    <i class="fa-solid fa-fire" style="margin-right: 6px;"></i>
+                    <span>Buy Source Code ($2,499)</span>
+                </a>
                 <a href="{{ route('register') }}" class="btn-primary">
                     <span>START FREE</span>
                     <i class="fa-solid fa-arrow-right"></i>
