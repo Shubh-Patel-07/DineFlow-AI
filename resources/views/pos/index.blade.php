@@ -170,8 +170,12 @@
       display: flex !important;
       flex-direction: column !important;
       justify-content: space-between !important;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
       overflow: hidden !important;
+      content-visibility: auto !important;
+      contain-intrinsic-size: 200px 150px !important;
+      transform: translateZ(0) !important;
+      will-change: transform !important;
     }
     body.light-theme .item-card:hover {
       border-color: #6366F1 !important;
@@ -959,44 +963,49 @@
     .cat-pill.active { border-color: var(--primary); color: #fff; background: var(--primary); }
     .cat-pill .dot   { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .7; }
 
-    /* Menu Grid */
+    /* Menu Grid - Hardware Accelerated & Virtualized */
     .menu-grid {
       flex: 1; overflow-y: auto; padding: 12px;
       display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       grid-auto-rows: minmax(200px, auto);
       gap: 12px;
       align-content: start;
+      contain: layout style;
+      transform: translateZ(0);
+      -webkit-overflow-scrolling: touch;
     }
     .menu-grid::-webkit-scrollbar { width: 6px; }
     .menu-grid::-webkit-scrollbar-track { background: transparent; }
     .menu-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
     .item-card {
-      background: rgba(30, 41, 59, 0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: #1E293B;
       border-radius: 14px;
       border: 1.5px solid rgba(255, 255, 255, 0.08);
       cursor: pointer;
-      transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
       overflow: hidden;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.25);
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       min-height: 200px;
       height: 100%;
+      content-visibility: auto;
+      contain-intrinsic-size: 200px 150px;
+      transform: translateZ(0);
+      will-change: transform;
     }
     .item-card:hover {
       border-color: rgba(99, 102, 241, 0.7);
-      box-shadow: 0 12px 30px -4px rgba(99, 102, 241, 0.35);
-      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 24px -2px rgba(99, 102, 241, 0.35);
+      transform: translateY(-3px);
     }
     .item-card.in-cart {
       border-color: #10B981;
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.85));
-      box-shadow: 0 8px 24px -2px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 6px 20px -2px rgba(16, 185, 129, 0.3);
     }
 
     .item-img {
@@ -1004,11 +1013,11 @@
       background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, rgba(15, 23, 42, 0.95) 100%);
       display: flex; align-items: center; justify-content: center;
       font-size: 34px; position: relative; overflow: hidden;
-      transition: transform 0.3s ease;
+      transition: transform 0.2s ease;
       flex-shrink: 0;
     }
     .item-card:hover .item-img {
-      transform: scale(1.1);
+      transform: scale(1.04);
     }
 
     .item-badge {
@@ -1016,7 +1025,6 @@
       font-size: 8.5px; font-weight: 800; padding: 2px 7px;
       border-radius: 20px; letter-spacing: .5px;
       text-transform: uppercase;
-      backdrop-filter: blur(8px);
     }
     .item-badge.veg   { background: rgba(16, 185, 129, 0.2); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.45); box-shadow: 0 0 12px rgba(16, 185, 129, 0.25); }
     .item-badge.nonveg{ background: rgba(239, 68, 68, 0.2);  color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.45);  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25); }
@@ -5716,10 +5724,14 @@
     selectCat('all','All Categories'); 
   }
 
-  /* ─── FILTER ─────────────────────────────── */
+  /* ─── FILTER (DEBOUNCED & 60FPS SMOOTH) ──── */
+  let filterDebounceTimer = null;
   function filterItems(val) {
     searchTerm = val || '';
-    renderMenu();
+    if (filterDebounceTimer) cancelAnimationFrame(filterDebounceTimer);
+    filterDebounceTimer = requestAnimationFrame(() => {
+      renderMenu();
+    });
   }
 
   function focusItemSearch() {
