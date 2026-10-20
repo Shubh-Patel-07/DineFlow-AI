@@ -829,6 +829,10 @@
         <i class="fa-solid fa-clipboard-list"></i>
         <span>Audit Logs</span>
       </a>
+      <a class="nav-item" onclick="switchSection('user-logins', this)">
+        <i class="fa-solid fa-user-clock"></i>
+        <span>User Logins &amp; Activity</span>
+      </a>
       <a class="nav-item" onclick="switchSection('leads', this)">
         <i class="fa-solid fa-address-book"></i>
         <span>Leads &amp; Enquiries</span>
@@ -1120,6 +1124,75 @@
               </thead>
               <tbody id="auditLogsTableBody">
                 <tr><td colspan="6" style="text-align: center;">Loading audit logs...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: USER LOGINS & ACTIVITY TRACKER ── -->
+      <section id="section-user-logins" style="display: none;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <div class="metric-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Total Platform Users</span>
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(99,102,241,0.15); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-users"></i>
+              </div>
+            </div>
+            <div style="font-size: 26px; font-weight: 800;" id="userStatTotal">--</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Registered Staff &amp; Admins</div>
+          </div>
+          <div class="metric-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Active Today</span>
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(16,185,129,0.15); color: var(--success); display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-user-check"></i>
+              </div>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; color: var(--success);" id="userStatToday">--</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Logged in today</div>
+          </div>
+          <div class="metric-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Active This Week</span>
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(245,158,11,0.15); color: var(--warning); display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; color: var(--warning);" id="userStatWeek">--</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Past 7 days active</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header" style="flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;">
+                <i class="fa-solid fa-user-clock" style="color: var(--primary);"></i> User Login &amp; Session Tracker
+              </h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Live tracking of all users/staff entering the platform (Date, Exact Time, Role, Restaurant &amp; Device)</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="text" id="userLoginSearch" class="form-input" style="width: 220px; padding: 7px 12px; font-size: 13px;" placeholder="Search user or email..." onkeyup="filterUserLogins()">
+              <button class="btn-secondary" onclick="fetchUserLogins()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>User &amp; Email</th>
+                  <th>Role</th>
+                  <th>Restaurant / Branch</th>
+                  <th>Date &amp; Time</th>
+                  <th>IP Address</th>
+                  <th>Device / Browser</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="userLoginsTableBody">
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading user login records...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1514,6 +1587,7 @@
         'subscriptions': 'SaaS Subscription Control',
         'analytics': 'Global Analytics',
         'audit-logs': 'System Audit Logs',
+        'user-logins': 'User Logins & Real-time Activity',
         'leads': 'Leads & Enquiries Management'
       };
       document.getElementById('currentSectionTitle').textContent = titles[sectionId] || 'Super Admin';
@@ -1521,6 +1595,7 @@
       if (sectionId === 'restaurants') fetchRestaurants();
       if (sectionId === 'subscriptions') fetchSubscriptions();
       if (sectionId === 'audit-logs') fetchAuditLogs();
+      if (sectionId === 'user-logins') fetchUserLogins();
       if (sectionId === 'dashboard') fetchRecentOrders();
       if (sectionId === 'leads') fetchLeads(1);
 
@@ -1625,6 +1700,9 @@
                   <button class="action-btn" title="View Full Inspection" onclick="openDetailsModal(${r.id})">
                     <i class="fa-solid fa-eye"></i>
                   </button>
+                  <a href="/superadmin/impersonate/${r.id}" class="action-btn" title="Login As Restaurant (Access POS & Dashboard)" style="background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.4); text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                  </a>
                   ${isSuspended ? `
                     <button class="action-btn" title="Activate / Restore Restaurant" onclick="quickActivate(${r.id})" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.4);">
                       <i class="fa-solid fa-play"></i>
@@ -1942,17 +2020,20 @@
             </div>
 
             <!-- Action Buttons Inside Modal -->
-            <div style="display: flex; gap: 8px; margin: 16px 0; padding: 12px; background: var(--bg-primary); border-radius: 10px;">
+            <div style="display: flex; gap: 8px; margin: 16px 0; padding: 12px; background: var(--bg-primary); border-radius: 10px; flex-wrap: wrap;">
+              <a href="/superadmin/impersonate/${r.id}" class="btn-primary" style="background: linear-gradient(135deg, #6366F1, #4F46E5); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 1; min-width: 180px; padding: 10px 14px; font-weight: 700; font-size: 13px;">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Login As Restaurant
+              </a>
               ${isSuspended ? `
-                <button type="button" class="btn-primary" style="background: #10B981; border-color: #10B981; flex: 1;" onclick="quickActivate(${r.id})">
-                  <i class="fa-solid fa-play"></i> Activate / Restore Restaurant
+                <button type="button" class="btn-primary" style="background: #10B981; border-color: #10B981; flex: 1; min-width: 180px;" onclick="quickActivate(${r.id})">
+                  <i class="fa-solid fa-play"></i> Activate / Restore
                 </button>
               ` : `
-                <button type="button" class="btn-danger" style="background: #EF4444; border-color: #EF4444; flex: 1;" onclick="openSuspendModal(${r.id})">
+                <button type="button" class="btn-danger" style="background: #EF4444; border-color: #EF4444; flex: 1; min-width: 180px;" onclick="openSuspendModal(${r.id})">
                   <i class="fa-solid fa-pause"></i> Suspend Restaurant
                 </button>
               `}
-              <button type="button" class="btn-secondary" style="flex: 1;" onclick="openSubscriptionModal(${r.id})">
+              <button type="button" class="btn-secondary" style="flex: 1; min-width: 180px;" onclick="openSubscriptionModal(${r.id})">
                 <i class="fa-solid fa-clock-rotate-left"></i> Manage Plan & Validity
               </button>
             </div>
@@ -2070,6 +2151,128 @@
       } catch (err) {
         console.error('Failed to fetch audit logs:', err);
       }
+    }
+
+    let allUserLogins = [];
+
+    async function fetchUserLogins() {
+      const tbody = document.getElementById('userLoginsTableBody');
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading live login activity...</td></tr>';
+      }
+
+      try {
+        const res = await fetch('/api/superadmin/user-logins');
+        const json = await res.json();
+
+        if (json.success) {
+          if (json.stats) {
+            const elTotal = document.getElementById('userStatTotal');
+            const elToday = document.getElementById('userStatToday');
+            const elWeek = document.getElementById('userStatWeek');
+            if (elTotal) elTotal.textContent = json.stats.total_users || 0;
+            if (elToday) elToday.textContent = json.stats.active_today || 0;
+            if (elWeek) elWeek.textContent = json.stats.active_this_week || 0;
+          }
+
+          allUserLogins = json.data || [];
+          renderUserLogins(allUserLogins);
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">Failed to load login activity.</td></tr>';
+        }
+      } catch (err) {
+        console.error('Failed to fetch user logins:', err);
+        if (tbody) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #EF4444; padding: 24px;">Error fetching user logins from server.</td></tr>';
+        }
+      }
+    }
+
+    function renderUserLogins(data) {
+      const tbody = document.getElementById('userLoginsTableBody');
+      if (!tbody) return;
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">No login activity recorded yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(log => {
+        const role = (log.role || 'staff').toLowerCase();
+        let roleBadgeColor = 'background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.3);';
+        if (role === 'superadmin') {
+          roleBadgeColor = 'background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3);';
+        } else if (role === 'admin' || role === 'owner') {
+          roleBadgeColor = 'background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3);';
+        } else if (role === 'cashier') {
+          roleBadgeColor = 'background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3);';
+        } else if (role === 'kitchen' || role === 'chef') {
+          roleBadgeColor = 'background: rgba(249,115,22,0.15); color: #F97316; border: 1px solid rgba(249,115,22,0.3);';
+        }
+
+        const initials = (log.user_name || 'U').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+
+        return `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--text-primary);">
+                  ${initials}
+                </div>
+                <div>
+                  <strong style="color: var(--text-primary); font-size: 13px;">${escapeHtml(log.user_name)}</strong>
+                  <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(log.user_email)}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span style="display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; ${roleBadgeColor}">
+                ${role}
+              </span>
+            </td>
+            <td>
+              <strong style="font-size: 13px;">${escapeHtml(log.restaurant_name)}</strong>
+              ${log.restaurant_id ? `<div style="font-size: 10px; color: var(--text-muted);">ID #${log.restaurant_id}</div>` : ''}
+            </td>
+            <td>
+              <div style="font-weight: 600; font-size: 12px; color: var(--text-primary);">${log.login_date} &bull; ${log.login_time}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${log.time_ago}</div>
+            </td>
+            <td>
+              <span style="font-family: monospace; font-size: 12px; background: rgba(255,255,255,0.04); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+                ${escapeHtml(log.ip_address)}
+              </span>
+            </td>
+            <td>
+              <div style="font-size: 11px; color: var(--text-secondary); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.user_agent)}">
+                <i class="fa-solid fa-desktop" style="margin-right: 4px; opacity: 0.7;"></i>
+                ${escapeHtml(log.user_agent.length > 35 ? log.user_agent.substring(0, 35) + '...' : log.user_agent)}
+              </div>
+            </td>
+            <td>
+              <span style="background: rgba(16,185,129,0.12); color: #10B981; border: 1px solid rgba(16,185,129,0.3); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="fa-solid fa-circle-check" style="font-size: 9px;"></i> Logged In
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterUserLogins() {
+      const q = (document.getElementById('userLoginSearch').value || '').toLowerCase().trim();
+      if (!q) {
+        renderUserLogins(allUserLogins);
+        return;
+      }
+      const filtered = allUserLogins.filter(item => {
+        return (item.user_name || '').toLowerCase().includes(q) ||
+               (item.user_email || '').toLowerCase().includes(q) ||
+               (item.restaurant_name || '').toLowerCase().includes(q) ||
+               (item.role || '').toLowerCase().includes(q) ||
+               (item.ip_address || '').toLowerCase().includes(q);
+      });
+      renderUserLogins(filtered);
     }
 
     /* ─── LEADS & ENQUIRIES MANAGEMENT ─── */

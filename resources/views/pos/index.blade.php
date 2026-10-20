@@ -2070,6 +2070,7 @@
   </style>
 </head>
 <body>
+@include('partials.impersonate-banner')
 
 <!-- ══════════════════════════════════════════════
      SIDEBAR

@@ -24,6 +24,24 @@ class SubscriptionStatusController extends Controller
         }
 
         if (!$user->restaurant_id) {
+            if (!$user->is_active) {
+                return view('subscription.status', [
+                    'restaurant' => (object)['name' => 'DineFlow Staff', 'id' => 0],
+                    'user' => $user,
+                    'status' => 'DEACTIVATED',
+                    'statusRaw' => 'deactivated',
+                    'effectiveExpiry' => null,
+                    'graceEndsAt' => null,
+                    'daysRemainingGrace' => 0,
+                    'customerMessage' => 'Your staff account has been deactivated. Please contact your administrator or manager.',
+                    'suspensionReason' => 'Staff Account Deactivated',
+                    'suspendedAt' => $user->updated_at,
+                    'supportPhone' => '+91 7777938338',
+                    'supportEmail' => 'shubhmpatel77@gmail.com',
+                    'whatsappUrl' => 'https://wa.me/917777938338',
+                    'availablePlans' => [],
+                ]);
+            }
             return redirect()->route('login');
         }
 
@@ -32,6 +50,7 @@ class SubscriptionStatusController extends Controller
             abort(404, 'Restaurant profile not found');
         }
 
+        $isUserDeactivated = !$user->is_active;
         $status = strtolower(trim($restaurant->subscription_status ?? 'active'));
         $effectiveExpiry = $restaurant->subscription_expires_at 
             ? Carbon::parse($restaurant->subscription_expires_at) 
@@ -41,8 +60,8 @@ class SubscriptionStatusController extends Controller
         $graceEndsAt = $effectiveExpiry ? (clone $effectiveExpiry)->addDays($graceDays) : null;
         $now = Carbon::now();
 
-        // If restaurant is fully active and not expired, redirect to their home
-        if ($status === 'active' || $status === 'trial') {
+        // If restaurant is fully active and not expired, redirect to their home (only if user account is active)
+        if (($status === 'active' || $status === 'trial') && !$isUserDeactivated) {
             if ($effectiveExpiry && $now->isAfter($effectiveExpiry)) {
                 // Let it evaluate status below
             } else {
@@ -56,7 +75,10 @@ class SubscriptionStatusController extends Controller
         }
 
         // Resolve customer-facing message
-        if ($status === 'suspended') {
+        if ($isUserDeactivated) {
+            $status = 'deactivated';
+            $customerMessage = "Your staff user account has been deactivated by the restaurant management. Please contact your store manager or administrator to restore access.";
+        } elseif ($status === 'suspended') {
             $customerMessage = $restaurant->getCustomerFacingSuspensionMessage();
         } elseif ($status === 'grace_period') {
             $customerMessage = $restaurant->getCustomerFacingGracePeriodMessage();

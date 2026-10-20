@@ -710,6 +710,8 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/superadmin/plans', [SuperAdminController::class, 'dashboard'])->name('superadmin.plans');
     Route::get('/superadmin/analytics', [SuperAdminController::class, 'dashboard'])->name('superadmin.analytics');
     Route::get('/superadmin/audit-logs', [SuperAdminController::class, 'dashboard'])->name('superadmin.audit-logs');
+    Route::get('/superadmin/user-logins', [SuperAdminController::class, 'dashboard'])->name('superadmin.user-logins');
+    Route::get('/superadmin/impersonate/{id}', [SuperAdminController::class, 'impersonateRestaurant'])->name('superadmin.impersonate');
 
     // Super Admin REST APIs
     Route::prefix('api/superadmin')->group(function () {
@@ -728,6 +730,7 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
         Route::post('/restaurants/{id}/payment', [SuperAdminController::class, 'recordPayment']);
         Route::get('/orders', [SuperAdminController::class, 'recentOrders']);
         Route::get('/audit-logs', [SuperAdminController::class, 'auditLogs']);
+        Route::get('/user-logins', [SuperAdminController::class, 'userLogins']);
         
         // Super Admin Leads & Enquiries Management
         Route::get('/leads', [SuperAdminController::class, 'leads']);
@@ -735,5 +738,11 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
         Route::delete('/leads/{id}', [SuperAdminController::class, 'deleteLead']);
     });
 });
+
+// Exit Impersonation Route (Accessible to authenticated user returning to superadmin)
+Route::get('/superadmin/leave-impersonate', [SuperAdminController::class, 'leaveImpersonation'])
+    ->name('superadmin.leave-impersonate')
+    ->middleware('auth');
+
 
 

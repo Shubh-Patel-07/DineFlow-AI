@@ -238,6 +238,7 @@
   </style>
 </head>
 <body>
+@include('partials.impersonate-banner')
 
   <div id="soundPermission" onclick="enableSound()" style="background: linear-gradient(135deg, #6366F1, #4F46E5); color: white; padding: 12px; text-align: center; border-radius: 10px; margin-bottom: 15px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
     <i class="fa-solid fa-volume-high fa-beat"></i> <span>અહીં ક્લિક કરી ગુજરાતી સાઉન્ડબોક્સ ચાલુ કરો (Click to Enable Gujarati Voice Alerts)</span>

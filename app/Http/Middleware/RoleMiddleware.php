@@ -32,6 +32,17 @@ class RoleMiddleware
         // If the route strictly requires superadmin, only superadmin can pass
         if (in_array('superadmin', $expandedRoles)) {
             if ($userRole !== 'superadmin') {
+                // If currently impersonating a restaurant, automatically restore superadmin session!
+                if ($request->hasSession() && $request->session()->has('impersonator_superadmin_id')) {
+                    $superadminId = $request->session()->get('impersonator_superadmin_id');
+                    $superadminUser = \App\Models\User::find($superadminId);
+                    if ($superadminUser && strtolower(trim($superadminUser->role ?? '')) === 'superadmin') {
+                        $request->session()->forget(['impersonator_superadmin_id', 'impersonated_restaurant_id', 'impersonated_restaurant_name']);
+                        auth()->login($superadminUser);
+                        return redirect()->to($request->fullUrl());
+                    }
+                }
+
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
@@ -51,7 +62,7 @@ class RoleMiddleware
                 }
 
                 // If user is a deactivated staff user
-                if ($user->is_active === false) {
+                if (!$user->is_active) {
                     return redirect()->route('subscription.status');
                 }
 

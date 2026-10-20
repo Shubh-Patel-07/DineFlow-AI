@@ -331,6 +331,7 @@
   </style>
 </head>
 <body>
+@include('partials.impersonate-banner')
 
 @if(Auth::user()?->restaurant?->is_demo)
 <div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 7px 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 9999;">

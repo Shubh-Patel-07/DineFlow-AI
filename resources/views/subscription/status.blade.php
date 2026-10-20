@@ -492,7 +492,11 @@
 
         <!-- Status Badge -->
         <div class="status-badge-wrapper">
-            @if($status === 'SUSPENDED')
+            @if($status === 'DEACTIVATED')
+                <div class="status-badge danger">
+                    <i class="fa-solid fa-user-slash"></i> User Account Deactivated
+                </div>
+            @elseif($status === 'SUSPENDED')
                 <div class="status-badge danger">
                     <i class="fa-solid fa-ban"></i> Account Suspended
                 </div>
@@ -508,7 +512,14 @@
         </div>
 
         <!-- Main Title & Subtitle -->
-        @if($status === 'SUSPENDED')
+        @if($status === 'DEACTIVATED')
+            <h1 class="status-title">Staff Account Deactivated</h1>
+            <p class="status-subtitle">
+                The account for <strong>{{ $user->name ?? 'User' }}</strong> has been temporarily deactivated by your administrator.
+                <br>
+                <span class="status-gujarati-sub">તમારું સ્ટાફ એકાઉન્ટ ડિએક્ટિવેટ કરવામાં આવ્યું છે. એક્સેસ પાછો મેળવવા કૃપા કરીને તમારા એડમિનનો સંપર્ક કરો.</span>
+            </p>
+        @elseif($status === 'SUSPENDED')
             <h1 class="status-title">Restaurant Account Suspended</h1>
             <p class="status-subtitle">
                 Access to <strong>{{ $restaurant->name }}</strong> has been temporarily placed on hold by Tendorabuy Administration.

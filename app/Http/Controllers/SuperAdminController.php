@@ -18,6 +18,7 @@ use App\Models\SubscriptionHistory;
 use App\Services\PlanLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -1028,5 +1029,160 @@ class SuperAdminController extends Controller
             ],
             'top_restaurants' => $topRestaurants,
         ];
+    }
+
+    /**
+     * Impersonate a restaurant: 1-Click Login as restaurant's primary admin/owner user.
+     */
+    public function impersonateRestaurant(Request $request, $id)
+    {
+        $superadmin = Auth::user();
+        if (!$superadmin || strtolower(trim($superadmin->role ?? '')) !== 'superadmin') {
+            abort(403, 'Unauthorized. Superadmin privilege required.');
+        }
+
+        $restaurant = Restaurant::findOrFail($id);
+
+        // Find primary admin/owner or any staff user for this restaurant
+        $targetUser = User::where('restaurant_id', $restaurant->id)
+            ->whereIn('role', ['admin', 'owner'])
+            ->first();
+
+        if (!$targetUser) {
+            $targetUser = User::where('restaurant_id', $restaurant->id)->first();
+        }
+
+        if (!$targetUser) {
+            return redirect()->route('superadmin.dashboard')
+                ->with('error', "No staff/admin account found for restaurant '{$restaurant->name}'. Please create a staff account first.");
+        }
+
+        $superadminId = $superadmin->id;
+
+        // Save original superadmin ID and restaurant info in session
+        session([
+            'impersonator_superadmin_id' => $superadminId,
+            'impersonated_restaurant_id' => $restaurant->id,
+            'impersonated_restaurant_name' => $restaurant->name,
+        ]);
+
+        try {
+            AuditLog::record('superadmin_impersonate_start', $restaurant->id, 'restaurant', $restaurant->id, [
+                'superadmin_id' => $superadminId,
+                'superadmin_email' => $superadmin->email,
+                'target_user_id' => $targetUser->id,
+                'target_user_email' => $targetUser->email,
+            ]);
+        } catch (\Throwable $e) {}
+
+        // Log in as target restaurant user
+        Auth::login($targetUser);
+
+        return redirect('/dashboard')->with('success', "Logged in as {$restaurant->name} ({$targetUser->name})");
+    }
+
+    /**
+     * Leave Impersonation: restore Superadmin session instantly
+     */
+    public function leaveImpersonation(Request $request)
+    {
+        $superadminId = session('impersonator_superadmin_id');
+
+        if (!$superadminId) {
+            return redirect()->route('login');
+        }
+
+        $superadmin = User::find($superadminId);
+
+        if (!$superadmin || strtolower(trim($superadmin->role ?? '')) !== 'superadmin') {
+            session()->forget(['impersonator_superadmin_id', 'impersonated_restaurant_id', 'impersonated_restaurant_name']);
+            Auth::logout();
+            return redirect()->route('login');
+        }
+
+        session()->forget(['impersonator_superadmin_id', 'impersonated_restaurant_id', 'impersonated_restaurant_name']);
+
+        Auth::login($superadmin);
+
+        return redirect()->route('superadmin.dashboard')->with('success', 'Returned to Super Admin Control Center.');
+    }
+
+    /**
+     * User Activity & Login Sessions Tracker
+     */
+    public function userLogins(Request $request)
+    {
+        $query = AuditLog::with(['user:id,name,email,role,restaurant_id,last_login_at,last_login_ip,last_login_device', 'restaurant:id,name'])
+            ->whereIn('action', ['staff_login', 'superadmin_impersonate_start', 'login', 'superadmin_login'])
+            ->orderBy('created_at', 'desc');
+
+        if ($request->filled('restaurant_id')) {
+            $query->where('restaurant_id', $request->restaurant_id);
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('role', 'like', "%{$search}%");
+                })->orWhereHas('restaurant', function ($rq) use ($search) {
+                    $rq->where('name', 'like', "%{$search}%");
+                })->orWhere('ip_address', 'like', "%{$search}%");
+            });
+        }
+
+        $logs = $query->paginate($request->input('per_page', 50));
+
+        $formatted = collect($logs->items())->map(function ($item) {
+            $user = $item->user;
+            $rest = $item->restaurant;
+            $meta = $item->metadata ?? [];
+            $createdAt = $item->created_at;
+
+            $userName = ($user && !empty($user->name)) 
+                ? $user->name 
+                : (($meta['name'] ?? null) ?: ($user?->username ?? $user?->email ?? $meta['username'] ?? $meta['email'] ?? 'Staff User'));
+
+            $restName = $rest 
+                ? $rest->name 
+                : ($item->restaurant_id ? (Restaurant::find($item->restaurant_id)?->name ?? "Restaurant #{$item->restaurant_id}") : 'Super Admin / Platform');
+
+            return [
+                'id' => $item->id,
+                'user_id' => $item->user_id,
+                'user_name' => $userName,
+                'user_email' => $user ? $user->email : ($meta['email'] ?? 'N/A'),
+                'role' => $user ? $user->role : ($meta['role'] ?? 'staff'),
+                'restaurant_id' => $item->restaurant_id,
+                'restaurant_name' => $restName,
+                'ip_address' => $item->ip_address ?? '127.0.0.1',
+                'user_agent' => $item->user_agent ?? 'Web Browser',
+                'login_date' => $createdAt ? $createdAt->format('d M Y') : 'N/A',
+                'login_time' => $createdAt ? $createdAt->format('h:i:s A') : 'N/A',
+                'time_ago' => $createdAt ? $createdAt->diffForHumans() : '',
+                'action' => $item->action,
+            ];
+        });
+
+        $totalUsers = User::count();
+        $activeToday = User::whereDate('last_login_at', Carbon::today())->count();
+        $activeThisWeek = User::where('last_login_at', '>=', Carbon::now()->subDays(7))->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => $formatted,
+            'stats' => [
+                'total_users' => $totalUsers,
+                'active_today' => $activeToday,
+                'active_this_week' => $activeThisWeek,
+            ],
+            'pagination' => [
+                'current_page' => $logs->currentPage(),
+                'last_page' => $logs->lastPage(),
+                'total' => $logs->total(),
+            ]
+        ]);
     }
 }

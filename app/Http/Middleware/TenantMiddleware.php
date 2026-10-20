@@ -49,6 +49,19 @@ class TenantMiddleware
             }
         }
 
+        // ── USER DEACTIVATION ENFORCEMENT ──────────────────────────────────────
+        if (!$user->is_active) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 'deactivated',
+                    'message' => 'Your staff account has been deactivated. Please contact your administrator.',
+                    'redirect' => '/subscription/status',
+                ], 403);
+            }
+            return redirect()->route('subscription.status');
+        }
+
         // ── SUBSCRIPTION STATUS ENFORCEMENT ────────────────────────────────────
         if ($user->restaurant_id) {
             $restaurant = \App\Models\Restaurant::find($user->restaurant_id);
