@@ -61,6 +61,62 @@
             padding: 0 20px;
         }
 
+        .navbar .container {
+            max-width: 1400px;
+            padding: 0 24px;
+        }
+
+        /* ─── DYNAMIC FLOATING AMBIENT GLOW ORBS ─── */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.32;
+            pointer-events: none;
+            z-index: 0;
+            will-change: transform;
+        }
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #6366F1, transparent 70%);
+            top: -100px;
+            left: -100px;
+            animation: orbFloat1 18s ease-in-out infinite alternate;
+        }
+        .orb-2 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, #EC4899, transparent 70%);
+            top: 25%;
+            right: -150px;
+            animation: orbFloat2 22s ease-in-out infinite alternate;
+        }
+        .orb-3 {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, #06B6D4, transparent 70%);
+            bottom: 10%;
+            left: 10%;
+            animation: orbFloat3 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes orbFloat1 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(120px, 160px) scale(1.15); }
+            100% { transform: translate(60px, 80px) scale(0.95); }
+        }
+        @keyframes orbFloat2 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-140px, 120px) scale(1.1); }
+            100% { transform: translate(-80px, -60px) scale(0.9); }
+        }
+        @keyframes orbFloat3 {
+            0% { transform: translate(0, 0) scale(0.9); }
+            50% { transform: translate(150px, -100px) scale(1.2); }
+            100% { transform: translate(40px, -50px) scale(1); }
+        }
+
         .section-tag {
             display: inline-flex;
             align-items: center;
@@ -375,9 +431,99 @@
             line-height: 1.2;
             letter-spacing: -0.6px;
             margin-bottom: 16px;
-            background: linear-gradient(135deg, #FFFFFF 30%, #A5B4FC 100%);
+            background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 25%, #EC4899 50%, #818CF8 75%, #FFFFFF 100%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: textShine 8s linear infinite;
+        }
+
+        @keyframes textShine {
+            to { background-position: 200% center; }
+        }
+
+        .btn-source-glow {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+            box-shadow: 0 4px 22px rgba(236, 72, 153, 0.45) !important;
+            animation: pulseSource 3s infinite alternate;
+        }
+        .btn-source-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transform: rotate(30deg);
+            animation: sweepShine 3.5s infinite linear;
+        }
+        @keyframes sweepShine {
+            0% { transform: translateX(-150%) rotate(30deg); }
+            100% { transform: translateX(150%) rotate(30deg); }
+        }
+        @keyframes pulseSource {
+            0% { box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transform: scale(1); }
+            100% { box-shadow: 0 6px 30px rgba(236, 72, 153, 0.7); transform: scale(1.02); }
+        }
+
+        /* ─── FLOATING LIVE BADGES ─── */
+        .floating-badge {
+            position: absolute;
+            background: rgba(18, 24, 50, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 9px 18px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 18px rgba(99, 102, 241, 0.25);
+            z-index: 5;
+            pointer-events: none;
+            will-change: transform;
+        }
+        .badge-top-left {
+            top: -22px;
+            left: -20px;
+            animation: floatLevitate1 4s ease-in-out infinite alternate;
+        }
+        .badge-top-right {
+            top: -18px;
+            right: -20px;
+            animation: floatLevitate2 4.5s ease-in-out infinite alternate;
+        }
+        .badge-bottom-left {
+            bottom: -20px;
+            left: 24px;
+            animation: floatLevitate2 5s ease-in-out infinite alternate;
+        }
+        @keyframes floatLevitate1 {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-12px) rotate(-1.5deg); }
+        }
+        @keyframes floatLevitate2 {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-10px) rotate(1.5deg); }
+        }
+        .pulse-dot-green {
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #10B981;
+            animation: dotBlink 1.5s infinite;
+        }
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
         }
 
         .hero-desc {
@@ -444,11 +590,20 @@
         }
 
         .mock-card {
-            background: rgba(15, 23, 42, 0.65);
+            background: rgba(15, 23, 42, 0.7);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
+            border-radius: 16px;
+            padding: 22px;
             text-align: left;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mock-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(99, 102, 241, 0.45);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 24px rgba(99, 102, 241, 0.2);
         }
 
         .mock-icon {
@@ -911,10 +1066,17 @@
             gap: 10px;
         }
 
-        /* ─── RESPONSIVE BREAKPOINTS (320px - 1100px) ─── */
-        @media (max-width: 1100px) {
+        /* ─── RESPONSIVE BREAKPOINTS (320px - 1280px) ─── */
+        @media (max-width: 1280px) {
+            .wa-text { display: none; }
             .nav-links { gap: 16px; }
             .nav-links a { font-size: 13.5px; }
+        }
+
+        @media (max-width: 1100px) {
+            .nav-links { gap: 12px; }
+            .nav-links a { font-size: 13px; }
+            .btn-header-demo span { font-size: 12px; }
             .wa-text { display: none; }
         }
 
@@ -923,6 +1085,7 @@
             .desktop-auth-btns { display: none !important; }
             .mobile-menu-btn { display: flex; }
             .btn-header-demo { display: none; }
+            .floating-badge { display: none !important; }
             .hero-mockup { grid-template-columns: 1fr; }
             .features-grid { grid-template-columns: repeat(2, 1fr); }
             .steps-grid { grid-template-columns: repeat(2, 1fr); }
@@ -951,6 +1114,11 @@
 </head>
 <body>
 
+    <!-- DYNAMIC FLOATING AMBIENT GLOW ORBS -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container nav-inner">
@@ -971,14 +1139,13 @@
                 <li><a href="/pricing">Pricing</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href="/contact">Contact</a></li>
-                <li><a href="/buy-source-code" style="color: #F472B6; font-weight: 700;"><i class="fa-solid fa-code" style="margin-right: 4px;"></i>Buy Code</a></li>
             </ul>
 
             <!-- Header Actions -->
             <div class="nav-actions">
                 <!-- Buy Source Code Pill -->
-                <a href="/buy-source-code" class="btn-header-demo" style="background: rgba(236, 72, 153, 0.15); border-color: rgba(236, 72, 153, 0.4); color: #F472B6;" title="Buy Complete Unencrypted Source Code">
-                    <i class="fa-solid fa-fire" style="font-size: 11px; color: #EC4899;"></i>
+                <a href="/buy-source-code" class="btn-header-demo btn-source-glow" style="border-color: rgba(236, 72, 153, 0.5); color: #fff; font-weight: 800;" title="Buy Complete Unencrypted Source Code">
+                    <i class="fa-solid fa-fire" style="font-size: 11px; color: #fff;"></i>
                     <span>Buy Source Code</span>
                 </a>
 
@@ -994,7 +1161,7 @@
                     <span class="wa-text">+91 7777938338</span>
                 </a>
 
-                <div class="desktop-auth-btns" style="display:flex; align-items:center; gap:8px;">
+                <div class="desktop-auth-btns" style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
                 @auth
                     @if(Auth::user()->role === 'superadmin')
                         <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i> Super Admin</a>
@@ -1077,20 +1244,46 @@
             </p>
 
             <div class="hero-ctas">
-                <a href="/buy-source-code" class="btn-primary" style="background: linear-gradient(135deg, #EC4899, #8B5CF6); box-shadow: 0 6px 22px rgba(236,72,153,0.45); font-weight: 800; padding: 10px 22px;">
+                <a href="/buy-source-code" class="btn-primary btn-source-glow" style="font-weight: 800; padding: 12px 26px;">
                     <i class="fa-solid fa-fire" style="margin-right: 6px;"></i>
                     <span>Buy Source Code ($2,499)</span>
                 </a>
-                <a href="{{ route('register') }}" class="btn-primary">
-                    <span>START FREE</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                @auth
+                    @if(Auth::user()->role === 'superadmin')
+                        <a href="{{ route('superadmin.dashboard') }}" class="btn-primary">
+                            <span>Open Super Admin</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    @elseif(Auth::user()->role === 'kitchen')
+                        <a href="/kitchen" class="btn-primary">
+                            <span>Open Kitchen KDS</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    @elseif(in_array(Auth::user()->role, ['cashier', 'waiter']))
+                        <a href="/pos" class="btn-primary">
+                            <span>Open POS Billing</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    @else
+                        <a href="/dashboard" class="btn-primary">
+                            <span>Go to Dashboard</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('register') }}" class="btn-primary">
+                        <span>START FREE</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                @endauth
                 <a href="/demo" class="btn-ghost" style="border: 1px solid #6366F1; color: #A5B4FC; background: rgba(99, 102, 241, 0.1);">
                     <i class="fa-solid fa-play" style="margin-right: 6px; color: #818CF8;"></i> Try Live Demo
                 </a>
+                @guest
                 <a href="{{ route('login') }}" class="btn-ghost">
                     <i class="fa-solid fa-right-to-bracket" style="margin-right: 6px;"></i> Login
                 </a>
+                @endguest
             </div>
 
             <div class="hero-pill-badge">
@@ -1099,6 +1292,19 @@
 
             <!-- Visual Showcase Mockup -->
             <div class="hero-mockup-wrapper">
+                <div class="floating-badge badge-top-left">
+                    <span class="pulse-dot-green"></span>
+                    <span>⚡ 0.8s Ultra-Fast Billing</span>
+                </div>
+                <div class="floating-badge badge-top-right">
+                    <i class="fa-solid fa-code" style="color: #EC4899;"></i>
+                    <span>⭐ 100% Full Source Code</span>
+                </div>
+                <div class="floating-badge badge-bottom-left">
+                    <i class="fa-solid fa-qrcode" style="color: #818CF8;"></i>
+                    <span>📱 Contactless UPI QR Menu</span>
+                </div>
+
                 <div class="hero-mockup">
                     <div class="mock-card">
                         <div class="mock-icon" style="color: #818CF8;"><i class="fa-solid fa-qrcode"></i></div>

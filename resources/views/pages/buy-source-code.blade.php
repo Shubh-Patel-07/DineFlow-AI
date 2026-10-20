@@ -1326,6 +1326,17 @@
             color: var(--text-muted);
         }
 
+        .navbar .container {
+            max-width: 1380px;
+            padding: 0 24px;
+        }
+
+        @media (max-width: 1240px) {
+            .btn-wa-header span { display: none; }
+            .nav-links { gap: 14px; }
+            .nav-links a { font-size: 13px; }
+        }
+
         @media (max-width: 900px) {
             .nav-links { display: none; }
             .hero-title { font-size: 34px; }
