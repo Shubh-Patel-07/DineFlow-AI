@@ -21,6 +21,9 @@ class User extends Authenticatable
         'role',
         'restaurant_id',
         'is_active',
+        'last_login_at',
+        'last_login_ip',
+        'last_login_device',
     ];
 
     protected $hidden = [
@@ -32,6 +35,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
         ];
