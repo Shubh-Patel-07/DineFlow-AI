@@ -59,6 +59,17 @@ class AuthController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
 
+        // Update User last login timestamp, IP and Agent device
+        try {
+            $user->update([
+                'last_login_at' => \Carbon\Carbon::now(),
+                'last_login_ip' => $request->ip(),
+                'last_login_device' => substr($request->userAgent() ?? 'Web Browser', 0, 255),
+            ]);
+        } catch (\Throwable $e) {
+            // Non-blocking update
+        }
+
         // Store username and role in session for tenant RBAC
         if ($request->hasSession()) {
             session([
