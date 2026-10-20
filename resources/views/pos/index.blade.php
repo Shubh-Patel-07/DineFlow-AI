@@ -4686,10 +4686,135 @@
     grid.innerHTML = html;
   }
 
+  // POS Menu State & Filter Variables
+  let currentCat = 'all';
+  let searchTerm = '';
+  let currentDietaryFilter = 'all'; // 'all', 'veg', 'nonveg'
+
   // Pre-seed MENU from server-injected items (zero-delay hydration, no fake items)
   let MENU = Array.isArray(SERVER_MENU_ITEMS) && SERVER_MENU_ITEMS.length > 0
     ? SERVER_MENU_ITEMS.map(transformMenuItem)
     : [];
+
+  function getCats() {
+    const catMap = new Map();
+    const cats = [
+      { key: 'all', label: 'All Items', emoji: '🍽️', count: (MENU || []).length }
+    ];
+
+    (MENU || []).forEach(item => {
+      const rawCat = (item.category || item.cat || '').trim();
+      if (!rawCat) return;
+      const upperCat = rawCat.toUpperCase();
+      if (!catMap.has(upperCat)) {
+        catMap.set(upperCat, {
+          key: upperCat,
+          label: formatCatTitle(upperCat),
+          emoji: getCatEmoji(upperCat),
+          count: 0
+        });
+      }
+      catMap.get(upperCat).count++;
+    });
+
+    const sortedCats = Array.from(catMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+    return cats.concat(sortedCats);
+  }
+
+  /* ─── RENDER MENU ────────────────────────── */
+  function renderMenu() {
+    const grid = document.getElementById('menuGrid');
+    if (!grid) return;
+
+    const query = (searchTerm || '').trim().toLowerCase();
+    const targetCat = (currentCat || 'all').toLowerCase();
+
+    const items = (MENU || []).filter(i => {
+      const matchCat = targetCat === 'all' || areCategoriesMatching(i.category || i.cat, targetCat);
+      const matchDiet = currentDietaryFilter === 'all' 
+        ? true 
+        : (currentDietaryFilter === 'veg' ? (i.badge === 'veg' || i.is_veg === true) : (i.badge === 'nonveg' || i.is_veg === false));
+      const matchSearch = !query ||
+        (i.name && i.name.toLowerCase().includes(query)) ||
+        (i.category && i.category.toLowerCase().includes(query)) ||
+        (i.desc && i.desc.toLowerCase().includes(query));
+      return matchCat && matchDiet && matchSearch;
+    });
+
+    if (items.length === 0) {
+      if (!MENU || MENU.length === 0) {
+        grid.innerHTML = `
+          <div class="pos-empty-state">
+            <div class="pos-empty-icon"><i class="fa-solid fa-utensils"></i></div>
+            <div class="pos-empty-title">No Menu Items Found</div>
+            <div class="pos-empty-sub">This restaurant doesn't have any menu items configured in the system yet.</div>
+            <a href="/admin/menu-manager" class="pos-empty-action"><i class="fa-solid fa-plus"></i> Add Menu Item</a>
+          </div>`;
+      } else {
+        grid.innerHTML = `
+          <div class="pos-empty-state">
+            <div class="pos-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="pos-empty-title">No Matching Dishes</div>
+            <div class="pos-empty-sub">No dishes found matching "${escapeHtml(searchTerm || currentCat)}". Try clearing your search or category filter.</div>
+            <button type="button" class="pos-empty-action" onclick="resetCat(); const si = document.getElementById('posSearchInput'); if (si) si.value=''; filterItems('');"><i class="fa-solid fa-rotate-left"></i> Reset Filter</button>
+          </div>`;
+      }
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const isSoldOut = !item.is_available;
+      const isVeg = item.badge === 'veg' || item.is_veg === true;
+      const hasImg = item.image && item.image.trim().length > 5;
+      const cardClass = `item-card ${item.qty > 0 ? 'in-cart' : ''} ${isSoldOut ? 'item-card-unavailable' : ''}`;
+      const safeName = escapeHtml(item.name).replace(/'/g, "\\'");
+      const clickAction = isSoldOut ? `showToast('${safeName} is Out of Stock!', 'error')` : `addQuickItem('${item.id}')`;
+
+      return `
+        <div class="${cardClass}" onclick="${clickAction}">
+          <div class="item-img">
+            ${hasImg ? `
+              <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <span style="display:none; font-size:34px;">${item.emoji}</span>
+            ` : `
+              <span>${item.emoji}</span>
+            `}
+            ${item.badge === 'out' || isSoldOut
+              ? `<span class="item-badge out">SOLD OUT</span>`
+              : (item.badge === 'new' ? `<span class="item-badge new">NEW</span>` : (item.badge === 'best' ? `<span class="item-badge best">BEST</span>` : ''))
+            }
+            ${item.qty > 0 ? `<span class="item-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
+            ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
+          </div>
+          <div class="item-body">
+            <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
+              <span class="petpooja-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
+              <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
+            </div>
+            <div class="item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+            <div class="item-footer">
+              <div class="item-price">₹ ${Number(item.price).toFixed(0)}<small>/dish</small></div>
+              <div class="item-footer-actions">
+                ${isSoldOut
+                  ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i> Out of Stock</span>`
+                  : (item.qty > 0
+                      ? `
+                        <div class="item-card-stepper" onclick="event.stopPropagation()">
+                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', -1)" title="Decrease Qty">−</button>
+                          <span class="card-step-qty">${item.qty}</span>
+                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', 1)" title="Increase Qty">+</button>
+                        </div>
+                      `
+                      : `<button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('${item.id}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>`
+                    )
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
   async function syncPosMenuWithDatabase() {
     if (!MENU || MENU.length === 0) {
@@ -4739,14 +4864,40 @@
         grid.innerHTML = `
           <div class="pos-error-state">
             <div class="pos-empty-icon" style="background:rgba(239,68,68,0.15); color:#EF4444;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <div class="pos-empty-title">Failed to Load Menu Items</div>
-            <div class="pos-empty-sub">Unable to connect to the server or fetch items. Please check network and retry.</div>
+            <div class="pos-empty-title">Unable to Load Menu Items</div>
+            <div class="pos-empty-sub">Failed to fetch menu items from server (${err.message || 'Network error'}). Please check connectivity.</div>
             <button type="button" class="pos-empty-action" onclick="syncPosMenuWithDatabase()"><i class="fa-solid fa-rotate-right"></i> Retry Loading</button>
           </div>
         `;
       }
     }
   }
+
+  // Zero-delay immediate initial render if items pre-seeded from server
+  if (Array.isArray(MENU) && MENU.length > 0) {
+    try {
+      renderMenu();
+      if (typeof renderPetpoojaCategoryRibbon === 'function') renderPetpoojaCategoryRibbon();
+    } catch (e) {
+      console.warn('Initial renderMenu error:', e);
+    }
+  }
+
+  // Trigger sync on DOMContentLoaded or immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => syncPosMenuWithDatabase());
+  } else {
+    syncPosMenuWithDatabase();
+  }
+
+  // Failsafe timeout: If skeleton is still visible after 2s, force sync or show empty state
+  setTimeout(() => {
+    const grid = document.getElementById('menuGrid');
+    if (grid && grid.querySelector('.pos-skeleton-card')) {
+      console.warn('POS Menu Skeleton still visible after 2s, executing failsafe...');
+      syncPosMenuWithDatabase();
+    }
+  }, 2000);
 
   const DEFAULT_WAITER_NAME = @json(Auth::user()->name ?? 'Staff');
   const META_PICKERS = {
@@ -4775,128 +4926,6 @@
     covers: '2',
     priority: 'Normal',
   };
-
-  let currentCat = 'all';
-  let searchTerm = '';
-
-  function getCats() {
-    const catMap = new Map();
-    const cats = [
-      { key: 'all', label: 'All Items', emoji: '🍽️', count: MENU.length }
-    ];
-
-    MENU.forEach(item => {
-      const rawCat = (item.category || item.cat || '').trim();
-      if (!rawCat) return;
-      const upperCat = rawCat.toUpperCase();
-      if (!catMap.has(upperCat)) {
-        catMap.set(upperCat, {
-          key: upperCat,
-          label: formatCatTitle(upperCat),
-          emoji: getCatEmoji(upperCat),
-          count: 0
-        });
-      }
-      catMap.get(upperCat).count++;
-    });
-
-    const sortedCats = Array.from(catMap.values()).sort((a, b) => a.label.localeCompare(b.label));
-    return cats.concat(sortedCats);
-  }
-
-  /* ─── RENDER MENU ────────────────────────── */
-  function renderMenu() {
-    const grid = document.getElementById('menuGrid');
-    if (!grid) return;
-
-    const query = (searchTerm || '').trim().toLowerCase();
-    const targetCat = (currentCat || 'all').toLowerCase();
-
-    const items = MENU.filter(i => {
-      const matchCat = targetCat === 'all' || areCategoriesMatching(i.category || i.cat, targetCat);
-      const matchDiet = currentDietaryFilter === 'all' 
-        ? true 
-        : (currentDietaryFilter === 'veg' ? (i.badge === 'veg' || i.is_veg === true) : (i.badge === 'nonveg' || i.is_veg === false));
-      const matchSearch = !query ||
-        (i.name && i.name.toLowerCase().includes(query)) ||
-        (i.category && i.category.toLowerCase().includes(query)) ||
-        (i.desc && i.desc.toLowerCase().includes(query));
-      return matchCat && matchDiet && matchSearch;
-    });
-
-    if (items.length === 0) {
-      if (MENU.length === 0) {
-        grid.innerHTML = `
-          <div class="pos-empty-state">
-            <div class="pos-empty-icon"><i class="fa-solid fa-utensils"></i></div>
-            <div class="pos-empty-title">No Menu Items Found</div>
-            <div class="pos-empty-sub">This restaurant doesn't have any menu items configured in the system yet.</div>
-            <a href="/admin/menu-manager" class="pos-empty-action"><i class="fa-solid fa-plus"></i> Add Menu Item</a>
-          </div>`;
-      } else {
-        grid.innerHTML = `
-          <div class="pos-empty-state">
-            <div class="pos-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-            <div class="pos-empty-title">No Matching Dishes</div>
-            <div class="pos-empty-sub">No dishes found matching "${escapeHtml(searchTerm || currentCat)}". Try clearing your search or category filter.</div>
-            <button type="button" class="pos-empty-action" onclick="resetCat(); const si = document.getElementById('posSearchInput'); if (si) si.value=''; filterItems('');"><i class="fa-solid fa-rotate-left"></i> Reset Filter</button>
-          </div>`;
-      }
-      return;
-    }
-
-    grid.innerHTML = items.map(item => {
-      const isSoldOut = !item.is_available;
-      const isVeg = item.badge === 'veg' || item.is_veg === true;
-      const hasImg = item.image && item.image.trim().length > 5;
-      const cardClass = `item-card ${item.qty > 0 ? 'in-cart' : ''} ${isSoldOut ? 'item-card-unavailable' : ''}`;
-      const clickAction = isSoldOut ? `showToast('${escapeHtml(item.name)} is Out of Stock!', 'error')` : `addQuickItem('${item.id}')`;
-
-      return `
-        <div class="${cardClass}" onclick="${clickAction}">
-          <div class="item-img">
-            ${hasImg ? `
-              <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-              <span style="display:none; font-size:34px;">${item.emoji}</span>
-            ` : `
-              <span>${item.emoji}</span>
-            `}
-            ${item.badge === 'out' || isSoldOut
-              ? `<span class="item-badge out">SOLD OUT</span>`
-              : (item.badge === 'new' ? `<span class="item-badge new">NEW</span>` : (item.badge === 'best' ? `<span class="item-badge best">BEST</span>` : ''))
-            }
-            ${item.qty > 0 ? `<span class="item-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
-            ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
-          </div>
-          <div class="item-body">
-            <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
-              <span class="petpooja-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
-              <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
-            </div>
-            <div class="item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
-            <div class="item-footer">
-              <div class="item-price">₹ ${Number(item.price).toFixed(0)}<small>/dish</small></div>
-              <div class="item-footer-actions">
-                ${isSoldOut
-                  ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i> Out of Stock</span>`
-                  : (item.qty > 0
-                      ? `
-                        <div class="item-card-stepper" onclick="event.stopPropagation()">
-                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', -1)" title="Decrease Qty">−</button>
-                          <span class="card-step-qty">${item.qty}</span>
-                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', 1)" title="Increase Qty">+</button>
-                        </div>
-                      `
-                      : `<button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('${item.id}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>`
-                    )
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
 
   /* ─── RENDER CART WITH ITEM COOKING PREFERENCES ─── */
   function renderCart() {
@@ -5414,8 +5443,6 @@
     renderCatPopup();
     openModal('catPopupModal');
   }
-
-  let currentDietaryFilter = 'all'; // 'all', 'veg', 'nonveg'
 
   function setDietaryFilter(diet) {
     currentDietaryFilter = diet || 'all';
