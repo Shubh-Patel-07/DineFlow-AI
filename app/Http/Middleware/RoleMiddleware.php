@@ -38,7 +38,33 @@ class RoleMiddleware
                         'message' => "Forbidden: Superadmin privilege required."
                     ], 403);
                 }
-                abort(403, "Forbidden: Superadmin privilege required.");
+
+                // If user is suspended or belongs to a suspended/expired restaurant, redirect to professional subscription/suspended page
+                if ($user->restaurant_id) {
+                    $restaurant = \App\Models\Restaurant::find($user->restaurant_id);
+                    if ($restaurant) {
+                        $st = strtolower(trim($restaurant->subscription_status ?? ''));
+                        if (in_array($st, ['suspended', 'expired', 'cancelled'])) {
+                            return redirect()->route('subscription.status');
+                        }
+                    }
+                }
+
+                // If user is a deactivated staff user
+                if ($user->is_active === false) {
+                    return redirect()->route('subscription.status');
+                }
+
+                // Otherwise redirect unauthorized users to their appropriate dashboard instead of raw 403 error
+                if ($userRole === 'admin' || $userRole === 'owner' || $userRole === 'manager') {
+                    return redirect('/dashboard');
+                } elseif ($userRole === 'cashier' || $userRole === 'waiter') {
+                    return redirect('/pos');
+                } elseif ($userRole === 'kitchen' || $userRole === 'chef') {
+                    return redirect('/kitchen');
+                }
+
+                return redirect('/dashboard');
             }
             return $next($request);
         }
