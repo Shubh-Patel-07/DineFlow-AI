@@ -272,16 +272,21 @@
     .topbar-center-cluster {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-shrink: 1;
       min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
     }
     .topbar-right-cluster {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       flex-shrink: 0 !important;
       margin-left: auto;
+      background: var(--card);
+      position: relative;
+      z-index: 5;
     }
     .pos-quick-logout-form {
       margin: 0;
@@ -325,6 +330,54 @@
       border-color: #EF4444 !important;
       color: #FFFFFF !important;
     }
+    /* Cashier User Pill (Base & Light Theme) */
+    .user-pill-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      padding: 3px 9px 3px 6px !important;
+      height: 33px !important;
+      border-radius: 9px !important;
+      cursor: pointer !important;
+      background: var(--bg) !important;
+      border: 1.5px solid var(--border) !important;
+      transition: all 0.15s ease !important;
+      flex-shrink: 0 !important;
+      user-select: none !important;
+      box-sizing: border-box !important;
+    }
+    .user-pill-btn:hover {
+      border-color: var(--primary) !important;
+      background: var(--card) !important;
+    }
+    .user-pill-btn i.fa-chevron-down {
+      font-size: 9px !important;
+      color: var(--text-muted) !important;
+      margin-left: 2px !important;
+      align-self: center !important;
+    }
+    .user-pill-text {
+      display: flex !important;
+      flex-direction: column !important;
+      line-height: 1.15 !important;
+      min-width: 0 !important;
+      justify-content: center !important;
+    }
+    .user-pill-text span:first-child {
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      color: var(--text-primary) !important;
+      max-width: 95px !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+    .user-pill-text span:last-child {
+      font-size: 9.5px !important;
+      color: var(--text-muted) !important;
+      text-transform: capitalize !important;
+      font-weight: 600 !important;
+    }
     body.light-theme .user-pill-btn {
       background: #F8FAFC !important;
       border: 1.5px solid #E2E8F0 !important;
@@ -335,8 +388,8 @@
       box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08) !important;
     }
 
-    /* Topbar responsive compactness on 1366px - 1536px laptop/desktop screens */
-    @media (max-width: 1536px) {
+    /* Topbar responsive compactness on 1366px - 1600px laptop/desktop screens */
+    @media (max-width: 1600px) {
       .topbar {
         padding: 0 10px !important;
         gap: 6px !important;
@@ -346,20 +399,27 @@
         font-size: 11px !important;
         gap: 5px !important;
         height: 32px !important;
-        min-width: 32px !important;
-      }
-      .user-pill-text {
-        max-width: 85px !important;
       }
     }
 
-    @media (max-width: 1366px) {
+    @media (max-width: 1440px) {
       .pos-quick-tool-btn span:not([id*="Badge"]):not([id*="badge"]):not([id*="Count"]) {
         display: none !important;
       }
       #posShiftText {
         display: none !important;
       }
+      .pos-quick-tool-btn {
+        width: 32px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+      }
+      .user-pill-text span:first-child {
+        max-width: 75px !important;
+      }
+    }
+
+    @media (max-width: 1366px) {
       .pos-quick-logout-btn {
         width: 33px !important;
         padding: 0 !important;
@@ -368,8 +428,8 @@
       .quick-logout-text {
         display: none !important;
       }
-      .user-pill-text {
-        max-width: 70px !important;
+      .user-pill-text span:first-child {
+        max-width: 65px !important;
       }
     }
 
@@ -1334,34 +1394,47 @@
 
     /* ─── RIGHT PANEL (CART) ──────────────────── */
     .pos-right {
-      width: 360px; min-width: 340px;
+      width: 360px; min-width: 330px;
       background: var(--card); border-left: 1.5px solid var(--border);
-      display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+      display: flex; flex-direction: column; height: 100%; max-height: 100%;
+      overflow: hidden; flex-shrink: 0; position: relative;
+    }
+    .cart-scroll-body {
+      flex: 1; min-height: 0;
+      overflow-y: auto; overflow-x: hidden;
       scrollbar-width: thin;
       -webkit-overflow-scrolling: touch;
     }
-    .pos-right::-webkit-scrollbar { width: 4px; }
-    .pos-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .cart-scroll-body::-webkit-scrollbar { width: 4px; }
+    .cart-scroll-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .cart-bottom-fixed {
+      flex-shrink: 0;
+      margin-top: auto;
+      border-top: 1.5px solid var(--border);
+      background: var(--card);
+    }
 
     .cart-header {
-      padding: 12px 14px 10px;
+      padding: 10px 14px 8px;
       background: var(--bg);
       border-bottom: 1.5px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
     }
-    .cart-title { font-size: 15px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .cart-title { font-size: 14.5px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
     .cart-count { background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
-    .cart-order-no { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+    .cart-order-no { font-size: 10.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
 
     /* Customer Strip */
     .customer-strip {
-      padding: 8px 14px;
+      padding: 6px 14px;
       background: var(--card); border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
     }
-    .cust-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-    .cust-info h5 { font-size: 12.5px; font-weight: 700; color: var(--text-primary); }
-    .cust-info p  { font-size: 11px; color: var(--text-muted); }
+    .cust-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .cust-info h5 { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .cust-info p  { font-size: 10.5px; color: var(--text-muted); }
     .cust-change { margin-left: auto; font-size: 11px; color: var(--primary); font-weight: 700; cursor: pointer; }
 
     /* Cart Items */
@@ -1421,28 +1494,27 @@
 
     /* Totals */
     .cart-totals {
-      padding: 10px 14px 6px;
-      border-top: 1.5px solid var(--border);
-      background: rgba(0,0,0,0.04);
+      padding: 6px 12px 3px;
+      background: rgba(0,0,0,0.03);
     }
-    .tot-row { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 5px; }
+    .tot-row { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 2px; }
     .tot-row .label { color: var(--text-secondary); font-weight: 500; }
     .tot-row .val   { font-weight: 700; color: var(--text-primary); }
     .tot-row.discount .val { color: var(--danger); font-weight: 800; }
-    .tot-divider { border: none; border-top: 1px dashed var(--border); margin: 6px 0; }
+    .tot-divider { border: none; border-top: 1px dashed var(--border); margin: 3px 0; }
     .tot-row.grand {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: var(--bg);
-      padding: 9px 12px;
-      border-radius: 10px;
+      padding: 5px 10px;
+      border-radius: 8px;
       border: 1.5px solid var(--border);
-      margin-top: 6px;
+      margin-top: 3px;
       margin-bottom: 2px;
     }
-    .tot-row.grand .label { font-size: 13.5px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; }
-    .tot-row.grand .val   { font-size: 19px; font-weight: 900; color: #10B981; }
+    .tot-row.grand .label { font-size: 12px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .tot-row.grand .val   { font-size: 16px; font-weight: 900; color: #10B981; }
 
     /* Coupon */
     .coupon-row {
@@ -1463,19 +1535,21 @@
 
     /* Payment */
     .payment-section {
-      padding: 10px 14px;
+      padding: 5px 12px;
       border-top: 1px solid var(--border);
     }
-    .payment-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 8px; }
-    .pay-methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .payment-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 4px; }
+    .pay-methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
     .pay-method {
-      padding: 8px 4px;
-      border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 4px 2px;
+      border: 1.5px solid var(--border); border-radius: 8px;
       text-align: center; cursor: pointer; transition: all .15s ease;
       background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 32px;
     }
-    .pay-method i { font-size: 16px; color: var(--text-muted); display: block; margin-bottom: 4px; }
-    .pay-method span { font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; }
+    .pay-method i { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 1px; }
+    .pay-method span { font-size: 10px; font-weight: 700; color: var(--text-muted); display: block; }
     .pay-method:hover { border-color: var(--primary); transform: translateY(-1px); }
     .pay-method.active { border-color: #10B981; background: rgba(16,185,129,0.12); }
     .pay-method.active i, .pay-method.active span { color: #10B981; font-weight: 800; }
@@ -2469,40 +2543,40 @@
       <!-- Cash Register & Shift Drawer -->
       <button type="button" class="pos-quick-tool-btn shift-btn" id="posShiftBtn" title="Cash Register & Shift Control" onclick="openShiftRegisterModal()">
         <i class="fa-solid fa-cash-register"></i>
-        <span id="posShiftText">Shift Drawer</span>
+        <span id="posShiftText">Shift</span>
       </button>
 
       <!-- Online Delivery & Aggregator Hub (Zomato / Swiggy / Riders) -->
       <button type="button" class="pos-quick-tool-btn online-btn" id="posDeliveryHubBtn" title="Online Orders & Delivery Hub" onclick="openDeliveryHubModal()">
         <i class="fa-solid fa-motorcycle"></i>
-        <span>Online Orders</span>
+        <span>Online</span>
         <span id="onlinePendingBadge" style="display:none; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
       </button>
 
       <!-- Multi-Cart Hold & Recall Hub (F4) -->
       <button type="button" class="pos-quick-tool-btn hold-btn" id="posHoldOrdersBtn" title="Hold & Recall Orders (F4)" onclick="openHoldOrdersModal()">
         <i class="fa-solid fa-circle-pause"></i>
-        <span>Hold Carts</span>
+        <span>Hold</span>
         <span id="holdCartsCountBadge" style="display:none; background:#EC4899; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
       </button>
 
       <!-- Live Stock & Ingredients Inventory Alert (DineFlow Stock Feature) -->
       <button type="button" class="pos-quick-tool-btn stock-btn" id="posInventoryBtn" title="Live Inventory Stock & Low-Stock Alerts" onclick="openInventoryQuickModal()">
         <i class="fa-solid fa-boxes-stacked"></i>
-        <span>Stock &amp; Inventory</span>
+        <span>Stock</span>
         <span id="topbarLowStockBadge" style="display:none; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
       </button>
 
       <!-- Today's Orders / Bills (F3) -->
       <button type="button" class="pos-quick-tool-btn orders-btn" id="posOrdersModalBtn" title="View Today's Bills & Orders (F3)" onclick="openModal('ordersModal')">
         <i class="fa-solid fa-receipt"></i>
-        <span>Orders (F3)</span>
+        <span>Orders</span>
       </button>
 
       <!-- Kitchen Display System (KDS) Direct Link -->
       <a href="/kitchen" target="_blank" class="pos-quick-tool-btn kds-btn" title="Open Kitchen Display System (KDS) in New Tab">
         <i class="fa-solid fa-fire-burner"></i>
-        <span>Kitchen KDS</span>
+        <span>KDS</span>
       </a>
     </div>
 
@@ -2867,163 +2941,168 @@
         <span class="cust-change" onclick="openModal('customerModal')">Change</span>
       </div>
 
-      <!-- Customer Loyalty Wallet & Birthday Ribbon -->
-      <div id="customerWalletStrip" style="display:none; margin: 6px 14px 2px; padding: 6px 10px; background: rgba(16,185,129,0.12); border: 1px dashed rgba(16,185,129,0.3); border-radius: 8px; justify-content: space-between; align-items: center;">
-        <div style="font-size: 11.5px; font-weight: 700; color: #10B981; display: flex; align-items: center; gap: 6px;">
-          <i class="fa-solid fa-wallet"></i>
-          <span>Wallet: <b id="custWalletAmount">₹0.00</b></span>
-          <span id="custBirthdayBadge" style="display:none; font-size:10px; background:#EC4899; color:#fff; padding:1px 6px; border-radius:6px; font-weight:800;">🎂 Birthday Special!</span>
-        </div>
-        <button id="custRedeemWalletBtn" type="button" onclick="applyCustomerWalletDiscount()" style="background: #10B981; color: #fff; border: none; border-radius: 6px; padding: 3px 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
-          Redeem
-        </button>
-      </div>
-
-      <!-- Home Delivery Address & Rider Dispatch Strip (DineFlow Delivery Module) -->
-      <div id="deliveryDetailsStrip" style="display:none; background:rgba(245,158,11,0.06); border-bottom:1px solid rgba(245,158,11,0.25); padding:10px 14px; flex-direction:column; gap:8px;">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <span style="font-size:11.5px; font-weight:800; color:#F59E0B; display:flex; align-items:center; gap:5px;">
-            <i class="fa-solid fa-motorcycle"></i> Home Delivery Details
-          </span>
-          <span style="font-size:10.5px; color:var(--text-muted);">Required for Delivery</span>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-          <input type="text" id="deliveryCustName" placeholder="Customer Name *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
-          <input type="tel" id="deliveryCustPhone" placeholder="Mobile No. *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
-        </div>
-        <input type="text" id="deliveryCustAddress" placeholder="Flat/House, Society/Street, Landmark *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
-        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:6px; align-items:center;">
-          <div style="display:flex; align-items:center; gap:4px;">
-            <span style="font-size:11px; color:var(--text-secondary); white-space:nowrap;">Delivery Fee ₹:</span>
-            <input type="number" id="deliveryFeeInput" value="30" min="0" step="5" oninput="updateCartUI()" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:11.5px; color:var(--text-primary);" />
+      <!-- Scrollable Middle Cart Body -->
+      <div class="cart-scroll-body">
+        <!-- Customer Loyalty Wallet & Birthday Ribbon -->
+        <div id="customerWalletStrip" style="display:none; margin: 6px 14px 2px; padding: 6px 10px; background: rgba(16,185,129,0.12); border: 1px dashed rgba(16,185,129,0.3); border-radius: 8px; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11.5px; font-weight: 700; color: #10B981; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet: <b id="custWalletAmount">₹0.00</b></span>
+            <span id="custBirthdayBadge" style="display:none; font-size:10px; background:#EC4899; color:#fff; padding:1px 6px; border-radius:6px; font-weight:800;">🎂 Birthday Special!</span>
           </div>
-          <div style="display:flex; align-items:center; gap:4px;">
-            <select id="deliveryRiderSelect" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:11px; color:var(--text-primary);">
-              <option value="">🛵 Auto Assign Rider</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cart Items -->
-      <div class="cart-items" id="cartItems">
-      </div>
-
-      <!-- Cart Note -->
-      <div class="cart-note-area">
-        <input class="cart-note-input" placeholder="Add order notes (allergies, special requests…)" id="cartNote" />
-      </div>
-
-      <!-- B2B GST Tax Billing (DineFlow B2B Invoicing Feature) -->
-      <div style="padding: 4px 14px 2px;">
-        <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-          <input type="checkbox" id="b2bInvoiceToggle" onchange="toggleB2bInvoiceForm()" style="accent-color: #0EA5E9;">
-          <span style="color:#0EA5E9;"><i class="fa-solid fa-file-invoice"></i> Add B2B Tax Invoice (Customer GSTIN)</span>
-        </label>
-        <div id="b2bInvoiceForm" style="display: none; margin-top: 6px; background: rgba(14,165,233,0.08); border: 1px dashed rgba(14,165,233,0.3); padding: 8px; border-radius: 8px; flex-direction: column; gap: 6px;">
-          <input type="text" id="b2bCompanyInput" placeholder="Company / Legal Trade Name *" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-primary);" />
-          <input type="text" id="b2bGstinInput" placeholder="Customer 15-digit GSTIN *" maxlength="15" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-primary); text-transform: uppercase;" />
-        </div>
-      </div>
-
-      <!-- DineFlow Fast Quick-Discount Strip -->
-      <div style="padding: 4px 14px 2px; display:flex; align-items:center; justify-content:space-between; gap:6px;">
-        <span style="font-size:10.5px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> Quick Disc:</span>
-        <div style="display:flex; gap:4px; flex-wrap:wrap;">
-          <button type="button" onclick="applyQuickPresetDiscount(5)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">5%</button>
-          <button type="button" onclick="applyQuickPresetDiscount(10)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">10%</button>
-          <button type="button" onclick="applyQuickPresetDiscount(15)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">15%</button>
-          <button type="button" onclick="applyQuickPresetDiscount(0, 50)" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">₹50</button>
-          <button type="button" onclick="applyQuickPresetDiscount(0, 100)" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">₹100</button>
-          <button type="button" onclick="openModal('posOffersModal')" style="background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#818CF8; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;" title="All Offers (F8)"><i class="fa-solid fa-gift"></i></button>
-        </div>
-      </div>
-
-      <!-- Coupon Row -->
-      <div class="coupon-row">
-        <input class="coupon-input" placeholder="Have a coupon code?" id="couponInput" />
-        <button class="coupon-btn" onclick="applyCoupon()"><i class="fa-solid fa-check"></i> Apply</button>
-      </div>
-
-      <!-- Totals -->
-      <div class="cart-totals">
-        <div class="tot-row"><span class="label">Subtotal (<span id="subItemCount">0</span> items)</span><span class="val" id="subtotal">₹ 0.00</span></div>
-        <div class="tot-row discount" id="discountRow" style="display:none;"><span class="label"><i class="fa-solid fa-tag"></i>&nbsp;Discount</span><span class="val" id="discountAmount">₹ 0.00</span></div>
-        <div class="tot-row"><span class="label">Service Charge (5%)</span><span class="val" id="serviceCharge">₹ 0.00</span></div>
-        <div class="tot-row"><span class="label">GST (18%)</span><span class="val" id="gstAmount">₹ 0.00</span></div>
-        <hr class="tot-divider"/>
-        <div class="tot-row grand"><span class="label">Grand Total</span><span class="val" id="grandTotal">₹ 0.00</span></div>
-      </div>
-
-      <!-- Payment Methods -->
-      <div class="payment-section">
-        <div class="payment-label">Payment Method</div>
-        <div class="pay-methods">
-          <div class="pay-method active" onclick="selectPay(this)">
-            <i class="fa-solid fa-money-bill-wave" style="pointer-events:none;"></i><span style="pointer-events:none;">Cash</span>
-          </div>
-          <div class="pay-method" onclick="selectPay(this)">
-            <i class="fa-solid fa-credit-card" style="pointer-events:none;"></i><span style="pointer-events:none;">Card</span>
-          </div>
-          <div class="pay-method" onclick="selectPay(this)" style="border-color:rgba(16,185,129,0.35);">
-            <i class="fa-solid fa-qrcode" style="pointer-events:none; color:#34D399;"></i><span style="pointer-events:none;">UPI QR</span>
-          </div>
-          <div class="pay-method" onclick="selectPay(this)">
-            <i class="fa-solid fa-code-branch" style="pointer-events:none;"></i><span style="pointer-events:none;">Split</span>
-          </div>
-        </div>
-        <div class="split-row" id="splitRow" style="display:none; flex-direction:column; gap:8px; margin-top:10px; background:rgba(99,102,241,0.06); padding:10px; border-radius:10px; border:1px dashed rgba(99,102,241,0.3);">
-          <div style="font-size:11px; font-weight:700; color:var(--text-secondary); display:flex; justify-content:space-between;">
-            <span>Split Payment Allocation</span>
-            <span id="splitStatusNotice" style="color:#F59E0B;">Enter split amounts</span>
-          </div>
-          <div style="display:flex; gap:6px;">
-            <input class="split-input" id="splitCashInput" placeholder="Cash ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
-            <input class="split-input" id="splitUpiInput" placeholder="UPI ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
-            <input class="split-input" id="splitCardInput" placeholder="Card ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Clean & Professional DineFlow POS Action Section -->
-      <div class="cart-actions" style="display:flex; flex-direction:column; gap:10px; padding:12px 14px 14px; border-top:1.5px solid var(--border); background:rgba(0,0,0,0.06);">
-        
-        <!-- DineFlow Dual Primary Action: Save & Print KOT (F1) + Pay & Place Order (F2) -->
-        <div style="display:grid; grid-template-columns: 1fr 1.35fr; gap:8px; width:100%;">
-          <button type="button" class="btn-checkout" onclick="sendKOT()" style="height:48px; border-radius:12px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13.5px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 6px 18px rgba(245,158,11,0.3); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'" title="Send KOT to Kitchen without settling payment (F1)">
-            <i class="fa-solid fa-fire-burner" style="font-size:16px;"></i>
-            <span>SAVE &amp; KOT <small style="font-size:10px; opacity:0.85;">(F1)</small></span>
-          </button>
-          
-          <button type="button" class="btn-checkout" onclick="checkout()" style="height:48px; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); color:#FFFFFF; font-size:14px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(16,185,129,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'" title="Settle & Pay Bill (F2)">
-            <i class="fa-solid fa-circle-check" style="font-size:16px;"></i>
-            <span>PAY &amp; BILL &bull; <span id="checkoutAmount">₹ 0.00</span></span>
+          <button id="custRedeemWalletBtn" type="button" onclick="applyCustomerWalletDiscount()" style="background: #10B981; color: #fff; border: none; border-radius: 6px; padding: 3px 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
+            Redeem
           </button>
         </div>
 
-        <!-- Secondary 4-Button Fast Action Toolbar -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:6px; width:100%;">
-          <!-- Hold Cart Button (F4) -->
-          <button onclick="holdCurrentCart()" style="height:38px; border-radius:8px; background:rgba(236,72,153,0.12); border:1.5px solid rgba(236,72,153,0.3); color:#F472B6; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(236,72,153,0.22)'" onmouseout="this.style.background='rgba(236,72,153,0.12)'" title="Hold Current Cart (F4)">
-            <i class="fa-solid fa-circle-pause" style="color:#EC4899;"></i> Hold <small style="font-size:9.5px; opacity:0.8;">(F4)</small>
-          </button>
-
-          <!-- Print & KOT Hub -->
-          <button onclick="openPrintHub(lastPlacedOrderId)" style="height:38px; border-radius:8px; background:rgba(99,102,241,0.12); border:1.5px solid rgba(99,102,241,0.3); color:#A5B4FC; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.22)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'" title="Print Bill or KOT (F9)">
-            <i class="fa-solid fa-print" style="color:#FCD34D;"></i> Print <small style="font-size:9.5px; opacity:0.8;">(F9)</small>
-          </button>
-          
-          <!-- WhatsApp Invoice -->
-          <button onclick="sendWhatsAppInvoice()" style="height:38px; border-radius:8px; background:rgba(37,211,102,0.12); border:1.5px solid rgba(37,211,102,0.3); color:#4ADE80; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Send WhatsApp Bill">
-            <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp
-          </button>
-          
-          <!-- Clear Cart -->
-          <button onclick="clearCart()" style="height:38px; border-radius:8px; background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.3); color:#FCA5A5; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'" title="Clear Cart">
-            <i class="fa-solid fa-trash"></i> Clear
-          </button>
+        <!-- Home Delivery Address & Rider Dispatch Strip (DineFlow Delivery Module) -->
+        <div id="deliveryDetailsStrip" style="display:none; background:rgba(245,158,11,0.06); border-bottom:1px solid rgba(245,158,11,0.25); padding:10px 14px; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:11.5px; font-weight:800; color:#F59E0B; display:flex; align-items:center; gap:5px;">
+              <i class="fa-solid fa-motorcycle"></i> Home Delivery Details
+            </span>
+            <span style="font-size:10.5px; color:var(--text-muted);">Required for Delivery</span>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+            <input type="text" id="deliveryCustName" placeholder="Customer Name *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+            <input type="tel" id="deliveryCustPhone" placeholder="Mobile No. *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+          </div>
+          <input type="text" id="deliveryCustAddress" placeholder="Flat/House, Society/Street, Landmark *" style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:11.5px; color:var(--text-primary);" />
+          <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:6px; align-items:center;">
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span style="font-size:11px; color:var(--text-secondary); white-space:nowrap;">Delivery Fee ₹:</span>
+              <input type="number" id="deliveryFeeInput" value="30" min="0" step="5" oninput="updateCartUI()" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:11.5px; color:var(--text-primary);" />
+            </div>
+            <div style="display:flex; align-items:center; gap:4px;">
+              <select id="deliveryRiderSelect" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font-size:11px; color:var(--text-primary);">
+                <option value="">🛵 Auto Assign Rider</option>
+              </select>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <!-- Cart Items -->
+        <div class="cart-items" id="cartItems">
+        </div>
+
+        <!-- Cart Note -->
+        <div class="cart-note-area">
+          <input class="cart-note-input" placeholder="Add order notes (allergies, special requests…)" id="cartNote" />
+        </div>
+
+        <!-- B2B GST Tax Billing (DineFlow B2B Invoicing Feature) -->
+        <div style="padding: 4px 14px 2px;">
+          <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="b2bInvoiceToggle" onchange="toggleB2bInvoiceForm()" style="accent-color: #0EA5E9;">
+            <span style="color:#0EA5E9;"><i class="fa-solid fa-file-invoice"></i> Add B2B Tax Invoice (Customer GSTIN)</span>
+          </label>
+          <div id="b2bInvoiceForm" style="display: none; margin-top: 6px; background: rgba(14,165,233,0.08); border: 1px dashed rgba(14,165,233,0.3); padding: 8px; border-radius: 8px; flex-direction: column; gap: 6px;">
+            <input type="text" id="b2bCompanyInput" placeholder="Company / Legal Trade Name *" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-primary);" />
+            <input type="text" id="b2bGstinInput" placeholder="Customer 15-digit GSTIN *" maxlength="15" style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-primary); text-transform: uppercase;" />
+          </div>
+        </div>
+
+        <!-- DineFlow Fast Quick-Discount Strip -->
+        <div style="padding: 4px 14px 2px; display:flex; align-items:center; justify-content:space-between; gap:6px;">
+          <span style="font-size:10.5px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> Quick Disc:</span>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <button type="button" onclick="applyQuickPresetDiscount(5)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">5%</button>
+            <button type="button" onclick="applyQuickPresetDiscount(10)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">10%</button>
+            <button type="button" onclick="applyQuickPresetDiscount(15)" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">15%</button>
+            <button type="button" onclick="applyQuickPresetDiscount(0, 50)" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">₹50</button>
+            <button type="button" onclick="applyQuickPresetDiscount(0, 100)" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">₹100</button>
+            <button type="button" onclick="openModal('posOffersModal')" style="background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#818CF8; border-radius:6px; padding:2px 7px; font-size:10.5px; font-weight:800; cursor:pointer;" title="All Offers (F8)"><i class="fa-solid fa-gift"></i></button>
+          </div>
+        </div>
+
+        <!-- Coupon Row -->
+        <div class="coupon-row">
+          <input class="coupon-input" placeholder="Have a coupon code?" id="couponInput" />
+          <button class="coupon-btn" onclick="applyCoupon()"><i class="fa-solid fa-check"></i> Apply</button>
+        </div>
+      </div><!-- end .cart-scroll-body -->
+
+      <!-- Fixed Pinned Bottom Checkout Section -->
+      <div class="cart-bottom-fixed">
+        <!-- Totals -->
+        <div class="cart-totals">
+          <div class="tot-row"><span class="label">Subtotal (<span id="subItemCount">0</span> items)</span><span class="val" id="subtotal">₹ 0.00</span></div>
+          <div class="tot-row discount" id="discountRow" style="display:none;"><span class="label"><i class="fa-solid fa-tag"></i>&nbsp;Discount</span><span class="val" id="discountAmount">₹ 0.00</span></div>
+          <div class="tot-row"><span class="label">Service Charge (5%)</span><span class="val" id="serviceCharge">₹ 0.00</span></div>
+          <div class="tot-row"><span class="label">GST (18%)</span><span class="val" id="gstAmount">₹ 0.00</span></div>
+          <hr class="tot-divider"/>
+          <div class="tot-row grand"><span class="label">Grand Total</span><span class="val" id="grandTotal">₹ 0.00</span></div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="payment-section">
+          <div class="payment-label">Payment Method</div>
+          <div class="pay-methods">
+            <div class="pay-method active" onclick="selectPay(this)">
+              <i class="fa-solid fa-money-bill-wave" style="pointer-events:none;"></i><span style="pointer-events:none;">Cash</span>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <i class="fa-solid fa-credit-card" style="pointer-events:none;"></i><span style="pointer-events:none;">Card</span>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)" style="border-color:rgba(16,185,129,0.35);">
+              <i class="fa-solid fa-qrcode" style="pointer-events:none; color:#34D399;"></i><span style="pointer-events:none;">UPI QR</span>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <i class="fa-solid fa-code-branch" style="pointer-events:none;"></i><span style="pointer-events:none;">Split</span>
+            </div>
+          </div>
+          <div class="split-row" id="splitRow" style="display:none; flex-direction:column; gap:8px; margin-top:8px; background:rgba(99,102,241,0.06); padding:8px; border-radius:8px; border:1px dashed rgba(99,102,241,0.3);">
+            <div style="font-size:11px; font-weight:700; color:var(--text-secondary); display:flex; justify-content:space-between;">
+              <span>Split Payment Allocation</span>
+              <span id="splitStatusNotice" style="color:#F59E0B;">Enter split amounts</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <input class="split-input" id="splitCashInput" placeholder="Cash ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
+              <input class="split-input" id="splitUpiInput" placeholder="UPI ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
+              <input class="split-input" id="splitCardInput" placeholder="Card ₹" style="flex:1;" oninput="calculateSplitRemaining()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Clean & Professional DineFlow POS Action Section -->
+        <div class="cart-actions" style="display:flex; flex-direction:column; gap:6px; padding:7px 12px 9px; border-top:1px solid var(--border); background:rgba(0,0,0,0.03);">
+          <!-- DineFlow Dual Primary Action: Save & Print KOT (F1) + Pay & Place Order (F2) -->
+          <div style="display:grid; grid-template-columns: 1fr 1.35fr; gap:7px; width:100%;">
+            <button type="button" class="btn-checkout" onclick="sendKOT()" style="height:40px; border-radius:10px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFFFFF; font-size:13px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 12px rgba(245,158,11,0.25); transition:all 0.18s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'" title="Send KOT to Kitchen without settling payment (F1)">
+              <i class="fa-solid fa-fire-burner" style="font-size:15px;"></i>
+              <span>SAVE &amp; KOT <small style="font-size:9.5px; opacity:0.85;">(F1)</small></span>
+            </button>
+            
+            <button type="button" class="btn-checkout" onclick="checkout()" style="height:40px; border-radius:10px; background:linear-gradient(135deg, #10B981, #059669); color:#FFFFFF; font-size:13.5px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:all 0.18s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'" title="Settle & Pay Bill (F2)">
+              <i class="fa-solid fa-circle-check" style="font-size:15px;"></i>
+              <span>PAY &amp; BILL &bull; <span id="checkoutAmount">₹ 0.00</span></span>
+            </button>
+          </div>
+
+          <!-- Secondary 4-Button Fast Action Toolbar -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:5px; width:100%;">
+            <!-- Hold Cart Button (F4) -->
+            <button onclick="holdCurrentCart()" style="height:31px; border-radius:7px; background:rgba(236,72,153,0.12); border:1px solid rgba(236,72,153,0.3); color:#F472B6; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px; transition:all 0.15s;" onmouseover="this.style.background='rgba(236,72,153,0.22)'" onmouseout="this.style.background='rgba(236,72,153,0.12)'" title="Hold Current Cart (F4)">
+              <i class="fa-solid fa-circle-pause" style="color:#EC4899; font-size:11px;"></i> Hold <small style="font-size:9px; opacity:0.8;">(F4)</small>
+            </button>
+
+            <!-- Print & KOT Hub -->
+            <button onclick="openPrintHub(lastPlacedOrderId)" style="height:31px; border-radius:7px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#A5B4FC; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px; transition:all 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.22)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'" title="Print Bill or KOT (F9)">
+              <i class="fa-solid fa-print" style="color:#FCD34D; font-size:11px;"></i> Print <small style="font-size:9px; opacity:0.8;">(F9)</small>
+            </button>
+            
+            <!-- WhatsApp Invoice -->
+            <button onclick="sendWhatsAppInvoice()" style="height:31px; border-radius:7px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.3); color:#4ADE80; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px; transition:all 0.15s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'" title="Send WhatsApp Bill">
+              <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:12px;"></i> WhatsApp
+            </button>
+            
+            <!-- Clear Cart -->
+            <button onclick="clearCart()" style="height:31px; border-radius:7px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#FCA5A5; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px; transition:all 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'" title="Clear Cart">
+              <i class="fa-solid fa-trash" style="font-size:11px;"></i> Clear
+            </button>
+          </div>
+        </div>
+      </div><!-- end .cart-bottom-fixed -->
     </div>
   </div>
 </div>
@@ -6127,7 +6206,8 @@
           shiftBtn.style.color = '#10B981';
           shiftBtn.style.background = 'rgba(16,185,129,0.15)';
           shiftBtn.style.borderColor = 'rgba(16,185,129,0.4)';
-          shiftText.textContent = `Shift #${data.data.register.id} Active`;
+          shiftText.textContent = `Shift #${data.data.register.id}`;
+          shiftBtn.title = `Shift #${data.data.register.id} Active (Cash Register & Shift Control)`;
         }
       } else {
         currentShiftData = null;
@@ -6135,7 +6215,8 @@
           shiftBtn.style.color = '#F59E0B';
           shiftBtn.style.background = 'rgba(245,158,11,0.15)';
           shiftBtn.style.borderColor = 'rgba(245,158,11,0.4)';
-          shiftText.textContent = `Open Shift`;
+          shiftText.textContent = `Shift`;
+          shiftBtn.title = 'Open Cash Register & Shift Drawer';
         }
       }
     } catch (e) {
