@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -196,6 +196,43 @@
     }
     body.light-theme .topbar-sub {
       color: #64748B !important;
+    }
+    body.light-theme .pos-skeleton-card {
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    }
+    body.light-theme .pos-skeleton-img {
+      background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%) !important;
+      background-size: 200% 100% !important;
+    }
+    body.light-theme .pos-skeleton-line {
+      background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%) !important;
+      background-size: 200% 100% !important;
+    }
+
+    /* Topbar responsive compactness on 1366px screens */
+    @media (max-width: 1440px) {
+      .pos-quick-tool-btn {
+        padding: 0 8px !important;
+        font-size: 11px !important;
+        gap: 5px !important;
+        height: 33px !important;
+      }
+      .pos-quick-tool-btn i {
+        font-size: 11px !important;
+      }
+      .topbar {
+        padding: 0 10px !important;
+        gap: 6px !important;
+      }
+    }
+
+    /* When sidebar is expanded on desktop (>=1024px), hide duplicate restaurant brand text in topbar to prevent header crowding */
+    @media (min-width: 1024px) {
+      body:not(.sidebar-collapsed-mode) .topbar-duplicate-brand {
+        display: none !important;
+      }
     }
     #liveClockBadge {
       background: rgba(99, 102, 241, 0.15);
@@ -433,8 +470,12 @@
     }
     .sidebar-toggle:hover { background: rgba(255,255,255,.25); }
     .sidebar-toggle i { font-size: 11px; color: rgba(255,255,255,.9); transition: transform .25s; }
-    .sidebar.collapsed .sidebar-toggle { display: none; }
-    .sidebar.collapsed .sidebar-brand { justify-content: center; padding: 10px 0; }
+    .sidebar.collapsed .sidebar-toggle {
+      display: flex;
+      margin: 8px auto 0 auto;
+    }
+    .sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { justify-content: center; padding: 10px 4px; flex-direction: column; gap: 6px; }
 
     .sidebar-section { padding: 12px 8px 4px; overflow: hidden; }
     .sidebar-section-label {
@@ -2080,7 +2121,7 @@
   $posRestName = $posRest ? $posRest->name : 'DineFlow AI POS';
   $posRestLogo = $posRest ? $posRest->getEffectiveLogoUrl() : null;
 @endphp
-<aside class="sidebar collapsed" id="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
     <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
       @if($posRestLogo)
@@ -2164,24 +2205,26 @@
   <!-- Topbar -->
   <div class="topbar">
     <!-- Left: Sidebar Toggle, Restaurant Brand & Live Clock -->
-    <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
-      <button class="topbar-btn" type="button" onclick="toggleSidebar()" title="Toggle Sidebar Navigation" style="cursor:pointer; flex-shrink:0;">
-        <i class="fa-solid fa-bars"></i>
+    <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+      <button class="topbar-btn" type="button" onclick="toggleSidebar()" id="posTopbarMenuToggle" title="Toggle Sidebar Navigation (Ctrl+B)" style="cursor:pointer; flex-shrink:0;">
+        <i class="fa-solid fa-bars" id="topbarHamburgerIcon"></i>
       </button>
 
-      <div style="display:flex; align-items:center; gap:10px;">
-        @if($posRestLogo)
-          <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #fff; padding: 2px; border: 1px solid var(--border); flex-shrink:0;">
-        @else
-          <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; font-family: 'Outfit', sans-serif; flex-shrink:0;">{{ substr($posRestName, 0, 1) }}</div>
-        @endif
-        <div style="display:flex; flex-direction:column; justify-content:center; gap:2px;">
-          <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 14px; line-height: 1.2; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-            <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $posRestName }}</span>
-            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981;" title="POS Terminal Live"></span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="topbar-duplicate-brand" style="display:flex; align-items:center; gap:8px;">
+          @if($posRestLogo)
+            <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain; background: #fff; padding: 2px; border: 1px solid var(--border); flex-shrink:0;">
+          @else
+            <div style="width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; font-family: 'Outfit', sans-serif; flex-shrink:0;">{{ substr($posRestName, 0, 1) }}</div>
+          @endif
+          <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13.5px; line-height: 1.2; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+            <span style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $posRestName }}</span>
+            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow:0 0 6px #10B981;" title="POS Terminal Live"></span>
           </div>
-          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px;">
-            <span id="topbarDate">{{ now()->format('D, M d, Y') }}</span>
+        </div>
+        <div style="display:flex; flex-direction:column; justify-content:center; line-height:1.2;">
+          <div style="font-size: 10px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 5px;">
+            <span id="topbarDate">{{ now()->format('D, M d') }}</span>
             <span id="liveClockBadge">--:--:--</span>
           </div>
         </div>
@@ -2279,21 +2322,18 @@
       </div>
 
       <!-- Cashier User Pill & Quick Logout -->
-      <div class="topbar-desktop-only" style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--border);">
-        <div class="user-avatar" style="width:30px; height:30px; font-size:12px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
-        <div style="display:flex; flex-direction:column; line-height:1.2;">
-          <span style="font-size:12px; font-weight:700; color:var(--text-primary); max-width:85px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ Auth::user()?->name ?? 'Admin' }}</span>
-          <span style="font-size:9.5px; color:var(--text-muted); text-transform:capitalize;">{{ Auth::user()?->role ?? 'cashier' }}</span>
+      <div class="topbar-desktop-only" style="display:flex; align-items:center; gap:8px; padding-left:8px; border-left:1px solid var(--border); flex-shrink:0;">
+        <div class="user-avatar" style="width:32px; height:32px; font-size:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+        <div style="display:flex; flex-direction:column; line-height:1.2; min-width:0;">
+          <span style="font-size:12px; font-weight:700; color:var(--text-primary); max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ Auth::user()?->name ?? 'Admin' }}">{{ Auth::user()?->name ?? 'Admin' }}</span>
+          <span style="font-size:10px; color:var(--text-muted); text-transform:capitalize; font-weight:600;">{{ Auth::user()?->role ?? 'admin' }}</span>
         </div>
         <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:2px;">
           @csrf
           <button type="submit" title="Logout"
-            style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); color:#F87171;
-                   width:28px; height:28px; border-radius:8px; cursor:pointer;
-                   display:flex; align-items:center; justify-content:center; font-size:12px;
-                   transition:all .18s;"
-            onmouseover="this.style.background='rgba(239,68,68,0.3)'"
-            onmouseout="this.style.background='rgba(239,68,68,0.12)'">
+            style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); color:#EF4444; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; transition:all 0.15s ease;"
+            onmouseover="this.style.background='#EF4444'; this.style.color='#fff';"
+            onmouseout="this.style.background='rgba(239,68,68,0.12)'; this.style.color='#EF4444';">
             <i class="fa-solid fa-right-from-bracket"></i>
           </button>
         </form>
@@ -4203,6 +4243,16 @@
       return div.innerHTML;
   }
 
+  function escapeAttr(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+  }
+
   let selectedCustomerData = { name: 'Rahul Kumar', phone: '+91 98765 43210', points: 0, avatar: 'RK' };
   let currentOrderType = 'dinein';
 
@@ -4763,56 +4813,65 @@
     }
 
     grid.innerHTML = items.map(item => {
-      const isSoldOut = !item.is_available;
-      const isVeg = item.badge === 'veg' || item.is_veg === true;
-      const hasImg = item.image && item.image.trim().length > 5;
-      const cardClass = `item-card ${item.qty > 0 ? 'in-cart' : ''} ${isSoldOut ? 'item-card-unavailable' : ''}`;
-      const safeName = escapeHtml(item.name).replace(/'/g, "\\'");
-      const clickAction = isSoldOut ? `showToast('${safeName} is Out of Stock!', 'error')` : `addQuickItem('${item.id}')`;
+      try {
+        const isSoldOut = !item.is_available;
+        const isVeg = item.badge === 'veg' || item.is_veg === true;
+        const hasImg = item.image && String(item.image).trim().length > 5;
+        const cardClass = `item-card ${item.qty > 0 ? 'in-cart' : ''} ${isSoldOut ? 'item-card-unavailable' : ''}`;
+        const safeName = escapeAttr(item.name || 'Dish');
+        const safeJsName = String(item.name || 'Dish').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeId = escapeAttr(String(item.id || ''));
+        const clickAction = isSoldOut 
+          ? `showToast('${safeJsName} is Out of Stock!', 'error')` 
+          : `addQuickItem('${safeId}')`;
 
-      return `
-        <div class="${cardClass}" onclick="${clickAction}">
-          <div class="item-img">
-            ${hasImg ? `
-              <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-              <span style="display:none; font-size:34px;">${item.emoji}</span>
-            ` : `
-              <span>${item.emoji}</span>
-            `}
-            ${item.badge === 'out' || isSoldOut
-              ? `<span class="item-badge out">SOLD OUT</span>`
-              : (item.badge === 'new' ? `<span class="item-badge new">NEW</span>` : (item.badge === 'best' ? `<span class="item-badge best">BEST</span>` : ''))
-            }
-            ${item.qty > 0 ? `<span class="item-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
-            ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
-          </div>
-          <div class="item-body">
-            <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
-              <span class="pos-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
-              <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
+        return `
+          <div class="${cardClass}" onclick="${clickAction}">
+            <div class="item-img">
+              ${hasImg ? `
+                <img src="${escapeAttr(item.image)}" alt="${safeName}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                <span style="display:none; font-size:34px;">${item.emoji || '🍽️'}</span>
+              ` : `
+                <span>${item.emoji || '🍽️'}</span>
+              `}
+              ${item.badge === 'out' || isSoldOut
+                ? `<span class="item-badge out">SOLD OUT</span>`
+                : (item.badge === 'new' ? `<span class="item-badge new">NEW</span>` : (item.badge === 'best' ? `<span class="item-badge best">BEST</span>` : ''))
+              }
+              ${item.qty > 0 ? `<span class="item-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
+              ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
             </div>
-            <div class="item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
-            <div class="item-footer">
-              <div class="item-price">₹ ${Number(item.price).toFixed(0)}<small>/dish</small></div>
-              <div class="item-footer-actions">
-                ${isSoldOut
-                  ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i> Out of Stock</span>`
-                  : (item.qty > 0
-                      ? `
-                        <div class="item-card-stepper" onclick="event.stopPropagation()">
-                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', -1)" title="Decrease Qty">−</button>
-                          <span class="card-step-qty">${item.qty}</span>
-                          <button type="button" class="card-step-btn" onclick="updateQty('${item.id}', 1)" title="Increase Qty">+</button>
-                        </div>
-                      `
-                      : `<button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('${item.id}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>`
-                    )
-                }
+            <div class="item-body">
+              <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
+                <span class="pos-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
+                <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
+              </div>
+              <div class="item-name" title="${safeName}">${safeName}</div>
+              <div class="item-footer">
+                <div class="item-price">₹ ${Number(item.price || 0).toFixed(0)}<small>/dish</small></div>
+                <div class="item-footer-actions">
+                  ${isSoldOut
+                    ? `<span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i> Out of Stock</span>`
+                    : (item.qty > 0
+                        ? `
+                          <div class="item-card-stepper" onclick="event.stopPropagation()">
+                            <button type="button" class="card-step-btn" onclick="updateQty('${safeId}', -1)" title="Decrease Qty">−</button>
+                            <span class="card-step-qty">${item.qty}</span>
+                            <button type="button" class="card-step-btn" onclick="updateQty('${safeId}', 1)" title="Increase Qty">+</button>
+                          </div>
+                        `
+                        : `<button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('${safeId}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>`
+                      )
+                  }
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      `;
+        `;
+      } catch (itemErr) {
+        console.warn('Error rendering dish card:', item, itemErr);
+        return '';
+      }
     }).join('');
   }
 
@@ -8384,19 +8443,67 @@
     setTimeout(() => t.remove(), 2800);
   }
 
-  /* ─── SIDEBAR TOGGLE ─────────────────────── */
+  /* ─── SIDEBAR TOGGLE & STATE MANAGER ─────────────────────── */
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
 
     if (window.innerWidth <= 768) {
       const willOpen = !sidebar.classList.contains('mobile-open');
-      if (willOpen) setMobileCart(false);
+      if (willOpen && typeof setMobileCart === 'function') setMobileCart(false);
       setMobileSidebar(willOpen);
       return;
     }
 
-    sidebar.classList.toggle('collapsed');
+    const isCollapsed = sidebar.classList.toggle('collapsed');
+    document.body.classList.toggle('sidebar-collapsed-mode', isCollapsed);
+    try {
+      localStorage.setItem('dineflow_pos_sidebar_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    if (toggleIcon) {
+      toggleIcon.className = isCollapsed ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+    }
   }
+
+  function initSidebarState() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    if (window.innerWidth <= 768) {
+      sidebar.classList.remove('collapsed');
+      document.body.classList.remove('sidebar-collapsed-mode');
+      return;
+    }
+
+    let saved = null;
+    try {
+      saved = localStorage.getItem('dineflow_pos_sidebar_collapsed');
+    } catch (e) {}
+
+    // On desktop, default to expanded (showing full labels) unless user explicitly collapsed it
+    const shouldCollapse = saved === '1';
+
+    sidebar.classList.toggle('collapsed', shouldCollapse);
+    document.body.classList.toggle('sidebar-collapsed-mode', shouldCollapse);
+
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    if (toggleIcon) {
+      toggleIcon.className = shouldCollapse ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+    }
+  }
+
+  // Keyboard shortcut Ctrl+B / Cmd+B for sidebar toggle
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+      e.preventDefault();
+      toggleSidebar();
+    }
+  });
+
+  // Self-execute immediately
+  initSidebarState();
 
   function setMobileSidebar(isOpen) {
     const sidebar  = document.getElementById('sidebar');
@@ -9338,6 +9445,7 @@
   });
 
   document.addEventListener('DOMContentLoaded', () => {
+    initSidebarState();
     renderPosNotifications();
     updateHeldCartsCountBadge();
     updateNetworkStatusDisplay(navigator.onLine);
