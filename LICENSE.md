@@ -32,5 +32,5 @@ This codebase and its cryptographic commit history are registered and recorded o
 
 ## 4. CONTACT & VERIFICATION
 For enterprise licensing, commercial buyout inquiries, or license verification, contact:
-- **Email:** umiyamarketing@gmail.com
+- **Email:** shubhmpatel77@gmail.com
 - **GitHub:** [https://github.com/Shubh-Patel-07](https://github.com/Shubh-Patel-07)
