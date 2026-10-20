@@ -226,6 +226,30 @@
         padding: 0 10px !important;
         gap: 6px !important;
       }
+      #posShiftText {
+        display: none !important;
+      }
+      .user-pill-text {
+        max-width: 80px !important;
+      }
+    }
+
+    @media (max-width: 1280px) {
+      .user-pill-text {
+        display: none !important;
+      }
+      .quick-logout-text {
+        display: none !important;
+      }
+      .pos-quick-tool-btn.stock-btn span:not(#topbarLowStockBadge) {
+        display: none !important;
+      }
+      .pos-quick-tool-btn.hold-btn span:not(#holdCartsCountBadge) {
+        display: none !important;
+      }
+      .pos-quick-tool-btn.online-btn span:not(#onlinePendingBadge) {
+        display: none !important;
+      }
     }
 
     /* When sidebar is expanded on desktop (>=1024px), hide duplicate restaurant brand text in topbar to prevent header crowding */
@@ -2321,23 +2345,72 @@
         <span id="notifCountBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:1px 5px; border-radius:10px; border:2px solid var(--card);">0</span>
       </div>
 
-      <!-- Cashier User Pill & Quick Logout -->
-      <div class="topbar-desktop-only" style="display:flex; align-items:center; gap:8px; padding-left:8px; border-left:1px solid var(--border); flex-shrink:0;">
-        <div class="user-avatar" style="width:32px; height:32px; font-size:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
-        <div style="display:flex; flex-direction:column; line-height:1.2; min-width:0;">
-          <span style="font-size:12px; font-weight:700; color:var(--text-primary); max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ Auth::user()?->name ?? 'Admin' }}">{{ Auth::user()?->name ?? 'Admin' }}</span>
-          <span style="font-size:10px; color:var(--text-muted); text-transform:capitalize; font-weight:600;">{{ Auth::user()?->role ?? 'admin' }}</span>
+      <!-- Cashier User Pill with Interactive Dropdown & Quick Logout -->
+      <div class="pos-dropdown-wrap pos-user-profile-wrap topbar-desktop-only" style="position:relative; flex-shrink:0;">
+        <div class="user-pill-btn" onclick="toggleUserMenu(event)" title="User Profile & Quick Actions"
+          style="display:flex; align-items:center; gap:8px; padding:3px 8px; border-radius:10px; cursor:pointer; background:var(--bg); border:1.5px solid var(--border); transition:all 0.15s ease;">
+          <div class="user-avatar" style="width:28px; height:28px; font-size:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;">
+            {{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}
+          </div>
+          <div class="user-pill-text" style="display:flex; flex-direction:column; line-height:1.2; min-width:0;">
+            <span style="font-size:11.5px; font-weight:700; color:var(--text-primary); max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ Auth::user()?->name ?? 'Admin' }}">{{ Auth::user()?->name ?? 'Admin' }}</span>
+            <span style="font-size:9.5px; color:var(--text-muted); text-transform:capitalize; font-weight:600;">{{ Auth::user()?->role ?? 'admin' }}</span>
+          </div>
+          <i class="fa-solid fa-chevron-down" style="font-size:9px; color:var(--text-muted); margin-left:2px;"></i>
         </div>
-        <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:2px;">
-          @csrf
-          <button type="submit" title="Logout"
-            style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); color:#EF4444; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; transition:all 0.15s ease;"
-            onmouseover="this.style.background='#EF4444'; this.style.color='#fff';"
-            onmouseout="this.style.background='rgba(239,68,68,0.12)'; this.style.color='#EF4444';">
-            <i class="fa-solid fa-right-from-bracket"></i>
-          </button>
-        </form>
+
+        <!-- User Profile Dropdown Menu -->
+        <div class="pos-dropdown-menu" id="posUserMenu" style="min-width:240px; right:0; top:calc(100% + 8px); padding:10px; z-index:999999;">
+          <div style="display:flex; align-items:center; gap:10px; padding:6px 8px 10px; border-bottom:1px solid var(--border); margin-bottom:6px;">
+            <div class="user-avatar" style="width:36px; height:36px; font-size:14px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;">
+              {{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}
+            </div>
+            <div style="display:flex; flex-direction:column; min-width:0; overflow:hidden;">
+              <span style="font-size:13px; font-weight:800; color:var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">{{ Auth::user()?->name ?? 'Admin' }}</span>
+              <span style="font-size:11px; color:var(--text-muted);">{{ Auth::user()?->email ?? '' }}</span>
+              <span style="font-size:9.5px; font-weight:700; color:#10B981; background:rgba(16,185,129,0.12); padding:1px 6px; border-radius:6px; display:inline-block; margin-top:3px; width:fit-content;">{{ strtoupper(Auth::user()?->role ?? 'ADMIN') }}</span>
+            </div>
+          </div>
+          
+          <a href="/dashboard" class="pos-dropdown-item" style="text-decoration:none; color:inherit;">
+            <i class="fa-solid fa-gauge" style="color:#6366F1; width:18px;"></i>
+            <span>Main Dashboard</span>
+          </a>
+          <a href="/kitchen" target="_blank" class="pos-dropdown-item" style="text-decoration:none; color:inherit;">
+            <i class="fa-solid fa-fire-burner" style="color:#F97316; width:18px;"></i>
+            <span>Kitchen Display (KDS)</span>
+          </a>
+          <a href="/admin/settings" class="pos-dropdown-item" style="text-decoration:none; color:inherit;">
+            <i class="fa-solid fa-gear" style="color:#64748B; width:18px;"></i>
+            <span>Settings</span>
+          </a>
+
+          <div style="height:1px; background:var(--border); margin:6px 0;"></div>
+
+          <!-- Prominent Logout Form Action -->
+          <form method="POST" action="{{ route('auth.logout') }}" style="margin:0; width:100%;">
+            @csrf
+            <button type="submit" class="pos-dropdown-item" style="width:100%; border:none; background:rgba(239,68,68,0.12); color:#EF4444; font-weight:700; cursor:pointer; border-radius:8px; padding:9px 12px; display:flex; align-items:center; gap:10px; transition:all 0.15s ease;"
+              onmouseover="this.style.background='#EF4444'; this.style.color='#fff';"
+              onmouseout="this.style.background='rgba(239,68,68,0.12)'; this.style.color='#EF4444';">
+              <i class="fa-solid fa-right-from-bracket" style="width:18px;"></i>
+              <span>Sign Out / Logout</span>
+            </button>
+          </form>
+        </div>
       </div>
+
+      <!-- Quick 1-Click Logout Button (Always Visible & Pinned to Top Right) -->
+      <form method="POST" action="{{ route('auth.logout') }}" class="topbar-desktop-only" style="margin:0; flex-shrink:0;">
+        @csrf
+        <button type="submit" title="Logout from POS"
+          style="background:rgba(239,68,68,0.14); border:1.5px solid rgba(239,68,68,0.35); color:#EF4444; height:32px; padding:0 10px; border-radius:9px; display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:11.5px; font-weight:800; transition:all 0.15s ease; flex-shrink:0; white-space:nowrap;"
+          onmouseover="this.style.background='#EF4444'; this.style.color='#fff';"
+          onmouseout="this.style.background='rgba(239,68,68,0.14)'; this.style.color='#EF4444';">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="quick-logout-text">Logout</span>
+        </button>
+      </form>
 
       <!-- Mobile-only cart button in topbar -->
       <div class="topbar-btn topbar-mobile-cart" title="Cart" onclick="toggleMobileCart()" style="position:relative;">
@@ -4949,14 +5022,17 @@
     syncPosMenuWithDatabase();
   }
 
-  // Failsafe timeout: If skeleton is still visible after 2s, force sync or show empty state
+  // Failsafe timeout: If skeleton is still visible after 1.5s, force renderMenu() or sync
   setTimeout(() => {
     const grid = document.getElementById('menuGrid');
     if (grid && grid.querySelector('.pos-skeleton-card')) {
-      console.warn('POS Menu Skeleton still visible after 2s, executing failsafe...');
-      syncPosMenuWithDatabase();
+      if (Array.isArray(MENU) && MENU.length > 0) {
+        renderMenu();
+      } else {
+        syncPosMenuWithDatabase();
+      }
     }
-  }, 2000);
+  }, 1500);
 
   const DEFAULT_WAITER_NAME = @json(Auth::user()->name ?? 'Staff');
   const META_PICKERS = {
@@ -5024,12 +5100,13 @@
     updateTotals();
   }
 
-  /* ─── DINEFLOW OPERATIONS DROPDOWN CONTROLLER ─── */
+  /* ─── DINEFLOW OPERATIONS & USER DROPDOWN CONTROLLERS ─── */
   function toggleMoreToolsMenu(event) {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
+    closeUserMenu();
     const menu = document.getElementById('posMoreToolsMenu');
     if (menu) {
       menu.classList.toggle('show');
@@ -5039,10 +5116,27 @@
     const menu = document.getElementById('posMoreToolsMenu');
     if (menu) menu.classList.remove('show');
   }
+
+  function toggleUserMenu(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    closeMoreToolsMenu();
+    const menu = document.getElementById('posUserMenu');
+    if (menu) {
+      menu.classList.toggle('show');
+    }
+  }
+  function closeUserMenu() {
+    const menu = document.getElementById('posUserMenu');
+    if (menu) menu.classList.remove('show');
+  }
+
   window.addEventListener('click', (e) => {
-    const wrap = document.querySelector('.pos-dropdown-wrap');
-    if (wrap && !wrap.contains(e.target)) {
+    if (!e.target.closest('.pos-dropdown-wrap')) {
       closeMoreToolsMenu();
+      closeUserMenu();
     }
   });
 
