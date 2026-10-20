@@ -437,6 +437,13 @@ Route::get('/demo', function () {
     return view('pages.demo');
 })->name('demo');
 
+// Commercial Source Code Sale & Licensing
+Route::get('/buy-source-code', function () {
+    return view('pages.buy-source-code');
+})->name('buy.source-code');
+Route::get('/acquire', fn() => redirect('/buy-source-code'));
+Route::get('/buy-code', fn() => redirect('/buy-source-code'));
+
 // Isolated Sandbox Demo Mode Routes
 Route::get('/demo/start', [\App\Http\Controllers\DemoSandboxController::class, 'startDemo'])->name('demo.start');
 Route::match(['get', 'post'], '/demo/reset', [\App\Http\Controllers\DemoSandboxController::class, 'resetDemo'])->name('demo.reset');

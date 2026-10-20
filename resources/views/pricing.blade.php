@@ -595,6 +595,25 @@
                 <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20am%20interested%20in%20the%20Enterprise%20Plan%20for%20my%20restaurant." target="_blank" class="btn-primary" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 14px rgba(37,211,102,0.3);"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
             </div>
         </section>
+
+        <!-- Buy Source Code Callout Banner -->
+        <section style="margin-top: 48px; background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(99,102,241,0.12)); border: 1.5px solid rgba(236,72,153,0.35); border-radius: 18px; padding: 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;">
+            <div>
+                <div style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#F472B6; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
+                    <i class="fa-solid fa-fire"></i> Developer &amp; Agency Special
+                </div>
+                <h3 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+                    Looking to Acquire the Complete Source Code?
+                </h3>
+                <p style="font-size:14px; color:#CBD5E1; max-width:640px; margin:0;">
+                    Own the full, unencrypted codebase of Tendorabuy &amp; DineFlow AI. White-label it, launch your own SaaS brand, and retain 100% client subscription revenues with a Commercial License.
+                </p>
+            </div>
+            <a href="/buy-source-code" class="btn-primary" style="background: linear-gradient(135deg, #EC4899, #8B5CF6); box-shadow: 0 4px 20px rgba(236,72,153,0.35); font-weight:800; padding: 12px 24px; white-space:nowrap;">
+                <span>🔥 Buy Source Code ($2,499)</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </section>
     </main>
 
     <footer class="footer">

@@ -971,10 +971,17 @@
                 <li><a href="/pricing">Pricing</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href="/contact">Contact</a></li>
+                <li><a href="/buy-source-code" style="color: #F472B6; font-weight: 700;"><i class="fa-solid fa-code" style="margin-right: 4px;"></i>Buy Code</a></li>
             </ul>
 
             <!-- Header Actions -->
             <div class="nav-actions">
+                <!-- Buy Source Code Pill -->
+                <a href="/buy-source-code" class="btn-header-demo" style="background: rgba(236, 72, 153, 0.15); border-color: rgba(236, 72, 153, 0.4); color: #F472B6;" title="Buy Complete Unencrypted Source Code">
+                    <i class="fa-solid fa-fire" style="font-size: 11px; color: #EC4899;"></i>
+                    <span>Buy Source Code</span>
+                </a>
+
                 <!-- Live Demo Pill -->
                 <a href="/demo" class="btn-header-demo" title="Try Live Sandbox Demo">
                     <i class="fa-solid fa-play" style="font-size: 11px; color: #818CF8;"></i>
@@ -1022,6 +1029,7 @@
     <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="toggleMobileNav()"></div>
     <div class="mobile-drawer" id="mobileDrawer">
         <ul>
+            <li><a href="/buy-source-code" onclick="toggleMobileNav()" style="color: #F472B6; font-weight: 800;"><i class="fa-solid fa-fire" style="color: #EC4899;"></i> Buy Source Code ($2,499)</a></li>
             <li><a href="/demo" onclick="toggleMobileNav()" style="color: #A5B4FC; font-weight: 700;"><i class="fa-solid fa-play" style="color: #818CF8;"></i> Live Sandbox Demo</a></li>
             <li><a href="#features" onclick="toggleMobileNav()"><i class="fa-solid fa-wand-magic-sparkles"></i> Features</a></li>
             <li><a href="#how-it-works" onclick="toggleMobileNav()"><i class="fa-solid fa-compass"></i> How It Works</a></li>
@@ -1434,6 +1442,7 @@
                         <li><a href="#how-it-works">How It Works</a></li>
                         <li><a href="#workflow">Online + Offline</a></li>
                         <li><a href="/pricing">Pricing</a></li>
+                        <li><a href="/buy-source-code" style="color: #F472B6; font-weight: 700;">Buy Source Code</a></li>
                     </ul>
                 </div>
 
