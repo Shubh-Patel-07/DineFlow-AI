@@ -162,34 +162,77 @@
     }
     body.light-theme .item-card {
       background: #FFFFFF !important;
-      border-color: #E2E8F0 !important;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
+      border: 1.5px solid #CBD5E1 !important;
+      border-radius: 14px !important;
+      min-height: 200px !important;
+      height: 100% !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      overflow: hidden !important;
+    }
+    body.light-theme .item-card:hover {
+      border-color: #6366F1 !important;
+      box-shadow: 0 8px 24px rgba(99,102,241,0.18) !important;
+      transform: translateY(-3px) scale(1.01) !important;
     }
     body.light-theme .item-card.in-cart {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), #FFFFFF) !important;
+      background: #F0FDF4 !important;
       border-color: #10B981 !important;
-      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.2) !important;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2) !important;
     }
     body.light-theme .item-img {
-      background: radial-gradient(circle at center, rgba(99, 102, 241, 0.12) 0%, #F1F5F9 100%) !important;
+      height: 90px !important;
+      min-height: 90px !important;
+      background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%) !important;
+      border-bottom: 1.5px solid #E2E8F0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 38px !important;
+    }
+    body.light-theme .item-body {
+      padding: 10px 12px 12px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      flex: 1 !important;
+      min-height: 105px !important;
     }
     body.light-theme .item-name {
       color: #0F172A !important;
-      font-weight: 700 !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      line-height: 1.35 !important;
+      margin: 4px 0 6px !important;
       word-break: break-word !important;
       overflow-wrap: break-word !important;
       display: -webkit-box !important;
       -webkit-line-clamp: 2 !important;
       -webkit-box-orient: vertical !important;
       overflow: hidden !important;
-      height: 2.6em !important;
-      line-height: 1.3em !important;
+      height: 2.7em !important;
     }
     body.light-theme .item-price {
       color: #4338CA !important;
+      font-size: 15px !important;
+      font-weight: 800 !important;
     }
     body.light-theme .item-price small {
       color: #64748B !important;
+      font-size: 9.5px !important;
+    }
+    body.light-theme .item-category-tag {
+      color: #6366F1 !important;
+      background: rgba(99, 102, 241, 0.08) !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 2px 7px !important;
+      border-radius: 6px !important;
+      display: inline-block !important;
+      width: fit-content !important;
     }
     body.light-theme .topbar-title {
       color: #0F172A !important;
@@ -199,28 +242,36 @@
     }
     body.light-theme .pos-skeleton-card {
       background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
+      border: 1.5px solid #E2E8F0 !important;
+      border-radius: 14px !important;
+      min-height: 200px !important;
+      height: 100% !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
     }
     body.light-theme .pos-skeleton-img {
       background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%) !important;
       background-size: 200% 100% !important;
+      height: 90px !important;
     }
     body.light-theme .pos-skeleton-line {
       background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%) !important;
       background-size: 200% 100% !important;
     }
 
-    /* Topbar responsive compactness on 1366px screens */
+    /* Topbar responsive compactness on 1366px - 1440px screens */
     @media (max-width: 1440px) {
       .pos-quick-tool-btn {
         padding: 0 8px !important;
         font-size: 11px !important;
         gap: 5px !important;
         height: 33px !important;
+        min-width: 34px !important;
+      }
+      .pos-quick-tool-btn span:not([id*="Badge"]):not([id*="badge"]):not([id*="Count"]) {
+        display: none !important;
       }
       .pos-quick-tool-btn i {
-        font-size: 11px !important;
+        font-size: 12px !important;
       }
       .topbar {
         padding: 0 10px !important;
@@ -230,30 +281,27 @@
         display: none !important;
       }
       .user-pill-text {
-        max-width: 80px !important;
+        max-width: 100px !important;
+      }
+      .quick-logout-text {
+        display: inline !important;
       }
     }
 
     @media (max-width: 1280px) {
       .user-pill-text {
-        display: none !important;
+        max-width: 75px !important;
       }
       .quick-logout-text {
         display: none !important;
       }
-      .pos-quick-tool-btn.stock-btn span:not(#topbarLowStockBadge) {
-        display: none !important;
-      }
-      .pos-quick-tool-btn.hold-btn span:not(#holdCartsCountBadge) {
-        display: none !important;
-      }
-      .pos-quick-tool-btn.online-btn span:not(#onlinePendingBadge) {
-        display: none !important;
-      }
     }
 
-    /* When sidebar is expanded on desktop (>=1024px), hide duplicate restaurant brand text in topbar to prevent header crowding */
+    /* When sidebar is expanded on desktop (>=1024px), hide duplicate restaurant brand text & hamburger in topbar to prevent header crowding */
     @media (min-width: 1024px) {
+      body:not(.sidebar-collapsed) #posTopbarMenuToggle {
+        display: none !important;
+      }
       body:not(.sidebar-collapsed-mode) .topbar-duplicate-brand {
         display: none !important;
       }
@@ -913,11 +961,13 @@
 
     /* Menu Grid */
     .menu-grid {
-      flex: 1; overflow-y: auto; padding: 4px 12px 12px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;
+      flex: 1; overflow-y: auto; padding: 12px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      grid-auto-rows: minmax(200px, auto);
+      gap: 12px;
       align-content: start;
     }
-    .menu-grid::-webkit-scrollbar { width: 5px; }
+    .menu-grid::-webkit-scrollbar { width: 6px; }
     .menu-grid::-webkit-scrollbar-track { background: transparent; }
     .menu-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
@@ -925,8 +975,8 @@
       background: rgba(30, 41, 59, 0.65);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
       cursor: pointer;
       transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden;
@@ -934,6 +984,9 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      min-height: 200px;
+      height: 100%;
     }
     .item-card:hover {
       border-color: rgba(99, 102, 241, 0.7);
@@ -2401,7 +2454,7 @@
       </div>
 
       <!-- Quick 1-Click Logout Button (Always Visible & Pinned to Top Right) -->
-      <form method="POST" action="{{ route('auth.logout') }}" class="topbar-desktop-only" style="margin:0; flex-shrink:0;">
+      <form method="POST" action="{{ route('auth.logout') }}" class="pos-quick-logout-form" style="margin:0; flex-shrink:0;">
         @csrf
         <button type="submit" title="Logout from POS"
           style="background:rgba(239,68,68,0.14); border:1.5px solid rgba(239,68,68,0.35); color:#EF4444; height:32px; padding:0 10px; border-radius:9px; display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:11.5px; font-weight:800; transition:all 0.15s ease; flex-shrink:0; white-space:nowrap;"
@@ -2608,7 +2661,7 @@
                   <div class="item-price">₹ {{ number_format($price, 0) }}<small>/dish</small></div>
                   <div class="item-footer-actions">
                     @if($isAvailable)
-                      <button class="item-add-btn" type="button" onclick="event.stopPropagation();addQuickItem('{{ $item->id }}')" title="Add to Cart">+</button>
+                      <button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('{{ $item->id }}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>
                     @else
                       <span style="font-size:10px; color:#EF4444; font-weight:700;"><i class="fa-solid fa-ban"></i></span>
                     @endif
@@ -4903,9 +4956,9 @@
             <div class="item-img">
               ${hasImg ? `
                 <img src="${escapeAttr(item.image)}" alt="${safeName}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='flex';">
-                <span style="display:none; font-size:34px;">${item.emoji || '🍽️'}</span>
+                <div class="item-emoji-circle" style="display:none; width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.08); align-items:center; justify-content:center; font-size:30px;">${item.emoji || '🍽️'}</div>
               ` : `
-                <span>${item.emoji || '🍽️'}</span>
+                <div class="item-emoji-circle" style="width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; font-size:30px;">${item.emoji || '🍽️'}</div>
               `}
               ${item.badge === 'out' || isSoldOut
                 ? `<span class="item-badge out">SOLD OUT</span>`
@@ -4915,9 +4968,9 @@
               ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
             </div>
             <div class="item-body">
-              <div style="display:flex; align-items:center; gap:5px; margin-bottom:3px;">
-                <span class="pos-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:5px; margin-bottom:4px;">
                 <span class="item-category-tag">${escapeHtml(item.category || item.cat || '')}</span>
+                <span class="pos-diet-icon ${isVeg ? 'veg' : 'nonveg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"><span class="diet-dot"></span></span>
               </div>
               <div class="item-name" title="${safeName}">${safeName}</div>
               <div class="item-footer">
