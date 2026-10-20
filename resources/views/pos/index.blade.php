@@ -262,51 +262,141 @@
       background-size: 200% 100% !important;
     }
 
-    /* Topbar responsive compactness on 1366px - 1440px screens */
-    @media (max-width: 1440px) {
-      .pos-quick-tool-btn {
-        padding: 0 8px !important;
-        font-size: 11px !important;
-        gap: 5px !important;
-        height: 33px !important;
-        min-width: 34px !important;
-      }
-      .pos-quick-tool-btn span:not([id*="Badge"]):not([id*="badge"]):not([id*="Count"]) {
-        display: none !important;
-      }
-      .pos-quick-tool-btn i {
-        font-size: 12px !important;
-      }
+    /* Topbar cluster layouts & resilient right-side anchoring */
+    .topbar-left-cluster {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0 !important;
+    }
+    .topbar-center-cluster {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    .topbar-right-cluster {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0 !important;
+      margin-left: auto;
+    }
+    .pos-quick-logout-form {
+      margin: 0;
+      flex-shrink: 0 !important;
+    }
+    .pos-quick-logout-btn {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1.5px solid rgba(239, 68, 68, 0.35);
+      color: #EF4444;
+      height: 33px;
+      padding: 0 11px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 800;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0 !important;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .pos-quick-logout-btn:hover {
+      background: #EF4444 !important;
+      border-color: #EF4444 !important;
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    }
+    .pos-quick-logout-btn:active {
+      transform: translateY(0);
+    }
+    body.light-theme .pos-quick-logout-btn {
+      background: #FEF2F2 !important;
+      border: 1.5px solid #FECACA !important;
+      color: #DC2626 !important;
+    }
+    body.light-theme .pos-quick-logout-btn:hover {
+      background: #EF4444 !important;
+      border-color: #EF4444 !important;
+      color: #FFFFFF !important;
+    }
+    body.light-theme .user-pill-btn {
+      background: #F8FAFC !important;
+      border: 1.5px solid #E2E8F0 !important;
+    }
+    body.light-theme .user-pill-btn:hover {
+      background: #FFFFFF !important;
+      border-color: #6366F1 !important;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08) !important;
+    }
+
+    /* Topbar responsive compactness on 1366px - 1536px laptop/desktop screens */
+    @media (max-width: 1536px) {
       .topbar {
         padding: 0 10px !important;
         gap: 6px !important;
       }
+      .pos-quick-tool-btn {
+        padding: 0 8px !important;
+        font-size: 11px !important;
+        gap: 5px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+      }
+      .user-pill-text {
+        max-width: 85px !important;
+      }
+    }
+
+    @media (max-width: 1366px) {
+      .pos-quick-tool-btn span:not([id*="Badge"]):not([id*="badge"]):not([id*="Count"]) {
+        display: none !important;
+      }
       #posShiftText {
         display: none !important;
       }
-      .user-pill-text {
-        max-width: 100px !important;
-      }
-      .quick-logout-text {
-        display: inline !important;
-      }
-    }
-
-    @media (max-width: 1280px) {
-      .user-pill-text {
-        max-width: 75px !important;
+      .pos-quick-logout-btn {
+        width: 33px !important;
+        padding: 0 !important;
+        justify-content: center !important;
       }
       .quick-logout-text {
         display: none !important;
       }
+      .user-pill-text {
+        max-width: 70px !important;
+      }
     }
 
-    /* When sidebar is expanded on desktop (>=1024px), hide duplicate restaurant brand text & hamburger in topbar to prevent header crowding */
+    @media (max-width: 1200px) {
+      #posNetworkStatusText {
+        display: none !important;
+      }
+      #posNetworkStatusBadge {
+        padding: 0 8px !important;
+        width: 33px !important;
+        justify-content: center !important;
+      }
+      .user-pill-text {
+        display: none !important;
+      }
+    }
+
+    /* Sidebar In/Out & Header Brand syncing */
     @media (min-width: 1024px) {
-      body:not(.sidebar-collapsed) #posTopbarMenuToggle {
+      /* When sidebar is expanded, hide duplicate brand name in topbar */
+      body:not(.sidebar-collapsed-mode) .topbar-duplicate-brand {
         display: none !important;
       }
-      body:not(.sidebar-collapsed-mode) .topbar-duplicate-brand {
+    }
+    /* When sidebar is collapsed on desktop, omit duplicate avatar because the 64px rail already renders it */
+    @media (min-width: 769px) {
+      .topbar-duplicate-brand .topbar-brand-avatar {
         display: none !important;
       }
     }
@@ -540,18 +630,74 @@
     .sidebar-toggle {
       margin-left: auto; flex-shrink: 0;
       width: 28px; height: 28px; border-radius: 8px;
-      background: rgba(255,255,255,.12); border: none;
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background .15s;
+      cursor: pointer; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .sidebar-toggle:hover { background: rgba(255,255,255,.25); }
-    .sidebar-toggle i { font-size: 11px; color: rgba(255,255,255,.9); transition: transform .25s; }
+    .sidebar-toggle:hover {
+      background: rgba(99,102,241,.35);
+      border-color: #6366F1;
+      transform: scale(1.05);
+    }
+    .sidebar-toggle i {
+      font-size: 11px;
+      color: rgba(255,255,255,.9);
+      transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-block;
+    }
+    .sidebar.collapsed .sidebar-brand {
+      justify-content: center;
+      padding: 10px 0 8px;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 72px;
+    }
+    .sidebar.collapsed .brand-icon {
+      margin: 0 auto;
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+    .sidebar.collapsed .brand-icon:hover {
+      transform: scale(1.06);
+    }
     .sidebar.collapsed .sidebar-toggle {
       display: flex;
-      margin: 8px auto 0 auto;
+      margin: 0 auto;
+      width: 34px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
     }
-    .sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
-    .sidebar.collapsed .sidebar-brand { justify-content: center; padding: 10px 4px; flex-direction: column; gap: 6px; }
+    .sidebar.collapsed .sidebar-toggle:hover {
+      background: rgba(99,102,241,.3);
+      border-color: #6366F1;
+      color: #818CF8;
+    }
+    .sidebar.collapsed .sidebar-toggle i {
+      transform: rotate(180deg);
+    }
+    body.light-theme .sidebar-toggle {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+    }
+    body.light-theme .sidebar-toggle i {
+      color: #475569;
+    }
+    body.light-theme .sidebar-toggle:hover {
+      background: #EEF2FF;
+      border-color: #6366F1;
+      color: #4338CA;
+    }
+    body.light-theme .sidebar.collapsed .sidebar-toggle {
+      background: #F1F5F9 !important;
+      border: 1px solid #CBD5E1 !important;
+    }
+    body.light-theme .sidebar.collapsed .sidebar-toggle:hover {
+      background: #EEF2FF !important;
+      border-color: #6366F1 !important;
+      color: #4338CA !important;
+    }
 
     .sidebar-section { padding: 12px 8px 4px; overflow: hidden; }
     .sidebar-section-label {
@@ -2208,7 +2354,7 @@
 @endphp
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+    <div class="brand-icon" onclick="if(document.getElementById('sidebar')?.classList.contains('collapsed')) toggleSidebar();" title="{{ $posRestName }}" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px; cursor: pointer;">
       @if($posRestLogo)
         <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 100%; height: 100%; object-fit: contain; background: #fff; padding: 2px; border-radius: 6px;">
       @else
@@ -2219,7 +2365,7 @@
       <h2 style="font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="{{ $posRestName }}">{{ $posRestName }}</h2>
       <span style="font-size: 10.5px; opacity: 0.7;">POS Terminal &bull; DineFlow</span>
     </div>
-    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" id="posSidebarToggleBtn" title="Collapse sidebar (Ctrl+B)">
       <i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i>
     </button>
   </div>
@@ -2290,18 +2436,20 @@
   <!-- Topbar -->
   <div class="topbar">
     <!-- Left: Sidebar Toggle, Restaurant Brand & Live Clock -->
-    <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+    <div class="topbar-left-cluster">
       <button class="topbar-btn" type="button" onclick="toggleSidebar()" id="posTopbarMenuToggle" title="Toggle Sidebar Navigation (Ctrl+B)" style="cursor:pointer; flex-shrink:0;">
         <i class="fa-solid fa-bars" id="topbarHamburgerIcon"></i>
       </button>
 
       <div style="display:flex; align-items:center; gap:8px;">
-        <div class="topbar-duplicate-brand" style="display:flex; align-items:center; gap:8px;">
-          @if($posRestLogo)
-            <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain; background: #fff; padding: 2px; border: 1px solid var(--border); flex-shrink:0;">
-          @else
-            <div style="width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; font-family: 'Outfit', sans-serif; flex-shrink:0;">{{ substr($posRestName, 0, 1) }}</div>
-          @endif
+        <div class="topbar-duplicate-brand" style="display:flex; align-items:center; gap:6px;">
+          <div class="topbar-brand-avatar" style="flex-shrink:0;">
+            @if($posRestLogo)
+              <img src="{{ $posRestLogo }}" alt="{{ $posRestName }}" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain; background: #fff; padding: 2px; border: 1px solid var(--border);">
+            @else
+              <div style="width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; font-family: 'Outfit', sans-serif;">{{ substr($posRestName, 0, 1) }}</div>
+            @endif
+          </div>
           <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13.5px; line-height: 1.2; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
             <span style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $posRestName }}</span>
             <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow:0 0 6px #10B981;" title="POS Terminal Live"></span>
@@ -2317,7 +2465,7 @@
     </div>
 
     <!-- Center: DineFlow Quick Action Control Cluster -->
-    <div style="display:flex; align-items:center; gap:8px;">
+    <div class="topbar-center-cluster">
       <!-- Cash Register & Shift Drawer -->
       <button type="button" class="pos-quick-tool-btn shift-btn" id="posShiftBtn" title="Cash Register & Shift Control" onclick="openShiftRegisterModal()">
         <i class="fa-solid fa-cash-register"></i>
@@ -2358,8 +2506,8 @@
       </a>
     </div>
 
-    <!-- Right: Operations Dropdown, Network Sentinel & User Menu -->
-    <div style="display:flex; align-items:center; gap:8px;">
+    <!-- Right: Operations Dropdown, Network Sentinel, User Menu & Quick Logout -->
+    <div class="topbar-right-cluster">
       <!-- Operations Dropdown (Recipe Costing, GST Tax, Shortcuts, Themes) -->
       <div class="pos-dropdown-wrap">
         <button type="button" class="pos-quick-tool-btn tools-btn" id="posMoreToolsBtn" onclick="toggleMoreToolsMenu(event)" title="Additional Management Tools">
@@ -2408,13 +2556,12 @@
 
       <!-- Cashier User Pill with Interactive Dropdown & Quick Logout -->
       <div class="pos-dropdown-wrap pos-user-profile-wrap topbar-desktop-only" style="position:relative; flex-shrink:0;">
-        <div class="user-pill-btn" onclick="toggleUserMenu(event)" title="User Profile & Quick Actions"
-          style="display:flex; align-items:center; gap:8px; padding:3px 8px; border-radius:10px; cursor:pointer; background:var(--bg); border:1.5px solid var(--border); transition:all 0.15s ease;">
+        <div class="user-pill-btn" onclick="toggleUserMenu(event)" title="User Profile & Quick Actions">
           <div class="user-avatar" style="width:28px; height:28px; font-size:12px; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;">
             {{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}
           </div>
           <div class="user-pill-text" style="display:flex; flex-direction:column; line-height:1.2; min-width:0;">
-            <span style="font-size:11.5px; font-weight:700; color:var(--text-primary); max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ Auth::user()?->name ?? 'Admin' }}">{{ Auth::user()?->name ?? 'Admin' }}</span>
+            <span style="font-size:11.5px; font-weight:700; color:var(--text-primary); max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ Auth::user()?->name ?? 'Admin' }}">{{ Auth::user()?->name ?? 'Admin' }}</span>
             <span style="font-size:9.5px; color:var(--text-muted); text-transform:capitalize; font-weight:600;">{{ Auth::user()?->role ?? 'admin' }}</span>
           </div>
           <i class="fa-solid fa-chevron-down" style="font-size:9px; color:var(--text-muted); margin-left:2px;"></i>
@@ -2454,7 +2601,7 @@
             <button type="submit" class="pos-dropdown-item" style="width:100%; border:none; background:rgba(239,68,68,0.12); color:#EF4444; font-weight:700; cursor:pointer; border-radius:8px; padding:9px 12px; display:flex; align-items:center; gap:10px; transition:all 0.15s ease;"
               onmouseover="this.style.background='#EF4444'; this.style.color='#fff';"
               onmouseout="this.style.background='rgba(239,68,68,0.12)'; this.style.color='#EF4444';">
-              <i class="fa-solid fa-right-from-bracket" style="width:18px;"></i>
+              <i class="fa-solid fa-arrow-right-from-bracket" style="width:18px;"></i>
               <span>Sign Out / Logout</span>
             </button>
           </form>
@@ -2462,13 +2609,10 @@
       </div>
 
       <!-- Quick 1-Click Logout Button (Always Visible & Pinned to Top Right) -->
-      <form method="POST" action="{{ route('auth.logout') }}" class="pos-quick-logout-form" style="margin:0; flex-shrink:0;">
+      <form method="POST" action="{{ route('auth.logout') }}" class="pos-quick-logout-form">
         @csrf
-        <button type="submit" title="Logout from POS"
-          style="background:rgba(239,68,68,0.14); border:1.5px solid rgba(239,68,68,0.35); color:#EF4444; height:32px; padding:0 10px; border-radius:9px; display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:11.5px; font-weight:800; transition:all 0.15s ease; flex-shrink:0; white-space:nowrap;"
-          onmouseover="this.style.background='#EF4444'; this.style.color='#fff';"
-          onmouseout="this.style.background='rgba(239,68,68,0.14)'; this.style.color='#EF4444';">
-          <i class="fa-solid fa-right-from-bracket"></i>
+        <button type="submit" class="pos-quick-logout-btn" title="Quick Logout / Sign Out from POS">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
           <span class="quick-logout-text">Logout</span>
         </button>
       </form>
@@ -8620,9 +8764,9 @@
       localStorage.setItem('dineflow_pos_sidebar_collapsed', isCollapsed ? '1' : '0');
     } catch (e) {}
 
-    const toggleIcon = document.getElementById('sidebarToggleIcon');
-    if (toggleIcon) {
-      toggleIcon.className = isCollapsed ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+    const toggleBtn = document.getElementById('posSidebarToggleBtn');
+    if (toggleBtn) {
+      toggleBtn.title = isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)';
     }
   }
 
@@ -8647,9 +8791,9 @@
     sidebar.classList.toggle('collapsed', shouldCollapse);
     document.body.classList.toggle('sidebar-collapsed-mode', shouldCollapse);
 
-    const toggleIcon = document.getElementById('sidebarToggleIcon');
-    if (toggleIcon) {
-      toggleIcon.className = shouldCollapse ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+    const toggleBtn = document.getElementById('posSidebarToggleBtn');
+    if (toggleBtn) {
+      toggleBtn.title = shouldCollapse ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)';
     }
   }
 
