@@ -6632,12 +6632,16 @@
     }
   }
 
-  // Background Auto-Polling for Incoming Aggregator Orders (every 20 seconds)
+  // Background Auto-Polling for Incoming Aggregator Orders (every 20 seconds, throttled & guarded)
+  let isCheckingAggregators = false;
   setInterval(() => {
+    if (document.visibilityState === 'hidden') return;
+    if (isCheckingAggregators) return;
+    isCheckingAggregators = true;
     fetch('/api/aggregators/orders')
       .then(r => r.json())
       .then(data => {
-        if (!data.success) return;
+        if (!data || !data.success) return;
         const pendingCount = data.pending_count || 0;
         const badge = document.getElementById('onlinePendingBadge');
         if (badge) {
@@ -6659,7 +6663,10 @@
         }
         lastKnownPendingAggregatorCount = pendingCount;
       })
-      .catch(e => {});
+      .catch(e => {})
+      .finally(() => {
+        isCheckingAggregators = false;
+      });
   }, 20000);
 
   /* ════════════════════════════════════════════════════════════════════════════════
@@ -8657,8 +8664,11 @@
   }
 
   // ─── VOCAL SOUNDBOX ANNOUNCEMENTS ───
+  let isCheckingNewPayments = false;
 
   async function checkNewPayments() {
+    if (isCheckingNewPayments) return;
+    isCheckingNewPayments = true;
     try {
       const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
       const data = await response.json();
@@ -8697,6 +8707,8 @@
       }
     } catch (err) {
       console.log('Error checking new payments:', err);
+    } finally {
+      isCheckingNewPayments = false;
     }
   }
 
