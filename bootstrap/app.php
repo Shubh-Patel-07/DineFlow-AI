@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
         $middleware->append(\App\Http\Middleware\ForceCloseConnection::class);
         $middleware->append(\App\Http\Middleware\SecurityHeadersMiddleware::class);
+        $middleware->append(\App\Http\Middleware\LicenseVerificationMiddleware::class);
 
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
