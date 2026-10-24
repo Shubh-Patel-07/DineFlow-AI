@@ -86,14 +86,28 @@ graph TD
 
 ---
 
-## 👥 Team Members & Detailed Module Contributions
+## 👥 Team Members & Contribution Metrics
 
-| Member Name | Role & Git Branch | Technical Contributions & Features Developed |
-| :--- | :--- | :--- |
-| 👑 **Shubh Patel (SMP)** | **Team Lead**<br>`feature-teamlead` | • **Full-Stack Architecture**: Framework configuration (Laravel 11 + PHP 8.3), REST API routes, Portable dual DB (SQLite/MySQL), and RBAC Middleware.<br>• **Touchscreen POS Terminal (`/pos`)**: Fast billing UI, tax engine (5% Service + 18% GST), table selector, and checkout logic.<br>• **⚡ Auto-Apply Offers Engine (`/admin/coupons`)**: Built 10+ offer features (Max Discount Cap, Expiry, Category & Order Type filters) + POS 1-click & auto-apply coupon logic.<br>• **🔊 Vocal Soundbox Engine**: Multi-language real-time speech announcements (Gujarati, Hindi, English) for paid orders.<br>• **📄 Executive A4 Invoice & Thermal Printer**: A4 Tax Invoice PDF generation with dynamic QR verification, authorized SMP seal signature, and 80mm thermal receipt printing.<br>• **📱 WhatsApp Invoice Sender**: Direct modal integration to share digital invoice links via WhatsApp without browser popups.<br>• **🛢️ Automated Stock Auto-Deduction**: Real-time database triggers deducting raw inventory items upon order checkout. |
-| 🧑‍💻 **Krushank Dave** | **Team Member 2**<br>`feature-krushank` | • **Customer QR Digital Menu (`/menu`)**: Contactless mobile ordering UI, responsive dish card layouts, and category filtering.<br>• **🛵 Live Order Status Tracker**: Progress bar tracking order lifecycle (`🟡 Received` ➔ `🟠 Cooking` ➔ `🟢 Ready & Serving`).<br>• **🍳 Kitchen Display System (KDS) UI (`/pos/kitchen`)**: Real-time kitchen order queue cards, audio chime alerts, and status toggles (`Pending` → `Preparing` → `Completed`).<br>• **🛒 Customer Cart & Badge Component**: Interactive floating cart summary, item quantity controls, and cart badge counters. |
-| 🧑‍💻 **Fiyans** | **Team Member 3**<br>`feature-fiyans` | • **Table Manager System (`/admin/tables`)**: Table registry UI, occupied status tracking, and dynamic QR Code generation.<br>• **⭐ Reviews & Customer Feedback (`/admin/feedback`)**: Customer ratings storage, review comments list, and star rating analytics.<br>• **🎨 System CSS Design System (`admin.css`)**: Glassmorphism dark/light theme CSS tokens, custom scrollbars, and card shadow system.<br>• **⚙️ System Settings Grid (`/admin/settings`)**: Ultra-modern 6-card preference grid layout for POS & soundbox settings. |
-| 🧑‍💻 **Veer Prajapati** | **Team Member 4**<br>`feature-veer` | • **🛒 Interactive Cart System**: Floating cart drawer, item quantity increments, subtotal calculations, and cart item badges.<br>• **🛵 Customer Order Tracking Engine**: Real-time order status progress bar tracking (`🟡 Received` ➔ `🟠 Cooking` ➔ `🟢 Ready & Serving`).<br>• **📱 Mobile Menu Integration**: Responsive customer-facing menu layout optimization for mobile devices. |
+![DineFlow AI Contributor Audit](github_contributors_report.png)
+
+| Member Name | Role & Git Branch | Main Commits | Contribution Share | Technical Contributions & Features Developed |
+| :--- | :--- | :---: | :---: | :--- |
+| 👑 **Shubh Patel (SMP)** | **Project Lead & Full-Stack Architect**<br>`feature-teamlead` | **701** | **92.2%** | • **Full-Stack Architecture**: Laravel 11 framework, REST API routes, dual DB (SQLite/MySQL), and RBAC Middleware.<br>• **Touchscreen POS Terminal (`/pos`)**: High-speed billing terminal, real-time GST tax engine, checkout flow.<br>• **⚡ Auto-Apply Offers Engine (`/admin/coupons`)**: Built coupon rules engine + 1-click checkout application.<br>• **🔊 Vocal Soundbox Engine**: Multi-language audio speech engine (Gujarati, Hindi, English).<br>• **📄 Executive A4 Invoice & Thermal Printer**: A4 Tax Invoice PDF generation with dynamic QR verification and 80mm thermal receipt printing.<br>• **📱 WhatsApp Invoice Sender**: Seamless modal sharing invoice links via WhatsApp.<br>• **☁️ Live AWS Cloud Deployment**: Ubuntu EC2 server setup, Nginx reverse proxy, MySQL database tuning. |
+| 🧑‍💻 **Krushank Dave** | **Frontend Contributor**<br>`feature-krushank` | **26** | **3.4%** | • **Customer QR Digital Menu (`/menu`)**: Mobile ordering UI, responsive dish card layouts, and category filtering.<br>• **🛵 Order Status Tracker UI**: Progress bar tracking order lifecycle.<br>• **🍳 Kitchen Display System (KDS) Layout (`/pos/kitchen`)**: Real-time kitchen order cards and status buttons.<br>• **🛒 Customer Cart UI**: Interactive floating cart summary and item quantity controls. |
+| 🧑‍💻 **Fiyans Patel** | **Admin Frontend Contributor**<br>`feature-fiyans` | **21** | **2.8%** | • **Table Manager System (`/admin/tables`)**: Table registry UI, occupied status tracking, and QR Code generation.<br>• **⭐ Reviews & Customer Feedback (`/admin/feedback`)**: Customer ratings storage and review comments list.<br>• **🎨 System CSS Design System (`admin.css`)**: Glassmorphism dark/light theme CSS tokens and card styling. |
+| 🧑‍💻 **Veer Prajapati** | **Utility & Storage Contributor**<br>`feature-veer` | **12** | **1.6%** | • **🛒 Cart LocalStorage Helper (`cart-storage.js`)**: Client-side storage routines for customer basket.<br>• **🛵 Order Status Polling Helper (`order-tracker-api.js`)**: Background polling helper for order progress updates.<br>• **📄 Specification Documentation**: Contributed to cart and tracking SRS documentation. |
+
+---
+
+## 📚 Technical Documentation Directory
+
+All architectural, operational, and audit reports have been structured in [`docs/`](docs/):
+
+- 🚀 **[Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md)**: Cloud VPS & AWS production setup.
+- 💾 **[Backup and Recovery](docs/operations/BACKUP_AND_RECOVERY.md)**: Database snapshotting and disaster recovery procedures.
+- 🔐 **[Login & Authentication Setup](docs/guides/LOGIN_SETUP.md)**: Role-based access control and demo credential provisioning.
+- 📴 **[Offline Synchronization Docs](docs/offline/)**: Architecture, conflict resolution, and recovery policies for desktop offline POS.
+- 📋 **[Audit & Verification Reports](docs/reports/)**: Preflight audit, security scans, and super admin subscription tests.
 
 ---
 
@@ -167,4 +181,4 @@ Our codebase maintains a clean multi-branch workflow:
 ## 📄 License & Attribution
 
 Developed by **Shubh Patel (SMP)** & Team for **DineFlow AI Restaurant Suite**.  
-Licensed under the [MIT License](LICENSE).
+Licensed under the [MIT License](LICENSE.md).

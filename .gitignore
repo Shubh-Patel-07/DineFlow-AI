@@ -33,3 +33,7 @@ backend/node_modules/
 frontend/node_modules/
 /marketing_kit/
 *.sql
+
+# Scratch scripts and temporary diagnostics
+scratch/
+
