@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Pricing Plans — DineFlow Restaurant Management</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <meta name="description" content="Simple, transparent restaurant software pricing. Start with our 100% Free Plan or choose Pro and Enterprise growth tiers. WhatsApp: +91 7777938338.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

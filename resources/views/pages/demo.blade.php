@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Experience Live Interactive Demo — DineFlow POS</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <meta name="description" content="Test drive DineFlow restaurant POS, QR ordering menu, and Kitchen KDS with our interactive live demo sandboxes. No sign-up or credit card required.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
