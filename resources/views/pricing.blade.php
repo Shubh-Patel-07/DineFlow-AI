@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Pricing Plans — Tendorabuy Restaurant Management</title>
+    <title>Pricing Plans — DineFlow Restaurant Management</title>
     <meta name="description" content="Simple, transparent restaurant software pricing. Start with our 100% Free Plan or choose Pro and Enterprise growth tiers. WhatsApp: +91 7777938338.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -470,7 +470,7 @@
             <!-- Brand Logo -->
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
-                <div class="brand-name">Tendorabuy</div>
+                <div class="brand-name">DineFlow</div>
             </a>
 
             <!-- Desktop Nav Links -->
@@ -485,7 +485,7 @@
 
             <!-- Header Actions -->
             <div class="nav-actions">
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20pricing%20plans." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20pricing%20plans." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
                     <i class="fa-brands fa-whatsapp"></i>
                     <span>+91 7777938338</span>
                 </a>
@@ -516,7 +516,7 @@
             <li><a href="/#faq" onclick="toggleMobileDrawer()"><i class="fa-solid fa-circle-question" style="color:var(--primary);"></i> FAQ</a></li>
             <li><a href="/contact"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> Contact Sales</a></li>
             <li>
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20pricing%20plans." target="_blank" style="color: #4ADE80;">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20pricing%20plans." target="_blank" style="color: #4ADE80;">
                     <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp); font-size: 16px;"></i> WhatsApp (+91 7777938338)
                 </a>
             </li>
@@ -592,7 +592,7 @@
                     <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone Support</li>
                 </ul>
                 <a href="/contact" class="btn-ghost" style="width:100%; margin-bottom:10px;">Contact Sales Form</a>
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20am%20interested%20in%20the%20Enterprise%20Plan%20for%20my%20restaurant." target="_blank" class="btn-primary" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 14px rgba(37,211,102,0.3);"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20am%20interested%20in%20the%20Enterprise%20Plan%20for%20my%20restaurant." target="_blank" class="btn-primary" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 14px rgba(37,211,102,0.3);"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
             </div>
         </section>
 
@@ -606,7 +606,7 @@
                     Looking to Acquire the Complete Source Code?
                 </h3>
                 <p style="font-size:14px; color:#CBD5E1; max-width:640px; margin:0;">
-                    Own the full, unencrypted codebase of Tendorabuy &amp; DineFlow AI. White-label it, launch your own SaaS brand, and retain 100% client subscription revenues with a Commercial License.
+                    Own the full, unencrypted codebase of DineFlow &amp; DineFlow AI. White-label it, launch your own SaaS brand, and retain 100% client subscription revenues with a Commercial License.
                 </p>
             </div>
             <a href="/buy-source-code" class="btn-primary" style="background: linear-gradient(135deg, #EC4899, #8B5CF6); box-shadow: 0 4px 20px rgba(236,72,153,0.35); font-weight:800; padding: 12px 24px; white-space:nowrap;">
@@ -618,7 +618,7 @@
 
     <footer class="footer">
         <div class="container">
-            &copy; 2026 Tendorabuy. All rights reserved. &bull; <a href="/terms" style="color:#94A3B8; text-decoration:none;">Terms</a> &bull; <a href="/privacy" style="color:#94A3B8; text-decoration:none;">Privacy</a> &bull; <a href="/contact" style="color:#94A3B8; text-decoration:none;">Contact</a>
+            &copy; 2026 DineFlow. All rights reserved. &bull; <a href="/terms" style="color:#94A3B8; text-decoration:none;">Terms</a> &bull; <a href="/privacy" style="color:#94A3B8; text-decoration:none;">Privacy</a> &bull; <a href="/contact" style="color:#94A3B8; text-decoration:none;">Contact</a>
         </div>
     </footer>
 

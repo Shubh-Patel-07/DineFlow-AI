@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — SaaS Subscription Automated Test Report
+# DineFlow AI / DineFlow — SaaS Subscription Automated Test Report
 
 **Execution Date**: August 28, 2026  
 **Test Suite**: `scratch/verify_superadmin_subscription_suite.php`  

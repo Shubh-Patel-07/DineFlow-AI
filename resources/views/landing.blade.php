@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Tendorabuy — Modern Restaurant POS, QR Ordering & Kitchen Management</title>
-    <meta name="description" content="Tendorabuy is the all-in-one restaurant platform. Table QR digital ordering, fast POS billing, real-time Kitchen Display (KDS), inventory control, and offline desktop sync.">
+    <title>DineFlow — Modern Restaurant POS, QR Ordering & Kitchen Management</title>
+    <meta name="description" content="DineFlow is the all-in-one restaurant platform. Table QR digital ordering, fast POS billing, real-time Kitchen Display (KDS), inventory control, and offline desktop sync.">
     
     <!-- Open Graph / SEO Metadata -->
-    <meta property="og:title" content="Tendorabuy — Modern Restaurant POS, QR Ordering & Kitchen Management">
+    <meta property="og:title" content="DineFlow — Modern Restaurant POS, QR Ordering & Kitchen Management">
     <meta property="og:description" content="Complete restaurant operating system. Streamline QR table ordering, fast POS billing, real-time KDS, offline desktop sync, and staff management.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
@@ -1126,7 +1126,7 @@
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
                 <div class="brand-name">
-                    <span>Tendorabuy</span>
+                    <span>DineFlow</span>
                     <span class="brand-badge">POS</span>
                 </div>
             </a>
@@ -1156,7 +1156,7 @@
                 </a>
 
                 <!-- WhatsApp Click to Chat -->
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp (+91 7777938338)">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp (+91 7777938338)">
                     <i class="fa-brands fa-whatsapp" style="font-size: 16px; color: #25D366;"></i>
                     <span class="wa-text">+91 7777938338</span>
                 </a>
@@ -1205,7 +1205,7 @@
             <li><a href="#faq" onclick="toggleMobileNav()"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
             <li><a href="/contact"><i class="fa-solid fa-headset"></i> Contact Support</a></li>
             <li>
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" style="color: #4ADE80; font-weight: 700;">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" style="color: #4ADE80; font-weight: 700;">
                     <i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 18px;"></i> WhatsApp (+91 7777938338)
                 </a>
             </li>
@@ -1240,7 +1240,7 @@
             <div class="section-tag"><i class="fa-solid fa-bolt"></i> Complete Restaurant Platform</div>
             <h1 class="hero-title">Complete Restaurant Management, POS, QR Ordering & Kitchen in One Platform.</h1>
             <p class="hero-desc">
-                Tendorabuy empowers restaurants, cafés, and food businesses with instant contactless table QR ordering, real-time Kitchen Display (KDS), lightning-fast POS billing, and intelligent inventory tracking.
+                DineFlow empowers restaurants, cafés, and food businesses with instant contactless table QR ordering, real-time Kitchen Display (KDS), lightning-fast POS billing, and intelligent inventory tracking.
             </p>
 
             <div class="hero-ctas">
@@ -1423,7 +1423,7 @@
     <section class="steps-section" id="how-it-works">
         <div class="container">
             <div class="section-tag"><i class="fa-solid fa-compass"></i> Simple Onboarding</div>
-            <h2 class="section-title">How Tendorabuy Works</h2>
+            <h2 class="section-title">How DineFlow Works</h2>
             <p class="section-subtitle">Get your restaurant up and running in 4 quick steps.</p>
 
             <div class="steps-grid">
@@ -1588,11 +1588,11 @@
         <div class="container">
             <div class="section-tag"><i class="fa-solid fa-circle-question"></i> Questions &amp; Answers</div>
             <h2 class="section-title">Frequently Asked Questions</h2>
-            <p class="section-subtitle">Everything you need to know about Tendorabuy.</p>
+            <p class="section-subtitle">Everything you need to know about DineFlow.</p>
 
             <div class="faq-list">
                 <div class="faq-item">
-                    <h4>Is Tendorabuy free to use?</h4>
+                    <h4>Is DineFlow free to use?</h4>
                     <p>Yes! Our Free Starter Plan is 100% free forever with no credit card required. It includes up to 10 tables, 5 staff accounts, 100 menu items, POS billing, and QR ordering.</p>
                 </div>
 
@@ -1608,12 +1608,12 @@
 
                 <div class="faq-item">
                     <h4>Can I connect standard thermal receipt printers?</h4>
-                    <p>Yes. Tendorabuy supports standard 58mm and 80mm ESC/POS thermal printers, network printers, and standard A4 tax invoices.</p>
+                    <p>Yes. DineFlow supports standard 58mm and 80mm ESC/POS thermal printers, network printers, and standard A4 tax invoices.</p>
                 </div>
 
                 <div class="faq-item">
                     <h4>Can multiple independent restaurants use the platform?</h4>
-                    <p>Yes. Tendorabuy features strict multi-tenant data isolation. Each restaurant has its own private menu, customer base, orders, inventory, and staff.</p>
+                    <p>Yes. DineFlow features strict multi-tenant data isolation. Each restaurant has its own private menu, customer base, orders, inventory, and staff.</p>
                 </div>
             </div>
         </div>
@@ -1624,13 +1624,13 @@
         <div class="container">
             <div class="cta-box">
                 <h2>Start Your Restaurant Free Today</h2>
-                <p>Join hundreds of modern restaurants accelerating their table turnover and kitchen speed with Tendorabuy.</p>
+                <p>Join hundreds of modern restaurants accelerating their table turnover and kitchen speed with DineFlow.</p>
                 <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                     <a href="{{ route('register') }}" class="btn-primary" style="padding: 13px 28px; font-size: 15px; border-radius: 10px;">
                         <span>START FREE TODAY</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-primary" style="padding: 13px 24px; font-size: 15px; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);">
+                    <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" class="btn-primary" style="padding: 13px 24px; font-size: 15px; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);">
                         <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i>
                         <span>Chat on WhatsApp</span>
                     </a>
@@ -1647,7 +1647,7 @@
                     <a href="/" class="brand-logo">
                         <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
                         <div class="brand-name">
-                            <span>Tendorabuy</span>
+                            <span>DineFlow</span>
                             <span class="brand-badge">POS</span>
                         </div>
                     </a>
@@ -1686,7 +1686,7 @@
             </div>
 
             <div class="footer-bottom">
-                <div>&copy; 2026 Tendorabuy. All rights reserved.</div>
+                <div>&copy; 2026 DineFlow. All rights reserved.</div>
                 <div>Designed for High-Performance Restaurant Operations</div>
             </div>
         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $status === 'SUSPENDED' ? 'Account Suspended' : ($status === 'GRACE_PERIOD' ? 'Subscription Grace Period' : 'Subscription Expired') }} — Tendorabuy POS</title>
+    <title>{{ $status === 'SUSPENDED' ? 'Account Suspended' : ($status === 'GRACE_PERIOD' ? 'Subscription Grace Period' : 'Subscription Expired') }} — DineFlow POS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -487,7 +487,7 @@
             <div class="brand-logo">
                 <i class="fa-solid fa-utensils"></i>
             </div>
-            <div class="brand-name">Tendorabuy POS</div>
+            <div class="brand-name">DineFlow POS</div>
         </div>
 
         <!-- Status Badge -->
@@ -522,7 +522,7 @@
         @elseif($status === 'SUSPENDED')
             <h1 class="status-title">Restaurant Account Suspended</h1>
             <p class="status-subtitle">
-                Access to <strong>{{ $restaurant->name }}</strong> has been temporarily placed on hold by Tendorabuy Administration.
+                Access to <strong>{{ $restaurant->name }}</strong> has been temporarily placed on hold by DineFlow Administration.
                 <br>
                 <span class="status-gujarati-sub">તમારું રેસ્ટોરન્ટ એકાઉન્ટ કામચલાઉ રીતે સ્થગિત કરવામાં આવ્યું છે. કૃપા કરીને સપોર્ટનો સંપર્ક કરો.</span>
             </p>
@@ -536,16 +536,16 @@
         @else
             <h1 class="status-title">Your Plan Has Expired</h1>
             <p class="status-subtitle">
-                The subscription for <strong>{{ $restaurant->name }}</strong> has expired. Continue using Tendorabuy POS by renewing your plan.
+                The subscription for <strong>{{ $restaurant->name }}</strong> has expired. Continue using DineFlow POS by renewing your plan.
                 <br>
-                <span class="status-gujarati-sub">તમારો Tendorabuy subscription plan પૂર્ણ થઈ ગયો છે. સિસ્ટમ ચાલુ રાખવા માટે કૃપા કરીને તમારો પ્લાન Renew કરો.</span>
+                <span class="status-gujarati-sub">તમારો DineFlow subscription plan પૂર્ણ થઈ ગયો છે. સિસ્ટમ ચાલુ રાખવા માટે કૃપા કરીને તમારો પ્લાન Renew કરો.</span>
             </p>
         @endif
 
         <!-- Customer-Facing Message Box -->
         <div class="message-box">
             <div class="message-box-header">
-                <i class="fa-solid fa-envelope-open-text"></i> Message from Tendorabuy Team
+                <i class="fa-solid fa-envelope-open-text"></i> Message from DineFlow Team
             </div>
             <div class="message-box-content">
                 {{ $customerMessage }}
@@ -652,7 +652,7 @@
         </div>
 
         <div class="footer-note">
-            &copy; {{ date('Y') }} Tendorabuy / DineFlow AI Platform. All restaurant operational data is securely preserved.
+            &copy; {{ date('Y') }} DineFlow AI Platform. All restaurant operational data is securely preserved.
         </div>
     </div>
 </div>

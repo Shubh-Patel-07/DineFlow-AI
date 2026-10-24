@@ -1,9 +1,9 @@
-# DineFlow AI / Tendorabuy — Step 4: Domain DNS & SSL Readiness Audit
+# DineFlow AI / DineFlow — Step 4: Domain DNS & SSL Readiness Audit
 
 **Audit Date**: August 28, 2026  
 **Auditor**: Lead Security & Infrastructure Engineer  
 **Target Server IP**: `3.110.208.210`  
-**Target Domain**: `tendorabuy.in` / `app.tendorabuy.in`
+**Target Domain**: `dineflowai.duckdns.org` / `dineflowai.duckdns.org`
 
 ---
 
@@ -11,12 +11,12 @@
 
 | # | Audit Item | Current State | Status |
 |---|---|---|---|
-| 1 | **`tendorabuy.in` DNS A-Record** | Currently `NXDOMAIN` (awaiting DNS propagation from registrar) | 🟡 **NEEDS MANUAL ACTION** |
-| 2 | **`app.tendorabuy.in` DNS A-Record** | Currently `NXDOMAIN` (awaiting DNS propagation from registrar) | 🟡 **NEEDS MANUAL ACTION** |
+| 1 | **`dineflowai.duckdns.org` DNS A-Record** | Currently `NXDOMAIN` (awaiting DNS propagation from registrar) | 🟡 **NEEDS MANUAL ACTION** |
+| 2 | **`dineflowai.duckdns.org` DNS A-Record** | Currently `NXDOMAIN` (awaiting DNS propagation from registrar) | 🟡 **NEEDS MANUAL ACTION** |
 | 3 | **HTTPS Active** | Port 443 SSL listener not yet active | 🟡 **NEEDS MANUAL ACTION** |
 | 4 | **SSL Certificate Installed** | Certbot certificate pending domain challenge verification | 🟡 **NEEDS MANUAL ACTION** |
 | 5 | **HTTP to HTTPS Redirect** | Plain HTTP (Port 80) active; redirect pending SSL installation | 🟡 **NEEDS MANUAL ACTION** |
-| 6 | **Nginx Configuration** | `/etc/nginx/sites-available/tendorabuy` configured for `tendorabuy.in`, `app.tendorabuy.in`, `3.110.208.210`, and `_` | 🟢 **VERIFIED** |
+| 6 | **Nginx Configuration** | `/etc/nginx/sites-available/dineflow` configured for `dineflowai.duckdns.org`, `dineflowai.duckdns.org`, `3.110.208.210`, and `_` | 🟢 **VERIFIED** |
 | 7 | **Laravel Application State** | All 25 migrations, UserSeeder, POS, KDS, Super Admin live & operational on `http://3.110.208.210` | 🟢 **VERIFIED** |
 | 8 | **Scheduler / Expiration Cron** | Cron job active for `php artisan schedule:run` | 🟢 **VERIFIED** |
 
@@ -26,8 +26,8 @@
 
 When querying DNS root nameservers:
 ```
-Query: tendorabuy.in ➔ NXDOMAIN (Non-Existent Domain / In Propagation)
-Query: app.tendorabuy.in ➔ NXDOMAIN
+Query: dineflowai.duckdns.org ➔ NXDOMAIN (Non-Existent Domain / In Propagation)
+Query: dineflowai.duckdns.org ➔ NXDOMAIN
 ```
 
 ### 📋 Required DNS Configuration at Domain Provider:
@@ -47,10 +47,10 @@ Ensure the following 3 records exist in your domain registrar's DNS panel (e.g. 
 Once DNS lookup returns `3.110.208.210`, execute the following single command in the AWS terminal to issue Let's Encrypt SSL and enable automatic HTTPS redirection:
 
 ```bash
-sudo certbot --nginx -d tendorabuy.in -d app.tendorabuy.in -d www.tendorabuy.in --non-interactive --agree-tos -m shubhmpatel77@gmail.com --redirect
+sudo certbot --nginx -d dineflowai.duckdns.org -d dineflowai.duckdns.org -d www.dineflowai.duckdns.org --non-interactive --agree-tos -m shubhmpatel77@gmail.com --redirect
 ```
 
 And update `APP_URL` in `.env`:
 ```bash
-sudo sed -i "s|APP_URL=.*|APP_URL=https://tendorabuy.in|g" /var/www/tendorabuy/.env && sudo php artisan config:clear
+sudo sed -i "s|APP_URL=.*|APP_URL=https://dineflowai.duckdns.org|g" /var/www/dineflow/.env && sudo php artisan config:clear
 ```

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Privacy Policy — Tendorabuy</title>
+    <title>Privacy Policy — DineFlow</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
 </head>
 <body>
     <div class="container">
-        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Tendorabuy</a>
+        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to DineFlow</a>
         <h1>Privacy Policy</h1>
         <p class="updated-date">Last updated: August 2026</p>
         <h2>1. Information We Collect</h2>
@@ -59,7 +59,7 @@
         <h2>3. Data Ownership</h2>
         <p>You retain 100% ownership of your customer lists, sales reports, and menu catalog.</p>
         <h2>4. Contact</h2>
-        <p>Questions regarding our privacy practices? Contact us at <a href="/contact">our contact page</a> or email <a href="mailto:privacy@tendorabuy.in">privacy@tendorabuy.in</a>.</p>
+        <p>Questions regarding our privacy practices? Contact us at <a href="/contact">our contact page</a> or email <a href="mailto:privacy@dineflowai.duckdns.org">privacy@dineflowai.duckdns.org</a>.</p>
     </div>
 </body>
 </html>

@@ -11,13 +11,13 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Create superadmin user
-        $superEmail = env('SUPERADMIN_EMAIL', 'superadmin@tendorabuy.in');
-        $superPass = env('SUPERADMIN_PASSWORD', 'SuperAdmin@Tendorabuy2026!');
+        $superEmail = env('SUPERADMIN_EMAIL', 'superadmin@dineflowai.duckdns.org');
+        $superPass = env('SUPERADMIN_PASSWORD', 'SuperAdmin@DineFlow2026!');
         User::updateOrCreate(
             ['email' => $superEmail],
             [
                 'username' => 'superadmin',
-                'name' => 'Tendorabuy Super Admin',
+                'name' => 'DineFlow Super Admin',
                 'password' => Hash::make($superPass),
                 'role' => 'superadmin',
                 'restaurant_id' => null,

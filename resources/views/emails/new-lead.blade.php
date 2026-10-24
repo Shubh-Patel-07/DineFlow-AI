@@ -22,7 +22,7 @@
     <div class="card">
         <div class="header">
             <h1>🚀 New Lead Received!</h1>
-            <p>A new enquiry was submitted via Tendorabuy website.</p>
+            <p>A new enquiry was submitted via DineFlow website.</p>
         </div>
         <div class="content">
             <div class="field">
@@ -75,7 +75,7 @@
                 if (strlen($cleanPhone) === 10) {
                     $cleanPhone = '91' . $cleanPhone;
                 }
-                $waText = urlencode("Hello " . $lead->name . ", thank you for reaching out to Tendorabuy regarding your restaurant " . $lead->restaurant_name . ". How can we assist you today?");
+                $waText = urlencode("Hello " . $lead->name . ", thank you for reaching out to DineFlow regarding your restaurant " . $lead->restaurant_name . ". How can we assist you today?");
             @endphp
             <div style="text-align: center; margin-top: 20px;">
                 <a href="https://wa.me/{{ $cleanPhone }}?text={{ $waText }}" class="btn-wa" target="_blank">
@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="footer">
-            Tendorabuy Lead Notification System &bull; Automatic Notification
+            DineFlow Lead Notification System &bull; Automatic Notification
         </div>
     </div>
 </body>

@@ -26,7 +26,7 @@ class NewLeadNotification extends Mailable
      */
     public function build()
     {
-        $subject = "🔔 New Enquiry from " . ($this->lead->restaurant_name ?: $this->lead->name) . " — Tendorabuy";
+        $subject = "🔔 New Enquiry from " . ($this->lead->restaurant_name ?: $this->lead->name) . " — DineFlow";
 
         return $this->subject($subject)
                     ->view('emails.new-lead');

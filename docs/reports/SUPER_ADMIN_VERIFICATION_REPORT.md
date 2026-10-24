@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — Super Admin Panel Verification Report
+# DineFlow AI / DineFlow — Super Admin Panel Verification Report
 
 **Date of Audit**: August 28, 2026  
 **Auditor**: Antigravity Lead Systems & Security Engineer  
@@ -87,7 +87,7 @@
 1. **Step 1 — Create `SuperAdminController.php`**: Implement global tenant listing, statistics aggregation, status toggles, and plan management.
 2. **Step 2 — Register Super Admin Routes**: Add `/superadmin` and `/api/superadmin/*` routes in `routes/web.php`.
 3. **Step 3 — Build Super Admin Dashboard UI**: Create a responsive Super Admin view with dark/light theme support.
-4. **Step 4 — Add Super Admin Seeder**: Seed a default platform Super Admin account (`superadmin@tendorabuy.in`).
+4. **Step 4 — Add Super Admin Seeder**: Seed a default platform Super Admin account (`superadmin@dineflowai.duckdns.org`).
 5. **Step 5 — Automated QA Verification**: Run automated tests verifying Super Admin authentication, restaurant listing, status toggles, and quota adjustments.
 
 ---

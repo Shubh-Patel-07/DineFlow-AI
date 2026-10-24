@@ -88,11 +88,11 @@ class SubscriptionStatusController extends Controller
 
         $supportPhone = '+91 7777938338';
         $supportEmail = 'shubhmpatel77@gmail.com';
-        $waGeneralMessage = urlencode("Hello Tendorabuy Team, I need assistance with my restaurant subscription for '{$restaurant->name}' (ID #{$restaurant->id}). Status: " . strtoupper($status));
+        $waGeneralMessage = urlencode("Hello DineFlow Team, I need assistance with my restaurant subscription for '{$restaurant->name}' (ID #{$restaurant->id}). Status: " . strtoupper($status));
         $whatsappUrl = "https://wa.me/917777938338?text={$waGeneralMessage}";
 
-        $waProMessage = urlencode("Hello Tendorabuy Team, I would like to renew / upgrade to the PRO Plan (₹999/mo) for my restaurant '{$restaurant->name}' (ID #{$restaurant->id}). Please send payment link and activate.");
-        $waEnterpriseMessage = urlencode("Hello Tendorabuy Team, I would like to enquire about the ENTERPRISE Plan for my restaurant '{$restaurant->name}' (ID #{$restaurant->id}). Please connect with sales.");
+        $waProMessage = urlencode("Hello DineFlow Team, I would like to renew / upgrade to the PRO Plan (₹999/mo) for my restaurant '{$restaurant->name}' (ID #{$restaurant->id}). Please send payment link and activate.");
+        $waEnterpriseMessage = urlencode("Hello DineFlow Team, I would like to enquire about the ENTERPRISE Plan for my restaurant '{$restaurant->name}' (ID #{$restaurant->id}). Please connect with sales.");
 
         $availablePlans = [
             'free' => [
@@ -108,7 +108,7 @@ class SubscriptionStatusController extends Controller
                 'menu_items' => '100 Menu Items',
                 'features' => ['Digital QR Menu', 'Basic POS Billing', 'Standard Sales Summary'],
                 'cta_text' => 'Choose Starter',
-                'cta_url' => "https://wa.me/917777938338?text=" . urlencode("Hello Tendorabuy Team, please activate Starter Free Plan for '{$restaurant->name}' (ID #{$restaurant->id})"),
+                'cta_url' => "https://wa.me/917777938338?text=" . urlencode("Hello DineFlow Team, please activate Starter Free Plan for '{$restaurant->name}' (ID #{$restaurant->id})"),
             ],
             'pro' => [
                 'name' => 'Restaurant Pro',

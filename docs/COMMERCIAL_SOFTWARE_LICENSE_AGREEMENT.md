@@ -60,7 +60,7 @@ This Commercial Software License Agreement (the **"Agreement"**) is entered into
 
 5.1. **Injunction & Damages:** In the event Licensee breaches Section 2 (Reselling, Redistribution, or Piracy), Licensee acknowledges that Licensor will suffer irreparable commercial harm.
 
-5.2. **Liquidated Damages:** Licensee agrees to pay liquidated damages of **₹10,00,000 INR (or $15,000 CAD)** per unauthorized deployment, copy, or resale transaction, plus all reasonable legal and attorney fees incurred in enforcing this Agreement.
+5.2. **Liquidated Damages:** Licensee agrees to pay liquidated damages of **₹25,00,000 INR / $25,000 USD (or equivalent statutory international currency in the jurisdiction of infringement)** per unauthorized deployment, copy, or resale transaction, plus all reasonable legal and attorney fees incurred in enforcing this Agreement.
 
 5.3. **Immediate Revocation:** Any unauthorized distribution or breach immediately and automatically revokes Licensee’s license without refund.
 
@@ -77,7 +77,7 @@ This Commercial Software License Agreement (the **"Agreement"**) is entered into
 | **License Type** | Single-Domain Commercial License (Non-Resellable) |
 | **License Token Signature** | `[Cryptographically Generated via php artisan license:generate]` |
 | **Purchase Date** | `_____ / _____ / 202___` |
-| **Total License Fee** | `₹_________________ / $_________________ CAD` |
+| **Total License Fee** | `₹_________________ / $_________________ USD (or local currency)` |
 
 ---
 

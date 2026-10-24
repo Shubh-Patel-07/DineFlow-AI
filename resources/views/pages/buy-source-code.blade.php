@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Acquire Complete Source Code — DineFlow AI & Tendorabuy Restaurant SaaS</title>
-    <meta name="description" content="Acquire the complete unencrypted source code of DineFlow AI & Tendorabuy. Web POS, QR Table Ordering, Kitchen KDS, Windows Desktop, and Multi-tenant SaaS with Commercial License.">
+    <title>Acquire Complete Source Code — DineFlow AI Restaurant SaaS</title>
+    <meta name="description" content="Acquire the complete unencrypted source code of DineFlow AI. Web POS, QR Table Ordering, Kitchen KDS, Windows Desktop, and Multi-tenant SaaS with Commercial License.">
     
     <!-- Open Graph Metadata -->
     <meta property="og:title" content="DineFlow AI Source Code Sale — Multi-Tenant Restaurant SaaS Platform">
@@ -1358,7 +1358,7 @@
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-code"></i></div>
                 <div class="brand-name">
-                    <span>Tendorabuy</span>
+                    <span>DineFlow</span>
                     <span class="brand-badge">Source Sale</span>
                 </div>
             </a>
@@ -1377,7 +1377,7 @@
                     <i class="fa-solid fa-play" style="font-size: 11px;"></i>
                     <span>Test Sandbox</span>
                 </a>
-                <a href="https://wa.me/917777938338?text=Hello%20Patel%20Shubh!%20I%20am%20interested%20in%20acquiring%20the%20DineFlow%20AI%20%2F%20Tendorabuy%20Source%20Code." class="btn-wa-header" target="_blank">
+                <a href="https://wa.me/917777938338?text=Hello%20Patel%20Shubh!%20I%20am%20interested%20in%20acquiring%20the%20DineFlow%20AI%20%2F%20DineFlow%20Source%20Code." class="btn-wa-header" target="_blank">
                     <i class="fa-brands fa-whatsapp"></i>
                     <span>+91 7777938338</span>
                 </a>
@@ -2030,7 +2030,7 @@
                     <a href="/" class="brand-logo">
                         <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
                         <div class="brand-name">
-                            <span>Tendorabuy</span>
+                            <span>DineFlow</span>
                             <span class="brand-badge">POS</span>
                         </div>
                     </a>
@@ -2051,7 +2051,7 @@
 
             <div class="footer-bottom">
                 <div>
-                    &copy; {{ date('Y') }} Tendorabuy / DineFlow AI. Created &amp; Engineered by <strong>Patel Shubh</strong> (<code>Patel-Shubh-07</code>).
+                    &copy; {{ date('Y') }} DineFlow AI. Created &amp; Engineered by <strong>Patel Shubh</strong> (<code>Patel-Shubh-07</code>).
                 </div>
                 <div style="display: flex; gap: 18px; align-items: center;">
                     <a href="mailto:shubhmpatel77@gmail.com" style="color: #A5B4FC; text-decoration: none;"><i class="fa-solid fa-envelope"></i> shubhmpatel77@gmail.com</a>

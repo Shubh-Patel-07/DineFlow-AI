@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — Super Admin SaaS Subscription Implementation
+# DineFlow AI / DineFlow — Super Admin SaaS Subscription Implementation
 
 **Status**: 🟢 **COMPLETE (Production Ready)**  
 **Version**: 2.0.0 (Multi-Tenant SaaS Control)  
@@ -8,7 +8,7 @@
 
 ## 1. Architectural Overview
 
-The Super Admin SaaS Platform Control System introduces an authoritative, server-driven subscription lifecycle engine for DineFlow AI / Tendorabuy. It enables SaaS administrators to manage tenant onboarding, multi-tiered subscription plans (`free`, `pro`, `enterprise`, `custom`), automated grace periods, expiration policies, and offline manual payment recordings.
+The Super Admin SaaS Platform Control System introduces an authoritative, server-driven subscription lifecycle engine for DineFlow AI / DineFlow. It enables SaaS administrators to manage tenant onboarding, multi-tiered subscription plans (`free`, `pro`, `enterprise`, `custom`), automated grace periods, expiration policies, and offline manual payment recordings.
 
 ```
                                ┌─────────────────────────────────────────┐

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>DineFlow / Tendorabuy — Super Admin Control Center</title>
+  <title>DineFlow AI — Super Admin Control Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -845,7 +845,7 @@
         <div class="avatar">SA</div>
         <div class="user-info">
           <h4>{{ Auth::user()->name ?? 'Super Admin' }}</h4>
-          <p>{{ Auth::user()->email ?? 'superadmin@tendorabuy.in' }}</p>
+          <p>{{ Auth::user()->email ?? 'superadmin@dineflowai.duckdns.org' }}</p>
         </div>
       </div>
       <form action="{{ route('auth.logout') }}" method="POST" style="width: 100%;">
@@ -1375,7 +1375,7 @@
               Customer-Facing Message
               <span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">(Visible to restaurant users upon login)</span>
             </label>
-            <textarea id="suspendCustomerMessage" class="form-textarea" rows="3" placeholder="Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance."></textarea>
+            <textarea id="suspendCustomerMessage" class="form-textarea" rows="3" placeholder="Your restaurant account has been temporarily suspended by DineFlow Administration. Please contact support for assistance."></textarea>
           </div>
 
           <div class="form-group">
@@ -1795,9 +1795,9 @@
       } else if (val === 'Subscription Issue') {
         custMsg.value = 'Your restaurant subscription has expired and access is suspended. Please renew your plan or contact support.';
       } else if (val === 'Policy Violation') {
-        custMsg.value = 'Your restaurant account has been suspended due to an administrative policy review. Please contact Tendorabuy support.';
+        custMsg.value = 'Your restaurant account has been suspended due to an administrative policy review. Please contact DineFlow support.';
       } else {
-        custMsg.value = 'Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.';
+        custMsg.value = 'Your restaurant account has been temporarily suspended by DineFlow Administration. Please contact support for assistance.';
       }
     }
 
@@ -1808,7 +1808,7 @@
       document.getElementById('suspendReasonSelect').value = 'Temporary Suspension';
       document.getElementById('customReasonWrapper').style.display = 'none';
       document.getElementById('suspendCustomReason').value = '';
-      document.getElementById('suspendCustomerMessage').value = 'Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.';
+      document.getElementById('suspendCustomerMessage').value = 'Your restaurant account has been temporarily suspended by DineFlow Administration. Please contact support for assistance.';
       document.getElementById('suspendInternalNote').value = '';
       openModal('suspendModal');
     }
@@ -2363,7 +2363,7 @@
       tbody.innerHTML = leads.map(lead => {
         const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
         const intlPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
-        const waText = encodeURIComponent(`Hello ${lead.name || 'there'}, thank you for contacting Tendorabuy regarding "${lead.restaurant_name}". How can we help you?`);
+        const waText = encodeURIComponent(`Hello ${lead.name || 'there'}, thank you for contacting DineFlow regarding "${lead.restaurant_name}". How can we help you?`);
         const dateStr = new Date(lead.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
 
         const statusColors = {

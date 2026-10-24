@@ -495,7 +495,7 @@
             <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">{{ $currentRest->getCustomerFacingGracePeriodMessage() }}</p>
           </div>
         </div>
-        <a href="https://wa.me/917777938338?text={{ urlencode('Hello Tendorabuy Team, I need to renew my restaurant subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I need to renew my restaurant subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
           <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
         </a>
       </div>
@@ -510,7 +510,7 @@
             <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">Your restaurant subscription will expire in {{ max(0, intval($daysRemaining)) }} day(s). Renew now to avoid any disruption.</p>
           </div>
         </div>
-        <a href="https://wa.me/917777938338?text={{ urlencode('Hello Tendorabuy Team, I want to renew/extend subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I want to renew/extend subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
           <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
         </a>
       </div>

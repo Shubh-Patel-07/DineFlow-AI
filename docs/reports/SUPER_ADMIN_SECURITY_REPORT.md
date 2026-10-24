@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — Super Admin Security Audit Report
+# DineFlow AI / DineFlow — Super Admin Security Audit Report
 
 **Date**: August 28, 2026  
 **Auditor**: Lead Security Engineer  

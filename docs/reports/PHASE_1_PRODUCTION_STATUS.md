@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — Phase 1 Production Status
+# DineFlow AI / DineFlow — Phase 1 Production Status
 
 **Status**: 🟢 **PRE-FLIGHT AUDIT COMPLETE (Zero Blockers Detected)**  
 **Classification**: Codebase is 100% ready for Step 2 Server Provisioning.
@@ -29,7 +29,7 @@
 
 ### 👤 What You Personally Need to Do (User Responsibilities):
 1. **Choose / Purchase a VPS Cloud Server** (e.g. DigitalOcean Droplet, Hetzner, AWS EC2, or Hostinger VPS with Ubuntu 22.04 / 24.04).
-2. **Set up DNS A-Record** pointing your domain (e.g. `app.tendorabuy.in`) to the VPS Public IP.
+2. **Set up DNS A-Record** pointing your domain (e.g. `dineflowai.duckdns.org`) to the VPS Public IP.
 3. **Provide SMTP Credentials** (Gmail App Password, SendGrid, or Brevo API key) to put into `.env`.
 4. **Acquire Thermal Printer / Hardware** (if deploying physical POS hardware at the pilot restaurant).
 

@@ -25,7 +25,7 @@ This document outlines the phased launch plan for deploying DineFlow AI to 1–2
 ├────────────────────────────────────────────────────────────────────────┤
 │ PHASE 3: PUBLIC COMMERCIAL SAAS LAUNCH                                 │
 │   - Target: Public self-serve multi-tenant onboarding.                 │
-│   - Domain: app.tendorabuy.in                                          │
+│   - Domain: dineflowai.duckdns.org                                          │
 │   - Automation: Automated billing, multi-outlet franchise, SMS/WhatsApp│
 │     order dispatch.                                                    │
 └────────────────────────────────────────────────────────────────────────┘

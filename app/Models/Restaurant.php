@@ -154,7 +154,7 @@ class Restaurant extends Model
             return $this->suspension_message;
         }
 
-        return "Your restaurant account has been temporarily suspended. Please contact Tendorabuy support for assistance.";
+        return "Your restaurant account has been temporarily suspended. Please contact DineFlow support for assistance.";
     }
 
     public function getCustomerFacingExpiryMessage(): string
@@ -163,7 +163,7 @@ class Restaurant extends Model
             return $this->expiry_message;
         }
 
-        return "Your Tendorabuy subscription has expired. Please renew your plan to continue using the platform.";
+        return "Your DineFlow subscription has expired. Please renew your plan to continue using the platform.";
     }
 
     public function getCustomerFacingGracePeriodMessage(): string

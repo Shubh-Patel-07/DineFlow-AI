@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Experience Live Interactive Demo — Tendorabuy POS</title>
-    <meta name="description" content="Test drive Tendorabuy restaurant POS, QR ordering menu, and Kitchen KDS with our interactive live demo sandboxes. No sign-up or credit card required.">
+    <title>Experience Live Interactive Demo — DineFlow POS</title>
+    <meta name="description" content="Test drive DineFlow restaurant POS, QR ordering menu, and Kitchen KDS with our interactive live demo sandboxes. No sign-up or credit card required.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -624,7 +624,7 @@
             <!-- Brand Logo -->
             <a href="/" class="brand-logo">
                 <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
-                <div class="brand-name">Tendorabuy</div>
+                <div class="brand-name">DineFlow</div>
             </a>
 
             <!-- Desktop Nav Links -->
@@ -639,7 +639,7 @@
 
             <!-- Header Actions -->
             <div class="nav-actions">
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp">
                     <i class="fa-brands fa-whatsapp"></i>
                     <span>+91 7777938338</span>
                 </a>
@@ -670,7 +670,7 @@
             <li><a href="/#faq" onclick="toggleMobileDrawer()"><i class="fa-solid fa-circle-question" style="color:var(--primary);"></i> FAQ</a></li>
             <li><a href="/contact"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> Contact Sales</a></li>
             <li>
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" style="color: #4ADE80;">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" style="color: #4ADE80;">
                     <i class="fa-brands fa-whatsapp" style="color: var(--whatsapp); font-size: 16px;"></i> WhatsApp (+91 7777938338)
                 </a>
             </li>
@@ -690,7 +690,7 @@
         <!-- 1. HERO -->
         <section class="demo-hero">
             <div class="section-tag"><i class="fa-solid fa-play"></i> Instant Sandbox</div>
-            <h1>Experience Tendorabuy in Action</h1>
+            <h1>Experience DineFlow in Action</h1>
             <p>Try live interactive demos of Customer QR ordering, Cashier POS billing, and Kitchen KDS displays. No credit card or sign-up needed.</p>
         </section>
 
@@ -817,8 +817,8 @@
                         <i class="fa-solid fa-check"></i>
                     </div>
                     <h3 style="font-family:'Outfit',sans-serif; color:#fff; font-size:18px; margin-bottom:6px;">Thank you! Your enquiry has been received.</h3>
-                    <p style="color:#A7F3D0; font-size:14px; margin-bottom:16px;">Our Tendorabuy team will contact you shortly.</p>
-                    <a id="demoWaBtn" href="https://wa.me/917777938338?text=Hello%20Tendorabuy%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20Tendorabuy%20for%20my%20restaurant." target="_blank" class="btn-success" style="width:fit-content; margin:0 auto; display:inline-flex;">
+                    <p style="color:#A7F3D0; font-size:14px; margin-bottom:16px;">Our DineFlow team will contact you shortly.</p>
+                    <a id="demoWaBtn" href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" class="btn-success" style="width:fit-content; margin:0 auto; display:inline-flex;">
                         <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i>
                         <span>Chat on WhatsApp (+91 7777938338)</span>
                     </a>
@@ -831,7 +831,7 @@
                 <h3>Want an Instant Demo on WhatsApp?</h3>
                 <p>Chat directly with our product team. We can send you demo videos, sample QR codes to scan on your phone, and answer any setup questions immediately.</p>
 
-                <a href="https://wa.me/917777938338?text=Hello%20Tendorabuy%2C%20I%20want%20to%20get%20a%20live%20demo%20walkthrough%20of%20the%20restaurant%20POS%20and%20QR%20ordering%20system." target="_blank" class="btn-success" style="padding: 14px 28px; font-size: 16px; width: fit-content;">
+                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%2C%20I%20want%20to%20get%20a%20live%20demo%20walkthrough%20of%20the%20restaurant%20POS%20and%20QR%20ordering%20system." target="_blank" class="btn-success" style="padding: 14px 28px; font-size: 16px; width: fit-content;">
                     <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i>
                     <span>Chat on WhatsApp (+91 7777938338)</span>
                 </a>
@@ -841,7 +841,7 @@
 
     <footer class="footer">
         <div class="container">
-            &copy; 2026 Tendorabuy. All rights reserved. &bull; <a href="/terms" style="color:#94A3B8; text-decoration:none;">Terms</a> &bull; <a href="/privacy" style="color:#94A3B8; text-decoration:none;">Privacy</a> &bull; <a href="/contact" style="color:#94A3B8; text-decoration:none;">Contact</a>
+            &copy; 2026 DineFlow. All rights reserved. &bull; <a href="/terms" style="color:#94A3B8; text-decoration:none;">Terms</a> &bull; <a href="/privacy" style="color:#94A3B8; text-decoration:none;">Privacy</a> &bull; <a href="/contact" style="color:#94A3B8; text-decoration:none;">Contact</a>
         </div>
     </footer>
 
@@ -913,7 +913,7 @@
                     form.style.display = 'none';
                     successBox.style.display = 'block';
 
-                    const customWaText = encodeURIComponent(`Hello Tendorabuy Team, I just requested a demo for "${restName}". My name is ${name}.`);
+                    const customWaText = encodeURIComponent(`Hello DineFlow Team, I just requested a demo for "${restName}". My name is ${name}.`);
                     document.getElementById('demoWaBtn').href = `https://wa.me/917777938338?text=${customWaText}`;
                 } else {
                     alert(data.message || 'Could not submit demo request. Please try WhatsApp directly at +91 7777938338.');

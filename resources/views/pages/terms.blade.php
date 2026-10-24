@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Terms of Service — Tendorabuy</title>
+    <title>Terms of Service — DineFlow</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
@@ -49,11 +49,11 @@
 </head>
 <body>
     <div class="container">
-        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Tendorabuy</a>
+        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to DineFlow</a>
         <h1>Terms of Service</h1>
         <p class="updated-date">Last updated: August 2026</p>
         <h2>1. Acceptance of Terms</h2>
-        <p>By creating a restaurant account on Tendorabuy, you agree to comply with these terms, governing your access to the POS billing, digital QR menu, and restaurant management services.</p>
+        <p>By creating a restaurant account on DineFlow, you agree to comply with these terms, governing your access to the POS billing, digital QR menu, and restaurant management services.</p>
         <h2>2. Use of Free Starter Plan</h2>
         <p>The Free Starter Plan permits up to 10 dining tables, 5 staff accounts, 100 menu items, and 500 orders monthly. We reserve the right to enforce resource quotas.</p>
         <h2>3. Data & Privacy</h2>

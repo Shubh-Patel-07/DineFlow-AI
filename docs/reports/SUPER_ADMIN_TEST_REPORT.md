@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — Super Admin Automated QA Test Report
+# DineFlow AI / DineFlow — Super Admin Automated QA Test Report
 
 **Execution Date**: August 28, 2026  
 **Test Suite**: `scratch/verify_superadmin_suite.php`  

@@ -22,7 +22,7 @@ class ContactController extends Controller
             Log::info('Spam bot submission caught via honeypot.', ['ip' => $request->ip()]);
             return response()->json([
                 'success' => true,
-                'message' => 'Thank you! Your enquiry has been received. Our Tendorabuy team will contact you shortly.'
+                'message' => 'Thank you! Your enquiry has been received. Our DineFlow team will contact you shortly.'
             ], 200);
         }
 
@@ -72,7 +72,7 @@ class ContactController extends Controller
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Thank you! Your enquiry has been received. Our Tendorabuy team will contact you shortly.',
+                    'message' => 'Thank you! Your enquiry has been received. Our DineFlow team will contact you shortly.',
                     'data'    => $recentDuplicate,
                     'duplicate' => true
                 ], 200);
@@ -113,7 +113,7 @@ class ContactController extends Controller
         }
 
         // 6. Return Response
-        $successMessage = 'Thank you! Your enquiry has been received. Our Tendorabuy team will contact you shortly.';
+        $successMessage = 'Thank you! Your enquiry has been received. Our DineFlow team will contact you shortly.';
 
         if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([

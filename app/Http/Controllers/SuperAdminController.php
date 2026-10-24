@@ -493,7 +493,7 @@ class SuperAdminController extends Controller
             $internalNote = trim((string)$request->input('internal_note', $request->input('suspension_internal_note', '')));
 
             if (empty($customerMessage)) {
-                $customerMessage = "Your restaurant account has been temporarily suspended by Tendorabuy Administration. Please contact support for assistance.";
+                $customerMessage = "Your restaurant account has been temporarily suspended by DineFlow Administration. Please contact support for assistance.";
             }
 
             $oldStatus = $restaurant->subscription_status;

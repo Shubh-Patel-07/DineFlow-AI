@@ -1,9 +1,9 @@
-# DineFlow AI / Tendorabuy — Phase 1 Production Preparation & Audit Report
+# DineFlow AI / DineFlow — Phase 1 Production Preparation & Audit Report
 
 **Report Date**: August 27, 2026  
 **Auditor**: Antigravity Lead Systems & Security Engineer  
 **Mode**: Beginner-Safe Mode (Zero Destructive Operations)  
-**Target Domain**: `tendorabuy.in` / `app.tendorabuy.in`
+**Target Domain**: `dineflowai.duckdns.org` / `dineflowai.duckdns.org`
 
 ---
 
@@ -22,14 +22,14 @@
 
 ---
 
-## 2. Domain & URL Architecture Check (`tendorabuy.in`)
+## 2. Domain & URL Architecture Check (`dineflowai.duckdns.org`)
 
 - **Dynamic Frontend Base URL**: `frontend/admin/api.js` and `frontend/customer/menu.js` dynamically resolve `API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;`.
-- **Zero Production URL Hardcoding**: When accessed on `https://app.tendorabuy.in`, all API calls automatically point to `https://app.tendorabuy.in/api`.
+- **Zero Production URL Hardcoding**: When accessed on `https://dineflowai.duckdns.org`, all API calls automatically point to `https://dineflowai.duckdns.org/api`.
 - **Subdomain Routing Scheme**:
-  - `https://tendorabuy.in` ➔ Public Landing & Pricing Page
-  - `https://app.tendorabuy.in` ➔ SaaS Restaurant Management, Dashboard & POS
-  - `https://api.tendorabuy.in` ➔ REST API & Offline Sync Gateway
+  - `https://dineflowai.duckdns.org` ➔ Public Landing & Pricing Page
+  - `https://dineflowai.duckdns.org` ➔ SaaS Restaurant Management, Dashboard & POS
+  - `https://api.dineflowai.duckdns.org` ➔ REST API & Offline Sync Gateway
 
 ---
 

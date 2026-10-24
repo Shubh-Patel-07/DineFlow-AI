@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — Production Deployment Pre-Flight Audit
+# DineFlow AI / DineFlow — Production Deployment Pre-Flight Audit
 
 **Audit Date**: August 28, 2026  
 **Auditor**: Lead DevOps & Security Engineer  
@@ -18,7 +18,7 @@
 | 6 | **Database Seeders** | `UserSeeder`, `SuperAdminSeeder`, `DineFlowAIPOSSeeder` ready | 🟢 **READY** |
 | 7 | **Production `APP_ENV` Requirements** | Requires `APP_ENV=production` on server | 🟡 **NEEDS MANUAL CONFIG** |
 | 8 | **`APP_DEBUG` Requirements** | Requires `APP_DEBUG=false` on production server | 🟡 **NEEDS MANUAL CONFIG** |
-| 9 | **`APP_URL` Requirements** | Must match real production domain (e.g. `https://app.tendorabuy.in`) | 🟡 **NEEDS MANUAL CONFIG** |
+| 9 | **`APP_URL` Requirements** | Must match real production domain (e.g. `https://dineflowai.duckdns.org`) | 🟡 **NEEDS MANUAL CONFIG** |
 | 10 | **Database Configuration** | MySQL 8.0/MariaDB `DB_HOST`, `DB_USERNAME`, `DB_PASSWORD` | 🟡 **NEEDS MANUAL CONFIG** |
 | 11 | **Session Configuration** | `SESSION_DRIVER=database` with auto encryption | 🟢 **READY** |
 | 12 | **Cache Configuration** | `CACHE_STORE=database` | 🟢 **READY** |

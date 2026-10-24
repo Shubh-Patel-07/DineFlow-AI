@@ -13,9 +13,9 @@ class EnsureSuperAdminCommand extends Command
 
     public function handle(): int
     {
-        $email = $this->option('email') ?: env('SUPERADMIN_EMAIL', 'superadmin@tendorabuy.in');
-        $password = $this->option('password') ?: env('SUPERADMIN_PASSWORD', 'SuperAdmin@Tendorabuy2026!');
-        $name = env('SUPERADMIN_NAME', 'Tendorabuy Super Admin');
+        $email = $this->option('email') ?: env('SUPERADMIN_EMAIL', 'superadmin@dineflowai.duckdns.org');
+        $password = $this->option('password') ?: env('SUPERADMIN_PASSWORD', 'SuperAdmin@DineFlow2026!');
+        $name = env('SUPERADMIN_NAME', 'DineFlow Super Admin');
         $username = env('SUPERADMIN_USERNAME', 'superadmin');
 
         $user = User::where('email', $email)->orWhere('username', $username)->first();

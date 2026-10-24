@@ -1,14 +1,14 @@
-# DineFlow AI / Tendorabuy — Production Pre-Deployment Checklist (Phase 1)
+# DineFlow AI / DineFlow — Production Pre-Deployment Checklist (Phase 1)
 
-This checklist provides a clear, step-by-step verification framework for deploying DineFlow AI to production on `tendorabuy.in`.
+This checklist provides a clear, step-by-step verification framework for deploying DineFlow AI to production on `dineflowai.duckdns.org`.
 
 ---
 
 ## A. Domain
-- [ ] Root Domain `tendorabuy.in` active and registered
-- [ ] Subdomain `app.tendorabuy.in` configured for SaaS Multi-Tenant Web App & POS
-- [ ] Subdomain `api.tendorabuy.in` configured for REST & Offline Sync Gateway
-- [ ] Subdomain `pos.tendorabuy.in` configured (optional alias for direct POS access)
+- [ ] Root Domain `dineflowai.duckdns.org` active and registered
+- [ ] Subdomain `dineflowai.duckdns.org` configured for SaaS Multi-Tenant Web App & POS
+- [ ] Subdomain `api.dineflowai.duckdns.org` configured for REST & Offline Sync Gateway
+- [ ] Subdomain `dineflowai.duckdns.org/pos` configured (optional alias for direct POS access)
 
 ## B. VPS Server
 - [ ] Cloud VPS provisioned (Ubuntu 22.04 LTS or 24.04 LTS)
@@ -25,7 +25,7 @@ This checklist provides a clear, step-by-step verification framework for deployi
 
 ## D. Nginx Web Server
 - [ ] Nginx installed and running (`systemctl status nginx`)
-- [ ] Server blocks configured for `tendorabuy.in`, `app.tendorabuy.in`, `api.tendorabuy.in`
+- [ ] Server blocks configured for `dineflowai.duckdns.org`, `dineflowai.duckdns.org`, `api.dineflowai.duckdns.org`
 - [ ] Document root pointed to `/var/www/dineflow/public`
 - [ ] `try_files $uri $uri/ /index.php?$query_string;` configured
 - [ ] Security headers active (`X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection`)
@@ -52,20 +52,20 @@ This checklist provides a clear, step-by-step verification framework for deployi
 
 ## H. SSL / HTTPS
 - [ ] Let's Encrypt Certbot installed (`sudo apt install certbot python3-certbot-nginx`)
-- [ ] Wildcard / Subdomain SSL certificate issued (`certbot --nginx -d tendorabuy.in -d app.tendorabuy.in -d api.tendorabuy.in`)
+- [ ] Wildcard / Subdomain SSL certificate issued (`certbot --nginx -d dineflowai.duckdns.org -d dineflowai.duckdns.org -d api.dineflowai.duckdns.org`)
 - [ ] Automatic HTTPS redirect enabled
 - [ ] Certbot auto-renewal timer active (`systemctl status certbot.timer`)
 
 ## I. SMTP & Transactional Email
 - [ ] Transactional email provider active (SendGrid / Mailgun / AWS SES)
 - [ ] SMTP host, port (587 TLS), username, and API key configured in `.env`
-- [ ] Sender email `support@tendorabuy.in` verified in email provider
+- [ ] Sender email `support@dineflowai.duckdns.org` verified in email provider
 - [ ] Test email sent successfully via `php artisan tinker`
 
 ## J. Environment Variables (.env)
 - [ ] `APP_ENV=production` set
 - [ ] `APP_DEBUG=false` set
-- [ ] `APP_URL=https://app.tendorabuy.in` set
+- [ ] `APP_URL=https://dineflowai.duckdns.org` set
 - [ ] `SESSION_DRIVER=database` or `SESSION_DRIVER=file`
 - [ ] `CACHE_STORE=database` or `CACHE_STORE=file`
 - [ ] `QUEUE_CONNECTION=database`
@@ -87,7 +87,7 @@ This checklist provides a clear, step-by-step verification framework for deployi
 - [ ] `windows-app/` Node dependencies installed (`npm install`)
 - [ ] Embedded SQLite engine initialized (`sql.js`)
 - [ ] Production Windows executable built (`npm run build`)
-- [ ] POS terminal connects to `https://api.tendorabuy.in` when online
+- [ ] POS terminal connects to `https://api.dineflowai.duckdns.org` when online
 
 ## N. Offline Sync Engine
 - [ ] `sync_queue` table active in local SQLite

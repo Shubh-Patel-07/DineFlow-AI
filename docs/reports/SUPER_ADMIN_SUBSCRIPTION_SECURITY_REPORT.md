@@ -1,4 +1,4 @@
-# DineFlow AI / Tendorabuy — SaaS Subscription Security Audit Report
+# DineFlow AI / DineFlow — SaaS Subscription Security Audit Report
 
 **Date**: August 28, 2026  
 **Auditor**: Lead Security & Infrastructure Engineer  

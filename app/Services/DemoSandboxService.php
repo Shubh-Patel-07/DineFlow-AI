@@ -49,7 +49,7 @@ class DemoSandboxService
         $user = User::create([
             'name' => 'Demo Administrator',
             'username' => $username,
-            'email' => $username . '@sandbox.tendorabuy.in',
+            'email' => $username . '@sandbox.dineflowai.duckdns.org',
             'password' => Hash::make('demo1234'),
             'role' => 'admin',
             'restaurant_id' => $restaurant->id,

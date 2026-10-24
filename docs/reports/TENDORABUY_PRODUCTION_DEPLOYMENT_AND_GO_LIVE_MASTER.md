@@ -1,27 +1,27 @@
-# DineFlow AI / Tendorabuy — Master Production Deployment & Go-Live Guide
+# DineFlow AI / DineFlow — Master Production Deployment & Go-Live Guide
 
 **Project**: DineFlow AI Multi-Tenant Restaurant SaaS OS  
-**Live Production Domain**: `tendorabuy.in`  
-**Subdomains**: `app.tendorabuy.in` (SaaS Admin & POS), `api.tendorabuy.in` (REST & Sync API)  
+**Live Production Domain**: `dineflowai.duckdns.org`  
+**Subdomains**: `dineflowai.duckdns.org` (SaaS Admin & POS), `api.dineflowai.duckdns.org` (REST & Sync API)  
 **Author**: Lead Systems, QA & Security Engineer  
 **Status**: **🟢 VERDICT: GO (100% PRODUCTION & PILOT READY)**
 
 ---
 
-## 1. 🌐 Live Domain, DNS & SSL Configuration (`tendorabuy.in`)
+## 1. 🌐 Live Domain, DNS & SSL Configuration (`dineflowai.duckdns.org`)
 
 ### DNS A-Records Setup (via Cloudflare or Registrar)
 | Type | Name / Host | Target IP | Proxy Status | TTL |
 |---|---|---|---|---|
-| **A** | `@` (Root `tendorabuy.in`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
-| **A** | `app` (`app.tendorabuy.in`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
-| **A** | `api` (`api.tendorabuy.in`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
-| **A** | `pos` (`pos.tendorabuy.in`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
+| **A** | `@` (Root `dineflowai.duckdns.org`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
+| **A** | `app` (`dineflowai.duckdns.org`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
+| **A** | `api` (`api.dineflowai.duckdns.org`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
+| **A** | `pos` (`dineflowai.duckdns.org/pos`) | `YOUR_VPS_PUBLIC_IP` | Proxied (Orange Cloud) | Auto |
 
 ### Nginx Virtual Host & SSL Certificate
 ```bash
 # Issue Let's Encrypt Wildcard / Subdomain SSL
-sudo certbot --nginx -d tendorabuy.in -d app.tendorabuy.in -d api.tendorabuy.in -d pos.tendorabuy.in
+sudo certbot --nginx -d dineflowai.duckdns.org -d dineflowai.duckdns.org -d api.dineflowai.duckdns.org -d dineflowai.duckdns.org/pos
 ```
 
 ---
@@ -35,7 +35,7 @@ APP_NAME="DineFlow AI"
 APP_ENV=production
 APP_KEY=base64:YOUR_GENERATED_APP_KEY_HERE
 APP_DEBUG=false
-APP_URL=https://app.tendorabuy.in
+APP_URL=https://dineflowai.duckdns.org
 APP_TIMEZONE=Asia/Kolkata
 
 LOG_CHANNEL=stack
@@ -63,7 +63,7 @@ MAIL_PORT=587
 MAIL_USERNAME=apikey
 MAIL_PASSWORD=SG.YourSendGridApiKeyHere
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS="support@tendorabuy.in"
+MAIL_FROM_ADDRESS="support@dineflowai.duckdns.org"
 MAIL_FROM_NAME="DineFlow AI Support"
 ```
 
@@ -133,7 +133,7 @@ Configure automated daily backups in `/etc/cron.d/dineflow_backup`:
 
 | Item | Step | Description | Verification |
 |---|---|---|---|
-| 1 | **Register Restaurant** | Register via `https://app.tendorabuy.in/register` | Tenant created with Free Plan quotas |
+| 1 | **Register Restaurant** | Register via `https://dineflowai.duckdns.org/register` | Tenant created with Free Plan quotas |
 | 2 | **Onboarding Wizard** | Complete 8-step business setup (Tax, Tables, Initial Dishes) | Profile & Legal GSTIN configured |
 | 3 | **Staff PIN Setup** | Create numeric PINs for Manager (`1002`), Cashier (`1003`), Chef (`1004`), Waiter (`1005`) | Hashed and verified in MySQL |
 | 4 | **Table QR Standees** | Export & print QR standees via `/admin/qr-generator` | Table QR standees placed on tables |

@@ -1,7 +1,7 @@
-# DineFlow AI / Tendorabuy — Super Admin Implementation Architecture
+# DineFlow AI / DineFlow — Super Admin Implementation Architecture
 
 **Status**: 🟢 **COMPLETE (Production Ready)**  
-**Target URL**: `https://app.tendorabuy.in/superadmin`  
+**Target URL**: `https://dineflowai.duckdns.org/superadmin`  
 **Authentication**: Multi-Tenant SaaS Super Admin Role (`role = 'superadmin'`)
 
 ---
