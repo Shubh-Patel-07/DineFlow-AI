@@ -20,6 +20,9 @@ use App\Http\Controllers\SubscriptionStatusController;
 use App\Http\Controllers\CashRegisterController;
 use App\Http\Controllers\DeliveryAggregatorController;
 use App\Http\Controllers\RecipeReportController;
+use App\Http\Controllers\ModifierController;
+use App\Http\Controllers\ProcurementController;
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
 // Public SaaS Registration & Authentication Routes
@@ -465,6 +468,7 @@ Route::prefix('api')->group(function () {
     Route::get('/tables/{id}', [TableController::class, 'show']);
     Route::get('/menu', [MenuItemController::class, 'index']);
     Route::get('/menu/restaurant/{restaurantId}', [MenuItemController::class, 'index']);
+    Route::get('/menu-items/{id}/modifiers', [ModifierController::class, 'getItemModifiers']);
     
     Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:15,1');
@@ -697,6 +701,42 @@ Route::prefix('api')->group(function () {
         Route::put('/staff/{id}/reset-password', [StaffController::class, 'resetPassword'])->middleware('role:admin,manager');
         Route::put('/staff/{id}/toggle-status', [StaffController::class, 'toggleStatus'])->middleware('role:admin,manager');
         Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->middleware('role:admin');
+
+        // Menu Modifiers & Combos Management
+        Route::get('/modifiers', [ModifierController::class, 'index'])->middleware('role:admin,manager,cashier');
+        Route::post('/modifiers', [ModifierController::class, 'store'])->middleware('role:admin,manager');
+        Route::post('/menu-items/assign-modifiers', [ModifierController::class, 'assignToItem'])->middleware('role:admin,manager');
+        Route::get('/api/modifiers', [ModifierController::class, 'index']);
+        Route::post('/api/modifiers', [ModifierController::class, 'store']);
+        Route::post('/api/menu-items/assign-modifiers', [ModifierController::class, 'assignToItem']);
+
+        // Suppliers & Procurement ERP (PO, GRN, Payments)
+        Route::get('/procurement/suppliers', [ProcurementController::class, 'suppliers'])->middleware('role:admin,manager');
+        Route::post('/procurement/suppliers', [ProcurementController::class, 'storeSupplier'])->middleware('role:admin,manager');
+        Route::get('/procurement/purchase-orders', [ProcurementController::class, 'purchaseOrders'])->middleware('role:admin,manager');
+        Route::post('/procurement/purchase-orders', [ProcurementController::class, 'storePurchaseOrder'])->middleware('role:admin,manager');
+        Route::post('/procurement/purchase-orders/{id}/receive-grn', [ProcurementController::class, 'receiveGoods'])->middleware('role:admin,manager');
+        Route::post('/procurement/payments', [ProcurementController::class, 'recordPayment'])->middleware('role:admin,manager');
+        Route::get('/api/procurement/suppliers', [ProcurementController::class, 'suppliers']);
+        Route::post('/api/procurement/suppliers', [ProcurementController::class, 'storeSupplier']);
+        Route::get('/api/procurement/purchase-orders', [ProcurementController::class, 'purchaseOrders']);
+        Route::post('/api/procurement/purchase-orders', [ProcurementController::class, 'storePurchaseOrder']);
+        Route::post('/api/procurement/purchase-orders/{id}/receive-grn', [ProcurementController::class, 'receiveGoods']);
+        Route::post('/api/procurement/payments', [ProcurementController::class, 'recordPayment']);
+
+        // Staff Attendance & Shift Clock-In/Out & Payroll
+        Route::post('/staff/clock-in', [AttendanceController::class, 'clockIn']);
+        Route::post('/staff/clock-out', [AttendanceController::class, 'clockOut']);
+        Route::get('/staff/attendance-today', [AttendanceController::class, 'todayStatus']);
+        Route::get('/staff/timesheet', [AttendanceController::class, 'timesheet']);
+        Route::post('/staff/payroll/generate', [AttendanceController::class, 'generatePayroll'])->middleware('role:admin,manager');
+        Route::post('/staff/payroll/{id}/mark-paid', [AttendanceController::class, 'markPaid'])->middleware('role:admin,manager');
+        Route::get('/api/staff/attendance-today', [AttendanceController::class, 'todayStatus']);
+        Route::post('/api/staff/clock-in', [AttendanceController::class, 'clockIn']);
+        Route::post('/api/staff/clock-out', [AttendanceController::class, 'clockOut']);
+        Route::get('/api/staff/timesheet', [AttendanceController::class, 'timesheet']);
+        Route::post('/api/staff/payroll/generate', [AttendanceController::class, 'generatePayroll']);
+        Route::post('/api/staff/payroll/{id}/mark-paid', [AttendanceController::class, 'markPaid']);
 
         // File & Image Storage
         Route::post('/upload/image', [RestaurantController::class, 'uploadImage'])->middleware('role:admin,manager');

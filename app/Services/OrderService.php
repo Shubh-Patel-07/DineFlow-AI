@@ -110,12 +110,25 @@ class OrderService
                 // Strictly enforce official catalog price to prevent price tampering
                 $price = floatval($menuItem->price);
 
-                $totalAmount += $price * $quantity;
+                // Factor in customer or POS chosen modifiers (Add-ons, Sizes, Crusts)
+                $selectedModifiers = !empty($rawItem['selected_modifiers'])
+                    ? (is_array($rawItem['selected_modifiers']) ? $rawItem['selected_modifiers'] : json_decode($rawItem['selected_modifiers'], true))
+                    : null;
+                $modifierSum = 0;
+                if (!empty($selectedModifiers) && is_array($selectedModifiers)) {
+                    foreach ($selectedModifiers as $mod) {
+                        $modifierSum += floatval($mod['price'] ?? 0);
+                    }
+                }
+                $finalUnitPrice = round($price + $modifierSum, 2);
+
+                $totalAmount += $finalUnitPrice * $quantity;
                 $itemsData[] = [
                     'menu_item_id' => $menuItem->id,
                     'name' => $menuItem->name,
                     'quantity' => $quantity,
-                    'price' => $price,
+                    'price' => $finalUnitPrice,
+                    'selected_modifiers' => $selectedModifiers,
                     'notes' => !empty($rawItem['notes']) ? (string)$rawItem['notes'] : (!empty($rawItem['special_instructions']) ? (string)$rawItem['special_instructions'] : null),
                     'kot_status' => 'pending',
                 ];
@@ -176,16 +189,23 @@ class OrderService
 
                 foreach ($itemsData as $newItem) {
                     $notesVal = $newItem['notes'] ?? null;
-                    $existingItem = $order->items()
-                        ->where('name', $newItem['name'])
-                        ->where(function($q) use ($notesVal) {
-                            if ($notesVal) {
-                                $q->where('notes', $notesVal);
-                            } else {
-                                $q->whereNull('notes')->orWhere('notes', '');
-                            }
-                        })
-                        ->first();
+                    $hasModifiers = !empty($newItem['selected_modifiers']);
+                    $existingItem = null;
+
+                    // Only merge with an existing item if neither has custom modifiers
+                    if (!$hasModifiers) {
+                        $existingItem = $order->items()
+                            ->where('name', $newItem['name'])
+                            ->whereNull('selected_modifiers')
+                            ->where(function($q) use ($notesVal) {
+                                if ($notesVal) {
+                                    $q->where('notes', $notesVal);
+                                } else {
+                                    $q->whereNull('notes')->orWhere('notes', '');
+                                }
+                            })
+                            ->first();
+                    }
 
                     if ($existingItem) {
                         $existingItem->quantity += $newItem['quantity'];
@@ -357,24 +377,42 @@ class OrderService
                 throw new ValidationException(validator([], []), ['name' => ['Item name is required']]);
             }
 
-            $notesVal = !empty($itemData['notes']) ? (string)$itemData['notes'] : (!empty($itemData['special_instructions']) ? (string)$itemData['special_instructions'] : null);
+            // Factor in modifiers if passed
+            $selectedModifiers = !empty($itemData['selected_modifiers'])
+                ? (is_array($itemData['selected_modifiers']) ? $itemData['selected_modifiers'] : json_decode($itemData['selected_modifiers'], true))
+                : null;
+            $modifierSum = 0;
+            if (!empty($selectedModifiers) && is_array($selectedModifiers)) {
+                foreach ($selectedModifiers as $mod) {
+                    $modifierSum += floatval($mod['price'] ?? 0);
+                }
+            }
+            $finalUnitPrice = round($price + $modifierSum, 2);
 
-            $existingItem = $order->items()
-                ->where(function ($q) use ($menuItemId, $name) {
-                    if ($menuItemId) {
-                        $q->where('menu_item_id', $menuItemId);
-                    } else {
-                        $q->where('name', $name);
-                    }
-                })
-                ->where(function($q) use ($notesVal) {
-                    if ($notesVal) {
-                        $q->where('notes', $notesVal);
-                    } else {
-                        $q->whereNull('notes')->orWhere('notes', '');
-                    }
-                })
-                ->first();
+            $notesVal = !empty($itemData['notes']) ? (string)$itemData['notes'] : (!empty($itemData['special_instructions']) ? (string)$itemData['special_instructions'] : null);
+            $hasModifiers = !empty($selectedModifiers);
+            $existingItem = null;
+
+            // Only merge if neither has modifiers
+            if (!$hasModifiers) {
+                $existingItem = $order->items()
+                    ->where(function ($q) use ($menuItemId, $name) {
+                        if ($menuItemId) {
+                            $q->where('menu_item_id', $menuItemId);
+                        } else {
+                            $q->where('name', $name);
+                        }
+                    })
+                    ->whereNull('selected_modifiers')
+                    ->where(function($q) use ($notesVal) {
+                        if ($notesVal) {
+                            $q->where('notes', $notesVal);
+                        } else {
+                            $q->whereNull('notes')->orWhere('notes', '');
+                        }
+                    })
+                    ->first();
+            }
 
             if ($existingItem) {
                 $existingItem->quantity += $quantity;
@@ -385,7 +423,8 @@ class OrderService
                     'menu_item_id' => $menuItemId,
                     'name' => $name,
                     'quantity' => $quantity,
-                    'price' => $price,
+                    'price' => $finalUnitPrice,
+                    'selected_modifiers' => $selectedModifiers,
                     'notes' => $notesVal,
                     'kot_status' => 'pending',
                 ]);

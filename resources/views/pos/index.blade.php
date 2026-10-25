@@ -22,6 +22,7 @@
     }
   </script>
   <script src="/frontend/admin/utils.js"></script>
+  <script src="/js/escpos-printer.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -2581,6 +2582,12 @@
         <i class="fa-solid fa-fire-burner"></i>
         <span>KDS</span>
       </a>
+
+      <!-- Staff Shift Clock-In/Out Quick Button -->
+      <button type="button" class="pos-quick-tool-btn staff-btn" id="posAttendanceQuickBtn" title="Staff Attendance & Clock In/Out" onclick="openStaffAttendanceModal()">
+        <i class="fa-solid fa-user-clock"></i>
+        <span>Staff</span>
+      </button>
     </div>
 
     <!-- Right: Operations Dropdown, Network Sentinel, User Menu & Quick Logout -->
@@ -2600,6 +2607,18 @@
           <div class="pos-dropdown-item" id="posGstBtn" onclick="openGstReportModal(); closeMoreToolsMenu();">
             <i class="fa-solid fa-file-invoice-dollar" style="color:#0EA5E9; width:18px;"></i>
             <span>GSTR-1 Tax Report</span>
+          </div>
+          <div class="pos-dropdown-item" id="posAttendanceBtn" onclick="openStaffAttendanceModal(); closeMoreToolsMenu();">
+            <i class="fa-solid fa-user-clock" style="color:#10B981; width:18px;"></i>
+            <span>Staff Attendance</span>
+          </div>
+          <div class="pos-dropdown-item" id="posPrinterBtn" onclick="openPrinterConfigModal(); closeMoreToolsMenu();">
+            <i class="fa-solid fa-print" style="color:#6366F1; width:18px;"></i>
+            <span>Thermal Printer Driver</span>
+          </div>
+          <div class="pos-dropdown-item" id="posProcurementBtn" onclick="window.open('/procurement/suppliers', '_blank'); closeMoreToolsMenu();">
+            <i class="fa-solid fa-truck-ramp-box" style="color:#F59E0B; width:18px;"></i>
+            <span>Suppliers & PO</span>
           </div>
           <div class="pos-dropdown-item" id="posShortcutsBtn" onclick="openShortcutsModal(); closeMoreToolsMenu();">
             <i class="fa-solid fa-keyboard" style="color:#38BDF8; width:18px;"></i>
@@ -4585,6 +4604,148 @@
   </div>
 </div>
 
+<!-- Menu Item Modifiers & Add-ons Selection Modal -->
+<div id="posItemModifierModal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:999999; backdrop-filter:blur(6px);">
+  <div class="modal-dialog" style="background:var(--card); color:var(--text-primary); width:480px; max-width:94vw; max-height:85vh; border-radius:20px; border:1px solid var(--border); padding:22px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+      <div>
+        <h3 id="modModalItemName" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; color:var(--text-primary); margin:0;">Customize Dish</h3>
+        <p id="modModalItemBasePrice" style="font-size:12px; color:var(--text-secondary); margin:3px 0 0 0;">Base Price: ₹0</p>
+      </div>
+      <button onclick="closeModal('posItemModifierModal')" style="background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; padding:0 4px;">&times;</button>
+    </div>
+    <input type="hidden" id="modModalItemId" value="">
+
+    <!-- Modifier Groups Container (Scrollable) -->
+    <div id="modModalGroupsContainer" style="overflow-y:auto; flex:1; padding-right:6px; margin-bottom:16px;">
+      <div style="text-align:center; padding:30px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+        <p style="margin-top:8px; font-size:12px;">Loading options & add-ons...</p>
+      </div>
+    </div>
+
+    <!-- Modal Footer with Total & Add to Cart -->
+    <div style="border-top:1px solid var(--border); padding-top:14px; display:flex; justify-content:space-between; align-items:center; gap:12px;">
+      <div>
+        <span style="font-size:11px; color:var(--text-muted); display:block;">Total Line Price</span>
+        <span id="modModalCalculatedPrice" style="font-size:19px; font-weight:800; color:var(--primary);">₹ 0</span>
+      </div>
+      <button type="button" onclick="applyModifiersAndAddToCart()" style="height:44px; padding:0 22px; border-radius:12px; border:none; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); font-size:13.5px; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-plus"></i> Add to Order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Attendance & Shift Clock-In/Out Modal -->
+<div id="posStaffAttendanceModal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:999999; backdrop-filter:blur(6px);">
+  <div class="modal-dialog" style="background:var(--card); color:var(--text-primary); width:520px; max-width:94vw; max-height:85vh; border-radius:20px; border:1px solid var(--border); padding:22px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:rgba(16,185,129,0.15); color:#10B981; display:flex; align-items:center; justify-content:center; font-size:16px;">
+          <i class="fa-solid fa-user-clock"></i>
+        </div>
+        <div>
+          <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; color:var(--text-primary); margin:0;">Staff Shift Attendance</h3>
+          <p style="font-size:11.5px; color:var(--text-secondary); margin:2px 0 0 0;">Clock-in, Clock-out & Real-Time Shift Tracking</p>
+        </div>
+      </div>
+      <button onclick="closeModal('posStaffAttendanceModal')" style="background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; padding:0 4px;">&times;</button>
+    </div>
+
+    <!-- Quick Action Card -->
+    <div style="background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:16px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div>
+          <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Select Staff Member</label>
+          <select id="attendanceStaffSelect" style="width:100%; height:38px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text-primary); padding:0 10px; font-size:12.5px; outline:none;">
+            <option value="">Select staff member...</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Shift Slot</label>
+          <select id="attendanceShiftSelect" style="width:100%; height:38px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text-primary); padding:0 10px; font-size:12.5px; outline:none;">
+            <option value="REGULAR">Regular Shift (8h)</option>
+            <option value="MORNING">Morning Shift</option>
+            <option value="EVENING">Evening Shift</option>
+            <option value="NIGHT">Night Shift</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button type="button" onclick="performStaffClockIn()" style="flex:1; height:40px; border-radius:10px; border:none; background:#10B981; color:#fff; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px; box-shadow:0 3px 10px rgba(16,185,129,0.3);">
+          <i class="fa-solid fa-right-to-bracket"></i> Clock In
+        </button>
+        <button type="button" onclick="performStaffClockOut()" style="flex:1; height:40px; border-radius:10px; border:none; background:#EF4444; color:#fff; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px; box-shadow:0 3px 10px rgba(239,68,68,0.3);">
+          <i class="fa-solid fa-right-from-bracket"></i> Clock Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Today's Attendance Table -->
+    <h4 style="font-size:12px; font-weight:800; color:var(--text-secondary); margin:0 0 8px 0; text-transform:uppercase; letter-spacing:0.5px;">Today's On-Duty Staff</h4>
+    <div id="attendanceTodayListContainer" style="overflow-y:auto; flex:1; max-height:220px; border:1px solid var(--border); border-radius:12px; background:var(--card);">
+      <div style="padding:15px; text-align:center; color:var(--text-muted); font-size:12px;">Loading attendance records...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Direct Silent Thermal Printer Configuration Modal -->
+<div id="posPrinterConfigModal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:999999; backdrop-filter:blur(6px);">
+  <div class="modal-dialog" style="background:var(--card); color:var(--text-primary); width:460px; max-width:92vw; border-radius:20px; border:1px solid var(--border); padding:22px; box-shadow:var(--shadow-lg);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:rgba(99,102,241,0.15); color:#6366F1; display:flex; align-items:center; justify-content:center; font-size:16px;">
+          <i class="fa-solid fa-print"></i>
+        </div>
+        <div>
+          <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; color:var(--text-primary); margin:0;">Thermal Printer Driver</h3>
+          <p style="font-size:11.5px; color:var(--text-secondary); margin:2px 0 0 0;">Direct Silent ESC/POS (0.1s Fast Print)</p>
+        </div>
+      </div>
+      <button onclick="closeModal('posPrinterConfigModal')" style="background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; padding:0 4px;">&times;</button>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Printing Mode:</label>
+      <select id="escposPrinterModeSelect" onchange="togglePrinterModeInputs()" style="width:100%; height:40px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:0 10px; font-size:13px; outline:none;">
+        <option value="browser">Standard Browser Print (Dialog Popup)</option>
+        <option value="usb">Direct WebUSB Thermal Printer (Silent ESC/POS)</option>
+        <option value="serial">Direct WebSerial (COM / RS232 Port)</option>
+        <option value="network">Network IP Thermal Printer (LAN Socket 9100)</option>
+      </select>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+      <div>
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Paper Width:</label>
+        <select id="escposPaperWidthSelect" style="width:100%; height:40px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:0 10px; font-size:13px; outline:none;">
+          <option value="80">80 mm (3 Inch - Standard)</option>
+          <option value="58">58 mm (2 Inch - Compact)</option>
+        </select>
+      </div>
+      <div id="escposIpGroup" style="display:none;">
+        <label style="font-size:12px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:6px;">Printer IP Address:</label>
+        <input type="text" id="escposPrinterIpInput" placeholder="192.168.1.100" style="width:100%; height:40px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:0 10px; font-size:13px; outline:none;">
+      </div>
+    </div>
+
+    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:18px; font-size:11.5px; color:var(--text-secondary); line-height:1.5;">
+      <i class="fa-solid fa-lightbulb" style="color:#F59E0B; margin-right:4px;"></i>
+      Direct printing sends native ESC/POS thermal commands directly to Epson, TVS, Star, Xprinter, and Posiflex printers without opening browser preview.
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button type="button" onclick="testThermalPrinter()" style="flex:1; height:42px; border-radius:12px; border:1px solid var(--border); background:none; color:var(--text-primary); font-weight:700; cursor:pointer; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <i class="fa-solid fa-vial"></i> Test Print
+      </button>
+      <button type="button" onclick="savePrinterSettings()" style="flex:1.5; height:42px; border-radius:12px; border:none; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#fff; font-weight:800; cursor:pointer; font-size:13px; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+        Save Configuration
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -5066,6 +5227,7 @@
       cat: rawCat,
       category: rawCat,
       price: parseFloat(item.price || 0),
+      basePrice: parseFloat(item.price || 0),
       image: item.image || '',
       emoji: emoji,
       badge: badge,
@@ -5073,6 +5235,9 @@
       qty: 0,
       is_available: isAvailable,
       is_veg: isVeg,
+      has_modifiers: Boolean(item.has_modifiers),
+      is_combo: Boolean(item.is_combo),
+      selected_modifiers: [],
       cookingNote: ''
     };
   }
@@ -5360,7 +5525,11 @@
           <div class="ci-top">
             <div class="ci-main">
               <div class="ci-name">${escapeHtml(item.name)}</div>
-              <div class="ci-variant">Regular</div>
+              ${item.selected_modifiers && item.selected_modifiers.length > 0 ? `
+                <div style="font-size: 10px; font-weight:700; color: #10B981; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 4px;">
+                  ${item.selected_modifiers.map(m => `<span style="background:rgba(16,185,129,0.12); padding:1px 6px; border-radius:4px; border:1px solid rgba(16,185,129,0.3);"><i class="fa-solid fa-plus" style="font-size:8px;"></i> ${escapeHtml(m.name)} (+₹${m.price})</span>`).join('')}
+                </div>
+              ` : `<div class="ci-variant">${item.has_modifiers ? 'Standard' : 'Regular'}</div>`}
               ${item.cookingNote ? `
                 <div style="font-size: 11px; font-weight:700; color: #F59E0B; background: rgba(245,158,11,0.12); padding: 3px 8px; border-radius: 6px; margin-top: 5px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(245,158,11,0.3);">
                   <i class="fa-solid fa-pen-nib"></i> ${escapeHtml(item.cookingNote)}
@@ -5768,6 +5937,10 @@
     if (item) {
       if (item.is_available === false || item.available === false) {
         showToast(item.name + ' is currently Out of Stock!', 'error');
+        return;
+      }
+      if (item.has_modifiers) {
+        openItemModifierModal(item.id);
         return;
       }
       item.qty += 1;
@@ -8772,8 +8945,37 @@
     }
   }
 
-  function triggerPrintHubAction(type) {
+  async function triggerPrintHubAction(type) {
     if (!lastPlacedOrderId) return;
+
+    // Direct Silent ESC/POS Thermal Printing Driver
+    if (window.dineFlowPrinter && window.dineFlowPrinter.isDirectPrintingEnabled()) {
+      try {
+        const res = await fetch(`/api/orders/${lastPlacedOrderId}`);
+        const data = await res.json();
+        const orderData = data.data || data;
+        const restData = {
+          name: '{{ $restaurant->name ?? "DineFlow Restaurant" }}',
+          address: '{{ $restaurant->address ?? "" }}',
+          phone: '{{ $restaurant->phone ?? "" }}',
+          gstin: '{{ $restaurant->gstin ?? "" }}'
+        };
+
+        if (type === 'receipt' || type === 'all') {
+          await window.dineFlowPrinter.printReceipt(orderData, restData);
+          showToast('⚡ Silent Receipt Printed on Thermal Printer!', 'success');
+        }
+        if (type === 'kitchen' || type === 'kots_only' || type === 'all') {
+          await window.dineFlowPrinter.printKot(orderData, restData.name);
+          showToast('🔥 Silent KOT Printed on Thermal Printer!', 'success');
+        }
+        closeModal('printHubModal');
+        return;
+      } catch (err) {
+        console.warn('Direct ESC/POS print error, fallback to browser print:', err);
+      }
+    }
+
     if (type === 'all') {
       window.open('/orders/' + lastPlacedOrderId + '/receipt', '_blank');
       if (activeOrderHasKitchen) {
@@ -9818,6 +10020,336 @@
       icon.className = 'fa-solid fa-triangle-exclamation fa-fade';
       text.textContent = 'Offline Mode';
       showToast('⚠️ Network connection lost! Offline Mode active — local billing continues safely.', 'warning');
+    }
+  }
+
+  /* ═════════════════════════════════════════════════════════════════════════
+     DINEFLOW ENTERPRISE - MENU MODIFIERS & COMBOS CONTROLLER
+     ═════════════════════════════════════════════════════════════════════════ */
+  let currentCustomizingItem = null;
+  let currentCustomizingGroups = [];
+
+  async function openItemModifierModal(itemId) {
+    const item = MENU.find(i => String(i.id) === String(itemId));
+    if (!item) return;
+
+    currentCustomizingItem = item;
+    document.getElementById('modModalItemId').value = item.id;
+    document.getElementById('modModalItemName').textContent = 'Customize ' + item.name;
+    document.getElementById('modModalItemBasePrice').textContent = `Base Price: ₹${(item.basePrice || item.price).toFixed(0)}`;
+    document.getElementById('modModalCalculatedPrice').textContent = `₹ ${(item.basePrice || item.price).toFixed(0)}`;
+
+    const container = document.getElementById('modModalGroupsContainer');
+    container.innerHTML = `
+      <div style="text-align:center; padding:30px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+        <p style="margin-top:8px; font-size:12px;">Loading options & add-ons...</p>
+      </div>`;
+    openModal('posItemModifierModal');
+
+    try {
+      const res = await fetch(`/api/menu-items/${item.id}/modifiers`);
+      const data = await res.json();
+      if (data.status === 'success' && Array.isArray(data.modifier_groups) && data.modifier_groups.length > 0) {
+        currentCustomizingGroups = data.modifier_groups;
+        renderModifierGroups(data.modifier_groups);
+      } else {
+        container.innerHTML = `
+          <div style="text-align:center; padding:24px; color:var(--text-secondary); font-size:13px;">
+            <i class="fa-solid fa-circle-info" style="font-size:22px; color:var(--primary); margin-bottom:8px; display:block;"></i>
+            No extra add-on groups configured for this dish. Adding as standard regular dish.
+          </div>`;
+        setTimeout(() => {
+          applyModifiersAndAddToCart();
+          closeModal('posItemModifierModal');
+        }, 1200);
+      }
+    } catch (err) {
+      console.error('Failed to load modifiers:', err);
+      container.innerHTML = `<div style="color:#EF4444; padding:15px; font-size:12.5px;">Error loading modifiers. Please try again.</div>`;
+    }
+  }
+
+  function renderModifierGroups(groups) {
+    const container = document.getElementById('modModalGroupsContainer');
+    container.innerHTML = groups.map((g, gIdx) => {
+      const isSingle = g.selection_type === 'single';
+      const isRequired = g.is_required || false;
+      return `
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h4 style="font-size:13px; font-weight:800; color:var(--text-primary); margin:0;">
+              ${escapeHtml(g.name)}
+              ${isRequired ? '<span style="color:#EF4444; font-size:11px; margin-left:4px;">*Required</span>' : '<span style="color:var(--text-muted); font-size:11px; margin-left:4px;">(Optional)</span>'}
+            </h4>
+            <span style="font-size:10.5px; font-weight:700; color:var(--text-muted); background:var(--card); padding:2px 6px; border-radius:4px; border:1px solid var(--border);">
+              ${isSingle ? 'Choose 1' : 'Choose Multiple'}
+            </span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            ${(g.options || []).map((opt, oIdx) => {
+              const inputType = isSingle ? 'radio' : 'checkbox';
+              const inputName = `mod_grp_${g.id}`;
+              const optId = `mod_opt_${opt.id}`;
+              const isChecked = isSingle && (opt.is_default || oIdx === 0);
+              return `
+                <label for="${optId}" style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-radius:8px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:all 0.15s;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="${inputType}" id="${optId}" name="${inputName}" value="${opt.id}" data-group-name="${escapeAttr(g.name)}" data-name="${escapeAttr(opt.name)}" data-price="${opt.price}" onchange="recalculateModalModifiersPrice()" ${isChecked ? 'checked' : ''} style="cursor:pointer; accent-color:var(--primary);">
+                    <span style="font-size:12.5px; font-weight:600; color:var(--text-primary);">${escapeHtml(opt.name)}</span>
+                  </div>
+                  <span style="font-size:12px; font-weight:700; color:${opt.price > 0 ? '#10B981' : 'var(--text-muted)'};">
+                    ${opt.price > 0 ? '+₹' + parseFloat(opt.price).toFixed(0) : 'Free'}
+                  </span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+    recalculateModalModifiersPrice();
+  }
+
+  function recalculateModalModifiersPrice() {
+    if (!currentCustomizingItem) return;
+    const base = currentCustomizingItem.basePrice || currentCustomizingItem.price || 0;
+    let extra = 0;
+    const checkedInputs = document.querySelectorAll('#modModalGroupsContainer input:checked');
+    checkedInputs.forEach(inp => {
+      extra += parseFloat(inp.getAttribute('data-price') || 0);
+    });
+    const total = base + extra;
+    document.getElementById('modModalCalculatedPrice').textContent = `₹ ${total.toFixed(0)}`;
+  }
+
+  function applyModifiersAndAddToCart() {
+    if (!currentCustomizingItem) return;
+
+    const checkedInputs = document.querySelectorAll('#modModalGroupsContainer input:checked');
+    const selectedMods = [];
+    let extraTotal = 0;
+
+    checkedInputs.forEach(inp => {
+      const p = parseFloat(inp.getAttribute('data-price') || 0);
+      extraTotal += p;
+      selectedMods.push({
+        group: inp.getAttribute('data-group-name'),
+        name: inp.getAttribute('data-name'),
+        price: p
+      });
+    });
+
+    currentCustomizingItem.selected_modifiers = selectedMods;
+    currentCustomizingItem.price = (currentCustomizingItem.basePrice || currentCustomizingItem.price) + extraTotal;
+    currentCustomizingItem.qty += 1;
+
+    renderMenu();
+    renderCart();
+    closeModal('posItemModifierModal');
+    showToast(`${currentCustomizingItem.name} customized and added to cart!`, 'success');
+  }
+
+  /* ═════════════════════════════════════════════════════════════════════════
+     DINEFLOW ENTERPRISE - STAFF ATTENDANCE CONTROLLER
+     ═════════════════════════════════════════════════════════════════════════ */
+  async function openStaffAttendanceModal() {
+    openModal('posStaffAttendanceModal');
+    await loadStaffMembersForAttendance();
+    await loadTodayStaffAttendance();
+  }
+
+  async function loadStaffMembersForAttendance() {
+    const sel = document.getElementById('attendanceStaffSelect');
+    try {
+      const res = await fetch(`/staff?restaurant_id=${RESTAURANT_ID}`);
+      const data = await res.json();
+      const staff = data.data || [];
+      if (staff.length > 0) {
+        sel.innerHTML = '<option value="">-- Choose Staff Member --</option>' +
+          staff.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${s.role.toUpperCase()})</option>`).join('');
+      } else {
+        sel.innerHTML = '<option value="">No staff members found</option>';
+      }
+    } catch (e) {
+      sel.innerHTML = '<option value="">Error loading staff</option>';
+    }
+  }
+
+  async function loadTodayStaffAttendance() {
+    const container = document.getElementById('attendanceTodayListContainer');
+    try {
+      const res = await fetch(`/api/staff/attendance-today`, {
+        headers: { 'X-Restaurant-ID': RESTAURANT_ID, 'Accept': 'application/json' }
+      });
+      const data = await res.json();
+      const records = data.data || [];
+      if (records.length === 0) {
+        container.innerHTML = `<div style="padding:18px; text-align:center; color:var(--text-muted); font-size:12px;">No shift attendance recorded today yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <table style="width:100%; border-collapse:collapse; font-size:12px;">
+          <thead>
+            <tr style="background:var(--bg); border-bottom:1px solid var(--border); text-align:left; color:var(--text-muted); font-size:11px;">
+              <th style="padding:8px 12px;">Staff Member</th>
+              <th style="padding:8px 12px;">Clock-In</th>
+              <th style="padding:8px 12px;">Clock-Out</th>
+              <th style="padding:8px 12px;">Hours</th>
+              <th style="padding:8px 12px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${records.map(r => {
+              const statusColor = r.is_clocked_in ? '#10B981' : (r.is_clocked_out ? '#6366F1' : '#9CA3AF');
+              const statusLabel = r.is_clocked_in ? 'ON SHIFT' : (r.is_clocked_out ? 'COMPLETED' : 'ABSENT');
+              return `
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:8px 12px; font-weight:700; color:var(--text-primary);">${escapeHtml(r.name)} <small style="color:var(--text-muted); display:block;">${r.role}</small></td>
+                  <td style="padding:8px 12px; color:var(--text-primary);">${r.clock_in || '--'}</td>
+                  <td style="padding:8px 12px; color:var(--text-primary);">${r.clock_out || '--'}</td>
+                  <td style="padding:8px 12px; font-weight:700; color:var(--text-primary);">${r.total_hours || 0}h ${r.overtime_hours > 0 ? `<span style="color:#F59E0B; font-size:10px;">(+${r.overtime_hours}h OT)</span>` : ''}</td>
+                  <td style="padding:8px 12px;">
+                    <span style="background:${statusColor}22; color:${statusColor}; border:1px solid ${statusColor}44; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:800;">
+                      ${statusLabel}
+                    </span>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (e) {
+      container.innerHTML = `<div style="padding:15px; color:#EF4444; font-size:12px;">Failed to load attendance list.</div>`;
+    }
+  }
+
+  async function performStaffClockIn() {
+    const userId = document.getElementById('attendanceStaffSelect').value;
+    const shift = document.getElementById('attendanceShiftSelect').value;
+    if (!userId) {
+      showToast('Please select a staff member to Clock In', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/staff/clock-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Restaurant-ID': RESTAURANT_ID,
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ user_id: userId, shift: shift })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        showToast(data.message, 'success');
+        await loadTodayStaffAttendance();
+      } else {
+        showToast(data.message || 'Clock In failed', 'error');
+      }
+    } catch (e) {
+      showToast('Clock in request failed', 'error');
+    }
+  }
+
+  async function performStaffClockOut() {
+    const userId = document.getElementById('attendanceStaffSelect').value;
+    if (!userId) {
+      showToast('Please select a staff member to Clock Out', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/staff/clock-out`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Restaurant-ID': RESTAURANT_ID,
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ user_id: userId })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        showToast(data.message, 'success');
+        await loadTodayStaffAttendance();
+      } else {
+        showToast(data.message || 'Clock Out failed', 'error');
+      }
+    } catch (e) {
+      showToast('Clock out request failed', 'error');
+    }
+  }
+
+  /* ═════════════════════════════════════════════════════════════════════════
+     DINEFLOW ENTERPRISE - DIRECT THERMAL PRINTER CONFIGURATION
+     ═════════════════════════════════════════════════════════════════════════ */
+  function openPrinterConfigModal() {
+    const currentMode = localStorage.getItem('dineflow_printer_type') || 'browser';
+    const currentWidth = localStorage.getItem('dineflow_printer_width') || '80';
+    const currentIp = localStorage.getItem('dineflow_printer_ip') || '';
+
+    document.getElementById('escposPrinterModeSelect').value = currentMode;
+    document.getElementById('escposPaperWidthSelect').value = currentWidth;
+    document.getElementById('escposPrinterIpInput').value = currentIp;
+    togglePrinterModeInputs();
+    openModal('posPrinterConfigModal');
+  }
+
+  function togglePrinterModeInputs() {
+    const mode = document.getElementById('escposPrinterModeSelect').value;
+    const ipGroup = document.getElementById('escposIpGroup');
+    if (ipGroup) {
+      ipGroup.style.display = (mode === 'network') ? 'block' : 'none';
+    }
+  }
+
+  async function savePrinterSettings() {
+    const mode = document.getElementById('escposPrinterModeSelect').value;
+    const width = document.getElementById('escposPaperWidthSelect').value;
+    const ip = document.getElementById('escposPrinterIpInput').value.trim();
+
+    if (window.dineFlowPrinter) {
+      window.dineFlowPrinter.setPrinterMode(mode, { paperWidth: width, printerIp: ip });
+
+      if (mode === 'usb') {
+        try {
+          await window.dineFlowPrinter.connectUsb();
+          showToast('🟢 WebUSB Thermal Printer Connected successfully!', 'success');
+        } catch (e) {
+          showToast('USB Printer connection cancelled or failed.', 'warning');
+        }
+      } else if (mode === 'serial') {
+        try {
+          await window.dineFlowPrinter.connectSerial();
+          showToast('🟢 WebSerial Thermal Printer Connected successfully!', 'success');
+        } catch (e) {
+          showToast('Serial Printer connection cancelled or failed.', 'warning');
+        }
+      } else {
+        showToast('Thermal printer settings saved!', 'success');
+      }
+    }
+    closeModal('posPrinterConfigModal');
+  }
+
+  async function testThermalPrinter() {
+    if (!window.dineFlowPrinter) {
+      showToast('Printer driver not initialized', 'error');
+      return;
+    }
+    try {
+      showToast('Sending test print voucher...', 'info');
+      await window.dineFlowPrinter.testPrint();
+      showToast('✅ Test Voucher Printed successfully!', 'success');
+    } catch (e) {
+      showToast('Test print failed: ' + e.message, 'error');
     }
   }
 
