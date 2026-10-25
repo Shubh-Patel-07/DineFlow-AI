@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="csrf-token" content="">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Modifiers & Add-ons | DineFlow AI</title>
+  <script>
+    (function() {
+      var t = localStorage.getItem('posTheme') || localStorage.getItem('dineflow_theme');
+      if (t === 'light') {
+        document.documentElement.classList.add('light-theme');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if (t === 'light' && document.body) {
+          document.body.classList.add('light-theme');
+        }
+      });
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/frontend/admin/admin.css?v=1.0.1">
+
+  <style>
+    .mod-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      transition: all 0.2s ease;
+    }
+    .mod-card:hover {
+      border-color: rgba(99,102,241,0.4);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+    .opt-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleAdminSidebar()"></div>
+
+  <div style="display: flex; min-height: 100vh;">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="brand-text">
+          <h2>DineFlow AI POS</h2>
+          <span>Restaurant Suite v2.0</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Main</div>
+          <a class="nav-item" href="/dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+          <a class="nav-item" href="/pos"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
+          <a class="nav-item" href="javascript:void(0)" onclick="openGlobalOrdersModal()"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span></a>
+          <a class="nav-item" href="/admin/tables"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+          <a class="nav-item" href="/kitchen" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Menu &amp; Catalog</div>
+          <a class="nav-item" href="/admin/menu-manager"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+          <a class="nav-item active" href="/admin/modifiers"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Modifiers & Combos</span></a>
+          <a class="nav-item" href="/admin/inventory"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
+          <a class="nav-item" href="/admin/procurement"><i class="fa-solid fa-truck-ramp-box"></i><span class="nav-label"> Suppliers & PO</span></a>
+          <a class="nav-item" href="/admin/coupons"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span></a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Operations &amp; HR</div>
+          <a class="nav-item" href="/admin/sales-report"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
+          <a class="nav-item" href="/admin/attendance"><i class="fa-solid fa-user-clock"></i><span class="nav-label"> Staff Attendance</span></a>
+          <a class="nav-item" href="/admin/staff"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff & Roles</span></a>
+          <a class="nav-item" href="/admin/expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+          <a class="nav-item" href="/admin/customers"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers & CRM</span></a>
+          <a class="nav-item" href="/admin/settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> Settings</span></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-bars"></i></button>
+          <div class="topbar-title">
+            <h1>Menu Modifiers & Add-ons Manager</h1>
+            <span>Create Variations, Sizes, Crusts, Extra Toppings and link them to dishes</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="btn btn-primary" onclick="openCreateGroupModal()">
+            <i class="fa-solid fa-plus"></i> Create Modifier Group
+          </button>
+        </div>
+      </header>
+
+      <div class="content-body" style="padding: 24px;">
+        <div id="modifiersGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap:18px;">
+          <div style="text-align:center; padding:40px; color:var(--text-muted); grid-column:1/-1;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+            <p style="margin-top:10px; font-size:13px;">Loading modifier groups...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Create Modifier Group -->
+  <div id="createModModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background:var(--card); width:560px; max-width:92vw; max-height:88vh; border-radius:18px; border:1px solid var(--border); padding:24px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; margin:0; color:var(--text-primary);">Create Modifier Group</h3>
+        <button onclick="closeModal('createModModal')" style="background:none; border:none; font-size:20px; color:var(--text-muted); cursor:pointer;">&times;</button>
+      </div>
+
+      <div style="overflow-y:auto; flex:1; padding-right:4px;">
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:14px;">
+          <div>
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Group Name *</label>
+            <input type="text" id="grpName" required placeholder="e.g. Pizza Crust or Extra Toppings" style="width:100%; height:38px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:0 10px; font-size:13px; outline:none;">
+          </div>
+          <div>
+            <label style="font-size:11.5px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Selection Type</label>
+            <select id="grpType" style="width:100%; height:38px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:0 8px; font-size:12.5px; outline:none;">
+              <option value="single">Single Choice (Radio)</option>
+              <option value="multiple">Multi Choice (Checkbox)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--text-primary); cursor:pointer;">
+            <input type="checkbox" id="grpRequired" style="accent-color:var(--primary); cursor:pointer;">
+            <span>Required selection (Customer must pick an option before ordering)</span>
+          </label>
+        </div>
+
+        <div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+          <label style="font-size:12px; font-weight:800; color:var(--text-primary); text-transform:uppercase;">Options & Prices</label>
+          <button type="button" onclick="addOptionRow()" style="font-size:11.5px; font-weight:700; color:var(--primary); background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;">
+            <i class="fa-solid fa-plus"></i> Add Option
+          </button>
+        </div>
+
+        <div id="optionsContainer" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+          <!-- Options rows -->
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--border); padding-top:14px;">
+        <button type="button" onclick="closeModal('createModModal')" style="padding:9px 18px; border-radius:10px; border:1px solid var(--border); background:none; color:var(--text-secondary); font-weight:700; cursor:pointer;">Cancel</button>
+        <button type="button" onclick="saveModifierGroup()" style="padding:9px 24px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-weight:800; cursor:pointer;">Save Group</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Assign Modifier to Dishes -->
+  <div id="assignModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background:var(--card); width:540px; max-width:92vw; max-height:85vh; border-radius:18px; border:1px solid var(--border); padding:24px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <h3 id="assignTitle" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; margin:0; color:var(--text-primary);">Link Modifiers to Dishes</h3>
+          <p style="font-size:11.5px; color:var(--text-muted); margin:2px 0 0 0;">Select dishes that will offer this customization group</p>
+        </div>
+        <button onclick="closeModal('assignModal')" style="background:none; border:none; font-size:20px; color:var(--text-muted); cursor:pointer;">&times;</button>
+      </div>
+
+      <input type="hidden" id="assignGroupId" value="">
+      <input type="text" id="dishSearch" oninput="filterDishList()" placeholder="Search dish name..." style="width:100%; height:38px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text-primary); padding:0 12px; font-size:12.5px; outline:none; margin-bottom:12px;">
+
+      <div id="dishListContainer" style="overflow-y:auto; flex:1; max-height:300px; border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--bg); display:flex; flex-direction:column; gap:6px;">
+        <!-- Dishes will load here -->
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--border); padding-top:14px; margin-top:14px;">
+        <button type="button" onclick="closeModal('assignModal')" style="padding:9px 18px; border-radius:10px; border:1px solid var(--border); background:none; color:var(--text-secondary); font-weight:700; cursor:pointer;">Cancel</button>
+        <button type="button" onclick="saveDishAssignments()" style="padding:9px 24px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-weight:800; cursor:pointer;">Save Links</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/frontend/admin/utils.js"></script>
+  <script>
+    let globalModifierGroups = [];
+    let globalMenuItems = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchModifierGroups();
+      fetchMenuItems();
+    });
+
+    async function fetchModifierGroups() {
+      try {
+        const res = await fetch('/api/modifiers');
+        const data = await res.json();
+        globalModifierGroups = data.data || [];
+
+        const grid = document.getElementById('modifiersGrid');
+        if (globalModifierGroups.length === 0) {
+          grid.innerHTML = `
+            <div style="text-align:center; padding:50px 20px; color:var(--text-muted); grid-column:1/-1;">
+              <i class="fa-solid fa-layer-group" style="font-size:36px; color:var(--primary); opacity:0.6; margin-bottom:12px; display:block;"></i>
+              <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:0;">No Modifier Groups Yet</h3>
+              <p style="font-size:12.5px; margin:4px 0 16px 0;">Create groups like "Pizza Crust", "Drink Sizes", or "Extra Toppings" to allow customer add-ons.</p>
+              <button class="btn btn-primary" onclick="openCreateGroupModal()"><i class="fa-solid fa-plus"></i> Create First Group</button>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = globalModifierGroups.map(g => {
+          const isSingle = g.selection_type === 'single';
+          return `
+            <div class="mod-card">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div>
+                  <h3 style="font-family:'Outfit',sans-serif; font-size:16px; font-weight:800; color:var(--text-primary); margin:0;">${escapeHtml(g.name)}</h3>
+                  <div style="display:flex; gap:6px; margin-top:4px;">
+                    <span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; background:rgba(99,102,241,0.12); color:var(--primary); border:1px solid rgba(99,102,241,0.25);">
+                      ${isSingle ? 'Single Selection' : 'Multi Selection'}
+                    </span>
+                    ${g.is_required ? '<span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; background:rgba(239,68,68,0.12); color:#EF4444; border:1px solid rgba(239,68,68,0.25);">Required</span>' : ''}
+                  </div>
+                </div>
+                <button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="openAssignModal(${g.id}, '${escapeAttr(g.name)}')">
+                  <i class="fa-solid fa-link"></i> Link Dishes
+                </button>
+              </div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
+                ${(g.options || []).map(opt => `
+                  <div class="opt-chip">
+                    <span>${escapeHtml(opt.name)}</span>
+                    <span style="color:#10B981; font-weight:800;">${opt.price > 0 ? '+₹' + parseFloat(opt.price).toFixed(0) : 'Free'}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function fetchMenuItems() {
+      try {
+        const res = await fetch('/api/menu');
+        const data = await res.json();
+        globalMenuItems = data.data || [];
+      } catch (e) {}
+    }
+
+    function openCreateGroupModal() {
+      document.getElementById('grpName').value = '';
+      document.getElementById('grpType').value = 'single';
+      document.getElementById('grpRequired').checked = false;
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      addOptionRow('Regular / Default', 0);
+      addOptionRow('Cheese Burst / Large', 50);
+      openModal('createModModal');
+    }
+
+    function addOptionRow(defName = '', defPrice = 0) {
+      const container = document.getElementById('optionsContainer');
+      const rowId = 'opt_row_' + Date.now() + Math.random().toString(36).substr(2, 4);
+      const div = document.createElement('div');
+      div.id = rowId;
+      div.style = 'display:grid; grid-template-columns: 2fr 1fr 30px; gap:8px; align-items:center; background:var(--bg); padding:8px; border-radius:8px; border:1px solid var(--border);';
+      div.innerHTML = `
+        <input type="text" class="opt-name" value="${escapeAttr(defName)}" placeholder="Option name (e.g. Cheese Burst)" required style="height:34px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--text-primary); padding:0 8px; font-size:12.5px; outline:none;">
+        <input type="number" class="opt-price" value="${defPrice}" placeholder="+₹ Price" min="0" step="1" required style="height:34px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--text-primary); padding:0 8px; font-size:12.5px; outline:none;">
+        <button type="button" onclick="document.getElementById('${rowId}').remove();" style="background:none; border:none; color:#EF4444; cursor:pointer; font-size:14px;"><i class="fa-solid fa-trash-can"></i></button>
+      `;
+      container.appendChild(div);
+    }
+
+    async function saveModifierGroup() {
+      const name = document.getElementById('grpName').value.trim();
+      const type = document.getElementById('grpType').value;
+      const isReq = document.getElementById('grpRequired').checked;
+
+      if (!name) {
+        alert('Please enter group name');
+        return;
+      }
+
+      const rows = document.querySelectorAll('#optionsContainer > div');
+      const options = [];
+      rows.forEach(r => {
+        const oName = r.querySelector('.opt-name')?.value.trim();
+        const oPrice = parseFloat(r.querySelector('.opt-price')?.value || 0);
+        if (oName) {
+          options.push({ name: oName, price: oPrice });
+        }
+      });
+
+      if (options.length === 0) {
+        alert('Please add at least 1 option');
+        return;
+      }
+
+      const payload = {
+        name: name,
+        selection_type: type,
+        is_required: isReq,
+        options: options
+      };
+
+      try {
+        const res = await fetch('/api/modifiers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          alert('Modifier group created successfully!');
+          closeModal('createModModal');
+          fetchModifierGroups();
+        } else {
+          alert(data.message || 'Creation failed');
+        }
+      } catch (err) {
+        alert('Request error');
+      }
+    }
+
+    function openAssignModal(groupId, groupName) {
+      document.getElementById('assignGroupId').value = groupId;
+      document.getElementById('assignTitle').textContent = `Link "${groupName}" to Dishes`;
+      renderDishCheckboxes();
+      openModal('assignModal');
+    }
+
+    function renderDishCheckboxes(filter = '') {
+      const container = document.getElementById('dishListContainer');
+      const q = filter.trim().toLowerCase();
+      const items = globalMenuItems.filter(i => !q || i.name.toLowerCase().includes(q) || (i.category && i.category.toLowerCase().includes(q)));
+
+      if (items.length === 0) {
+        container.innerHTML = '<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:12px;">No dishes match your search.</div>';
+        return;
+      }
+
+      container.innerHTML = items.map(i => `
+        <label style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-radius:6px; background:var(--card); border:1px solid var(--border); cursor:pointer;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" class="dish-assign-cb" value="${i.id}" style="accent-color:var(--primary); cursor:pointer;">
+            <span style="font-size:12.5px; font-weight:600; color:var(--text-primary);">${escapeHtml(i.name)}</span>
+          </div>
+          <span style="font-size:11px; color:var(--text-muted);">${escapeHtml(i.category || 'Mains')}</span>
+        </label>
+      `).join('');
+    }
+
+    function filterDishList() {
+      const q = document.getElementById('dishSearch').value;
+      renderDishCheckboxes(q);
+    }
+
+    async function saveDishAssignments() {
+      const groupId = parseInt(document.getElementById('assignGroupId').value);
+      const cbs = document.querySelectorAll('.dish-assign-cb:checked');
+      if (cbs.length === 0) {
+        alert('Please select at least one dish');
+        return;
+      }
+
+      for (const cb of cbs) {
+        const itemId = cb.value;
+        await fetch('/api/menu-items/assign-modifiers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+          },
+          body: JSON.stringify({
+            menu_item_id: itemId,
+            modifier_group_ids: [groupId]
+          })
+        });
+      }
+
+      alert('✅ Modifier group successfully attached to selected dishes!');
+      closeModal('assignModal');
+    }
+  </script>
+</body>
+</html>
