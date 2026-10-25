@@ -10,17 +10,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #9F1239;
-            --primary-glow: rgba(159, 18, 57, 0.35);
-            --primary-dark: #881337;
-            --primary-rose: #FB7185;
-            --success: #22C55E;
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --primary-dark: #4338CA;
+            --success: #10B981;
             --danger: #EF4444;
-            --bg: #0B0B0D;
-            --card: #151517;
-            --border: #26262A;
-            --text-primary: #F4F4F5;
-            --text-secondary: #A1A1AA;
+            --bg: #090D1A;
+            --card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +37,7 @@
         /* ─── SPLIT LAYOUT ─── */
         .split-left {
             flex: 1;
-            background: linear-gradient(135deg, #0B0B0D 0%, #1E0A12 50%, #12060B 100%);
+            background: linear-gradient(135deg, #090D1A 0%, #1e1b4b 50%, #0f172a 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -50,7 +49,7 @@
             content: '';
             position: absolute;
             top: -200px; left: -200px; width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(159, 18, 57, 0.22) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -79,7 +78,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 18px;
-            background: linear-gradient(135deg, #FB7185, #9F1239, #E11D48, #FB7185);
+            background: linear-gradient(135deg, #38BDF8, #818CF8, #C084FC, #38BDF8);
             background-size: 300% 300%;
             animation: logoGradientRotate 4s linear infinite;
             opacity: 0.85;
@@ -99,9 +98,9 @@
             height: 64px;
             width: 64px;
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(159, 18, 57, 0.5);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.5);
             object-fit: cover;
-            border: 1px solid rgba(251, 113, 133, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             animation: logoFloatPulse 3s ease-in-out infinite alternate;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
         }
@@ -109,17 +108,17 @@
         @keyframes logoFloatPulse {
             0% {
                 transform: translateY(0px) scale(1);
-                box-shadow: 0 8px 24px rgba(159, 18, 57, 0.4), 0 0 15px rgba(251, 113, 133, 0.3);
+                box-shadow: 0 8px 24px rgba(56, 189, 248, 0.4), 0 0 15px rgba(129, 140, 248, 0.3);
             }
             100% {
                 transform: translateY(-5px) scale(1.04);
-                box-shadow: 0 16px 36px rgba(225, 29, 72, 0.65), 0 0 25px rgba(251, 113, 133, 0.55);
+                box-shadow: 0 16px 36px rgba(192, 132, 252, 0.65), 0 0 25px rgba(56, 189, 248, 0.55);
             }
         }
 
         .logo-img-wrapper:hover .logo-img {
             transform: translateY(-7px) scale(1.09) rotate(3deg);
-            box-shadow: 0 20px 45px rgba(159, 18, 57, 0.85), 0 0 35px rgba(251, 113, 133, 0.85);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.85), 0 0 35px rgba(56, 189, 248, 0.85);
         }
 
         .logo-text {
@@ -131,7 +130,7 @@
         }
 
         .logo-text span {
-            background: linear-gradient(135deg, #FB7185, #F43F5E, #FDA4AF);
+            background: linear-gradient(135deg, #38BDF8, #818CF8, #C084FC, #38BDF8);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -149,7 +148,7 @@
             font-weight: 800;
             line-height: 1.2;
             margin-bottom: 20px;
-            background: linear-gradient(to right, #FFFFFF, #E4E4E7, #A1A1AA);
+            background: linear-gradient(to right, #fff, #94A3B8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -189,7 +188,7 @@
 
         .split-right {
             width: 490px;
-            background: #0E0E11;
+            background: #0B0F19;
             border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
@@ -288,7 +287,7 @@
         .btn-submit {
             width: 100%;
             padding: 13px;
-            background: linear-gradient(135deg, #9F1239 0%, #BE123C 100%);
+            background: linear-gradient(135deg, var(--primary), #4F46E5);
             border: none;
             color: white;
             font-size: 15px;
@@ -296,7 +295,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 16px rgba(159, 18, 57, 0.4);
+            box-shadow: 0 4px 14px var(--primary-glow);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -305,12 +304,7 @@
 
         .btn-submit:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 22px rgba(159, 18, 57, 0.55);
-            background: linear-gradient(135deg, #881337 0%, #9F1239 100%);
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
+            box-shadow: 0 6px 20px var(--primary-glow);
         }
 
         .error-container {
@@ -417,13 +411,13 @@
 
         /* ─── DEMO CREDENTIALS DRAWER ─── */
         .credentials-box {
-            background: rgba(159, 18, 57, 0.08);
-            border: 1px solid rgba(251, 113, 133, 0.22);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px dashed rgba(99, 102, 241, 0.35);
             border-radius: 12px;
             padding: 14px;
             margin-top: 24px;
             font-size: 12.5px;
-            color: #FDA4AF;
+            color: #A5B4FC;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -513,7 +507,7 @@
     <!-- Right Split -->
     <div class="split-right">
         <div style="margin-bottom: 24px; display:flex; align-items:center; gap:14px;">
-            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:50px; width:50px; border-radius:12px; box-shadow:0 4px 18px rgba(159,18,57,0.4); object-fit:cover; border:1px solid rgba(251,113,133,0.35);" onerror="this.src='/images/dineflow_logo.png'">
+            <img src="/images/dineflow_logo.jpg" alt="DineFlow AI Logo" style="height:50px; width:50px; border-radius:12px; box-shadow:0 4px 18px rgba(99,102,241,0.35); object-fit:cover; border:1px solid rgba(99,102,241,0.3);" onerror="this.src='/images/dineflow_logo.png'">
             <div>
                 <h2 style="font-family:'Outfit', sans-serif; font-size:24px; font-weight:800; margin-bottom:2px; color:#fff;">Welcome Back</h2>
                 <p style="color:var(--text-secondary); font-size:13px;">Sign in to access your DineFlow POS dashboard.</p>
@@ -557,7 +551,7 @@
                 </button>
 
                 <div style="text-align:center; margin-top:16px; font-size:13px; color:var(--text-secondary);">
-                    New to DineFlow AI? <a href="/register" style="color:#FB7185; font-weight:700; text-decoration:none;">Start Free Restaurant Account →</a>
+                    New to DineFlow AI? <a href="/register" style="color:#818CF8; font-weight:700; text-decoration:none;">Start Free Restaurant Account →</a>
                 </div>
             </form>
         </div>

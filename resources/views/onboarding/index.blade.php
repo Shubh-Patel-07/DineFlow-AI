@@ -11,16 +11,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         :root {
-            --primary: #9F1239;
-            --primary-glow: rgba(159, 18, 57, 0.35);
-            --primary-dark: #881337;
-            --primary-rose: #FB7185;
-            --success: #22C55E;
-            --bg: #0B0B0D;
-            --card: #151517;
-            --border: #26262A;
-            --text-primary: #F4F4F5;
-            --text-secondary: #A1A1AA;
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --bg: #090D1A;
+            --card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,14 +54,13 @@
         .brand-icon {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #9F1239, #BE123C);
+            background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             color: #fff;
-            border: 1px solid rgba(251, 113, 133, 0.3);
         }
 
         .brand-name {
@@ -73,13 +71,13 @@
         }
 
         .restaurant-badge {
-            background: rgba(159, 18, 57, 0.15);
-            border: 1px solid rgba(251, 113, 133, 0.3);
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 20px;
             padding: 6px 14px;
             font-size: 12px;
             font-weight: 600;
-            color: #FDA4AF;
+            color: #A5B4FC;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -284,7 +282,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(159, 18, 57, 0.5);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
         }
 
         .sample-grid {
@@ -305,8 +303,8 @@
         }
 
         .usage-stat-box {
-            background: rgba(159, 18, 57, 0.08);
-            border: 1px solid rgba(251, 113, 133, 0.25);
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
             border-radius: 14px;
             padding: 20px;
             margin: 20px 0;
@@ -361,7 +359,7 @@
                     <span style="font-weight: 800; color: #34D399;" id="progressPercentage">12.5% Completed</span>
                 </div>
                 <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden;">
-                    <div id="onboardingProgressBar" style="height: 100%; width: 12.5%; background: linear-gradient(90deg, #9F1239, #22C55E); transition: width 0.3s ease;"></div>
+                    <div id="onboardingProgressBar" style="height: 100%; width: 12.5%; background: linear-gradient(90deg, #6366F1, #34D399); transition: width 0.3s ease;"></div>
                 </div>
             </div>
         </div>
@@ -486,7 +484,7 @@
                             <div style="font-weight:700; font-size:15px;">Quick Generate Tables</div>
                             <div style="font-size:12px; color:var(--text-secondary);">Generates T-1 through T-6 with ready QR codes.</div>
                         </div>
-                        <button type="button" onclick="generateSampleTables()" class="btn-secondary" style="color:#FB7185; border-color:#9F1239;">
+                        <button type="button" onclick="generateSampleTables()" class="btn-secondary" style="color:#818CF8; border-color:#6366F1;">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Generate 6 Tables
                         </button>
                     </div>
@@ -509,7 +507,7 @@
                             <div style="font-weight:700; font-size:15px;">Load Starter Menu Items</div>
                             <div style="font-size:12px; color:var(--text-secondary);">Adds 5 top-selling dishes (Paneer Masala, Biryani, Naan, Spring Rolls, Drinks).</div>
                         </div>
-                        <button type="button" onclick="loadSampleMenuItems()" class="btn-secondary" style="color:#FB7185; border-color:#9F1239;">
+                        <button type="button" onclick="loadSampleMenuItems()" class="btn-secondary" style="color:#818CF8; border-color:#6366F1;">
                             <i class="fa-solid fa-utensils"></i> Load Starter Dishes
                         </button>
                     </div>
@@ -527,8 +525,8 @@
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                    <div style="background:rgba(159,18,57,0.12); border:1px solid rgba(251,113,133,0.3); border-radius:14px; padding:18px;">
-                        <div style="font-size:11px; font-weight:700; color:#FDA4AF; text-transform:uppercase;">Owner Administrator</div>
+                    <div style="background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); border-radius:14px; padding:18px;">
+                        <div style="font-size:11px; font-weight:700; color:#A5B4FC; text-transform:uppercase;">Owner Administrator</div>
                         <div style="font-size:16px; font-weight:800; color:#fff; margin:6px 0;">{{ $user->name }}</div>
                         <div style="font-size:13px; color:var(--text-secondary);">Login Email: <strong style="color:#fff;">{{ $user->email }}</strong></div>
                         <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Security: <strong style="color:#34D399; font-size:13px;">Password Protected</strong></div>

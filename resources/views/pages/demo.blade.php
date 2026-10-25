@@ -17,21 +17,20 @@
 
     <style>
         :root {
-            --primary: #9F1239;
-            --primary-glow: rgba(159, 18, 57, 0.4);
-            --primary-dark: #881337;
-            --primary-rose: #FB7185;
-            --success: #22C55E;
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --primary-dark: #4338CA;
+            --success: #10B981;
             --whatsapp: #25D366;
             --whatsapp-dark: #128C7E;
-            --accent: #FB7185;
-            --bg: #0B0B0D;
-            --bg-alt: #101012;
-            --card: #151517;
-            --border: #26262A;
-            --border-glow: rgba(159, 18, 57, 0.3);
-            --text-primary: #F4F4F5;
-            --text-secondary: #A1A1AA;
+            --accent: #EC4899;
+            --bg: #090D1A;
+            --bg-alt: #0D1326;
+            --card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
         }
 
         *, *::before, *::after {
@@ -101,7 +100,7 @@
         .brand-icon {
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, #9F1239, #BE123C);
+            background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -109,7 +108,6 @@
             font-size: 17px;
             color: #fff;
             box-shadow: 0 0 12px var(--primary-glow);
-            border: 1px solid rgba(251, 113, 133, 0.3);
         }
 
         .brand-name {
@@ -323,7 +321,7 @@
 
         .mobile-drawer ul li a:hover,
         .mobile-drawer ul li a.active {
-            background: rgba(159, 18, 57, 0.15);
+            background: rgba(99, 102, 241, 0.12);
             color: #fff;
         }
 
@@ -348,10 +346,10 @@
             align-items: center;
             gap: 8px;
             padding: 6px 14px;
-            background: rgba(159, 18, 57, 0.15);
-            border: 1px solid rgba(251, 113, 133, 0.3);
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 30px;
-            color: #FDA4AF;
+            color: #A5B4FC;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -407,9 +405,9 @@
         }
 
         .demo-card.highlight {
-            border-color: #FB7185;
-            background: linear-gradient(180deg, #1E0A12 0%, #151517 100%);
-            box-shadow: 0 0 30px rgba(159, 18, 57, 0.25);
+            border-color: #6366F1;
+            background: linear-gradient(180deg, #162044 0%, #131A35 100%);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
         }
 
         .demo-icon-wrap {
@@ -532,7 +530,7 @@
 
         .form-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.25);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         .whatsapp-card {
@@ -703,7 +701,7 @@
         <section class="demo-grid">
             <!-- Customer QR Demo -->
             <div class="demo-card highlight">
-                <div class="demo-icon-wrap" style="background: rgba(159, 18, 57, 0.15); color: #FB7185;">
+                <div class="demo-icon-wrap" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">
                     <i class="fa-solid fa-qrcode"></i>
                 </div>
                 <h3>1. Customer QR Menu Demo</h3>

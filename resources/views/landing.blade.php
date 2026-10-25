@@ -28,24 +28,23 @@
 
     <style>
         :root {
-            --primary: #9F1239;
-            --primary-glow: rgba(159, 18, 57, 0.4);
-            --primary-dark: #881337;
-            --primary-rose: #FB7185;
-            --success: #22C55E;
-            --success-glow: rgba(34, 197, 94, 0.3);
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --success-glow: rgba(16, 185, 129, 0.3);
             --whatsapp: #25D366;
             --whatsapp-dark: #128C7E;
-            --accent: #FB7185;
-            --bg: #0B0B0D;
-            --bg-alt: #101012;
-            --card: #151517;
-            --card-glass: rgba(21, 21, 23, 0.85);
-            --border: #26262A;
-            --border-glow: rgba(159, 18, 57, 0.35);
-            --text-primary: #F4F4F5;
-            --text-secondary: #A1A1AA;
-            --text-muted: #71717A;
+            --accent: #EC4899;
+            --bg: #090D1A;
+            --bg-alt: #0D1326;
+            --card: #131A35;
+            --card-glass: rgba(19, 26, 53, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -87,7 +86,7 @@
         .orb-1 {
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, #9F1239, transparent 70%);
+            background: radial-gradient(circle, #6366F1, transparent 70%);
             top: -100px;
             left: -100px;
             animation: orbFloat1 18s ease-in-out infinite alternate;
@@ -130,10 +129,10 @@
             align-items: center;
             gap: 8px;
             padding: 6px 14px;
-            background: rgba(159, 18, 57, 0.15);
-            border: 1px solid rgba(251, 113, 133, 0.3);
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 30px;
-            color: #FDA4AF;
+            color: #A5B4FC;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -195,7 +194,7 @@
         .brand-icon {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #9F1239, #BE123C);
+            background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -203,7 +202,6 @@
             font-size: 17px;
             color: #fff;
             box-shadow: 0 0 12px var(--primary-glow);
-            border: 1px solid rgba(251, 113, 133, 0.3);
         }
 
         .brand-name {
@@ -222,9 +220,9 @@
             font-weight: 700;
             padding: 2px 6px;
             border-radius: 6px;
-            background: rgba(159, 18, 57, 0.2);
-            color: #FB7185;
-            border: 1px solid rgba(251, 113, 133, 0.3);
+            background: rgba(99, 102, 241, 0.2);
+            color: #818CF8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
             text-transform: uppercase;
         }
 
@@ -257,9 +255,9 @@
 
         .btn-header-demo {
             padding: 7px 14px;
-            background: rgba(159, 18, 57, 0.15);
-            border: 1px solid rgba(251, 113, 133, 0.35);
-            color: #FDA4AF;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: #A5B4FC;
             text-decoration: none;
             font-size: 13px;
             font-weight: 700;
@@ -272,8 +270,8 @@
         }
 
         .btn-header-demo:hover {
-            background: rgba(159, 18, 57, 0.25);
-            border-color: #9F1239;
+            background: rgba(99, 102, 241, 0.22);
+            border-color: #6366F1;
             color: #fff;
         }
 
@@ -781,8 +779,8 @@
             padding: 30px;
         }
 
-        .sync-card.cloud { border-left: 4px solid #FB7185; }
-        .sync-card.offline { border-left: 4px solid #22C55E; }
+        .sync-card.cloud { border-left: 4px solid #6366F1; }
+        .sync-card.offline { border-left: 4px solid #10B981; }
 
         .sync-badge {
             display: inline-block;
@@ -794,8 +792,8 @@
             margin-bottom: 14px;
         }
 
-        .sync-card.cloud .sync-badge { background: rgba(159, 18, 57, 0.15); color: #FB7185; }
-        .sync-card.offline .sync-badge { background: rgba(34, 197, 94, 0.15); color: #34D399; }
+        .sync-card.cloud .sync-badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; }
+        .sync-card.offline .sync-badge { background: rgba(16, 185, 129, 0.15); color: #34D399; }
 
         .sync-card h3 {
             font-family: 'Outfit', sans-serif;
@@ -883,9 +881,9 @@
         }
 
         .price-card.featured {
-            border-color: #FB7185;
-            box-shadow: 0 0 24px rgba(159, 18, 57, 0.25);
-            background: linear-gradient(180deg, #1E0A12 0%, #151517 100%);
+            border-color: #6366F1;
+            box-shadow: 0 0 24px rgba(99, 102, 241, 0.25);
+            background: linear-gradient(180deg, #18224B 0%, #131A35 100%);
         }
 
         .featured-tag {
@@ -893,7 +891,7 @@
             top: -11px;
             left: 50%;
             transform: translateX(-50%);
-            background: #9F1239;
+            background: #6366F1;
             color: #fff;
             font-size: 10.5px;
             font-weight: 800;
@@ -1285,8 +1283,8 @@
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 @endauth
-                <a href="/demo" class="btn-ghost" style="border: 1px solid #9F1239; color: #FDA4AF; background: rgba(159, 18, 57, 0.12);">
-                    <i class="fa-solid fa-play" style="margin-right: 6px; color: #FB7185;"></i> Try Live Demo
+                <a href="/demo" class="btn-ghost" style="border: 1px solid #6366F1; color: #A5B4FC; background: rgba(99, 102, 241, 0.1);">
+                    <i class="fa-solid fa-play" style="margin-right: 6px; color: #818CF8;"></i> Try Live Demo
                 </a>
                 @guest
                 <a href="{{ route('login') }}" class="btn-ghost">

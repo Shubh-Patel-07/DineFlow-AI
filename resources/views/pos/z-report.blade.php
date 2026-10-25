@@ -21,26 +21,26 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
-      --bg: #0B0B0D;
-      --card: #151517;
-      --border: #26262A;
-      --primary: #9F1239;
-      --success: #22C55E;
-      --text: #F4F4F5;
-      --muted: #A1A1AA;
+      --bg: #0F172A;
+      --card: #1E293B;
+      --border: #334155;
+      --primary: #6366F1;
+      --success: #10B981;
+      --text: #F8FAFC;
+      --muted: #94A3B8;
       --input-bg: rgba(255,255,255,0.08);
       --stat-bg: rgba(255,255,255,0.04);
       --th-bg: rgba(255,255,255,0.05);
     }
     html.light-theme, body.light-theme {
-      --bg: #FBF9F8 !important;
+      --bg: #F8FAFC !important;
       --card: #FFFFFF !important;
-      --border: #ECE6E4 !important;
-      --text: #111827 !important;
-      --muted: #6B7280 !important;
-      --input-bg: #F5F1EF !important;
-      --stat-bg: #FCFCFC !important;
-      --th-bg: #F5F1EF !important;
+      --border: #E2E8F0 !important;
+      --text: #0F172A !important;
+      --muted: #64748B !important;
+      --input-bg: #F1F5F9 !important;
+      --stat-bg: #F8FAFC !important;
+      --th-bg: #F1F5F9 !important;
     }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 24px; transition: all 0.2s; }
     .z-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 900px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
@@ -106,7 +106,7 @@
       </div>
       <div class="z-stat-box">
         <label>Total Completed Orders</label>
-        <val style="color:#FB7185;">{{ $totalOrdersCount }}</val>
+        <val style="color:#6366F1;">{{ $totalOrdersCount }}</val>
       </div>
     </div>
 
@@ -122,12 +122,12 @@
       </thead>
       <tbody>
         <tr>
-          <td><i class="fa-solid fa-money-bill" style="color:#22C55E; margin-right:8px;"></i> Cash</td>
+          <td><i class="fa-solid fa-money-bill" style="color:#10B981; margin-right:8px;"></i> Cash</td>
           <td>{{ $paymentSplit['cash']['count'] ?? 0 }}</td>
           <td style="font-weight:700;">₹{{ number_format($paymentSplit['cash']['amount'] ?? 0, 2) }}</td>
         </tr>
         <tr>
-          <td><i class="fa-solid fa-qrcode" style="color:#FB7185; margin-right:8px;"></i> UPI / Online</td>
+          <td><i class="fa-solid fa-qrcode" style="color:#6366F1; margin-right:8px;"></i> UPI / Online</td>
           <td>{{ $paymentSplit['online']['count'] ?? 0 }}</td>
           <td style="font-weight:700;">₹{{ number_format($paymentSplit['online']['amount'] ?? 0, 2) }}</td>
         </tr>

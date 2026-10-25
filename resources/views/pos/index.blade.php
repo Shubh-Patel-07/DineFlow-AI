@@ -27,26 +27,26 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
     :root {
-      --primary:        #9F1239; /* Deep Burgundy / Velvet Wine */
-      --primary-light:  rgba(159, 18, 57, 0.08);
-      --primary-dark:   #881337;
-      --success:        #22C55E;
-      --success-light:  rgba(34, 197, 94, 0.1);
+      --primary:        #6366F1;
+      --primary-light:  rgba(99, 102, 241, 0.15);
+      --primary-dark:   #4F46E5;
+      --success:        #10B981;
+      --success-light:  rgba(16, 185, 129, 0.1);
       --danger:         #EF4444;
       --danger-light:   rgba(239, 68, 68, 0.1);
       --warning:        #F59E0B;
       --warning-light:  rgba(245, 158, 11, 0.1);
       --info:           #3B82F6;
       --info-light:     rgba(59, 130, 246, 0.1);
-      --sidebar-bg:     #101012;
-      --sidebar-hover:  #1C1C20;
-      --sidebar-active: #FB7185;
-      --bg:             #0B0B0D;
-      --card:           #151517;
-      --border:         #26262A;
-      --text-primary:   #F4F4F5;
-      --text-secondary: #D4D4D8;
-      --text-muted:     #A1A1AA;
+      --sidebar-bg:     #0B0F19;
+      --sidebar-hover:  #1E293B;
+      --sidebar-active: #6366F1;
+      --bg:             #0F172A;
+      --card:           #1E293B;
+      --border:         #334155;
+      --text-primary:   #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted:     #64748B;
       --shadow-sm:      0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
       --shadow-md:      0 4px 6px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.3);
       --shadow-lg:      0 10px 15px rgba(0,0,0,.5), 0 4px 6px rgba(0,0,0,.4);
@@ -57,31 +57,28 @@
 
     /* Global Select Dropdown Option Visibility Fix */
     select option {
-      background-color: #151517 !important;
-      color: #F4F4F5 !important;
+      background-color: #1E293B !important;
+      color: #F8FAFC !important;
     }
     body.light-theme select option {
       background-color: #FFFFFF !important;
-      color: #111827 !important;
+      color: #0F172A !important;
     }
 
-    /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES (Warm Porcelain & Velvet Wine) ─── */
+    /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES ─── */
     body.light-theme {
-      --sidebar-bg:     #FCFCFC;
-      --sidebar-hover:  #F5F1EF;
-      --sidebar-active: #9F1239;
-      --bg:             #FBF9F8;
+      --sidebar-bg:     #FFFFFF;
+      --sidebar-hover:  #F1F5F9;
+      --sidebar-active: #6366F1;
+      --bg:             #F8FAFC;
       --card:           #FFFFFF;
-      --border:         #ECE6E4;
-      --text-primary:   #111827;
-      --text-secondary: #4B5563;
-      --text-muted:     #6B7280;
-      --primary:        #9F1239;
-      --primary-light:  rgba(159, 18, 57, 0.08);
-      --primary-dark:   #881337;
-      --shadow-sm:      0 1px 3px rgba(0,0,0,.03);
-      --shadow-md:      0 4px 14px rgba(0,0,0,.05);
-      --shadow-lg:      0 12px 32px rgba(0,0,0,.08);
+      --border:         #E2E8F0;
+      --text-primary:   #0F172A;
+      --text-secondary: #475569;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.06);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.08);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.1);
     }
     body.light-theme .sidebar {
       background: #FFFFFF !important;

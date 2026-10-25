@@ -9,356 +9,344 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <script>window.AUTH_USER_ROLE = "{{ Auth::user()?->role ?? Auth::user()?->username ?? session('active_role') ?? '' }}";</script>
   <script src="/frontend/admin/utils.js"></script>
-
-  <!-- Typography: Inter & Geist Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
-
-  <!-- Chart.js 4.4.1 -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            canvas: {
-              DEFAULT: '#FBF9F8',
-              dark: '#0B0B0D'
-            },
-            surface: {
-              DEFAULT: '#FFFFFF',
-              dark: '#151517'
-            },
-            panel: {
-              DEFAULT: '#FCFCFC',
-              dark: '#101012'
-            },
-            brand: {
-              DEFAULT: '#9F1239', // Velvet Wine / Deep Burgundy
-              dark: '#881337',
-              hover: '#BE123C',
-              soft: 'rgba(159, 18, 57, 0.08)',
-              rose: '#FB7185'
-            },
-            hairline: {
-              DEFAULT: '#ECE6E4',
-              dark: '#26262A'
-            },
-            obsidian: {
-              DEFAULT: '#111827',
-              muted: '#6B7280',
-              light: '#F4F4F5'
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'Outfit', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
-          },
-          boxShadow: {
-            'subtle': '0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02)',
-            'elevated': '0 4px 14px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03)',
-            'deep': '0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04)'
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
     :root {
-      --canvas: #FBF9F8;
-      --surface: #FFFFFF;
-      --panel: #FCFCFC;
-      --brand: #9F1239;
-      --brand-hover: #881337;
-      --brand-soft: rgba(159, 18, 57, 0.08);
-      --hairline: #ECE6E4;
-      --text-primary: #111827;
-      --text-muted: #6B7280;
-      --success: #22C55E;
-      --warning: #F59E0B;
-      --danger: #EF4444;
-      --primary: #9F1239;
-      --primary-light: rgba(159, 18, 57, 0.08);
-      --primary-dark: #881337;
-      --sidebar-bg: #FCFCFC;
-      --sidebar-hover: #F5F1EF;
-      --sidebar-active: #9F1239;
-      --bg: #FBF9F8;
-      --card: #FFFFFF;
-      --border: #ECE6E4;
-      --text-secondary: #4B5563;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.03);
-      --shadow-md: 0 4px 14px rgba(0,0,0,0.05);
-      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+      --primary:        #6366F1;
+      --primary-light:  rgba(99, 102, 241, 0.15);
+      --primary-dark:   #4F46E5;
+      --success:        #10B981;
+      --success-light:  rgba(16, 185, 129, 0.15);
+      --danger:         #EF4444;
+      --danger-light:   rgba(239, 68, 68, 0.15);
+      --warning:        #F59E0B;
+      --warning-light:  rgba(245, 158, 11, 0.15);
+      --info:           #06B6D4;
+      --info-light:     rgba(6, 182, 212, 0.15);
+      --sidebar-bg:     #0B0F19;
+      --sidebar-hover:  #1E293B;
+      --sidebar-active: #6366F1;
+      --bg:             #0F172A;
+      --card:           #1E293B;
+      --border:         #334155;
+      --text-primary:   #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.3);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.4);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.5);
+      --radius-sm:      8px;
+      --radius-md:      12px;
+      --radius-lg:      20px;
     }
 
-    /* Dark Mode Design Tokens */
-    body:not(.light-theme),
-    html:not(.light-theme) body {
-      --canvas: #0B0B0D;
-      --surface: #151517;
-      --panel: #101012;
-      --brand: #FB7185;
-      --brand-hover: #F43F5E;
-      --brand-soft: rgba(251, 113, 133, 0.12);
-      --hairline: #26262A;
-      --text-primary: #F4F4F5;
-      --text-muted: #A1A1AA;
-      --sidebar-bg: #101012;
-      --sidebar-hover: #1C1C20;
-      --sidebar-active: #FB7185;
-      --bg: #0B0B0D;
-      --card: #151517;
-      --border: #26262A;
-      --text-secondary: #D4D4D8;
-      --primary: #FB7185;
-      --primary-light: rgba(251, 113, 133, 0.12);
-    }
-
-    /* Explicit Light Mode Override when light-theme is active */
+    /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES FOR DASHBOARD ─── */
     body.light-theme {
-      --canvas: #FBF9F8;
-      --surface: #FFFFFF;
-      --panel: #FCFCFC;
-      --brand: #9F1239;
-      --brand-hover: #881337;
-      --brand-soft: rgba(159, 18, 57, 0.08);
-      --hairline: #ECE6E4;
-      --text-primary: #111827;
-      --text-muted: #6B7280;
-      --sidebar-bg: #FCFCFC;
-      --sidebar-hover: #F5F1EF;
-      --sidebar-active: #9F1239;
-      --bg: #FBF9F8;
-      --card: #FFFFFF;
-      --border: #ECE6E4;
-      --text-secondary: #4B5563;
-      --primary: #9F1239;
-      --primary-light: rgba(159, 18, 57, 0.08);
+      --sidebar-bg:     #FFFFFF;
+      --sidebar-hover:  #F1F5F9;
+      --sidebar-active: #6366F1;
+      --bg:             #F8FAFC;
+      --card:           #FFFFFF;
+      --border:         #E2E8F0;
+      --text-primary:   #0F172A;
+      --text-secondary: #475569;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.06);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.08);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.1);
+    }
+    body.light-theme .sidebar { background: #FFFFFF !important; border-right: 1px solid #E2E8F0 !important; }
+    body.light-theme .sidebar-brand { border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .brand-text h2 { color: #0F172A !important; }
+    body.light-theme .brand-text span { color: #64748B !important; }
+    body.light-theme .sidebar-toggle { background: #F1F5F9 !important; }
+    body.light-theme .sidebar-toggle i { color: #475569 !important; }
+    body.light-theme .sidebar-section-label { color: #94A3B8 !important; }
+    body.light-theme .nav-item { color: #475569 !important; }
+    body.light-theme .nav-item:hover { background: #F1F5F9 !important; color: #0F172A !important; }
+    body.light-theme .nav-item.active { background: var(--primary) !important; color: #FFFFFF !important; }
+    body.light-theme .sidebar-footer { border-top-color: #E2E8F0 !important; }
+    body.light-theme .user-card:hover { background: #F1F5F9 !important; }
+    body.light-theme .user-info h4 { color: #0F172A !important; }
+    body.light-theme .user-info p { color: #64748B !important; }
+    body.light-theme .topbar { background: #FFFFFF !important; border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .topbar-title { color: #0F172A !important; }
+    body.light-theme .topbar-sub { color: #64748B !important; }
+
+    /* Override inline hardcoded white colors & dark backgrounds for light mode */
+    body.light-theme [style*="color: #F8FAFC"],
+    body.light-theme [style*="color:#F8FAFC"] {
+      color: #0F172A !important;
+    }
+    body.light-theme [style*="background: rgba(30,41,59"],
+    body.light-theme [style*="background: linear-gradient(135deg, rgba(30,41,59"] {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
+    }
+    body.light-theme [style*="background: rgba(255,255,255,0.06)"] {
+      background: #F1F5F9 !important;
+      color: #475569 !important;
+      border-color: #CBD5E1 !important;
+    }
+    #liveClockBadge {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #818CF8;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+    body.light-theme #liveClockBadge {
+      background: #EEF2FF !important;
+      border: 1.5px solid #C7D2FE !important;
+      color: #4338CA !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08) !important;
     }
 
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--canvas);
-      color: var(--text-primary);
-      margin: 0;
-      padding: 0;
+    #localWeatherBadge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
       display: flex;
-      height: 100vh;
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
+      align-items: center;
+      gap: 4px;
+    }
+    body.light-theme #localWeatherBadge {
+      background: #ECFDF5 !important;
+      border: 1.5px solid #A7F3D0 !important;
+      color: #065F46 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08) !important;
     }
 
-    /* Tabular figures for financial and numerical precision */
-    .tabular-nums {
-      font-variant-numeric: tabular-nums;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
-    /* Sidebar Transitions & Elevation */
+    /* ─── SIDEBAR ─────────────────────────────── */
     .sidebar {
-      width: 256px;
-      min-width: 256px;
+      width: 240px; min-width: 240px;
       background: var(--sidebar-bg);
-      border-right: 1px solid var(--hairline);
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       overflow: hidden;
-      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: width .25s cubic-bezier(.4,0,.2,1), min-width .25s cubic-bezier(.4,0,.2,1);
       flex-shrink: 0;
-      z-index: 40;
     }
-    .sidebar.collapsed {
-      width: 68px;
-      min-width: 68px;
-    }
-    .sidebar.collapsed .brand-text,
-    .sidebar.collapsed .sidebar-section-label,
-    .sidebar.collapsed .nav-label,
-    .sidebar.collapsed .nav-badge,
-    .sidebar.collapsed .user-info {
-      opacity: 0;
-      display: none;
-    }
-    .sidebar.collapsed .sidebar-toggle i {
-      transform: rotate(180deg);
-    }
-    .sidebar.collapsed .user-card {
-      justify-content: center;
-      padding: 8px 4px;
-    }
-    .sidebar.collapsed #dashLogoutForm {
-      display: none !important;
-    }
-
     .sidebar-nav {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
+      flex: 1; overflow-y: auto; overflow-x: hidden;
       scrollbar-width: thin;
-      scrollbar-color: var(--hairline) transparent;
-      padding: 12px 10px;
+      scrollbar-color: rgba(255,255,255,.15) transparent;
     }
     .sidebar-nav::-webkit-scrollbar { width: 4px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background: var(--hairline); border-radius: 4px; }
+    .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
+    .sidebar.collapsed { width: 60px; min-width: 60px; }
+
+    .sidebar-brand {
+      padding: 14px 12px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0; position: relative; min-height: 58px;
+    }
+    .brand-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: var(--primary); display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff;
+    }
+    .brand-text { overflow: hidden; white-space: nowrap; transition: opacity .2s, width .25s; }
+    .brand-text h2 { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+    .brand-text span { font-size: 11px; color: rgba(255,255,255,.45); }
+    .sidebar.collapsed .brand-text { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .brand-icon { display: none; }
+
+    .sidebar-toggle {
+      margin-left: auto; flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(255,255,255,.12); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .15s;
+    }
+    .sidebar-toggle:hover { background: rgba(255,255,255,.25); }
+    .sidebar-toggle i { font-size: 11px; color: rgba(255,255,255,.9); transition: transform .25s; }
+    .sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { justify-content: center; }
+    .sidebar.collapsed .sidebar-toggle { margin-left: 0; }
+
+    .sidebar-section { padding: 14px 8px 4px; overflow: hidden; }
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,.3); padding: 0 6px; white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .sidebar.collapsed .sidebar-section-label { opacity: 0; }
 
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 13.5px;
-      font-weight: 500;
-      transition: all 0.16s ease;
-      margin-top: 2px;
-      text-decoration: none;
-      white-space: nowrap;
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: var(--radius-sm);
+      color: rgba(255,255,255,.55); cursor: pointer;
+      font-size: 13.5px; font-weight: 500;
+      transition: all .18s; margin-top: 2px;
+      text-decoration: none; white-space: nowrap; overflow: hidden;
       position: relative;
     }
-    .nav-item:hover {
-      background: var(--sidebar-hover);
-      color: var(--text-primary);
-    }
-    .nav-item.active {
-      background: var(--brand-soft);
-      color: var(--brand);
-      font-weight: 600;
-    }
-    body:not(.light-theme) .nav-item.active {
-      background: rgba(251, 113, 133, 0.15);
-      color: #FB7185;
-    }
-    .nav-item i {
-      width: 18px;
-      min-width: 18px;
-      text-align: center;
-      font-size: 14px;
-    }
-    .nav-badge {
-      margin-left: auto;
-      font-family: 'Geist Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 9999px;
-      background: var(--brand-soft);
-      color: var(--brand);
-      border: 1px solid var(--hairline);
-    }
-    .nav-badge.green {
-      background: rgba(34, 197, 94, 0.12);
-      color: #16A34A;
-      border-color: rgba(34, 197, 94, 0.25);
+    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+    .nav-item.active { background: var(--sidebar-active); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,.4); }
+    .nav-item i { width: 20px; min-width: 20px; text-align: center; font-size: 14px; }
+    .nav-item .nav-label { transition: opacity .2s; }
+    .sidebar.collapsed .nav-item .nav-label { opacity: 0; }
+    .nav-badge { margin-left: auto; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 20px; transition: opacity .2s; }
+    .nav-badge.green { background: var(--success); }
+    .sidebar.collapsed .nav-badge { opacity: 0; }
+
+    .sidebar.collapsed .nav-item:hover::after {
+      content: attr(data-tip);
+      position: absolute; left: 54px; top: 50%; transform: translateY(-50%);
+      background: #1E293B; color: #fff; font-size: 12px; font-weight: 500;
+      padding: 5px 10px; border-radius: 6px; white-space: nowrap;
+      box-shadow: var(--shadow-md); pointer-events: none; z-index: 200;
     }
 
-    /* Main view container */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      min-width: 0;
-      background: var(--canvas);
+    .sidebar-footer {
+      flex-shrink: 0; padding: 14px 8px;
+      border-top: 1px solid rgba(255,255,255,.07); overflow: hidden;
     }
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: var(--radius-sm);
+      transition: background .15s; white-space: nowrap;
+    }
+    .user-card:hover { background: var(--sidebar-hover); }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+    .user-info { transition: opacity .2s; overflow: hidden; }
+    .user-info h4 { font-size: 13px; font-weight: 600; color: #fff; }
+    .user-info p  { font-size: 11px; color: rgba(255,255,255,.4); }
+    .sidebar.collapsed .user-info { opacity: 0; width: 0; }
+    .sidebar.collapsed #dashLogoutForm { margin-left: 0 !important; }
 
-    /* Topbar */
+    .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; min-width: 0; }
+
     .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--hairline);
-      padding: 0 28px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-shrink: 0;
+      background: var(--sidebar-bg); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px;
+      flex-shrink: 0; box-shadow: var(--shadow-sm);
+    }
+    .topbar-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .topbar-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-btn {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      background: var(--bg); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-secondary); position: relative;
+      transition: all .15s;
+    }
+    .topbar-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--sidebar-bg); }
+
+    .dashboard-content {
+      flex: 1; overflow-y: auto; padding: 24px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+      align-content: start;
     }
 
-    /* Card Micro-Interactions */
-    .bento-card {
-      background: var(--surface);
-      border: 1px solid var(--hairline);
-      border-radius: 16px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    .dashboard-card {
+      background: var(--card); border-radius: var(--radius-lg); padding: 24px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 12px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .bento-card:hover {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
-      border-color: rgba(159, 18, 57, 0.2);
-    }
-    body:not(.light-theme) .bento-card:hover {
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
-      border-color: rgba(251, 113, 133, 0.25);
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
     }
 
-    /* Mobile Responsive Sidebar Drawer */
+    .card-header { display: flex; align-items: center; gap: 12px; }
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .card-icon.primary { background: var(--primary-light); color: var(--primary); }
+    .card-icon.success { background: var(--success-light); color: var(--success); }
+    .card-icon.warning { background: var(--warning-light); color: var(--warning); }
+    .card-icon.danger  { background: var(--danger-light);  color: var(--danger); }
+
+    .card-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .5px; }
+    .card-value { font-size: 32px; font-weight: 700; color: var(--text-primary); }
+    .card-sub   { font-size: 12px; color: var(--text-muted); }
+
     @media (max-width: 768px) {
       .sidebar {
         position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 50;
+        top: 0; left: 0; bottom: 0;
+        width: 260px !important;
+        min-width: 260px !important;
+        z-index: 310;
         transform: translateX(-100%);
-        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        width: 260px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        box-shadow: 10px 0 30px rgba(15,23,42,.22);
       }
       .sidebar.mobile-open {
         transform: translateX(0);
       }
-      .sidebar-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(4px);
-        z-index: 45;
-        display: none;
+      .topbar {
+        padding: 0 12px;
       }
-      .sidebar-backdrop.active {
-        display: block;
-      }
+      .topbar-title-group { display: flex !important; }
+      .topbar-sub { display: none !important; }
+      .topbar-mobile-menu { display: flex !important; }
+      .topbar-desktop-only { display: none !important; }
+      .main { margin-left: 0 !important; width: 100% !important; }
+      .dashboard-content { padding: 14px !important; gap: 16px !important; }
+      .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+    }
+    .topbar-mobile-menu { display: none; }
+
+    /* ─── FULL MULTI-DEVICE RESPONSIVE ENGINE STYLES ─── */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,23,42,0.75);
+      backdrop-filter: blur(4px);
+      z-index: 305;
+    }
+    .sidebar-backdrop.active { display: block; }
+
+    @media (max-width: 1024px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+      .charts-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
     }
 
-    /* Audio wave animation for Soundbox */
-    @keyframes soundwave {
-      0%, 100% { height: 4px; }
-      50% { height: 16px; }
+    @media (max-width: 480px) {
+      .card-value { font-size: 26px !important; }
     }
-    .soundwave-bar {
-      width: 2.5px;
-      background: #22C55E;
-      border-radius: 2px;
-      animation: soundwave 1.2s infinite ease-in-out;
-    }
-    .soundwave-bar:nth-child(2) { animation-delay: 0.2s; }
-    .soundwave-bar:nth-child(3) { animation-delay: 0.4s; }
-    .soundwave-bar:nth-child(4) { animation-delay: 0.1s; }
   </style>
 </head>
 <body>
 @include('partials.impersonate-banner')
 
 @if(Auth::user()?->restaurant?->is_demo)
-<div id="demoSandboxBanner" class="bg-amber-500 text-stone-900 px-5 py-2 text-xs font-semibold flex items-center justify-between flex-wrap gap-2 z-50 shadow-sm">
-  <div class="flex items-center gap-2">
-    <span class="bg-stone-900 text-amber-300 px-2 py-0.5 rounded text-[10px] font-mono font-bold tracking-wider uppercase">Demo Sandbox</span>
-    <span>Your changes are isolated within your active session. Production catalog is protected.</span>
+<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 7px 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 9999;">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <span style="background:#000; color:#FBBF24; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:900;">DEMO MODE</span>
+    <span>Your changes are temporary and strictly isolated in your personal sandbox. Production data is safe.</span>
   </div>
-  <div class="flex items-center gap-2">
-    <a href="{{ route('demo.reset') }}" onclick="return confirm('Reset demo sandbox to fresh sample state?');" class="bg-stone-900/10 hover:bg-stone-900/20 text-stone-900 border border-stone-900/20 px-2.5 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-      <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset Demo
+  <div style="display:flex; align-items:center; gap:8px;">
+    <a href="{{ route('demo.reset') }}" onclick="return confirm('Reset demo sandbox to fresh sample state?');" style="background: rgba(0,0,0,0.15); color: #000; border: 1px solid rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px; text-decoration: none; font-size: 11.5px; font-weight: 800; display:flex; align-items:center; gap:4px;">
+      <i class="fa-solid fa-rotate-left"></i> Reset Demo
     </a>
-    <a href="{{ route('demo.exit') }}" class="bg-stone-900 hover:bg-stone-800 text-white px-3 py-1 rounded-lg text-xs font-medium transition">
+    <a href="{{ route('demo.exit') }}" style="background: #000; color: #fff; padding: 4px 12px; border-radius: 6px; text-decoration: none; font-size: 11.5px; font-weight: 800;">
       Exit Demo
     </a>
   </div>
@@ -367,183 +355,133 @@
 
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- SIDEBAR: Boutique Linear & Fine Dining Hospitality Navigation -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="h-[60px] px-4 flex items-center justify-between border-b border-[var(--hairline)] flex-shrink-0">
-    <div class="flex items-center gap-2.5 overflow-hidden">
-      <div class="w-8 h-8 rounded-xl bg-[var(--brand)] text-white flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0">
-        <i class="fa-solid fa-utensils text-xs"></i>
-      </div>
-      <div class="brand-text">
-        <h2 class="text-sm font-semibold tracking-tight text-[var(--text-primary)] leading-tight">DineFlow AI</h2>
-        <span class="text-[11px] font-mono text-[var(--text-muted)] tracking-wider">HOSPITALITY OS</span>
-      </div>
+  <div class="sidebar-brand">
+    <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+      <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
-    <button class="sidebar-toggle w-7 h-7 rounded-lg border border-[var(--hairline)] hover:bg-[var(--sidebar-hover)] text-[var(--text-muted)] flex items-center justify-center transition" onclick="toggleSidebar()" title="Toggle sidebar">
-      <i class="fa-solid fa-chevron-left text-[11px]" id="sidebarToggleIcon"></i>
-    </button>
+    <div class="brand-text">
+      <h2>DineFlow AI POS</h2>
+      <span>Restaurant Suite v2.0</span>
+    </div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar"><i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i></button>
   </div>
 
   <div class="sidebar-nav">
-    <div class="mb-4">
-      <div class="sidebar-section-label text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 mb-1.5">Terminal & Operations</div>
-      <a class="nav-item active" href="/dashboard" data-path="/dashboard" data-tip="Dashboard">
-        <i class="fa-solid fa-chart-pie"></i><span class="nav-label">Dashboard</span>
-      </a>
-      <a class="nav-item" href="/pos" data-path="/pos" data-tip="POS Terminal">
-        <i class="fa-solid fa-cash-register"></i><span class="nav-label">POS Terminal</span>
-        <span class="nav-badge green">Live</span>
-      </a>
-      <a class="nav-item" href="javascript:void(0)" onclick="openDashOrdersModal()" data-tip="Orders">
-        <i class="fa-solid fa-receipt"></i><span class="nav-label">Orders</span>
-        <span class="nav-badge" id="globalOrdersNavBadge">{{ $todayOrdersCount }}</span>
-      </a>
-      <a class="nav-item" href="/admin/tables" data-path="/admin/tables" data-tip="Table Manager">
-        <i class="fa-solid fa-table-cells-large"></i><span class="nav-label">Table Manager</span>
-      </a>
-      <a class="nav-item" href="/kitchen" data-path="/kitchen" data-tip="Kitchen Display" target="_blank">
-        <i class="fa-solid fa-fire-burner"></i><span class="nav-label">Kitchen Display</span>
-        <span class="text-[10px] text-emerald-600 font-mono ml-auto"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
-      </a>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <a class="nav-item active" href="/dashboard" data-path="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+      <a class="nav-item" href="/pos" data-path="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashOrdersModal()" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge" id="globalOrdersNavBadge">{{ $todayOrdersCount }}</span></a>
+      <a class="nav-item" href="/admin/tables" data-path="/admin/tables" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+      <a class="nav-item" href="/kitchen" data-path="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
 
-    <div class="mb-4">
-      <div class="sidebar-section-label text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 mb-1.5">Catalog & Stock</div>
-      <a class="nav-item" href="/admin/menu-manager" data-path="/admin/menu-manager" data-tip="Menu Items">
-        <i class="fa-solid fa-bowl-food"></i><span class="nav-label">Menu Catalog</span>
-      </a>
-      <a class="nav-item" href="/admin/modifiers" data-path="/admin/modifiers" data-tip="Modifiers & Combos">
-        <i class="fa-solid fa-layer-group"></i><span class="nav-label">Modifiers & Combos</span>
-      </a>
-      <a class="nav-item" href="/admin/inventory" data-path="/admin/inventory" data-tip="Inventory Stock">
-        <i class="fa-solid fa-boxes-stacked"></i><span class="nav-label">Inventory & Stock</span>
-      </a>
-      <a class="nav-item" href="/admin/procurement" data-path="/admin/procurement" data-tip="Suppliers & PO">
-        <i class="fa-solid fa-truck-ramp-box"></i><span class="nav-label">Suppliers & PO</span>
-      </a>
-      <a class="nav-item" href="/admin/coupons" data-path="/admin/coupons" data-tip="Offers & Deals">
-        <i class="fa-solid fa-tag"></i><span class="nav-label">Offers & Deals</span>
-      </a>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Menu &amp; Catalog</div>
+      <a class="nav-item" href="/admin/menu-manager" data-path="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+      <a class="nav-item" href="/admin/modifiers" data-path="/admin/modifiers" data-tip="Modifiers & Combos"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Modifiers &amp; Combos</span></a>
+      <a class="nav-item" href="/admin/inventory" data-path="/admin/inventory" data-tip="Inventory Stock"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
+      <a class="nav-item" href="/admin/procurement" data-path="/admin/procurement" data-tip="Suppliers & PO"><i class="fa-solid fa-truck-ramp-box"></i><span class="nav-label"> Suppliers &amp; PO</span></a>
+      <a class="nav-item" href="/admin/coupons" data-path="/admin/coupons" data-tip="Offers &amp; Deals"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
     </div>
 
-    <div class="mb-4">
-      <div class="sidebar-section-label text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 mb-1.5">Intelligence & Analytics</div>
-      <a class="nav-item" href="/admin/sales-report" data-path="/admin/sales-report" data-tip="Sales Analytics">
-        <i class="fa-solid fa-chart-line"></i><span class="nav-label">Sales Intelligence</span>
-      </a>
-      <a class="nav-item" href="/admin/expenses" data-path="/admin/expenses" data-tip="Expenses">
-        <i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label">Expenses & P&L</span>
-      </a>
-      <a class="nav-item" href="/admin/customers" data-path="/admin/customers" data-tip="Customers & CRM">
-        <i class="fa-solid fa-users"></i><span class="nav-label">Customers & Loyalty</span>
-      </a>
-      <a class="nav-item" href="/admin/qr-generator" data-path="/admin/qr-generator" data-tip="QR Generator">
-        <i class="fa-solid fa-qrcode"></i><span class="nav-label">QR Posters</span>
-      </a>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Operations &amp; HR</div>
+      <a class="nav-item" href="/admin/sales-report" data-path="/admin/sales-report" data-tip="Sales Analytics"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
+      <a class="nav-item" href="/admin/attendance" data-path="/admin/attendance" data-tip="Staff Attendance & Payroll"><i class="fa-solid fa-user-clock"></i><span class="nav-label"> Staff Attendance &amp; Payroll</span></a>
+      <a class="nav-item" href="/admin/expenses" data-path="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" href="/admin/customers" data-path="/admin/customers" data-tip="Customers &amp; CRM"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
+      <a class="nav-item" href="/admin/qr-generator" data-path="/admin/qr-generator" data-tip="QR Generator"><i class="fa-solid fa-qrcode"></i><span class="nav-label"> QR Generator</span></a>
     </div>
 
-    <div class="mb-2">
-      <div class="sidebar-section-label text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 mb-1.5">Administration</div>
-      <a class="nav-item" href="/admin/attendance" data-path="/admin/attendance" data-tip="Staff Attendance & Payroll">
-        <i class="fa-solid fa-user-clock"></i><span class="nav-label">Staff Attendance & Payroll</span>
-      </a>
-      <a class="nav-item" href="/admin/staff" data-path="/admin/staff" data-tip="Staff & Roles">
-        <i class="fa-solid fa-user-shield"></i><span class="nav-label">Staff & Roles</span>
-      </a>
-      <a class="nav-item" href="/admin/settings" data-path="/admin/settings" data-tip="System Settings">
-        <i class="fa-solid fa-sliders"></i><span class="nav-label">System Settings</span>
-      </a>
-      <a class="nav-item" href="/admin/feedback" data-path="/admin/feedback" data-tip="Feedback & Reviews">
-        <i class="fa-solid fa-star"></i><span class="nav-label">Reviews & CSAT</span>
-      </a>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Settings &amp; Admin</div>
+      <a class="nav-item" href="/admin/staff" data-path="/admin/staff" data-tip="Staff &amp; Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+      <a class="nav-item" href="/admin/settings" data-path="/admin/settings" data-tip="System Settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+      <a class="nav-item" href="/admin/feedback" data-path="/admin/feedback" data-tip="Feedback &amp; Reviews"><i class="fa-solid fa-star"></i><span class="nav-label"> Feedback &amp; Reviews</span></a>
     </div>
   </div>
 
-  <div class="p-3 border-t border-[var(--hairline)] flex-shrink-0">
-    <div class="user-card flex items-center gap-2.5 p-2 rounded-xl hover:bg-[var(--sidebar-hover)] transition">
-      <div class="w-8 h-8 rounded-full bg-[var(--brand)] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
-        {{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" style="background:var(--primary);">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+      <div class="user-info">
+        <h4>{{ Auth::user()?->name ?? 'Administrator' }}</h4>
+        <p style="text-transform:capitalize;">{{ Auth::user()?->role ?? 'User' }}</p>
       </div>
-      <div class="user-info flex-1 min-w-0">
-        <h4 class="text-xs font-semibold text-[var(--text-primary)] truncate">{{ Auth::user()?->name ?? 'Administrator' }}</h4>
-        <p class="text-[11px] text-[var(--text-muted)] capitalize truncate">{{ Auth::user()?->role ?? 'Operator' }}</p>
-      </div>
-      <form method="POST" action="{{ route('auth.logout') }}" id="dashLogoutForm" class="m-0">
+      <form method="POST" action="{{ route('auth.logout') }}" id="dashLogoutForm" style="margin-left:auto;">
         @csrf
-        <button type="submit" title="Logout" class="w-7 h-7 rounded-lg border border-[var(--hairline)] text-[var(--text-muted)] hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center justify-center text-xs transition">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:32px; height:32px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:14px;
+                 transition:all .2s;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </form>
     </div>
   </div>
 </aside>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- MAIN: Executive Operations Center (Porcelain & Linear Style)    -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MAIN -->
 <div class="main">
 
   <!-- Topbar -->
-  <header class="topbar">
-    <div class="flex items-center gap-3">
-      <button class="md:hidden w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-[var(--text-primary)]" onclick="toggleSidebar()">
-        <i class="fa-solid fa-bars text-sm"></i>
-      </button>
-      <div>
-        <h1 class="text-sm font-semibold tracking-tight text-[var(--text-primary)] flex items-center gap-2">
-          <span>Executive Dashboard</span>
-          <span class="text-[10px] font-mono text-stone-500 uppercase px-2 py-0.5 rounded-full border border-[var(--hairline)] bg-[var(--panel)]">Fine Dining Edition</span>
-        </h1>
-        <div class="text-[11px] text-[var(--text-muted)]" id="topbarDate">{{ now()->format('l, M d, Y') }} • Evening Shift</div>
-      </div>
-    </div>
-
-    <div class="ml-auto flex items-center gap-2 sm:gap-3">
-      <!-- Live Clock Pill (Monospaced & Tabular) -->
-      <div id="liveClockBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--hairline)] bg-[var(--surface)] text-[var(--text-primary)] shadow-subtle tabular-nums">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>--:--:-- --</span>
-      </div>
-
-      <!-- Weather Badge -->
-      <div id="localWeatherBadge" class="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[var(--hairline)] bg-[var(--surface)] text-[var(--text-muted)] shadow-subtle">
-        <i class="fa-solid fa-cloud-sun text-amber-500 text-xs"></i> Patan, GJ • 34°C
-      </div>
-
-      <!-- Vocal Soundbox Indicator Pill -->
-      <button type="button" onclick="announcePaymentVoice('Test', 250, 'cash')" class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/15 transition cursor-pointer shadow-subtle" title="Click to test Soundbox voice broadcast">
-        <div class="flex items-center gap-0.5 h-3">
-          <span class="soundwave-bar"></span>
-          <span class="soundwave-bar"></span>
-          <span class="soundwave-bar"></span>
-          <span class="soundwave-bar"></span>
+  <div class="topbar">
+    <div class="topbar-title-group">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover;">
+          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
         </div>
-        <span class="font-mono text-[11px] font-semibold tracking-wide">Soundbox Active</span>
-      </button>
-
-      <!-- Theme Switcher -->
-      <button type="button" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[var(--hairline)] bg-[var(--surface)] text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] transition cursor-pointer shadow-subtle">
-        <i id="posThemeIcon" class="fa-solid fa-sun text-amber-500 text-xs"></i>
-        <span id="posThemeText" class="text-[11px] font-semibold">Light</span>
-      </button>
-
-      <!-- Notification Bell -->
-      <button type="button" class="relative w-8 h-8 rounded-full border border-[var(--hairline)] bg-[var(--surface)] hover:bg-[var(--sidebar-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center transition" onclick="openModal('notifModal')" title="Notifications">
-        <i class="fa-regular fa-bell text-xs"></i>
-        <span class="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-600 border border-white dark:border-stone-900"></span>
-      </button>
-
-      <!-- Fullscreen Toggle -->
-      <button type="button" class="hidden sm:flex w-8 h-8 rounded-full border border-[var(--hairline)] bg-[var(--surface)] hover:bg-[var(--sidebar-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] items-center justify-center transition" onclick="toggleFull()" title="Full Screen">
-        <i class="fa-solid fa-expand text-xs"></i>
-      </button>
+        <div id="liveClockBadge">--:--:-- --</div>
+        <div id="localWeatherBadge"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
+      </div>
+      <div class="topbar-sub" id="topbarDate">{{ now()->format('l, M d, Y') }} • Shift: Evening (16:00 - 24:00)</div>
     </div>
-  </header>
+    <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div class="topbar-spacer"></div>
+    
+    <!-- Light/Dark Mode Theme Switcher -->
+    <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+      <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
+    </div>
 
-  <!-- Dashboard Scrollable Body -->
-  <main class="flex-1 p-5 sm:p-7 max-w-[1600px] w-full mx-auto space-y-6">
+    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
+      <i class="fa-solid fa-bell"></i>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()" style="cursor:pointer;"><i class="fa-solid fa-expand"></i></div>
+    <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
+    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
+      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+      <div style="display:flex;flex-direction:column;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()?->name ?? 'Administrator' }}</span>
+        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()?->role ?? 'staff' }}</span>
+      </div>
+      <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
+        @csrf
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:30px; height:30px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:13px;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
 
     @php
       $currentRest = \App\Models\Restaurant::find(Auth::user()?->restaurant_id);
@@ -553,460 +491,222 @@
     @endphp
 
     @if($restStatus === 'grace_period')
-      <div class="bento-card bg-amber-500/10 border-amber-500/30 p-4 sm:p-5 flex items-center justify-between flex-wrap gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg flex-shrink-0">
+      <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 18px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 20px;">
             <i class="fa-solid fa-triangle-exclamation"></i>
           </div>
           <div>
-            <h4 class="text-sm font-semibold text-amber-800 dark:text-amber-300">Subscription in Grace Period</h4>
-            <p class="text-xs text-amber-900/70 dark:text-amber-400/80">{{ $currentRest->getCustomerFacingGracePeriodMessage() }}</p>
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 800; color: #F59E0B;">Subscription in Grace Period</h4>
+            <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">{{ $currentRest->getCustomerFacingGracePeriodMessage() }}</p>
           </div>
         </div>
-        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I need to renew my restaurant subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-sm">
-          <i class="fa-brands fa-whatsapp text-sm"></i> Renew on WhatsApp
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I need to renew my restaurant subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
         </a>
       </div>
     @elseif($restStatus === 'expiring' || ($daysRemaining !== null && $daysRemaining >= 0 && $daysRemaining <= 3))
-      <div class="bento-card bg-orange-500/10 border-orange-500/30 p-4 sm:p-5 flex items-center justify-between flex-wrap gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-lg flex-shrink-0">
+      <div style="background: rgba(249, 115, 22, 0.12); border: 1.5px solid rgba(249, 115, 22, 0.4); border-radius: 18px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(249, 115, 22, 0.2); border: 1px solid rgba(249, 115, 22, 0.5); color: #FB923C; display: flex; align-items: center; justify-content: center; font-size: 20px;">
             <i class="fa-solid fa-clock"></i>
           </div>
           <div>
-            <h4 class="text-sm font-semibold text-orange-800 dark:text-orange-300">Subscription Expiring Soon</h4>
-            <p class="text-xs text-orange-900/70 dark:text-orange-400/80">Your subscription will expire in {{ max(0, intval($daysRemaining)) }} day(s). Renew now to avoid interruption.</p>
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 800; color: #FB923C;">Subscription Expiring Soon</h4>
+            <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">Your restaurant subscription will expire in {{ max(0, intval($daysRemaining)) }} day(s). Renew now to avoid any disruption.</p>
           </div>
         </div>
-        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I want to renew subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-sm">
-          <i class="fa-brands fa-whatsapp text-sm"></i> Renew on WhatsApp
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I want to renew/extend subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
         </a>
       </div>
     @endif
 
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <!-- HERO COMMAND BAR: Hospitality Overview & Instant POS Links    -->
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <div class="bento-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-br from-[var(--surface)] to-[var(--panel)]">
-      <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-[var(--brand)] text-white flex items-center justify-center text-xl font-bold shadow-elevated flex-shrink-0">
-          <i class="fa-solid fa-wine-glass-empty"></i>
-        </div>
+    <!-- Welcome Hero Banner -->
+    <div style="background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 24px; padding: 24px 28px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 20px rgba(99,102,241,0.4); border: 2px solid rgba(99,102,241,0.5);">
         <div>
-          <div class="flex items-center gap-2">
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-              Welcome back, {{ Auth::user()?->name ?? 'Manager' }}
-            </h2>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-mono font-medium border border-emerald-200 dark:border-emerald-800">SYSTEM OPERATIONAL</span>
-          </div>
-          <p class="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
-            Real-time floor intelligence, dynamic menu profitability, and Vocal Soundbox dispatch center.
-          </p>
+          <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:var(--text-primary); margin:0 0 4px; display:flex; align-items:center; gap:8px;">
+            Welcome back, {{ Auth::user()?->name ?? 'Administrator' }}! <span style="font-size:18px;">👋</span>
+          </h2>
+          <p style="margin:0; color:var(--text-muted); font-size:13px; font-weight:500;">DineFlow AI POS Operations Center • Live Real-Time Analytics & Soundbox Enabled</p>
         </div>
       </div>
-
-      <!-- Linear Style Quick Actions Bar -->
-      <div class="flex items-center flex-wrap gap-2.5">
-        <a href="/pos" class="px-4 py-2.5 rounded-xl bg-[var(--brand)] hover:bg-[var(--brand-hover)] text-white text-xs font-semibold flex items-center gap-2 transition shadow-sm active:scale-[0.98]">
-          <i class="fa-solid fa-cash-register"></i> + New POS Bill
-        </a>
-        <button type="button" onclick="openDashOrdersModal('all')" class="px-3.5 py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface)] hover:bg-[var(--sidebar-hover)] text-[var(--text-primary)] text-xs font-medium flex items-center gap-1.5 transition active:scale-[0.98]">
-          <i class="fa-solid fa-receipt text-[var(--text-muted)]"></i> Orders
-        </button>
-        <button type="button" onclick="openDashOffersModal()" class="px-3.5 py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface)] hover:bg-[var(--sidebar-hover)] text-[var(--text-primary)] text-xs font-medium flex items-center gap-1.5 transition active:scale-[0.98]">
-          <i class="fa-solid fa-tag text-amber-500"></i> Deals
-        </button>
-        <a href="/admin/tables" class="px-3.5 py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface)] hover:bg-[var(--sidebar-hover)] text-[var(--text-primary)] text-xs font-medium flex items-center gap-1.5 transition active:scale-[0.98]">
-          <i class="fa-solid fa-table-cells-large text-[var(--text-muted)]"></i> Tables
-        </a>
-        <a href="/kitchen" target="_blank" class="px-3.5 py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface)] hover:bg-[var(--sidebar-hover)] text-[var(--text-primary)] text-xs font-medium flex items-center gap-1.5 transition active:scale-[0.98]">
-          <i class="fa-solid fa-fire-burner text-rose-500"></i> KDS Screen
-        </a>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="/pos" style="padding: 10px 18px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
+        <button type="button" onclick="openDashOrdersModal('all')" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-receipt"></i> Orders</button>
+        <button type="button" onclick="openDashOffersModal()" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-tags"></i> Offers</button>
+        <a href="/admin/tables" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
+        <a href="/admin/menu-manager" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
+        <a href="/admin/procurement" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-truck-ramp-box"></i> Suppliers &amp; PO</a>
+        <a href="/admin/attendance" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-user-clock"></i> Attendance</a>
+        <a href="/admin/sales-report" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
       </div>
     </div>
 
     @if(isset($usageStats))
-    <!-- SaaS Resource Quotas Bar -->
-    <div class="bento-card px-5 py-3.5 flex items-center justify-between flex-wrap gap-4 text-xs">
-      <div class="flex items-center gap-2.5">
-        <span class="px-2.5 py-0.5 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] font-mono font-bold text-[10px] tracking-wider uppercase border border-[var(--hairline)]">
-          {{ strtoupper($usageStats['plan_type'] ?? 'FREE') }} TIER
+    <!-- SaaS Free Plan Usage Bar -->
+    <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #818CF8; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid fa-bolt"></i> {{ strtoupper($usageStats['plan_type'] ?? 'FREE') }} PLAN
         </span>
-        <span class="text-[var(--text-muted)] font-medium">Resource Consumption:</span>
+        <span style="font-size: 12.5px; color: var(--text-secondary); font-weight: 600;">Resource Quotas:</span>
       </div>
-      <div class="flex items-center gap-4 sm:gap-6 flex-wrap font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
-        <div><strong class="text-[var(--text-primary)]">{{ $usageStats['usage']['tables']['current'] ?? 0 }}</strong>/{{ $usageStats['usage']['tables']['limit'] ?? 10 }} Tables</div>
-        <div><strong class="text-[var(--text-primary)]">{{ $usageStats['usage']['staff']['current'] ?? 0 }}</strong>/{{ $usageStats['usage']['staff']['limit'] ?? 5 }} Staff</div>
-        <div><strong class="text-[var(--text-primary)]">{{ $usageStats['usage']['menu_items']['current'] ?? 0 }}</strong>/{{ $usageStats['usage']['menu_items']['limit'] ?? 100 }} Dishes</div>
-        <div><strong class="text-[var(--text-primary)]">{{ $usageStats['usage']['monthly_orders']['current'] ?? 0 }}</strong>/{{ $usageStats['usage']['monthly_orders']['limit'] ?? 500 }} Orders</div>
-        <button type="button" onclick="alert('Enterprise plans available upon request.'); window.location.href='/pricing';" class="px-2.5 py-1 rounded-lg bg-[var(--brand)] text-white text-[11px] font-sans font-semibold hover:bg-[var(--brand-hover)] transition">
-          Upgrade Plan
+      <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['tables']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['tables']['limit'] ?? 10 }} Tables
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['staff']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['staff']['limit'] ?? 5 }} Staff
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['menu_items']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['menu_items']['limit'] ?? 100 }} Menu Items
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['monthly_orders']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['monthly_orders']['limit'] ?? 500 }} Monthly Orders
+        </div>
+        <button type="button" onclick="alert('Pro & Enterprise paid plans are coming soon! View upcoming features on our pricing page.'); window.location.href='/pricing';" style="padding: 6px 14px; background: linear-gradient(135deg, #6366F1, #818CF8); color: #fff; border: none; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(99,102,241,0.3);">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Upgrade
         </button>
       </div>
     </div>
     @endif
 
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <!-- BENTO GRID ROW 1: Revenue, Occupancy, Tickets, Soundbox Pill  -->
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-
-      <!-- Card 1: Today's Revenue KPI -->
-      <div class="bento-card p-5 relative overflow-hidden flex flex-col justify-between">
-        <div class="flex items-start justify-between">
+    <!-- 4 Stats Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px;">
+      <!-- Card 1 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #818CF8; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-receipt"></i></div>
           <div>
-            <div class="text-[11px] font-mono tracking-wider uppercase text-[var(--text-muted)]">Net Revenue Today</div>
-            <div class="text-3xl font-bold font-mono text-[var(--text-primary)] tracking-tight mt-1 tabular-nums">
-              ₹ {{ number_format($todayRevenue) }}
-            </div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Today's Orders</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ $todayOrdersCount }}</div>
+            <div style="font-size: 11.5px; color: #34D399; font-weight: 600;">{{ $ordersDiffText }}</div>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-500/20">
-            <i class="fa-solid fa-indian-rupee-sign"></i>
-          </div>
-        </div>
-        <div class="mt-4 pt-3 border-t border-[var(--hairline)] flex items-center justify-between text-xs">
-          <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-mono font-medium text-[11px]">
-            <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> {{ $revenueDiffText }}
-          </span>
-          <span class="text-[11px] text-[var(--text-muted)]">Paid tickets</span>
         </div>
       </div>
 
-      <!-- Card 2: Floor Occupancy Meter -->
-      <div class="bento-card p-5 flex flex-col justify-between">
-        <div class="flex items-start justify-between">
+      <!-- Card 2 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-indian-rupee-sign"></i></div>
           <div>
-            <div class="text-[11px] font-mono tracking-wider uppercase text-[var(--text-muted)]">Floor Occupancy</div>
-            <div class="text-3xl font-bold font-mono text-[var(--text-primary)] tracking-tight mt-1 tabular-nums">
-              {{ $occupiedTablesCount }} <span class="text-base text-[var(--text-muted)] font-normal">/ {{ $totalTablesCount }} Tables</span>
-            </div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Revenue</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">₹ {{ number_format($todayRevenue) }}</div>
+            <div style="font-size: 11.5px; color: #34D399; font-weight: 600;">{{ $revenueDiffText }}</div>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-500/20">
-            <i class="fa-solid fa-chair"></i>
-          </div>
-        </div>
-        
-        <!-- Visual Occupancy Meter Bar -->
-        <div class="mt-3">
-          @php
-            $occupancyRate = $totalTablesCount > 0 ? min(100, round(($occupiedTablesCount / $totalTablesCount) * 100)) : 0;
-          @endphp
-          <div class="w-full bg-stone-200 dark:bg-stone-800 rounded-full h-2 overflow-hidden">
-            <div class="bg-[var(--brand)] h-2 rounded-full transition-all duration-500" style="width: {{ $occupancyRate }}%;"></div>
-          </div>
-        </div>
-
-        <div class="mt-3 pt-3 border-t border-[var(--hairline)] flex items-center justify-between text-xs">
-          <span class="text-[11px] text-[var(--text-muted)] font-medium">
-            <i class="fa-solid fa-users text-amber-500 mr-1"></i> {{ $activeCustomers }} Guests Dining
-          </span>
-          <span class="font-mono text-[11px] font-semibold text-[var(--text-primary)]">{{ $occupancyRate }}% Full</span>
         </div>
       </div>
 
-      <!-- Card 3: Today's Orders Velocity -->
-      <div class="bento-card p-5 flex flex-col justify-between">
-        <div class="flex items-start justify-between">
+      <!-- Card 3 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #FBBF24; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-users"></i></div>
           <div>
-            <div class="text-[11px] font-mono tracking-wider uppercase text-[var(--text-muted)]">Completed Tickets</div>
-            <div class="text-3xl font-bold font-mono text-[var(--text-primary)] tracking-tight mt-1 tabular-nums">
-              {{ $todayOrdersCount }}
-            </div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Active Customers</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ $activeCustomers }}</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;">Currently dining at tables</div>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-[var(--brand-soft)] text-[var(--brand)] flex items-center justify-center text-sm border border-[var(--hairline)]">
-            <i class="fa-solid fa-receipt"></i>
-          </div>
-        </div>
-        <div class="mt-4 pt-3 border-t border-[var(--hairline)] flex items-center justify-between text-xs">
-          <span class="text-[11px] font-mono font-medium text-emerald-600 dark:text-emerald-400">
-            {{ $ordersDiffText }}
-          </span>
-          <button type="button" onclick="openDashOrdersModal('all')" class="text-[11px] text-[var(--brand)] hover:underline font-medium">
-            View Live Stack →
-          </button>
         </div>
       </div>
 
-      <!-- Card 4: Vocal Soundbox Active Widget -->
-      <div class="bento-card p-5 flex flex-col justify-between border-emerald-500/30 bg-gradient-to-br from-[var(--surface)] to-emerald-500/5">
-        <div class="flex items-start justify-between">
+      <!-- Card 4 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #F87171; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-table-cells-large"></i></div>
           <div>
-            <div class="text-[11px] font-mono tracking-wider uppercase text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              Vocal Soundbox
-            </div>
-            <div class="text-lg font-bold text-[var(--text-primary)] mt-1">
-              Gujarati &amp; Hindi
-            </div>
-            <p class="text-[11px] text-[var(--text-muted)] mt-0.5">Instant audio alert on digital scan &amp; cash</p>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Tables Occupied</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ $occupiedTablesCount }} / {{ $totalTablesCount }}</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;">Real-time floor occupancy</div>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-500/20">
-            <i class="fa-solid fa-volume-high"></i>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-3 border-t border-[var(--hairline)] flex items-center justify-between">
-          <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 uppercase font-semibold">Ready for Billing</span>
-          <button type="button" onclick="announcePaymentVoice('Test', 250, 'online')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-medium transition flex items-center gap-1">
-            <i class="fa-solid fa-play text-[9px]"></i> Test Voice
-          </button>
         </div>
       </div>
-
     </div>
 
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <!-- BENTO GRID ROW 2: Analytics Trajectory & Category Sales       -->
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-
-      <!-- 7-Day Revenue Trajectory -->
-      <div class="bento-card p-6 lg:col-span-8 flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-base font-semibold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-              <i class="fa-solid fa-chart-line text-[var(--brand)]"></i> 7-Day Revenue Trajectory
-            </h3>
-            <p class="text-xs text-[var(--text-muted)] mt-0.5">Normalized indexed revenue trajectory for shift planning</p>
-          </div>
-          <span class="text-[11px] font-mono text-[var(--text-muted)] px-2 py-0.5 rounded-full border border-[var(--hairline)] bg-[var(--panel)]">INR (₹)</span>
-        </div>
-        <div class="h-[270px] relative w-full">
+    <!-- Charts Row -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-line" style="color:#818CF8;"></i> Last 7 Days Revenue Trend
+        </h3>
+        <div style="height: 280px; position: relative;">
           <canvas id="salesTrendChart"></canvas>
         </div>
       </div>
 
-      <!-- Category Sales Distribution -->
-      <div class="bento-card p-6 lg:col-span-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-base font-semibold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-emerald-600"></i> Category Breakdown
-            </h3>
-            <p class="text-xs text-[var(--text-muted)] mt-0.5">Share of sales by cuisine &amp; menu section</p>
-          </div>
-        </div>
-        <div class="h-[270px] relative w-full flex items-center justify-center">
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-pie" style="color:#34D399;"></i> Sales Category Distribution
+        </h3>
+        <div style="height: 280px; position: relative;">
           <canvas id="categorySalesChart"></canvas>
-          <div id="dashCatEmptyState" class="hidden flex-col items-center justify-center text-center p-6 text-[var(--text-muted)] space-y-2">
-            <div class="w-12 h-12 rounded-2xl bg-[var(--panel)] border border-[var(--hairline)] flex items-center justify-center text-xl text-[var(--text-muted)]">
-              <i class="fa-solid fa-chart-pie"></i>
-            </div>
-            <p class="text-xs font-medium text-[var(--text-primary)]">No Sales Recorded Today</p>
-            <p class="text-[11px] text-[var(--text-muted)] max-w-[200px]">Category breakdown will appear dynamically once POS tickets are completed.</p>
+          <div id="dashCatEmptyState" style="display:none; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:var(--text-muted); gap:8px;">
+            <i class="fa-solid fa-chart-pie" style="font-size:36px; opacity:0.3; color:#34D399;"></i>
+            <span style="font-weight:700; font-size:13.5px; color:var(--text-primary);">No sales data yet</span>
+            <span style="font-size:11.5px; max-width:220px; line-height:1.4;">Sales category distribution will appear once orders are completed.</span>
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <!-- BENTO GRID ROW 3: AI Menu Engineering & Profitability Matrix -->
-    <!-- ═════════════════════════════════════════════════════════════ -->
-    <div class="bento-card p-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+    <!-- 📊 BCG Menu Engineering & Profitability Matrix -->
+    <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div>
-          <h3 class="text-base font-semibold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <span>✨</span> AI Menu Engineering &amp; BCG Profitability Matrix
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+            <span>📊</span> <span>AI Menu Engineering & Profitability Matrix</span>
           </h3>
-          <p class="text-xs text-[var(--text-muted)] mt-0.5">Automated classification of dishes (Popularity vs Profit Margin) to maximize menu gross yield.</p>
+          <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Classifies dishes into 4 BCG quadrants (Popularity vs Profit Margin) to maximize restaurant profit</p>
         </div>
-        <div class="flex items-center gap-2 flex-wrap text-xs">
-          <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-medium text-[11px]">⭐ Star</span>
-          <span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-medium text-[11px]">🐎 Plowhorse</span>
-          <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-medium text-[11px]">🧩 Puzzle</span>
-          <span class="px-2.5 py-1 rounded-full bg-stone-500/10 text-stone-700 dark:text-stone-400 border border-stone-500/30 font-medium text-[11px]">🐕 Dog</span>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">⭐ Stars (High Profit & Pop)</span>
+          <span style="background: rgba(99,102,241,0.12); color: #818CF8; border: 1px solid rgba(99,102,241,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🐎 Plowhorses (High Pop)</span>
+          <span style="background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🧩 Puzzles (High Profit)</span>
+          <span style="background: rgba(239,68,68,0.12); color: #F87171; border: 1px solid rgba(239,68,68,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🐕 Dogs (Low Pop & Profit)</span>
         </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs border-collapse">
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
           <thead>
-            <tr class="border-b border-[var(--hairline)] text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
-              <th class="py-3 px-3">Dish / Recipe</th>
-              <th class="py-3 px-3">Category</th>
-              <th class="py-3 px-3 font-mono">Retail Price</th>
-              <th class="py-3 px-3 font-mono">Gross Margin</th>
-              <th class="py-3 px-3 font-mono">Volume Sold</th>
-              <th class="py-3 px-3">Quadrant</th>
-              <th class="py-3 px-3">AI Recommendation</th>
+            <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+              <th style="padding: 12px 14px;">Dish Name</th>
+              <th style="padding: 12px 14px;">Category</th>
+              <th style="padding: 12px 14px;">Price</th>
+              <th style="padding: 12px 14px;">Profit Margin</th>
+              <th style="padding: 12px 14px;">Qty Sold</th>
+              <th style="padding: 12px 14px;">BCG Quadrant</th>
+              <th style="padding: 12px 14px;">AI Recommendation</th>
             </tr>
           </thead>
-          <tbody id="menuMatrixBody" class="divide-y divide-[var(--hairline)] text-[var(--text-primary)]">
+          <tbody id="menuMatrixBody">
             <tr>
-              <td colspan="7" class="py-8 text-center text-[var(--text-muted)]">
-                <i class="fa-solid fa-spinner fa-spin mr-2"></i> Analyzing dish velocity and margins...
-              </td>
+              <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">Loading Menu Engineering Matrix...</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-  </main>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- MODALS PRESERVED: Zero-Breakage ID Fidelity                     -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-
-<!-- Notifications Modal -->
-<div class="modal-overlay fixed inset-0 bg-stone-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity" id="notifModal">
-  <div class="bg-[var(--surface)] border border-[var(--hairline)] rounded-2xl w-[480px] max-w-[92vw] shadow-deep overflow-hidden">
-    <div class="px-5 py-4 border-b border-[var(--hairline)] flex items-center justify-between">
-      <div class="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
-        <i class="fa-regular fa-bell text-[var(--brand)]"></i> Live Notifications
-        <span id="notifCountBadge" class="hidden text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold"></span>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="refreshDashNotifications()" title="Refresh" class="w-7 h-7 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-          <i class="fa-solid fa-arrows-rotate"></i>
-        </button>
-        <button onclick="closeModal('notifModal')" class="w-7 h-7 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs text-[var(--text-muted)] hover:text-rose-600">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-    </div>
-    <div class="p-5 max-h-[380px] overflow-y-auto space-y-2.5 modal-body">
-      <div class="text-center py-8 text-xs text-[var(--text-muted)]">
-        <i class="fa-solid fa-spinner fa-spin text-lg mb-2 block"></i> Loading notifications...
-      </div>
-    </div>
-    <div class="px-5 py-3 border-t border-[var(--hairline)] bg-[var(--panel)] flex items-center justify-between text-xs">
-      <button type="button" onclick="markAllNotificationsAsRead()" class="text-[var(--brand)] hover:underline font-medium">Mark all as read</button>
-      <button type="button" onclick="closeModal('notifModal')" class="px-3 py-1.5 rounded-lg border border-[var(--hairline)] bg-[var(--surface)] font-medium">Close</button>
-    </div>
   </div>
 </div>
-
-<!-- Recent Orders Modal -->
-<div class="modal-overlay fixed inset-0 bg-stone-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity" id="dashOrdersModal">
-  <div class="bg-[var(--surface)] border border-[var(--hairline)] rounded-2xl w-[920px] max-w-[94vw] max-h-[86vh] shadow-deep overflow-hidden flex flex-col">
-    <div class="px-6 py-4 border-b border-[var(--hairline)] flex items-center justify-between flex-shrink-0">
-      <div class="flex items-center gap-2.5 text-base font-semibold text-[var(--text-primary)]" id="dashOrdersModalTitle">
-        <i class="fa-solid fa-receipt text-[var(--brand)]"></i>
-        <span>Live Restaurant Orders</span>
-        <span id="dashOrdersCountBadge" class="text-xs font-mono px-2 py-0.5 rounded-full border border-[var(--hairline)] bg-[var(--panel)] text-[var(--text-muted)]">Loading...</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="loadDashOrdersModalData()" title="Refresh" class="w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-          <i class="fa-solid fa-arrows-rotate"></i>
-        </button>
-        <button onclick="closeDashOrdersModal()" class="w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs text-[var(--text-muted)] hover:text-rose-600">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-    </div>
-    <div class="p-6 overflow-y-auto flex-1" id="dashOrdersModalBody">
-      <div class="text-center py-12 text-xs text-[var(--text-muted)]">
-        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block text-[var(--brand)]"></i> Fetching orders...
-      </div>
-    </div>
-    <div class="px-6 py-3.5 border-t border-[var(--hairline)] bg-[var(--panel)] flex items-center justify-between text-xs flex-shrink-0">
-      <span class="text-[var(--text-muted)]">Thermal receipts and A4 tax invoices are generated on-demand.</span>
-      <button onclick="closeDashOrdersModal()" class="px-4 py-2 rounded-xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-hover)] transition">
-        Close
-      </button>
-    </div>
-  </div>
 </div>
 
-<!-- Admin Module Iframe Modal -->
-<div class="modal-overlay fixed inset-0 bg-stone-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity" id="dashAdminModuleModal">
-  <div class="bg-[var(--surface)] border border-[var(--hairline)] rounded-2xl w-[1320px] max-w-[96vw] h-[90vh] shadow-deep overflow-hidden flex flex-col">
-    <div class="px-6 py-3.5 border-b border-[var(--hairline)] flex items-center justify-between flex-shrink-0">
-      <div class="text-sm font-semibold text-[var(--text-primary)]" id="dashAdminModuleTitle">Admin Module</div>
-      <div class="flex items-center gap-2">
-        <button onclick="const f=document.getElementById('dashAdminModuleIframe'); if(f) f.contentWindow.location.reload();" class="w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs">
-          <i class="fa-solid fa-arrows-rotate"></i>
-        </button>
-        <button onclick="closeDashAdminModule()" class="w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs hover:text-rose-600">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-    </div>
-    <iframe id="dashAdminModuleIframe" src="about:blank" class="flex-1 w-full border-none bg-[var(--canvas)]"></iframe>
-  </div>
-</div>
-
-<!-- Offers & Deals Modal -->
-<div class="modal-overlay fixed inset-0 bg-stone-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity" id="dashOffersModal">
-  <div class="bg-[var(--surface)] border border-[var(--hairline)] rounded-2xl w-[680px] max-w-[94vw] max-h-[85vh] shadow-deep overflow-hidden flex flex-col">
-    <div class="px-6 py-4 border-b border-[var(--hairline)] flex items-center justify-between flex-shrink-0">
-      <div class="flex items-center gap-2 text-base font-semibold text-[var(--text-primary)]">
-        <i class="fa-solid fa-tag text-amber-500"></i> Active Restaurant Offers
-      </div>
-      <button onclick="closeDashOffersModal()" class="w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs hover:text-rose-600">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="p-6 overflow-y-auto flex-1 space-y-3">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-        <div class="p-4 rounded-xl border border-[var(--hairline)] bg-[var(--panel)]">
-          <div class="font-bold text-sm text-[var(--text-primary)]">WELCOME15</div>
-          <div class="text-[var(--text-muted)] mt-0.5">Flat 15% discount for first-time guests</div>
-        </div>
-        <div class="p-4 rounded-xl border border-[var(--hairline)] bg-[var(--panel)]">
-          <div class="font-bold text-sm text-[var(--text-primary)]">SAVE50</div>
-          <div class="text-[var(--text-muted)] mt-0.5">₹50 off on orders above ₹300</div>
-        </div>
-        <div class="p-4 rounded-xl border border-[var(--hairline)] bg-[var(--panel)]">
-          <div class="font-bold text-sm text-[var(--text-primary)]">VIP10</div>
-          <div class="text-[var(--text-muted)] mt-0.5">10% off for verified loyalty guests</div>
-        </div>
-        <div class="p-4 rounded-xl border border-[var(--hairline)] bg-[var(--panel)]">
-          <div class="font-bold text-sm text-[var(--text-primary)]">HAPPY10</div>
-          <div class="text-[var(--text-muted)] mt-0.5">Happy hours 16:00 to 19:00 promotional rate</div>
-        </div>
-      </div>
-    </div>
-    <div class="px-6 py-3.5 border-t border-[var(--hairline)] bg-[var(--panel)] flex justify-end">
-      <button onclick="closeDashOffersModal()" class="px-4 py-2 rounded-xl bg-[var(--brand)] text-white text-xs font-medium">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Delivery Modal -->
-<div class="modal-overlay fixed inset-0 bg-stone-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity" id="dashDeliveryModal">
-  <div class="bg-[var(--surface)] border border-[var(--hairline)] rounded-2xl w-[780px] max-w-[94vw] max-h-[85vh] shadow-deep overflow-hidden flex flex-col">
-    <div class="px-6 py-4 border-b border-[var(--hairline)] flex items-center justify-between flex-shrink-0">
-      <div class="flex items-center gap-2 text-base font-semibold text-[var(--text-primary)]">
-        <i class="fa-solid fa-motorcycle text-sky-500"></i> Delivery &amp; Takeaway Dispatch
-      </div>
-      <button onclick="closeDashDeliveryModal()" class="w-8 h-8 rounded-lg border border-[var(--hairline)] flex items-center justify-center text-xs hover:text-rose-600">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="p-6 overflow-y-auto flex-1" id="dashDeliveryModalBody">
-      <div class="text-center py-10 text-xs text-[var(--text-muted)]">
-        <i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i> Loading delivery queue...
-      </div>
-    </div>
-    <div class="px-6 py-3.5 border-t border-[var(--hairline)] bg-[var(--panel)] flex justify-end">
-      <button onclick="closeDashDeliveryModal()" class="px-4 py-2 rounded-xl bg-[var(--brand)] text-white text-xs font-medium">Close</button>
-    </div>
-  </div>
-</div>
-
-@include('partials.order-management')
-
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT: High-Performance Zero-Breakage Engine                -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- Load Chart.js -->
 <script>
-// 1. Live Monospaced Clock Ticker
+// Run live clock ticker immediately
 function updateLiveClock() {
+  const now = new Date();
   const clockEl = document.getElementById('liveClockBadge');
   if (clockEl) {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    clockEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>${timeStr}</span>`;
+    clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
 }
 updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
-// 2. Chart.js Engine with Wine / Fine-Dining Palette
 let salesTrendChartInstance = null;
 let categorySalesChartInstance = null;
 
@@ -1018,17 +718,17 @@ function initDashboardCharts() {
 
   try {
     const isLight = document.body.classList.contains('light-theme') || document.documentElement.classList.contains('light-theme');
-    const tickColor = isLight ? '#6B7280' : '#A1A1AA';
-    const gridColor = isLight ? '#ECE6E4' : '#26262A';
-    const brandColor = isLight ? '#9F1239' : '#FB7185';
+    const tickColor = isLight ? '#475569' : '#94A3B8';
+    const gridColor = isLight ? '#E2E8F0' : 'rgba(255, 255, 255, 0.06)';
+    const legendColor = isLight ? '#0F172A' : '#F8FAFC';
 
-    // 1. Sales Trend Chart
+    // 1. Sales Trend Chart (Authoritative & Zero-Start)
     const trendEl = document.getElementById('salesTrendChart');
     if (trendEl) {
       const ctxTrend = trendEl.getContext('2d');
-      const trendGrad = ctxTrend.createLinearGradient(0, 0, 0, 260);
-      trendGrad.addColorStop(0, isLight ? 'rgba(159, 18, 57, 0.20)' : 'rgba(251, 113, 133, 0.25)');
-      trendGrad.addColorStop(1, 'rgba(159, 18, 57, 0.00)');
+      const trendGrad = ctxTrend.createLinearGradient(0, 0, 0, 280);
+      trendGrad.addColorStop(0, isLight ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.35)');
+      trendGrad.addColorStop(1, isLight ? 'rgba(99, 102, 241, 0.01)' : 'rgba(99, 102, 241, 0.01)');
 
       const weeklyLabels = {!! json_encode($weeklySalesLabels) !!};
       let weeklyData = {!! json_encode($weeklySalesData) !!};
@@ -1046,18 +746,18 @@ function initDashboardCharts() {
         data: {
           labels: weeklyLabels && weeklyLabels.length ? weeklyLabels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           datasets: [{
-            label: 'Net Revenue (₹)',
+            label: 'Revenue (₹)',
             data: weeklyData,
-            borderColor: brandColor,
-            borderWidth: 2.5,
+            borderColor: '#6366F1',
+            borderWidth: 3,
             backgroundColor: trendGrad,
             fill: true,
-            tension: 0.35,
-            pointBackgroundColor: brandColor,
-            pointBorderColor: isLight ? '#FFFFFF' : '#151517',
+            tension: 0.4,
+            pointBackgroundColor: '#818CF8',
+            pointBorderColor: isLight ? '#FFFFFF' : '#1E293B',
             pointBorderWidth: 2,
-            pointRadius: 3.5,
-            pointHoverRadius: 6
+            pointRadius: 4,
+            pointHoverRadius: 7
           }]
         },
         options: {
@@ -1066,16 +766,15 @@ function initDashboardCharts() {
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: isLight ? '#111827' : '#FFFFFF',
-              titleColor: isLight ? '#FFFFFF' : '#111827',
-              bodyColor: isLight ? '#E5E7EB' : '#4B5563',
-              titleFont: { family: 'Inter', size: 12, weight: '600' },
-              bodyFont: { family: 'Geist Mono', size: 12, weight: '500' },
+              backgroundColor: isLight ? '#FFFFFF' : '#1E293B',
+              titleColor: isLight ? '#0F172A' : '#F8FAFC',
+              bodyColor: isLight ? '#475569' : '#94A3B8',
+              borderColor: isLight ? '#CBD5E1' : '#334155',
+              borderWidth: 1,
               padding: 10,
-              cornerRadius: 8,
               callbacks: {
                 label: function(context) {
-                  return ' ₹ ' + Number(context.parsed.y).toLocaleString('en-IN');
+                  return ' Revenue: ₹' + Number(context.parsed.y).toLocaleString('en-IN');
                 }
               }
             }
@@ -1085,20 +784,20 @@ function initDashboardCharts() {
               grid: { color: gridColor },
               ticks: {
                 color: tickColor,
-                font: { family: 'Geist Mono', size: 11 },
+                font: { family: 'Outfit', size: 11, weight: '600' },
                 callback: function(val) { return '₹' + val; }
               }
             },
             x: {
               grid: { display: false },
-              ticks: { color: tickColor, font: { family: 'Inter', size: 11, weight: '500' } }
+              ticks: { color: tickColor, font: { family: 'Outfit', size: 11, weight: '600' } }
             }
           }
         }
       });
     }
 
-    // 2. Category Sales Chart
+    // 2. Category Sales Chart (Authoritative & Zero-Start)
     const catEl = document.getElementById('categorySalesChart');
     const dashCatEmpty = document.getElementById('dashCatEmptyState');
     if (catEl) {
@@ -1125,16 +824,8 @@ function initDashboardCharts() {
             labels: catLabels,
             datasets: [{
               data: catData,
-              backgroundColor: [
-                '#9F1239', // Velvet Wine
-                '#10B981', // Emerald
-                '#F59E0B', // Amber
-                '#3B82F6', // Cobalt
-                '#8B5CF6', // Violet
-                '#EC4899', // Rose
-                '#64748B'  // Slate
-              ],
-              borderColor: isLight ? '#FFFFFF' : '#151517',
+              backgroundColor: ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#8B5CF6'],
+              borderColor: isLight ? '#FFFFFF' : '#1E293B',
               borderWidth: 2
             }]
           },
@@ -1143,23 +834,22 @@ function initDashboardCharts() {
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                position: 'bottom',
+                position: 'right',
                 labels: {
-                  color: isLight ? '#111827' : '#F4F4F5',
-                  font: { family: 'Inter', size: 11, weight: '500' },
-                  padding: 10,
+                  color: legendColor,
+                  font: { family: 'Outfit', size: 12, weight: '700' },
+                  padding: 12,
                   usePointStyle: true,
                   pointStyle: 'circle'
                 }
               },
               tooltip: {
-                backgroundColor: isLight ? '#111827' : '#FFFFFF',
-                titleColor: isLight ? '#FFFFFF' : '#111827',
-                bodyColor: isLight ? '#E5E7EB' : '#4B5563',
-                titleFont: { family: 'Inter', size: 12, weight: '600' },
-                bodyFont: { family: 'Geist Mono', size: 12, weight: '500' },
+                backgroundColor: isLight ? '#FFFFFF' : '#1E293B',
+                titleColor: isLight ? '#0F172A' : '#F8FAFC',
+                bodyColor: isLight ? '#475569' : '#94A3B8',
+                borderColor: isLight ? '#CBD5E1' : '#334155',
+                borderWidth: 1,
                 padding: 10,
-                cornerRadius: 8,
                 callbacks: {
                   label: function(context) {
                     return ' ' + context.label + ': ₹' + Number(context.parsed).toLocaleString('en-IN');
@@ -1167,7 +857,7 @@ function initDashboardCharts() {
                 }
               }
             },
-            cutout: '72%'
+            cutout: '68%'
           }
         });
       }
@@ -1177,7 +867,6 @@ function initDashboardCharts() {
   }
 }
 
-// 3. Menu Engineering BCG Matrix Loader
 async function loadMenuMatrix() {
   const tbody = document.getElementById('menuMatrixBody');
   if (!tbody) return;
@@ -1188,17 +877,7 @@ async function loadMenuMatrix() {
     if (json.success && Array.isArray(json.data) && json.data.length > 0) {
       renderMenuMatrix(json.data);
     } else {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7" class="py-8 text-center text-[var(--text-muted)]">
-            <div class="flex flex-col items-center justify-center space-y-1">
-              <i class="fa-solid fa-utensils text-lg text-[var(--text-muted)] mb-1"></i>
-              <span class="font-medium">No sales data recorded yet for BCG matrix</span>
-              <span class="text-[11px]">Once orders are completed, items will automatically populate the matrix.</span>
-            </div>
-          </td>
-        </tr>
-      `;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-muted);">No sales data available yet to categorize items into BCG quadrants.</td></tr>`;
     }
   } catch (err) {
     console.warn('Matrix fetch error:', err);
@@ -1210,27 +889,27 @@ function renderMenuMatrix(items) {
   if (!tbody) return;
 
   const quadConfig = {
-    'Star':      { badge: '⭐ Star',       class: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30' },
-    'Plowhorse': { badge: '🐎 Plowhorse',  class: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/30' },
-    'Puzzle':    { badge: '🧩 Puzzle',     class: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30' },
-    'Dog':       { badge: '🐕 Dog',        class: 'bg-stone-500/10 text-stone-700 dark:text-stone-400 border border-stone-500/30' }
+    'Star':      { badge: '⭐ STAR',       color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+    'Plowhorse': { badge: '🐎 PLOWHORSE', color: '#818CF8', bg: 'rgba(99,102,241,0.15)' },
+    'Puzzle':    { badge: '🧩 PUZZLE',    color: '#34D399', bg: 'rgba(16,185,129,0.15)' },
+    'Dog':       { badge: '🐕 DOG',       color: '#F87171', bg: 'rgba(239,68,68,0.15)' }
   };
 
   tbody.innerHTML = items.map(item => {
-    const q = quadConfig[item.matrix_quad] || { badge: item.matrix_quad, class: 'bg-stone-500/10 text-stone-600' };
+    const q = quadConfig[item.matrix_quad] || { badge: item.matrix_quad, color: '#94A3B8', bg: 'rgba(148,163,184,0.15)' };
     return `
-      <tr class="hover:bg-[var(--sidebar-hover)] transition">
-        <td class="py-3 px-3 font-semibold text-[var(--text-primary)]">${item.name}</td>
-        <td class="py-3 px-3 text-[var(--text-muted)]">${item.category_name || 'General'}</td>
-        <td class="py-3 px-3 font-mono font-medium text-[var(--text-primary)] tabular-nums">₹${item.price}</td>
-        <td class="py-3 px-3 font-mono text-emerald-600 dark:text-emerald-400 font-medium tabular-nums">₹${item.margin} <span class="text-[10px] text-[var(--text-muted)]">(${item.margin_pct}%)</span></td>
-        <td class="py-3 px-3 font-mono font-medium text-[var(--text-primary)] tabular-nums">${item.qty_sold} sold</td>
-        <td class="py-3 px-3">
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${q.class}">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+        <td style="padding: 12px 14px; font-weight: 700; color: var(--text-primary);">${item.name}</td>
+        <td style="padding: 12px 14px; color: var(--text-secondary);">${item.category_name || 'General'}</td>
+        <td style="padding: 12px 14px; font-weight: 700; color: var(--text-primary);">₹${item.price}</td>
+        <td style="padding: 12px 14px; color: #10B981; font-weight: 700;">₹${item.margin} <span style="font-size:11px; color:var(--text-muted);">(${item.margin_pct}%)</span></td>
+        <td style="padding: 12px 14px; font-weight: 700; color: #818CF8;">${item.qty_sold} sold</td>
+        <td style="padding: 12px 14px;">
+          <span style="background: ${q.bg}; color: ${q.color}; border: 1px solid ${q.color}40; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800;">
             ${q.badge}
           </span>
         </td>
-        <td class="py-3 px-3 text-[11px] text-[var(--text-muted)]">${item.action_hint}</td>
+        <td style="padding: 12px 14px; font-size: 12px; color: var(--text-muted);">${item.action_hint}</td>
       </tr>
     `;
   }).join('');
@@ -1244,8 +923,9 @@ document.addEventListener("DOMContentLoaded", function() {
 window.addEventListener('themechange', () => {
   setTimeout(initDashboardCharts, 50);
 });
+</script>
 
-// 4. Sidebar Controls
+<script>
 const DASHBOARD_RESTAURANT_ID = '{{ Auth::user()->restaurant_id ?? '' }}';
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
@@ -1260,24 +940,40 @@ function toggleSidebar() {
   }
 }
 
-// 5. Fullscreen Toggle
+let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
+
+
 function toggleFull() {
   const doc = document.documentElement;
   if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-    if (doc.requestFullscreen) doc.requestFullscreen();
-    else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+    if (doc.requestFullscreen) {
+      doc.requestFullscreen();
+    } else if (doc.webkitRequestFullscreen) {
+      doc.webkitRequestFullscreen();
+    } else if (doc.msRequestFullscreen) {
+      doc.msRequestFullscreen();
+    }
   } else {
-    if (document.exitFullscreen) document.exitFullscreen();
-    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
   }
 }
 
-// 6. Vocal Soundbox Engine (Gujarati / Hindi / English)
-let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
+
 
 function announcePaymentVoice(tableNumber, amount, method = 'online') {
+
   if (isPosVoiceMuted) return;
-  if (!('speechSynthesis' in window)) return;
+
+  if (!('speechSynthesis' in window)) {
+    console.log('Text-to-speech not supported in this browser.');
+    return;
+  }
   
   window.speechSynthesis.cancel();
   
@@ -1297,19 +993,19 @@ function announcePaymentVoice(tableNumber, amount, method = 'online') {
   utterance.rate = 0.95;
   utterance.pitch = 1.0;
   
-  const voices = window.speechSynthesis.getVoices();
-  const guVoice = voices.find(v => v.lang.includes('gu') || v.name.includes('Gujarati') || v.lang.includes('hi') || v.lang.includes('IN'));
+  let guVoice = window.speechSynthesis.getVoices().find(v => v.lang.includes('gu') || v.name.includes('Gujarati') || v.lang.includes('hi') || v.lang.includes('IN'));
   if (guVoice) utterance.voice = guVoice;
   
   window.speechSynthesis.speak(utterance);
 }
 
-// 7. Modals Management
+
+
 function openModal(id) {
   const modal = document.getElementById(id);
   if (modal) {
     modal.style.display = 'flex';
-    requestAnimationFrame(() => { modal.style.opacity = '1'; });
+    setTimeout(() => { modal.style.opacity = '1'; }, 10);
   }
 }
 
@@ -1327,57 +1023,77 @@ function showToast(msg, type = 'success') {
 
   const toast = document.createElement('div');
   toast.id = 'dineflow-toast';
-  toast.className = 'fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-deep text-xs font-semibold flex items-center gap-2 border bg-[var(--surface)] text-[var(--text-primary)] border-[var(--hairline)]';
-  toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i><span>${msg}</span>`;
+  const bgMap = { success: 'linear-gradient(135deg,#059669,#10B981)', error: 'linear-gradient(135deg,#DC2626,#EF4444)', info: 'linear-gradient(135deg,#2563EB,#3B82F6)', warning: 'linear-gradient(135deg,#D97706,#F59E0B)' };
+  const bg = bgMap[type] || bgMap.success;
+  toast.style.cssText = `position:fixed; top:20px; right:20px; z-index:99999; background:${bg}; color:#fff; padding:14px 22px; border-radius:14px; font-family:'Outfit',sans-serif; font-size:13.5px; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,0.35); display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-12px) scale(0.95); transition:all 0.35s cubic-bezier(0.4,0,0.2,1); max-width:420px;`;
+  toast.textContent = msg;
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3200);
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0) scale(1)';
+  });
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-12px) scale(0.95)';
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
 }
 
 function markAllNotificationsAsRead() {
   const body = document.querySelector('#notifModal .modal-body');
   if (body) {
     body.innerHTML = `
-      <div class="text-center py-8 text-xs text-[var(--text-muted)] space-y-1">
-        <i class="fa-solid fa-bell-slash text-xl block mb-1"></i>
-        <div class="font-semibold text-[var(--text-primary)]">All Caught Up!</div>
-        <div>All notifications have been marked as read.</div>
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Caught Up!</div>
+        <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
       </div>
     `;
   }
 
-  document.querySelectorAll('.notif-dot').forEach(dot => dot.style.display = 'none');
+  document.querySelectorAll('.notif-dot').forEach(dot => {
+    dot.style.display = 'none';
+  });
+
   const badge = document.getElementById('notifCountBadge');
   if (badge) badge.style.display = 'none';
 
   dashNotifDismissedIds = [...dashNotifAllIds];
   localStorage.setItem('dineflow_dismissed_notifs', JSON.stringify(dashNotifDismissedIds));
-  showToast('Notifications marked as read');
-  setTimeout(() => closeModal('notifModal'), 400);
+
+  showToast('✅ All notifications cleared & marked as read!', 'success');
+
+  setTimeout(() => {
+    closeModal('notifModal');
+  }, 400);
 }
 
-// 8. Live Notification Poller
+/* ─── LIVE NOTIFICATION POLLING SYSTEM ─── */
 let dashNotifDismissedIds = [];
 let dashNotifAllIds = [];
-try { dashNotifDismissedIds = JSON.parse(localStorage.getItem('dineflow_dismissed_notifs') || '[]'); } catch(e) { dashNotifDismissedIds = []; }
+
+try {
+  dashNotifDismissedIds = JSON.parse(localStorage.getItem('dineflow_dismissed_notifs') || '[]');
+} catch(e) { dashNotifDismissedIds = []; }
 
 function timeAgo(dateStr) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return 'Just now';
-  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-  return Math.floor(diff / 86400) + 'd ago';
+  if (diff < 3600) return Math.floor(diff / 60) + ' mins ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' hrs ago';
+  return Math.floor(diff / 86400) + ' days ago';
 }
 
-function buildNotifCard(icon, iconColor, title, desc, timeStr, id) {
+function buildNotifCard(icon, iconBg, iconColor, borderColor, title, desc, timeStr, id) {
   return `
-    <div class="p-3 rounded-xl border border-[var(--hairline)] bg-[var(--panel)] flex items-start gap-3 text-xs" data-notif-id="${id}">
-      <div class="w-7 h-7 rounded-lg bg-[var(--surface)] border border-[var(--hairline)] ${iconColor} flex items-center justify-center flex-shrink-0">
-        <i class="fa-solid ${icon} text-xs"></i>
+    <div class="live-notif-item" data-notif-id="${id}" style="display:flex; align-items:flex-start; gap:12px; background:${iconBg}; border:1px solid ${borderColor}; border-radius:12px; padding:12px; animation: notifSlideIn 0.3s ease;">
+      <div style="width:34px; height:34px; border-radius:10px; background:${iconBg}; color:${iconColor}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <i class="fa-solid ${icon}"></i>
       </div>
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold text-[var(--text-primary)] truncate">${title}</div>
-        <div class="text-[11px] text-[var(--text-muted)] mt-0.5 truncate">${desc}</div>
-        <div class="text-[10px] text-[var(--text-muted)] font-mono mt-1"><i class="fa-regular fa-clock mr-1"></i>${timeStr}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${title}</div>
+        <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${desc}</div>
+        <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeStr}</div>
       </div>
     </div>
   `;
@@ -1385,7 +1101,9 @@ function buildNotifCard(icon, iconColor, title, desc, timeStr, id) {
 
 async function fetchLiveNotifications() {
   const notifications = [];
+
   try {
+    // 1. Waiter Calls (unresolved)
     const wcRes = await fetch(`/api/waiter-calls/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     const wcData = await wcRes.json();
     if (wcData.success && wcData.data) {
@@ -1394,105 +1112,273 @@ async function fetchLiveNotifications() {
           notifications.push({
             id: 'wc-' + call.id,
             icon: 'fa-bell-concierge',
-            iconColor: 'text-rose-500',
-            title: 'Waiter Called — Table ' + (call.table_id || '?'),
-            desc: 'Guest requested service',
-            time: call.created_at
+            iconBg: 'rgba(239,68,68,0.1)',
+            iconColor: '#F87171',
+            borderColor: 'rgba(239,68,68,0.25)',
+            title: '🔔 Waiter Called — Table ' + (call.table_id || '?'),
+            desc: 'Customer is requesting waiter service',
+            time: call.created_at,
+            priority: 1
           });
         }
       });
     }
-  } catch(e) {}
+  } catch(e) { console.log('Waiter calls fetch skipped:', e.message); }
 
   try {
+    // 2. Recent Orders (last 30 min, pending/preparing)
     const orRes = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     const orData = await orRes.json();
     const orOrdersList = Array.isArray(orData.data) ? orData.data : (orData.data?.data || []);
     if (orData.success && Array.isArray(orOrdersList)) {
-      const thirtyMinsAgo = Date.now() - (30 * 60 * 1000);
+      const now = Date.now();
+      const thirtyMinsAgo = now - (30 * 60 * 1000);
       orOrdersList.forEach(order => {
         const orderTime = new Date(order.created_at).getTime();
-        if (orderTime > thirtyMinsAgo && order.status === 'pending') {
+        if (orderTime > thirtyMinsAgo) {
+          if (order.status === 'pending') {
+            notifications.push({
+              id: 'order-new-' + order.id,
+              icon: 'fa-receipt',
+              iconBg: 'rgba(99,102,241,0.1)',
+              iconColor: '#818CF8',
+              borderColor: 'rgba(99,102,241,0.25)',
+              title: '🆕 New Order #' + order.id + (order.table_id ? ' — Table ' + order.table_id : ''),
+              desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' • Waiting for kitchen confirmation',
+              time: order.created_at,
+              priority: 2
+            });
+          }
+          if (order.status === 'ready') {
+            notifications.push({
+              id: 'order-ready-' + order.id,
+              icon: 'fa-utensils',
+              iconBg: 'rgba(16,185,129,0.1)',
+              iconColor: '#34D399',
+              borderColor: 'rgba(16,185,129,0.25)',
+              title: '✅ Order #' + order.id + ' Ready' + (order.table_id ? ' — Table ' + order.table_id : ''),
+              desc: 'Kitchen has prepared this order. Ready to serve!',
+              time: order.updated_at || order.created_at,
+              priority: 2
+            });
+          }
+          if (order.payment_status === 'paid' && order.status === 'completed') {
+            notifications.push({
+              id: 'order-paid-' + order.id,
+              icon: 'fa-indian-rupee-sign',
+              iconBg: 'rgba(16,185,129,0.1)',
+              iconColor: '#34D399',
+              borderColor: 'rgba(16,185,129,0.25)',
+              title: '💰 Payment Received — Order #' + order.id,
+              desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' via ' + (order.payment_method || 'Online'),
+              time: order.updated_at || order.created_at,
+              priority: 3
+            });
+          }
+        }
+      });
+    }
+  } catch(e) { console.log('Orders fetch skipped:', e.message); }
+
+  try {
+    // 3. Low Stock Alerts
+    const invRes = await fetch(`/api/inventory?restaurantId=${DASHBOARD_RESTAURANT_ID}`);
+    const invData = await invRes.json();
+    if (invData.success && invData.data) {
+      invData.data.forEach(item => {
+        if (item.quantity <= (item.low_stock_alert || 10)) {
           notifications.push({
-            id: 'order-new-' + order.id,
-            icon: 'fa-receipt',
-            iconColor: 'text-amber-500',
-            title: 'New Order #' + order.id,
-            desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' • Waiting for kitchen',
-            time: order.created_at
+            id: 'inv-' + item.id,
+            icon: 'fa-triangle-exclamation',
+            iconBg: 'rgba(245,158,11,0.1)',
+            iconColor: '#FCD34D',
+            borderColor: 'rgba(245,158,11,0.25)',
+            title: '⚠️ Low Stock — ' + item.item_name,
+            desc: 'Only ' + item.quantity + ' ' + (item.unit || 'units') + ' remaining (threshold: ' + (item.low_stock_alert || 10) + ')',
+            time: item.updated_at || item.created_at,
+            priority: 2
           });
         }
       });
     }
-  } catch(e) {}
+  } catch(e) { console.log('Inventory fetch skipped:', e.message); }
+
+  // Sort by priority then time
+  notifications.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return new Date(b.time) - new Date(a.time);
+  });
 
   return notifications;
 }
 
-function renderNotifications(notifs) {
+function renderNotifications(notifications) {
   const body = document.querySelector('#notifModal .modal-body');
   if (!body) return;
 
-  dashNotifAllIds = notifs.map(n => n.id);
-  const unreadNotifs = notifs.filter(n => !dashNotifDismissedIds.includes(n.id));
+  dashNotifAllIds = notifications.map(n => n.id);
+  const unreadNotifs = notifications.filter(n => !dashNotifDismissedIds.includes(n.id));
 
+  // Update badge count
   const badge = document.getElementById('notifCountBadge');
   const dots = document.querySelectorAll('.notif-dot');
 
   if (unreadNotifs.length > 0) {
+    dots.forEach(dot => { dot.style.display = 'block'; });
     if (badge) {
-      badge.style.display = 'inline-flex';
-      badge.innerText = unreadNotifs.length;
+      badge.textContent = unreadNotifs.length > 9 ? '9+' : unreadNotifs.length;
+      badge.style.display = 'flex';
     }
-    dots.forEach(dot => dot.style.display = 'block');
   } else {
+    dots.forEach(dot => { dot.style.display = 'none'; });
     if (badge) badge.style.display = 'none';
-    dots.forEach(dot => dot.style.display = 'none');
   }
 
-  if (notifs.length === 0) {
+  if (notifications.length === 0) {
     body.innerHTML = `
-      <div class="text-center py-8 text-xs text-[var(--text-muted)] space-y-1">
-        <i class="fa-regular fa-bell-slash text-xl block mb-1"></i>
-        <div class="font-semibold text-[var(--text-primary)]">No New Alerts</div>
-        <div>All operations running smoothly.</div>
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Quiet!</div>
+        <div style="font-size:12px; color:#94A3B8;">No active alerts right now. Everything is running smoothly.</div>
       </div>
     `;
     return;
   }
 
-  body.innerHTML = notifs.map(n => buildNotifCard(n.icon, n.iconColor, n.title, n.desc, timeAgo(n.time), n.id)).join('');
+  let html = '';
+  notifications.forEach(n => {
+    const opacity = dashNotifDismissedIds.includes(n.id) ? 'opacity:0.45;' : '';
+    html += `
+      <div class="live-notif-item" data-notif-id="${n.id}" style="display:flex; align-items:flex-start; gap:12px; background:${n.iconBg}; border:1px solid ${n.borderColor}; border-radius:12px; padding:12px; transition:all 0.2s; ${opacity}">
+        <div style="width:34px; height:34px; border-radius:10px; background:${n.iconBg}; color:${n.iconColor}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid ${n.icon}"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${n.title}</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${n.desc}</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeAgo(n.time)}</div>
+        </div>
+      </div>
+    `;
+  });
+  body.innerHTML = html;
 }
 
 async function refreshDashNotifications() {
   try {
     const notifs = await fetchLiveNotifications();
     renderNotifications(notifs);
-  } catch(e) {}
+  } catch(e) {
+    console.log('Notification refresh error:', e);
+  }
 }
 
+// Initial fetch + poll every 15 seconds
 document.addEventListener('DOMContentLoaded', () => {
   refreshDashNotifications();
-  setInterval(refreshDashNotifications, 20000);
+  setInterval(refreshDashNotifications, 15000);
 });
 
-// 9. Orders Modal Logic
+// Also refresh when bell icon is clicked
+const origOpenModal = openModal;
+openModal = function(id) {
+  origOpenModal(id);
+  if (id === 'notifModal') {
+    refreshDashNotifications();
+  }
+};
+</script>
+
+<!-- Notifications Modal -->
+<div class="modal-overlay" id="notifModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.2s;">
+  <div class="modal" style="width:480px; background:var(--card); border:1px solid var(--border); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
+        Live Notifications
+        <span id="notifCountBadge" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; display:none; align-items:center; justify-content:center; min-width:20px; animation: pulse 2s infinite;"></span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="refreshDashNotifications()" title="Refresh" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.3)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeModal('notifModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:16px 20px; max-height:400px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+      <div style="text-align:center; padding:30px 20px; color:#64748B;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:#818CF8; display:block; margin-bottom:10px;"></i>
+        <div style="font-size:12px; color:#94A3B8;">Loading live notifications...</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 20px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">Mark All as Read</button>
+      <div style="display:flex; align-items:center; gap:4px; color:#475569; font-size:10.5px;"><i class="fa-solid fa-circle" style="font-size:6px; color:#10B981; animation:pulse 2s infinite;"></i> Auto-refresh every 15s</div>
+      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Close</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+  @keyframes notifSlideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .live-notif-item:hover { transform:translateX(3px); filter:brightness(1.1); }
+</style>
+
+<!-- Dashboard Recent Orders Modal -->
+<div class="modal-overlay" id="dashOrdersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:880px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" id="dashOrdersModalTitle" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
+        <span>Recent Restaurant Orders</span>
+        <span id="dashOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="loadDashOrdersModalData()" title="Refresh Orders" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.2s;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeDashOrdersModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="dashOrdersModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary); display:block; margin-bottom:12px;"></i>
+        <div style="font-size:13px; color:var(--text-muted);">Fetching recent orders...</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">💡 Click any action button to open Receipts or Tax Invoices</div>
+      <button onclick="closeDashOrdersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">Close</button>
+    </div>
+  </div>
+</div>
+
+@include('partials.order-management')
+
+<script>
 let currentDashOrderFilter = 'all';
 
 function openDashOrdersModal(filterType = 'all') {
   currentDashOrderFilter = filterType;
   const modal = document.getElementById('dashOrdersModal');
   const titleEl = document.getElementById('dashOrdersModalTitle');
+  
   if (titleEl) {
-    titleEl.innerHTML = `
-      <i class="fa-solid fa-receipt text-[var(--brand)]"></i>
-      <span>Live Restaurant Orders</span>
-      <span id="dashOrdersCountBadge" class="text-xs font-mono px-2 py-0.5 rounded-full border border-[var(--hairline)] bg-[var(--panel)] text-[var(--text-muted)]">Loading...</span>
-    `;
+    if (filterType === 'delivery') {
+      titleEl.innerHTML = `
+        <i class="fa-solid fa-motorcycle" style="color:#38BDF8;"></i>
+        <span>Delivery & Takeaway Orders</span>
+        <span id="dashOrdersCountBadge" style="background:rgba(56,189,248,0.25); color:#38BDF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(56,189,248,0.4);">Loading...</span>
+      `;
+    } else {
+      titleEl.innerHTML = `
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
+        <span>Recent Restaurant Orders</span>
+        <span id="dashOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
+      `;
+    }
   }
+
   if (!modal) return;
   modal.style.display = 'flex';
-  requestAnimationFrame(() => { modal.style.opacity = '1'; });
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
   loadDashOrdersModalData();
 }
 
@@ -1508,65 +1394,91 @@ async function loadDashOrdersModalData() {
   const badge = document.getElementById('dashOrdersCountBadge');
   if (!body) return;
 
-  body.innerHTML = '<div class="text-center py-12 text-xs text-[var(--text-muted)]"><i class="fa-solid fa-spinner fa-spin text-xl block mb-2 text-[var(--brand)]"></i> Loading tickets...</div>';
+  body.innerHTML = `
+    <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary); display:block; margin-bottom:12px;"></i>
+      <div style="font-size:13px; color:var(--text-muted);">Loading orders...</div>
+    </div>
+  `;
 
   try {
     const res = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
+    if (!res.ok) throw new Error('API request failed');
     const rawData = await res.json();
+    
+    // Support direct array, Laravel object { success: true, data: [...] } or paginated { success: true, data: { data: [...] } }
     let orders = Array.isArray(rawData) ? rawData : (Array.isArray(rawData.data) ? rawData.data : (rawData.data?.data || []));
+    
+    if (currentDashOrderFilter === 'delivery') {
+      orders = orders.filter(o => {
+        const isDeliveryType = (o.order_type === 'delivery' || o.order_type === 'takeaway');
+        const isNoTable = !o.table_id || o.table_id == '0';
+        const tableStr = o.table ? (o.table.table_number || '').toLowerCase() : '';
+        const isDeliveryTable = tableStr.includes('del') || tableStr.includes('take') || tableStr.includes('online');
+        return isDeliveryType || isNoTable || isDeliveryTable;
+      });
+    }
 
     if (orders.length === 0) {
-      if (badge) badge.innerText = '0 Tickets';
+      if (badge) badge.innerText = '0 Orders';
       body.innerHTML = `
-        <div class="text-center py-12 text-xs text-[var(--text-muted)] space-y-2">
-          <div class="w-12 h-12 rounded-2xl bg-[var(--panel)] border border-[var(--hairline)] flex items-center justify-center mx-auto text-lg">
-            <i class="fa-solid fa-receipt"></i>
-          </div>
-          <div class="font-semibold text-sm text-[var(--text-primary)]">No Active Orders Found</div>
-          <div>All order tickets for today will appear here in real-time.</div>
+        <div style="text-align:center; padding:48px 20px; color:var(--text-muted);">
+          <i class="fa-solid ${currentDashOrderFilter === 'delivery' ? 'fa-motorcycle' : 'fa-receipt'}" style="font-size:42px; margin-bottom:14px; color:var(--text-muted); display:block;"></i>
+          <div style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">No ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders Found</div>
+          <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">There are no ${currentDashOrderFilter === 'delivery' ? 'delivery or takeaway' : 'recent'} orders recorded today.</div>
+          ${currentDashOrderFilter === 'delivery' ? `<button onclick="openDashOrdersModal('all')" style="padding:8px 16px; font-size:12px; font-weight:700; border-radius:8px; background:var(--primary-light); color:var(--primary); border:1px solid var(--border); cursor:pointer;">View All Orders</button>` : ''}
         </div>
       `;
       return;
     }
 
-    if (badge) badge.innerText = `${orders.length} Tickets`;
+    if (badge) badge.innerText = `${orders.length} ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders`;
 
     let html = `
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs border-collapse">
+      <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch;">
+        <table style="width:100%; min-width:620px; border-collapse:collapse; font-size:13px;">
           <thead>
-            <tr class="border-b border-[var(--hairline)] text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
-              <th class="py-2.5 px-3">Ticket ID</th>
-              <th class="py-2.5 px-3">Table / Type</th>
-              <th class="py-2.5 px-3 font-mono">Amount</th>
-              <th class="py-2.5 px-3">Payment</th>
-              <th class="py-2.5 px-3">Kitchen Status</th>
-              <th class="py-2.5 px-3 text-right">Actions</th>
+            <tr style="border-bottom:1px solid var(--border); color:var(--primary); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 12px;">Order ID</th>
+              <th style="padding:10px 12px;">Type / Table</th>
+              <th style="padding:10px 12px;">Amount</th>
+              <th style="padding:10px 12px;">Payment</th>
+              <th style="padding:10px 12px;">Status</th>
+              <th style="padding:10px 12px; text-align:right;">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[var(--hairline)] text-[var(--text-primary)]">
+          <tbody>
     `;
 
     orders.forEach(o => {
       const isPaid = (o.payment_status === 'paid');
-      const payBadge = isPaid
-        ? '<span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-medium text-[10px] border border-emerald-500/20">PAID</span>'
-        : '<span class="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono font-medium text-[10px] border border-amber-500/20">PENDING</span>';
-      
-      const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id && o.table_id != '0' ? `Table ${o.table_id}` : 'Takeaway / Delivery');
+      const payBg = isPaid ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
+      const payColor = isPaid ? '#34D399' : '#FBBF24';
+      const payBorder = isPaid ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)';
+      const payText = isPaid ? 'Paid' : 'Pending';
+
+      const statusColor = (o.status === 'completed') ? '#34D399' : ((o.status === 'cooking' || o.status === 'preparing') ? '#FBBF24' : '#818CF8');
+
+      const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id && o.table_id != '0' ? `Table ${o.table_id}` : '🛵 Takeaway / Delivery');
 
       html += `
-        <tr class="hover:bg-[var(--sidebar-hover)] transition">
-          <td class="py-3 px-3 font-mono font-semibold">#${o.id}</td>
-          <td class="py-3 px-3 text-[var(--text-muted)] font-medium">${tableName}</td>
-          <td class="py-3 px-3 font-mono font-bold tabular-nums">₹${parseFloat(o.total_amount || 0).toFixed(2)}</td>
-          <td class="py-3 px-3">${payBadge}</td>
-          <td class="py-3 px-3 font-semibold capitalize">${o.status || 'Received'}</td>
-          <td class="py-3 px-3 text-right">
+        <tr style="border-bottom:1px solid var(--border); transition:background 0.2s;" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background='transparent'">
+          <td style="padding:12px; font-weight:700; color:var(--text-primary);">
+            #${o.id}
+            <div style="font-size:10.5px; color:var(--text-muted); font-weight:400; margin-top:2px;">${new Date(o.created_at || Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+          </td>
+          <td style="padding:12px; color:var(--text-secondary); font-weight:600;">${tableName}</td>
+          <td style="padding:12px; font-weight:800; color:var(--text-primary);">₹${parseFloat(o.total_amount || 0).toFixed(2)}</td>
+          <td style="padding:12px;">
+            <span style="background:${payBg}; color:${payColor}; border:1px solid ${payBorder}; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px;">${payText}</span>
+          </td>
+          <td style="padding:12px; font-weight:700; color:${statusColor}; text-transform:capitalize;">${o.status || 'Received'}</td>
+          <td style="padding:12px; text-align:right;">
             ${typeof renderOrderActionsHtml === 'function' ? renderOrderActionsHtml(o) : `
-              <div class="inline-flex items-center gap-1.5">
-                <a href="/orders/${o.id}/receipt" target="_blank" class="px-2.5 py-1 rounded-lg border border-[var(--hairline)] hover:bg-[var(--sidebar-hover)] text-[11px] font-medium" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> KOT</a>
-                <a href="/orders/${o.id}/invoice-a4" target="_blank" class="px-2.5 py-1 rounded-lg border border-[var(--hairline)] hover:bg-[var(--sidebar-hover)] text-[11px] font-medium text-emerald-600" title="A4 PDF Tax Invoice"><i class="fa-solid fa-file-invoice"></i> PDF</a>
+              <div style="display:inline-flex; gap:6px;">
+                <a href="/orders/${o.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
+                <a href="/orders/${o.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
+                <a href="/orders/${o.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
               </div>
             `}
           </td>
@@ -1574,14 +1486,38 @@ async function loadDashOrdersModalData() {
       `;
     });
 
-    html += `</tbody></table></div>`;
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
     body.innerHTML = html;
-  } catch(e) {
-    body.innerHTML = '<div class="text-center py-10 text-xs text-rose-500">Failed to load orders. Please refresh.</div>';
+  } catch(err) {
+    console.error('Error loading dashboard orders modal:', err);
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#F87171;">
+        <i class="fa-solid fa-circle-exclamation" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+        <div style="font-size:14px; font-weight:700;">Failed to load orders</div>
+        <div style="font-size:12px; color:#94A3B8; margin-top:4px;">Please check server connection or refresh.</div>
+      </div>
+    `;
   }
 }
 
-// 10. Admin Module Iframe Modal
+// Handle ESC key to close modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeDashOrdersModal();
+    closeDashAdminModule();
+    closeDashOffersModal();
+    closeDashDeliveryModal();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN MODULE IFRAME MODAL — Load any admin page inside Dashboard
+// ═══════════════════════════════════════════════════════════════
 function openDashAdminModule(url, titleHtml) {
   const modal = document.getElementById('dashAdminModuleModal');
   const titleEl = document.getElementById('dashAdminModuleTitle');
@@ -1590,87 +1526,217 @@ function openDashAdminModule(url, titleHtml) {
   titleEl.innerHTML = titleHtml || 'Admin Module';
   iframe.src = url;
   modal.style.display = 'flex';
-  requestAnimationFrame(() => { modal.style.opacity = '1'; });
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
 }
 function closeDashAdminModule() {
   const modal = document.getElementById('dashAdminModuleModal');
   const iframe = document.getElementById('dashAdminModuleIframe');
   if (!modal) return;
   modal.style.opacity = '0';
-  setTimeout(() => { modal.style.display = 'none'; if (iframe) iframe.src = 'about:blank'; }, 200);
+  setTimeout(() => { modal.style.display = 'none'; if (iframe) iframe.src = 'about:blank'; }, 250);
 }
 
-// 11. Offers Modal
+// ═══════════════════════════════════════════════════════════════
+// OFFERS & DEALS MODAL — Same promos as POS posOffersModal
+// ═══════════════════════════════════════════════════════════════
 function openDashOffersModal() {
   const modal = document.getElementById('dashOffersModal');
   if (!modal) return;
   modal.style.display = 'flex';
-  requestAnimationFrame(() => { modal.style.opacity = '1'; });
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
 }
 function closeDashOffersModal() {
   const modal = document.getElementById('dashOffersModal');
   if (!modal) return;
   modal.style.opacity = '0';
-  setTimeout(() => { modal.style.display = 'none'; }, 200);
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
 }
 
-// 12. Delivery Modal
+// ═══════════════════════════════════════════════════════════════
+// DELIVERY ORDERS MODAL — Shows delivery/takeaway orders from API
+// ═══════════════════════════════════════════════════════════════
 function openDashDeliveryModal() {
   const modal = document.getElementById('dashDeliveryModal');
   if (!modal) return;
   modal.style.display = 'flex';
-  requestAnimationFrame(() => { modal.style.opacity = '1'; });
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
   loadDashDeliveryData();
 }
 function closeDashDeliveryModal() {
   const modal = document.getElementById('dashDeliveryModal');
   if (!modal) return;
   modal.style.opacity = '0';
-  setTimeout(() => { modal.style.display = 'none'; }, 200);
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
 }
-
 async function loadDashDeliveryData() {
   const body = document.getElementById('dashDeliveryModalBody');
   if (!body) return;
-  body.innerHTML = '<div class="text-center py-10 text-xs text-[var(--text-muted)]"><i class="fa-solid fa-spinner fa-spin text-xl block mb-2"></i> Loading delivery queue...</div>';
+  body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...</div>';
   try {
     const resp = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
     const rawData = await resp.json();
     const allOrders = Array.isArray(rawData) ? rawData : (rawData.data || []);
     const deliveryOrders = allOrders.filter(o => o.order_type === 'delivery' || o.order_type === 'takeaway');
     if (!deliveryOrders.length) {
-      body.innerHTML = '<div class="text-center py-12 text-xs text-[var(--text-muted)]">No active takeaway or delivery orders.</div>';
+      body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-motorcycle" style="font-size:36px; display:block; margin-bottom:12px; opacity:0.4;"></i><div style="font-weight:700; font-size:14px;">No Active Delivery Orders</div><div style="font-size:12px; margin-top:4px;">Delivery and takeaway orders will appear here in real-time</div></div>';
       return;
     }
-    let html = '<div class="space-y-2.5">';
+    let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
     deliveryOrders.forEach(o => {
+      const statusColor = o.status === 'completed' ? '#10B981' : o.status === 'preparing' ? '#F59E0B' : o.status === 'ready' ? '#06B6D4' : '#6366F1';
+      const payBadge = o.payment_status === 'paid' ? '<span style="background:rgba(16,185,129,0.15); color:#10B981; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700;">PAID</span>' : '<span style="background:rgba(245,158,11,0.15); color:#F59E0B; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700;">UNPAID</span>';
       html += `
-        <div class="p-3.5 rounded-xl border border-[var(--hairline)] bg-[var(--panel)] flex items-center justify-between text-xs">
-          <div>
-            <div class="font-bold text-[var(--text-primary)]">#${o.id} • ${(o.order_type || 'Delivery').toUpperCase()}</div>
-            <div class="text-[var(--text-muted)] mt-0.5 font-mono">₹${parseFloat(o.total_amount || 0).toFixed(2)}</div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:${statusColor}20; display:flex; align-items:center; justify-content:center;"><i class="fa-solid ${o.order_type === 'delivery' ? 'fa-motorcycle' : 'fa-bag-shopping'}" style="color:${statusColor}; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:700; font-size:14px; color:var(--text-primary);">#${o.id} — ${(o.order_type || 'delivery').toUpperCase()}</div>
+              <div style="font-size:11px; color:var(--text-muted);">Table: ${o.table_number || 'N/A'} • ₹${parseFloat(o.total_amount || 0).toFixed(2)}</div>
+            </div>
           </div>
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-stone-200 dark:bg-stone-800 text-[var(--text-primary)]">${o.status}</span>
-        </div>
-      `;
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${payBadge}
+            <span style="background:${statusColor}20; color:${statusColor}; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700; text-transform:uppercase;">${o.status}</span>
+          </div>
+        </div>`;
     });
     html += '</div>';
     body.innerHTML = html;
   } catch(err) {
-    body.innerHTML = '<div class="text-center py-10 text-xs text-rose-500">Failed to load delivery orders.</div>';
+    body.innerHTML = '<div style="text-align:center; padding:36px; color:#F87171;"><i class="fa-solid fa-circle-exclamation" style="font-size:28px; display:block; margin-bottom:10px;"></i><div style="font-weight:700;">Failed to load delivery orders</div></div>';
   }
 }
-
-// Global ESC Key Close
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    closeDashOrdersModal();
-    closeDashAdminModule();
-    closeDashOffersModal();
-    closeDashDeliveryModal();
-    closeModal('notifModal');
-  }
-});
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ADMIN MODULE IFRAME MODAL — Loads admin pages inside Dashboard -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashAdminModuleModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:1320px; max-width:96vw; height:90vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+      <div class="modal-title" id="dashAdminModuleTitle" style="color:var(--primary); font-size:16px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">Admin Module</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="const f=document.getElementById('dashAdminModuleIframe'); if(f) f.contentWindow.location.reload();" title="Reload" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:32px; height:32px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button onclick="closeDashAdminModule()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:32px; height:32px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <iframe id="dashAdminModuleIframe" src="about:blank" style="flex:1; width:100%; border:none; background:var(--bg);"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- OFFERS & DEALS MODAL — Identical to POS posOffersModal -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashOffersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:700px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-gift" style="color:var(--primary);"></i>
+        <span>Smart Offers & Discount Deals</span>
+        <span style="background:linear-gradient(135deg,#EF4444,#DC2626); color:#fff; font-size:10px; font-weight:800; padding:3px 10px; border-radius:20px;">DEALS</span>
+      </div>
+      <button onclick="closeDashOffersModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:14px;">
+        <!-- Offer Cards -->
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-percentage" style="color:#10B981; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">WELCOME15</div>
+              <div style="font-size:11px; color:var(--text-muted);">15% off for new customers</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--success); font-weight:700;">Flat 15% Discount • No Minimum</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(99,102,241,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-indian-rupee-sign" style="color:#6366F1; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">SAVE50</div>
+              <div style="font-size:11px; color:var(--text-muted);">₹50 off on orders above ₹300</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--primary); font-weight:700;">₹50 Flat Off • Min ₹300</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(245,158,11,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-fire" style="color:#F59E0B; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">SAVE120</div>
+              <div style="font-size:11px; color:var(--text-muted);">₹120 off on orders above ₹600</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#F59E0B; font-weight:700;">₹120 Flat Off • Min ₹600</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(239,68,68,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-crown" style="color:#EF4444; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">VIP10</div>
+              <div style="font-size:11px; color:var(--text-muted);">10% off for VIP loyalty members</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#EF4444; font-weight:700;">10% VIP Discount • Loyalty Only</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(6,182,212,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-clock" style="color:#06B6D4; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">HAPPY10</div>
+              <div style="font-size:11px; color:var(--text-muted);">10% off during Happy Hours</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#06B6D4; font-weight:700;">10% Happy Hour Discount</div>
+        </div>
+      </div>
+      <!-- Custom Coupon Input -->
+      <div style="margin-top:20px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px;">
+        <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:10px;"><i class="fa-solid fa-ticket" style="color:var(--primary); margin-right:6px;"></i> Enter Custom Coupon Code</div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" placeholder="Enter promo code..." style="flex:1; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:600; outline:none;">
+          <button style="padding:10px 20px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer;">Apply</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">🎁 Apply offers from the POS Terminal during billing</div>
+      <button onclick="closeDashOffersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- DELIVERY ORDERS MODAL — Shows delivery/takeaway orders -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashDeliveryModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:780px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-motorcycle" style="color:var(--primary);"></i>
+        <span>Delivery & Takeaway Dispatch Terminal</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="loadDashDeliveryData()" title="Refresh" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button onclick="closeDashDeliveryModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="dashDeliveryModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="text-align:center; padding:40px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:14px; align-items:center;">
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#10B981;"></span> Completed</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#F59E0B;"></span> Preparing</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#06B6D4;"></span> Ready</span>
+      </div>
+      <button onclick="closeDashDeliveryModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

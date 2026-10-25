@@ -17,22 +17,21 @@
 
     <style>
         :root {
-            --primary: #9F1239;
-            --primary-glow: rgba(159, 18, 57, 0.4);
-            --primary-dark: #881337;
-            --primary-rose: #FB7185;
-            --success: #22C55E;
-            --success-glow: rgba(34, 197, 94, 0.3);
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --success-glow: rgba(16, 185, 129, 0.3);
             --whatsapp: #25D366;
             --whatsapp-dark: #128C7E;
             --whatsapp-glow: rgba(37, 211, 102, 0.35);
-            --bg: #0B0B0D;
-            --bg-card: #151517;
-            --border: #26262A;
-            --border-focus: rgba(251, 113, 133, 0.6);
-            --text-primary: #F4F4F5;
-            --text-secondary: #A1A1AA;
-            --text-muted: #71717A;
+            --bg: #090D1A;
+            --bg-card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(99, 102, 241, 0.6);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
         }
 
         *, *::before, *::after {
@@ -102,7 +101,7 @@
         .brand-icon {
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, #9F1239, #BE123C);
+            background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -110,7 +109,6 @@
             font-size: 17px;
             color: #fff;
             box-shadow: 0 0 12px var(--primary-glow);
-            border: 1px solid rgba(251, 113, 133, 0.3);
         }
 
         .brand-name {
@@ -218,7 +216,7 @@
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(159, 18, 57, 0.5);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
         .mobile-menu-btn {
@@ -299,7 +297,7 @@
 
         .mobile-drawer ul li a:hover,
         .mobile-drawer ul li a.active {
-            background: rgba(159, 18, 57, 0.15);
+            background: rgba(99, 102, 241, 0.12);
             color: #fff;
         }
 
@@ -324,10 +322,10 @@
             align-items: center;
             gap: 8px;
             padding: 6px 14px;
-            background: rgba(159, 18, 57, 0.15);
-            border: 1px solid rgba(251, 113, 133, 0.3);
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 30px;
-            color: #FDA4AF;
+            color: #A5B4FC;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -454,8 +452,8 @@
         }
 
         .contact-channel:hover {
-            border-color: rgba(251, 113, 133, 0.4);
-            background: rgba(159, 18, 57, 0.08);
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.08);
             transform: translateX(3px);
         }
 
@@ -463,8 +461,8 @@
             width: 40px;
             height: 40px;
             border-radius: 10px;
-            background: rgba(159, 18, 57, 0.15);
-            color: #FB7185;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818CF8;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -550,7 +548,7 @@
 
         .form-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.25);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
             background: rgba(15, 23, 42, 1);
         }
 

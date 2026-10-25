@@ -16,18 +16,17 @@
 
     <style>
         :root {
-            --primary: #9F1239;
-            --primary-glow: rgba(159, 18, 57, 0.4);
-            --primary-dark: #881337;
-            --primary-rose: #FB7185;
-            --success: #22C55E;
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --primary-dark: #4338CA;
+            --success: #10B981;
             --whatsapp: #25D366;
             --whatsapp-dark: #128C7E;
-            --bg: #0B0B0D;
-            --card: #151517;
-            --border: #26262A;
-            --text-primary: #F4F4F5;
-            --text-secondary: #A1A1AA;
+            --bg: #090D1A;
+            --card: #131A35;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
         }
 
         *, *::before, *::after {
@@ -97,7 +96,7 @@
         .brand-icon {
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, #9F1239, #BE123C);
+            background: linear-gradient(135deg, #6366F1, #818CF8);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -105,7 +104,6 @@
             font-size: 17px;
             color: #fff;
             box-shadow: 0 0 12px var(--primary-glow);
-            border: 1px solid rgba(251, 113, 133, 0.3);
         }
 
         .brand-name {
@@ -213,7 +211,7 @@
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(159, 18, 57, 0.5);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
         .mobile-menu-btn {
@@ -294,7 +292,7 @@
 
         .mobile-drawer ul li a:hover,
         .mobile-drawer ul li a.active {
-            background: rgba(159, 18, 57, 0.15);
+            background: rgba(99, 102, 241, 0.12);
             color: #fff;
         }
 
@@ -356,13 +354,13 @@
 
         .pricing-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(251, 113, 133, 0.4);
+            border-color: rgba(99, 102, 241, 0.4);
         }
 
         .pricing-card.featured {
-            border-color: #FB7185;
+            border-color: var(--primary);
             box-shadow: 0 0 30px var(--primary-glow);
-            background: linear-gradient(180deg, #1E0A12 0%, #151517 100%);
+            background: linear-gradient(180deg, #18224B 0%, #131A35 100%);
         }
 
         .featured-badge {
@@ -602,7 +600,7 @@
         </section>
 
         <!-- Buy Source Code Callout Banner -->
-        <section style="margin-top: 48px; background: linear-gradient(135deg, rgba(251,113,133,0.12), rgba(159,18,57,0.15)); border: 1.5px solid rgba(251,113,133,0.35); border-radius: 18px; padding: 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;">
+        <section style="margin-top: 48px; background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(99,102,241,0.12)); border: 1.5px solid rgba(236,72,153,0.35); border-radius: 18px; padding: 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;">
             <div>
                 <div style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#F472B6; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
                     <i class="fa-solid fa-fire"></i> Developer &amp; Agency Special
