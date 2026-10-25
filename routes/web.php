@@ -304,6 +304,16 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
         Route::get('/admin/menu-manager', fn() => $serveAdminPage('menu-manager.html'));
         Route::get('/admin/menu', fn() => $serveAdminPage('menu-manager.html'));
 
+        Route::get('/frontend/admin/modifiers.html', fn() => $serveAdminPage('modifiers.html'));
+        Route::get('/admin/modifiers', fn() => $serveAdminPage('modifiers.html'));
+
+        Route::get('/frontend/admin/procurement.html', fn() => $serveAdminPage('procurement.html'));
+        Route::get('/admin/procurement', fn() => $serveAdminPage('procurement.html'));
+        Route::get('/admin/suppliers', fn() => $serveAdminPage('procurement.html'));
+
+        Route::get('/frontend/admin/attendance.html', fn() => $serveAdminPage('attendance.html'));
+        Route::get('/admin/attendance', fn() => $serveAdminPage('attendance.html'));
+
         Route::get('/frontend/admin/inventory.html', fn() => $serveAdminPage('inventory.html'));
         Route::get('/admin/inventory', fn() => $serveAdminPage('inventory.html'));
 

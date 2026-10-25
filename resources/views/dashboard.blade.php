@@ -414,8 +414,14 @@
       <a class="nav-item" href="/admin/menu-manager" data-path="/admin/menu-manager" data-tip="Menu Items">
         <i class="fa-solid fa-bowl-food"></i><span class="nav-label">Menu Catalog</span>
       </a>
+      <a class="nav-item" href="/admin/modifiers" data-path="/admin/modifiers" data-tip="Modifiers & Combos">
+        <i class="fa-solid fa-layer-group"></i><span class="nav-label">Modifiers & Combos</span>
+      </a>
       <a class="nav-item" href="/admin/inventory" data-path="/admin/inventory" data-tip="Inventory Stock">
         <i class="fa-solid fa-boxes-stacked"></i><span class="nav-label">Inventory & Stock</span>
+      </a>
+      <a class="nav-item" href="/admin/procurement" data-path="/admin/procurement" data-tip="Suppliers & PO">
+        <i class="fa-solid fa-truck-ramp-box"></i><span class="nav-label">Suppliers & PO</span>
       </a>
       <a class="nav-item" href="/admin/coupons" data-path="/admin/coupons" data-tip="Offers & Deals">
         <i class="fa-solid fa-tag"></i><span class="nav-label">Offers & Deals</span>
@@ -440,6 +446,9 @@
 
     <div class="mb-2">
       <div class="sidebar-section-label text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] px-3 mb-1.5">Administration</div>
+      <a class="nav-item" href="/admin/attendance" data-path="/admin/attendance" data-tip="Staff Attendance & Payroll">
+        <i class="fa-solid fa-user-clock"></i><span class="nav-label">Staff Attendance & Payroll</span>
+      </a>
       <a class="nav-item" href="/admin/staff" data-path="/admin/staff" data-tip="Staff & Roles">
         <i class="fa-solid fa-user-shield"></i><span class="nav-label">Staff & Roles</span>
       </a>
