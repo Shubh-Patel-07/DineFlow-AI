@@ -80,6 +80,7 @@ function renderInventory() {
         <td>
           <button onclick="adjustQty('${item.id}', 10)" title="Add 10" style="padding:4px 10px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10B981; border-radius:6px; font-weight:700; cursor:pointer; margin-right:4px;">+10</button>
           <button onclick="adjustQty('${item.id}', -5)" title="Use 5" style="padding:4px 10px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#EF4444; border-radius:6px; font-weight:700; cursor:pointer; margin-right:4px;">-5</button>
+          ${qty <= alert ? `<a href="/admin/procurement" title="Order from Supplier" style="padding:4px 8px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#F59E0B; border-radius:6px; text-decoration:none; display:inline-block; font-size:11px; font-weight:700; margin-right:4px;"><i class="fa-solid fa-truck-ramp-box"></i> Order</a>` : ''}
           <button onclick="deleteInventoryItem('${item.id}')" title="Delete" style="padding:4px 8px; background:transparent; border:1px solid rgba(239,68,68,0.2); color:#EF4444; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>`;
