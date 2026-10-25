@@ -24,8 +24,9 @@
             --warning-bg: rgba(245, 158, 11, 0.12);
             --warning-border: rgba(245, 158, 11, 0.35);
             --success: #10B981;
-            --primary: #6366F1;
-            --primary-hover: #4F46E5;
+            --primary: #9F1239;
+            --primary-rose: #FB7185;
+            --primary-hover: #881337;
             --whatsapp: #25D366;
             --radius-xl: 24px;
             --radius-lg: 16px;
@@ -43,8 +44,8 @@
         body {
             background-color: var(--bg);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.12) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(159, 18, 57, 0.18) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(251, 113, 133, 0.12) 0px, transparent 50%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -83,7 +84,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: {{ $status === 'SUSPENDED' ? 'linear-gradient(90deg, #EF4444, #DC2626)' : ($status === 'GRACE_PERIOD' ? 'linear-gradient(90deg, #F59E0B, #D97706)' : 'linear-gradient(90deg, #F97316, #EA580C, #6366F1)') }};
+            background: {{ $status === 'SUSPENDED' ? 'linear-gradient(90deg, #EF4444, #DC2626)' : ($status === 'GRACE_PERIOD' ? 'linear-gradient(90deg, #F59E0B, #D97706)' : 'linear-gradient(90deg, #9F1239, #E11D48, #FB7185)') }};
         }
 
         .brand-header {
@@ -98,14 +99,14 @@
             width: 42px;
             height: 42px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            background: linear-gradient(135deg, #9F1239, #BE123C);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #FFFFFF;
             font-size: 22px;
             font-weight: 800;
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 4px 14px rgba(159, 18, 57, 0.4);
         }
 
         .brand-name {
@@ -273,20 +274,20 @@
 
         .plan-card:hover {
             transform: translateY(-3px);
-            border-color: #6366F1;
+            border-color: #FB7185;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
         .plan-card.popular {
-            border: 2px solid #6366F1;
-            background: linear-gradient(180deg, rgba(99, 102, 241, 0.12) 0%, rgba(30, 41, 59, 0.95) 100%);
+            border: 2px solid #FB7185;
+            background: linear-gradient(180deg, rgba(159, 18, 57, 0.12) 0%, rgba(30, 41, 59, 0.95) 100%);
         }
 
         .popular-tag {
             position: absolute;
             top: -11px;
             right: 18px;
-            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            background: linear-gradient(135deg, #9F1239, #E11D48);
             color: #FFFFFF;
             font-size: 10px;
             font-weight: 800;
@@ -465,9 +466,9 @@
         }
 
         .btn-dashboard-grace {
-            background: linear-gradient(135deg, #6366F1, #4F46E5);
+            background: linear-gradient(135deg, #9F1239, #BE123C);
             color: #FFFFFF;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4);
         }
 
         .footer-note {
