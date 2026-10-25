@@ -16,32 +16,34 @@
 
   <style>
     :root {
-      --bg-primary: #0F172A;
-      --bg-secondary: #1E293B;
-      --bg-card: rgba(30, 41, 59, 0.7);
-      --bg-card-hover: rgba(51, 65, 85, 0.6);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --text-primary: #F8FAFC;
-      --text-secondary: #94A3B8;
-      --text-muted: #64748B;
-      --accent: #6366F1;
-      --accent-gradient: linear-gradient(135deg, #6366F1, #8B5CF6);
-      --success: #10B981;
+      --bg-primary: #0B0B0D;
+      --bg-secondary: #111113;
+      --bg-card: #151517;
+      --bg-card-hover: #1C1C20;
+      --border-color: #26262A;
+      --text-primary: #F4F4F5;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --accent: #FB7185;
+      --accent-gradient: linear-gradient(135deg, #9F1239 0%, #FB7185 100%);
+      --success: #22C55E;
       --warning: #F59E0B;
       --danger: #EF4444;
-      --info: #06B6D4;
+      --info: #38BDF8;
       --sidebar-width: 260px;
     }
 
     body.light-theme {
-      --bg-primary: #F8FAFC;
-      --bg-secondary: #FFFFFF;
+      --bg-primary: #FBF9F8;
+      --bg-secondary: #FCFCFC;
       --bg-card: #FFFFFF;
-      --bg-card-hover: #F1F5F9;
-      --border-color: #E2E8F0;
-      --text-primary: #0F172A;
-      --text-secondary: #475569;
-      --text-muted: #94A3B8;
+      --bg-card-hover: #FDF2F4;
+      --border-color: #ECE6E4;
+      --text-primary: #111827;
+      --text-secondary: #4B5563;
+      --text-muted: #6B7280;
+      --accent: #9F1239;
+      --accent-gradient: linear-gradient(135deg, #9F1239 0%, #BE123C 100%);
     }
 
     * {
@@ -93,7 +95,7 @@
       color: white;
       font-size: 20px;
       font-weight: 800;
-      box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 8px 16px rgba(159, 18, 57, 0.4);
     }
 
     .brand-text h1 {
@@ -146,7 +148,7 @@
     .nav-item.active {
       color: #FFFFFF;
       background: var(--accent-gradient);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(159, 18, 57, 0.4);
     }
 
     .nav-item i {
@@ -173,7 +175,7 @@
       width: 38px;
       height: 38px;
       border-radius: 10px;
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba(159, 18, 57, 0.15);
       color: var(--accent);
       display: flex;
       align-items: center;
@@ -280,7 +282,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(159, 18, 57, 0.35);
       transition: transform 0.2s;
     }
 
@@ -319,7 +321,7 @@
 
     .metric-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(99, 102, 241, 0.4);
+      border-color: rgba(251, 113, 133, 0.4);
     }
 
     .metric-header {
@@ -467,7 +469,7 @@
     }
 
     .plan-free { background: rgba(100, 116, 139, 0.2); color: #94A3B8; border: 1px solid rgba(100, 116, 139, 0.3); }
-    .plan-pro { background: rgba(99, 102, 241, 0.2); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.4); }
+    .plan-pro { background: rgba(159, 18, 57, 0.15); color: #FB7185; border: 1px solid rgba(251, 113, 133, 0.35); }
     .plan-enterprise { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .plan-custom { background: rgba(6, 182, 212, 0.2); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.4); }
 
@@ -892,7 +894,7 @@
           <div class="metric-card">
             <div class="metric-header">
               <span class="metric-label">Total Restaurants</span>
-              <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">
+              <div class="metric-icon" style="background: rgba(159, 18, 57, 0.15); color: #FB7185;">
                 <i class="fa-solid fa-store"></i>
               </div>
             </div>
@@ -936,7 +938,7 @@
             </div>
             <div class="metric-value">₹{{ number_format($stats['revenue']['total_gmv'] ?? 0, 2) }}</div>
             <div>
-              <span class="metric-badge" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">
+              <span class="metric-badge" style="background: rgba(159, 18, 57, 0.15); color: #FB7185;">
                 Today: ₹{{ number_format($stats['revenue']['today_gmv'] ?? 0, 2) }}
               </span>
             </div>
@@ -951,7 +953,7 @@
             </div>
             <div class="metric-value">{{ $stats['plans']['free'] ?? 0 }} Free</div>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <span class="metric-badge" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">
+              <span class="metric-badge" style="background: rgba(159, 18, 57, 0.15); color: #FB7185;">
                 {{ $stats['plans']['pro'] ?? 0 }} Pro
               </span>
               <span class="metric-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
@@ -1207,7 +1209,7 @@
         <!-- Lead Metrics Overview -->
         <div class="metrics-grid" style="margin-bottom: 24px;">
           <div class="metric-card">
-            <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;"><i class="fa-solid fa-inbox"></i></div>
+            <div class="metric-icon" style="background: rgba(159, 18, 57, 0.15); color: #FB7185;"><i class="fa-solid fa-inbox"></i></div>
             <div class="metric-content">
               <span class="metric-label">Total Leads</span>
               <div class="metric-value" id="leadStatTotal">0</div>
@@ -1703,7 +1705,7 @@
                   <button class="action-btn" title="View Full Inspection" onclick="openDetailsModal(${r.id})">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  <a href="/superadmin/impersonate/${r.id}" class="action-btn" title="Login As Restaurant (Access POS & Dashboard)" style="background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.4); text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                  <a href="/superadmin/impersonate/${r.id}" class="action-btn" title="Login As Restaurant (Access POS & Dashboard)" style="background: rgba(159,18,57,0.15); color: #FB7185; border: 1px solid rgba(251,113,133,0.4); text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                     <i class="fa-solid fa-arrow-right-to-bracket"></i>
                   </a>
                   ${isSuspended ? `
@@ -2170,7 +2172,7 @@
           tbody.innerHTML = json.data.map(l => `
             <tr>
               <td style="white-space: nowrap; font-size: 11px; color: var(--text-muted);">${new Date(l.created_at).toLocaleString()}</td>
-              <td><span class="metric-badge" style="background: rgba(99,102,241,0.15); color: #818CF8;">${l.action}</span></td>
+              <td><span class="metric-badge" style="background: rgba(159,18,57,0.15); color: #FB7185;">${l.action}</span></td>
               <td>${l.user ? l.user.name : 'System'}</td>
               <td>${l.restaurant ? l.restaurant.name : (l.target_type + ' #' + l.target_id)}</td>
               <td style="font-family: monospace; font-size: 11px;">${l.ip_address || 'N/A'}</td>
@@ -2233,7 +2235,7 @@
 
       tbody.innerHTML = data.map(log => {
         const role = (log.role || 'staff').toLowerCase();
-        let roleBadgeColor = 'background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.3);';
+        let roleBadgeColor = 'background: rgba(159,18,57,0.15); color: #FB7185; border: 1px solid rgba(251,113,133,0.3);';
         if (role === 'superadmin') {
           roleBadgeColor = 'background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3);';
         } else if (role === 'admin' || role === 'owner') {
@@ -2372,7 +2374,7 @@
         const statusColors = {
           'new': { bg: 'rgba(239, 68, 68, 0.15)', text: '#F87171', border: 'rgba(239, 68, 68, 0.3)' },
           'pending': { bg: 'rgba(245, 158, 11, 0.15)', text: '#FBBF24', border: 'rgba(245, 158, 11, 0.3)' },
-          'contacted': { bg: 'rgba(99, 102, 241, 0.15)', text: '#818CF8', border: 'rgba(99, 102, 241, 0.3)' },
+          'contacted': { bg: 'rgba(159, 18, 57, 0.15)', text: '#FB7185', border: 'rgba(251, 113, 133, 0.3)' },
           'converted': { bg: 'rgba(16, 185, 129, 0.15)', text: '#34D399', border: 'rgba(16, 185, 129, 0.3)' },
           'closed': { bg: 'rgba(100, 116, 139, 0.15)', text: '#94A3B8', border: 'rgba(100, 116, 139, 0.3)' }
         };
