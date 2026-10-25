@@ -2057,7 +2057,7 @@
 
             <!-- Action Buttons Inside Modal -->
             <div style="display: flex; gap: 8px; margin: 16px 0; padding: 12px; background: var(--bg-primary); border-radius: 10px; flex-wrap: wrap;">
-              <a href="/superadmin/impersonate/${r.id}" class="btn-primary" style="background: linear-gradient(135deg, #6366F1, #4F46E5); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 1; min-width: 180px; padding: 10px 14px; font-weight: 700; font-size: 13px;">
+              <a href="/superadmin/impersonate/${r.id}" class="btn-primary" style="background: linear-gradient(135deg, #9F1239, #BE123C); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 1; min-width: 180px; padding: 10px 14px; font-weight: 700; font-size: 13px;">
                 <i class="fa-solid fa-arrow-right-to-bracket"></i> Login As Restaurant
               </a>
               ${isSuspended ? `
