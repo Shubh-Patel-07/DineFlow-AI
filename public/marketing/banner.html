@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DineFlow AI — Official Marketing Banner Suite</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #6366F1;
+      --primary-dark: #4F46E5;
+      --bg: #090D1A;
+      --card: #0F172A;
+      --border: rgba(255, 255, 255, 0.1);
+      --emerald: #10B981;
+      --amber: #F59E0B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #060913;
+      color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+      padding: 30px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .toolbar {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      background: #0F172A;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13.5px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+      transition: all 0.2s;
+    }
+    .btn-download:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.6); }
+
+    /* ─── BANNER CANVAS (1200 x 630 Landscape) ─── */
+    .banner-container {
+      width: 1200px;
+      height: 630px;
+      background: radial-gradient(circle at 85% 20%, rgba(99, 102, 241, 0.25) 0%, transparent 50%),
+                  radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.15) 0%, transparent 45%),
+                  linear-gradient(135deg, #090D1A 0%, #0F172A 60%, #0B1120 100%);
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(99,102,241,0.2);
+    }
+
+    /* Ambient Grid & Glow */
+    .banner-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Left Content Column (620px) */
+    .banner-left {
+      width: 650px;
+      padding: 55px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      padding: 6px 14px;
+      border-radius: 30px;
+      width: fit-content;
+    }
+    .brand-badge img { width: 22px; height: 22px; border-radius: 6px; }
+    .brand-badge span { font-size: 12.5px; font-weight: 800; color: #A5B4FC; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    .headline {
+      font-family: 'Outfit', sans-serif;
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: #FFFFFF;
+      margin-top: 14px;
+      letter-spacing: -0.5px;
+    }
+    .headline .gradient-text {
+      background: linear-gradient(135deg, #818CF8 0%, #C084FC 50%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subheadline {
+      font-size: 16px;
+      color: #94A3B8;
+      line-height: 1.5;
+      margin-top: 12px;
+      max-width: 520px;
+    }
+
+    .features-pill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .feature-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #E2E8F0;
+      backdrop-filter: blur(8px);
+    }
+    .feature-pill i { color: #818CF8; font-size: 14px; }
+    .feature-pill.green i { color: #10B981; }
+    .feature-pill.gold i { color: #F59E0B; }
+    .feature-pill.cyan i { color: #06B6D4; }
+
+    .banner-footer-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .cta-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #FFFFFF;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+    }
+    .url-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .url-tag i { color: #6366F1; }
+
+    /* Right Visual Showcase Column (550px) */
+    .banner-right {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 50px;
+      z-index: 2;
+    }
+
+    /* Mockup POS Terminal Card */
+    .pos-mockup {
+      width: 440px;
+      background: #0B0F19;
+      border: 1.5px solid rgba(99, 102, 241, 0.4);
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.25);
+      overflow: hidden;
+      transform: perspective(1000px) rotateY(-8deg) rotateX(4deg);
+      transition: transform 0.3s;
+    }
+    .pos-mockup-header {
+      background: #111827;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pos-mockup-dots { display: flex; gap: 6px; }
+    .pos-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #EF4444; }
+    .dot-y { background: #F59E0B; }
+    .dot-g { background: #10B981; }
+
+    .pos-mockup-body {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .mock-dish-card {
+      background: #1E293B;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .dish-img-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .dish-info h5 { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .dish-info span { font-size: 11px; font-weight: 800; color: #34D399; }
+
+    .mock-stat-bar {
+      grid-column: span 2;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stat-label { font-size: 11px; color: #A7F3D0; font-weight: 600; text-transform: uppercase; }
+    .stat-val { font-size: 17px; font-weight: 900; color: #10B981; font-family:'JetBrains Mono', monospace; }
+
+    /* Floating Badges */
+    .floating-pill {
+      position: absolute;
+      background: #1E293B;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 10px 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(12px);
+      z-index: 5;
+    }
+    .pill-1 { top: 40px; right: 20px; border-color: rgba(16, 185, 129, 0.4); }
+    .pill-2 { bottom: 50px; right: 280px; border-color: rgba(99, 102, 241, 0.5); }
+    .floating-pill i { font-size: 18px; }
+    .floating-pill .txt-main { font-size: 12.5px; font-weight: 800; color: #fff; display: block; }
+    .floating-pill .txt-sub { font-size: 10px; color: #94A3B8; display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Toolbar -->
+  <div class="toolbar">
+    <div>
+      <h3 style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:800; color:#fff;">DineFlow AI Marketing Banner</h3>
+      <p style="font-size:12px; color:#94A3B8; margin-top:2px;">1200 &times; 630 px &bull; Perfect for WhatsApp Business Catalog, Social Media & Hero Banner</p>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn-download" onclick="downloadBanner()">
+        <i class="fa-solid fa-download"></i> Download Banner (PNG)
+      </button>
+    </div>
+  </div>
+
+  <!-- THE OFFICIAL 1200x630 BANNER CANVAS -->
+  <div class="banner-container" id="bannerCanvas">
+    
+    <!-- Left Column: Copy & Value Proposition -->
+    <div class="banner-left">
+      <div>
+        <div class="brand-badge">
+          <img src="/images/dineflow_logo.jpg" alt="Logo">
+          <span>DineFlow AI &bull; POS Suite 2.0</span>
+        </div>
+
+        <h1 class="headline">
+          Upgrade Your Restaurant <br>
+          With <span class="gradient-text">Smart AI POS</span>
+        </h1>
+
+        <p class="subheadline">
+          The all-in-one restaurant operating platform. Ultra-fast billing, interactive QR menus, direct thermal printing, and live kitchen management.
+        </p>
+
+        <div class="features-pill-grid">
+          <div class="feature-pill green">
+            <i class="fa-solid fa-bolt"></i> 3x Faster Billing &amp; KOT
+          </div>
+          <div class="feature-pill cyan">
+            <i class="fa-solid fa-qrcode"></i> Digital QR Table Ordering
+          </div>
+          <div class="feature-pill gold">
+            <i class="fa-solid fa-fire-burner"></i> Live Kitchen Display (KDS)
+          </div>
+          <div class="feature-pill">
+            <i class="fa-solid fa-print"></i> Direct Thermal Printing (USB/LAN)
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner Footer CTA -->
+      <div class="banner-footer-meta">
+        <div class="cta-btn">
+          <i class="fa-solid fa-rocket"></i> Get Started Free
+        </div>
+        <div class="url-tag">
+          <i class="fa-solid fa-globe"></i> dineflowai.duckdns.org
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: High-Tech POS Interface Mockup -->
+    <div class="banner-right">
+      
+      <!-- Floating Badge 1 (Kitchen KOT) -->
+      <div class="floating-pill pill-1">
+        <div style="width:36px; height:36px; border-radius:10px; background:rgba(16,185,129,0.2); display:flex; align-items:center; justify-content:center; color:#10B981;">
+          <i class="fa-solid fa-bell-concierge"></i>
+        </div>
+        <div>
+          <span class="txt-main">Instant KOT Sync</span>
+          <span class="txt-sub">Kitchen screen in 0.2s</span>
+        </div>
+      </div>
+
+      <!-- POS Device Mockup -->
+      <div class="pos-mockup">
+        <div class="pos-mockup-header">
+          <div class="pos-mockup-dots">
+            <span class="pos-dot dot-r"></span>
+            <span class="pos-dot dot-y"></span>
+            <span class="pos-dot dot-g"></span>
+          </div>
+          <span style="font-size:11px; font-weight:700; color:#94A3B8; font-family:'JetBrains Mono',monospace;">TABLE #07 &bull; ACTIVE BILL</span>
+          <span style="font-size:11px; color:#10B981; font-weight:800;"><i class="fa-solid fa-circle" style="font-size:8px;"></i> LIVE</span>
+        </div>
+
+        <div class="pos-mockup-body">
+          <div class="mock-dish-card">
+            <div class="dish-img-box">🍕</div>
+            <div class="dish-info">
+              <h5>Paneer Tikka Pizza</h5>
+              <span>₹ 340.00</span>
+            </div>
+          </div>
+
+          <div class="mock-dish-card">
+            <div class="dish-img-box">🍔</div>
+            <div class="dish-info">
+              <h5>Crispy Veg Burger</h5>
+              <span>₹ 160.00</span>
+            </div>
+          </div>
+
+          <div class="mock-dish-card">
+            <div class="dish-img-box">🍜</div>
+            <div class="dish-info">
+              <h5>Hakka Noodles</h5>
+              <span>₹ 220.00</span>
+            </div>
+          </div>
+
+          <div class="mock-dish-card">
+            <div class="dish-img-box">🍹</div>
+            <div class="dish-info">
+              <h5>Virgin Mojito</h5>
+              <span>₹ 120.00</span>
+            </div>
+          </div>
+
+          <div class="mock-stat-bar">
+            <div>
+              <span class="stat-label">Total Bill Amount</span>
+              <div style="font-size:10px; color:#6EE7B7;">Inc. CGST &amp; SGST (5%)</div>
+            </div>
+            <span class="stat-val">₹ 882.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Badge 2 (Offline & Thermal) -->
+      <div class="floating-pill pill-2">
+        <div style="width:36px; height:36px; border-radius:10px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center; color:#818CF8;">
+          <i class="fa-solid fa-print"></i>
+        </div>
+        <div>
+          <span class="txt-main">Silent Thermal Print</span>
+          <span class="txt-sub">WebUSB &bull; LAN &bull; WiFi</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    async function downloadBanner() {
+      const banner = document.getElementById('bannerCanvas');
+      const originalTransform = banner.style.transform;
+      
+      try {
+        const canvas = await html2canvas(banner, {
+          scale: 2, // 2x Retina resolution (2400 x 1260)
+          useCORS: true,
+          backgroundColor: '#090D1A'
+        });
+
+        const link = document.createElement('a');
+        link.download = 'DineFlow-AI-Marketing-Banner.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (e) {
+        alert('Could not generate image automatically. You can take a screenshot or print to PDF.');
+      }
+    }
+  </script>
+</body>
+</html>
