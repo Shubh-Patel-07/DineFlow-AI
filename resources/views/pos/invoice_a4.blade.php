@@ -40,7 +40,7 @@
       padding: 8px 16px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700;
       cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; text-decoration: none;
     }
-    .btn-print { background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; }
+    .btn-print { background: linear-gradient(135deg, #9F1239, #BE123C); color: #fff; }
     .btn-whatsapp { background: #25D366; color: #fff; }
     .btn-close { background: rgba(255,255,255,0.1); color: #94A3B8; }
     .btn-action:hover { transform: translateY(-1px); filter: brightness(1.1); }
@@ -348,11 +348,11 @@
         @endphp
         @if(!empty($logoUrl))
           <img src="{{ $logoUrl }}" alt="{{ $restaurant->name }} Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logoFallbackAvatar').style.display='flex';">
-          <div id="logoFallbackAvatar" class="brand-logo" style="display:none; align-items:center; justify-content:center; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; font-size:24px; font-weight:800; font-family:'Outfit',sans-serif;">
+          <div id="logoFallbackAvatar" class="brand-logo" style="display:none; align-items:center; justify-content:center; background:linear-gradient(135deg, #9F1239, #BE123C); color:#fff; font-size:24px; font-weight:800; font-family:'Outfit',sans-serif;">
             {{ strtoupper(substr($restaurant->name, 0, 1)) }}
           </div>
         @else
-          <div class="brand-logo" style="display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; font-size:24px; font-weight:800; font-family:'Outfit',sans-serif;">
+          <div class="brand-logo" style="display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #9F1239, #BE123C); color:#fff; font-size:24px; font-weight:800; font-family:'Outfit',sans-serif;">
             {{ strtoupper(substr($restaurant->name, 0, 1)) }}
           </div>
         @endif

@@ -75,9 +75,9 @@
       text-decoration: none;
     }
     .btn-print {
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      background: linear-gradient(135deg, #9F1239, #BE123C);
       color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(159, 18, 57, 0.4);
     }
     .btn-print:hover {
       filter: brightness(1.1);
@@ -145,7 +145,7 @@
       position: absolute;
       width: 14px;
       height: 14px;
-      border: 2px solid #6366F1;
+      border: 2px solid #9F1239;
       border-radius: 4px;
     }
     .poster-card::before { top: 8px; left: 8px; }

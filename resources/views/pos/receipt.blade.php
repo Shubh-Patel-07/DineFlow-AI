@@ -67,7 +67,7 @@
 
         .btn-feed { background: linear-gradient(135deg, #10B981, #059669); }
         .btn-toggle { background: linear-gradient(135deg, #F59E0B, #D97706); }
-        .btn-print { background: linear-gradient(135deg, #6366F1, #4F46E5); }
+        .btn-print { background: linear-gradient(135deg, #9F1239, #BE123C); }
 
         /* 3D Hardware Thermal Printer Assembly Unit */
         .printer-3d-hardware-unit {
