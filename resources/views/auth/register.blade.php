@@ -11,18 +11,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         :root {
-            --primary: #6366F1;
-            --primary-glow: rgba(99, 102, 241, 0.3);
-            --primary-dark: #4338CA;
-            --success: #10B981;
+            --primary: #9F1239;
+            --primary-glow: rgba(159, 18, 57, 0.35);
+            --primary-dark: #881337;
+            --primary-rose: #FB7185;
+            --success: #22C55E;
             --danger: #EF4444;
-            --bg: #090D1A;
-            --card: #131A35;
-            --card-glass: rgba(19, 26, 53, 0.7);
-            --border: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(99, 102, 241, 0.25);
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
+            --bg: #0B0B0D;
+            --card: #151517;
+            --card-glass: rgba(21, 21, 23, 0.85);
+            --border: #26262A;
+            --border-glow: rgba(159, 18, 57, 0.3);
+            --text-primary: #F4F4F5;
+            --text-secondary: #A1A1AA;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +39,7 @@
         /* ─── SPLIT HERO LEFT ─── */
         .split-left {
             flex: 1.1;
-            background: linear-gradient(135deg, #090D1A 0%, #1e1b4b 50%, #0f172a 100%);
+            background: linear-gradient(135deg, #0B0B0D 0%, #1E0A12 50%, #12060B 100%);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -53,7 +54,7 @@
             left: -20%;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(159, 18, 57, 0.22) 0%, rgba(0,0,0,0) 70%);
             z-index: 0;
             pointer-events: none;
         }
@@ -69,7 +70,7 @@
         .brand-icon {
             width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, #6366F1, #818CF8);
+            background: linear-gradient(135deg, #9F1239, #BE123C);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -77,6 +78,7 @@
             font-size: 20px;
             color: #fff;
             box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(251, 113, 133, 0.3);
         }
 
         .brand-name {
@@ -84,7 +86,7 @@
             font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 40%, #818CF8);
+            background: linear-gradient(135deg, #fff 40%, #FB7185);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -99,10 +101,10 @@
             align-items: center;
             gap: 8px;
             padding: 6px 14px;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: rgba(159, 18, 57, 0.12);
+            border: 1px solid rgba(251, 113, 133, 0.3);
             border-radius: 30px;
-            color: #A5B4FC;
+            color: #FDA4AF;
             font-size: 12px;
             font-weight: 700;
             margin-bottom: 24px;
@@ -253,10 +255,10 @@
         .form-input {
             width: 100%;
             padding: 12px 14px 12px 42px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #151517;
+            border: 1px solid #26262A;
             border-radius: 12px;
-            color: #fff;
+            color: #F4F4F5;
             font-size: 14px;
             font-family: inherit;
             outline: none;
@@ -266,7 +268,7 @@
         .form-input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-glow);
-            background: rgba(15, 23, 42, 0.9);
+            background: #18181B;
         }
 
         .form-row {
@@ -296,7 +298,7 @@
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, #9F1239 0%, #BE123C 100%);
             border: none;
             border-radius: 12px;
             color: #fff;
@@ -304,7 +306,7 @@
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
             cursor: pointer;
-            box-shadow: 0 8px 24px var(--primary-glow);
+            box-shadow: 0 8px 24px rgba(159, 18, 57, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -314,7 +316,12 @@
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(99, 102, 241, 0.45);
+            box-shadow: 0 12px 28px rgba(159, 18, 57, 0.55);
+            background: linear-gradient(135deg, #881337 0%, #9F1239 100%);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
         }
 
         .signin-link {
@@ -325,12 +332,13 @@
         }
 
         .signin-link a {
-            color: #818CF8;
+            color: #FB7185;
             font-weight: 600;
             text-decoration: none;
         }
 
         .signin-link a:hover {
+            color: #FDA4AF;
             text-decoration: underline;
         }
 
@@ -493,7 +501,7 @@
 
                     <label class="checkbox-label">
                         <input type="checkbox" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} required>
-                        <span>I agree to the <a href="{{ route('terms') }}" target="_blank" style="color:#818CF8;">Terms of Service</a> & <a href="{{ route('privacy') }}" target="_blank" style="color:#818CF8;">Privacy Policy</a>.</span>
+                        <span>I agree to the <a href="{{ route('terms') }}" target="_blank" style="color:#FB7185;">Terms of Service</a> & <a href="{{ route('privacy') }}" target="_blank" style="color:#FB7185;">Privacy Policy</a>.</span>
                     </label>
 
                     <button type="submit" id="btnSubmitReg" class="btn-submit">
