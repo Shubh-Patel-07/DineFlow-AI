@@ -1,1723 +1,1380 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-js" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>DineFlow — Modern Restaurant POS, QR Ordering & Kitchen Management</title>
-    <meta name="description" content="DineFlow is the all-in-one restaurant platform. Table QR digital ordering, fast POS billing, real-time Kitchen Display (KDS), inventory control, and offline desktop sync.">
+  <!-- Meta Tags -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Shubh Patel">
+  <title>DineFlow AI – Next-Gen Restaurant Cloud POS, QR Ordering & Enterprise ERP</title>
+  <meta name="description" content="DineFlow AI is India's most advanced restaurant cloud POS and operating system. Instant QR table ordering, lightning-fast 3-second billing, real-time KDS, silent ESC/POS thermal printing, and recipe inventory ERP.">
+
+  <!-- Open Graph / SEO -->
+  <meta property="og:title" content="DineFlow AI – Modern Restaurant POS, QR Ordering & Kitchen Management">
+  <meta property="og:description" content="Complete restaurant operating system. Streamline QR table ordering, fast POS billing, real-time KDS, silent thermal printing, and staff payroll.">
+  <meta property="og:image" content="{{ asset('images/dineflow_banner.jpg') }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ url('/') }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/vendor/posing/css/plugins/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/posing/css/plugins/slick.css">
+  <link rel="stylesheet" href="/vendor/posing/css/plugins/animate.css">
+  <link rel="stylesheet" href="/vendor/posing/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Custom DineFlow Overrides -->
+  <style>
+    :root {
+      --df-primary: #6366F1;
+      --df-primary-dark: #4F46E5;
+      --df-secondary: #52C8C4;
+      --df-accent: #EC4899;
+      --df-dark: #0F172A;
+      --df-slate: #1E293B;
+      --df-whatsapp: #25D366;
+    }
     
-    <!-- Open Graph / SEO Metadata -->
-    <meta property="og:title" content="DineFlow — Modern Restaurant POS, QR Ordering & Kitchen Management">
-    <meta property="og:description" content="Complete restaurant operating system. Streamline QR table ordering, fast POS billing, real-time KDS, offline desktop sync, and staff management.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url('/') }}">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="robots" content="index, follow">
-
-    <!-- Favicon & Brand Icons -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/favicon.png">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary: #6366F1;
-            --primary-glow: rgba(99, 102, 241, 0.35);
-            --primary-dark: #4338CA;
-            --success: #10B981;
-            --success-glow: rgba(16, 185, 129, 0.3);
-            --whatsapp: #25D366;
-            --whatsapp-dark: #128C7E;
-            --accent: #EC4899;
-            --bg: #090D1A;
-            --bg-alt: #0D1326;
-            --card: #131A35;
-            --card-glass: rgba(19, 26, 53, 0.85);
-            --border: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(99, 102, 241, 0.3);
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --text-muted: #64748B;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            width: 100%;
-            line-height: 1.6;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
-        }
-
-        /* ─── CONTAINER & SHARED ─── */
-        .container {
-            width: 100%;
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .navbar .container {
-            max-width: 1400px;
-            padding: 0 24px;
-        }
-
-        /* ─── DYNAMIC FLOATING AMBIENT GLOW ORBS ─── */
-        .ambient-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.32;
-            pointer-events: none;
-            z-index: 0;
-            will-change: transform;
-        }
-        .orb-1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #6366F1, transparent 70%);
-            top: -100px;
-            left: -100px;
-            animation: orbFloat1 18s ease-in-out infinite alternate;
-        }
-        .orb-2 {
-            width: 550px;
-            height: 550px;
-            background: radial-gradient(circle, #EC4899, transparent 70%);
-            top: 25%;
-            right: -150px;
-            animation: orbFloat2 22s ease-in-out infinite alternate;
-        }
-        .orb-3 {
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, #06B6D4, transparent 70%);
-            bottom: 10%;
-            left: 10%;
-            animation: orbFloat3 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes orbFloat1 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(120px, 160px) scale(1.15); }
-            100% { transform: translate(60px, 80px) scale(0.95); }
-        }
-        @keyframes orbFloat2 {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-140px, 120px) scale(1.1); }
-            100% { transform: translate(-80px, -60px) scale(0.9); }
-        }
-        @keyframes orbFloat3 {
-            0% { transform: translate(0, 0) scale(0.9); }
-            50% { transform: translate(150px, -100px) scale(1.2); }
-            100% { transform: translate(40px, -50px) scale(1); }
-        }
-
-        .section-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 30px;
-            color: #A5B4FC;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 14px;
-        }
-
-        .section-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(26px, 3.5vw, 36px);
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 14px;
-            line-height: 1.25;
-            color: #fff;
-        }
-
-        .section-subtitle {
-            font-size: clamp(14.5px, 1.6vw, 16px);
-            color: var(--text-secondary);
-            max-width: 620px;
-            margin: 0 auto 44px;
-            text-align: center;
-            line-height: 1.55;
-        }
-
-        /* ─── NAVBAR ─── */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 72px;
-            background: rgba(9, 13, 26, 0.9);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            gap: 16px;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        .brand-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #6366F1, #818CF8);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            color: #fff;
-            box-shadow: 0 0 12px var(--primary-glow);
-        }
-
-        .brand-name {
-            font-family: 'Outfit', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: -0.4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .brand-name .brand-badge {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 6px;
-            background: rgba(99, 102, 241, 0.2);
-            color: #818CF8;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .nav-links a:hover {
-            color: #fff;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
-
-        .btn-header-demo {
-            padding: 7px 14px;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.35);
-            color: #A5B4FC;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 700;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .btn-header-demo:hover {
-            background: rgba(99, 102, 241, 0.22);
-            border-color: #6366F1;
-            color: #fff;
-        }
-
-        .btn-wa-header {
-            padding: 7px 12px;
-            background: rgba(37, 211, 102, 0.12);
-            border: 1px solid rgba(37, 211, 102, 0.3);
-            color: #4ADE80;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 700;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .btn-wa-header:hover {
-            background: rgba(37, 211, 102, 0.2);
-            border-color: #25D366;
-            color: #fff;
-        }
-
-        .btn-ghost {
-            padding: 7px 14px;
-            color: #CBD5E1;
-            text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 600;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-
-        .btn-primary {
-            padding: 8px 16px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff;
-            text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 700;
-            font-family: 'Outfit', sans-serif;
-            border-radius: 8px;
-            box-shadow: 0 4px 14px var(--primary-glow);
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: none;
-            cursor: pointer;
-            justify-content: center;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            width: 36px;
-            height: 36px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* ─── MOBILE DRAWER ─── */
-        .mobile-drawer-backdrop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(9, 13, 26, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 998;
-            pointer-events: none;
-        }
-
-        .mobile-drawer-backdrop.active {
-            display: block;
-            pointer-events: auto;
-        }
-
-        .mobile-drawer {
-            display: none;
-            position: fixed;
-            top: 72px;
-            left: 0;
-            right: 0;
-            background: #0D1326;
-            border-bottom: 1px solid var(--border);
-            padding: 20px;
-            z-index: 999;
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
-            max-height: calc(100vh - 72px);
-            overflow-y: auto;
-        }
-
-        .mobile-drawer.active {
-            display: block;
-        }
-
-        .mobile-drawer ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .mobile-drawer ul li a {
-            color: #CBD5E1;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: background 0.15s;
-        }
-
-        .mobile-drawer ul li a:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-        }
-
-        /* ─── 1. HERO SECTION ─── */
-        .hero-section {
-            padding: 120px 0 70px;
-            background: radial-gradient(circle at 50% 25%, rgba(99, 102, 241, 0.14) 0%, rgba(9, 13, 26, 0) 70%);
-            position: relative;
-        }
-
-        .hero-content {
-            text-align: center;
-            max-width: 880px;
-            margin: 0 auto;
-        }
-
-        .hero-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(28px, 4.2vw, 44px);
-            font-weight: 900;
-            line-height: 1.2;
-            letter-spacing: -0.6px;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 25%, #EC4899 50%, #818CF8 75%, #FFFFFF 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: textShine 8s linear infinite;
-        }
-
-        @keyframes textShine {
-            to { background-position: 200% center; }
-        }
-
-        .btn-source-glow {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
-            box-shadow: 0 4px 22px rgba(236, 72, 153, 0.45) !important;
-            animation: pulseSource 3s infinite alternate;
-        }
-        .btn-source-glow::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-            transform: rotate(30deg);
-            animation: sweepShine 3.5s infinite linear;
-        }
-        @keyframes sweepShine {
-            0% { transform: translateX(-150%) rotate(30deg); }
-            100% { transform: translateX(150%) rotate(30deg); }
-        }
-        @keyframes pulseSource {
-            0% { box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transform: scale(1); }
-            100% { box-shadow: 0 6px 30px rgba(236, 72, 153, 0.7); transform: scale(1.02); }
-        }
-
-        /* ─── FLOATING LIVE BADGES ─── */
-        .floating-badge {
-            position: absolute;
-            background: rgba(18, 24, 50, 0.88);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 9px 18px;
-            border-radius: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #fff;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 18px rgba(99, 102, 241, 0.25);
-            z-index: 5;
-            pointer-events: none;
-            will-change: transform;
-        }
-        .badge-top-left {
-            top: -22px;
-            left: -20px;
-            animation: floatLevitate1 4s ease-in-out infinite alternate;
-        }
-        .badge-top-right {
-            top: -18px;
-            right: -20px;
-            animation: floatLevitate2 4.5s ease-in-out infinite alternate;
-        }
-        .badge-bottom-left {
-            bottom: -20px;
-            left: 24px;
-            animation: floatLevitate2 5s ease-in-out infinite alternate;
-        }
-        @keyframes floatLevitate1 {
-            0% { transform: translateY(0px) rotate(0deg); }
-            100% { transform: translateY(-12px) rotate(-1.5deg); }
-        }
-        @keyframes floatLevitate2 {
-            0% { transform: translateY(0px) rotate(0deg); }
-            100% { transform: translateY(-10px) rotate(1.5deg); }
-        }
-        .pulse-dot-green {
-            width: 8px;
-            height: 8px;
-            background: #10B981;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px #10B981;
-            animation: dotBlink 1.5s infinite;
-        }
-        @keyframes dotBlink {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
-        }
-
-        .hero-desc {
-            font-size: clamp(15px, 1.7vw, 17px);
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-            max-width: 660px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-
-        .hero-ctas {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            flex-wrap: wrap;
-        }
-
-        .hero-ctas .btn-primary {
-            padding: 12px 28px;
-            font-size: 15px;
-            border-radius: 10px;
-        }
-
-        .hero-ctas .btn-ghost {
-            padding: 12px 24px;
-            font-size: 15px;
-            border-radius: 10px;
-        }
-
-        .hero-pill-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 18px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            border-radius: 30px;
-            color: #34D399;
-            font-size: 12.5px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        /* ─── SHOWCASE MOCKUP ─── */
-        .hero-mockup-wrapper {
-            position: relative;
-            margin-top: 10px;
-        }
-
-        .hero-mockup {
-            background: var(--card-glass);
-            border: 1px solid var(--border-glow);
-            border-radius: 20px;
-            padding: 22px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.12);
-            backdrop-filter: blur(12px);
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .mock-card {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 22px;
-            text-align: left;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mock-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(99, 102, 241, 0.45);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 24px rgba(99, 102, 241, 0.2);
-        }
-
-        .mock-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .mock-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .mock-sub {
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        /* ─── TRUST STATS ─── */
-        .trust-section {
-            padding: 36px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            background: var(--bg-alt);
-        }
-
-        .trust-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-            text-align: center;
-        }
-
-        .trust-item h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 2px;
-        }
-
-        .trust-item p {
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* ─── FEATURES ─── */
-        .features-section {
-            padding: 80px 0;
-            text-align: center;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            text-align: left;
-        }
-
-        .feature-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.25s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--border-glow);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-        }
-
-        .feat-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            background: rgba(99, 102, 241, 0.12);
-            color: #818CF8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-            margin-bottom: 16px;
-        }
-
-        .feature-card h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .feature-card p {
-            font-size: 13.5px;
-            color: var(--text-secondary);
-            line-height: 1.55;
-        }
-
-        /* ─── HOW IT WORKS ─── */
-        .steps-section {
-            padding: 80px 0;
-            background: var(--bg-alt);
-            text-align: center;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            text-align: left;
-        }
-
-        .step-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            position: relative;
-        }
-
-        .step-num {
-            font-family: 'Outfit', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            color: rgba(99, 102, 241, 0.35);
-            margin-bottom: 10px;
-        }
-
-        .step-card h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 17px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .step-card p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        /* ─── ONLINE + OFFLINE WORKFLOW ─── */
-        .sync-section {
-            padding: 80px 0;
-            text-align: center;
-        }
-
-        .sync-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            text-align: left;
-        }
-
-        .sync-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 30px;
-        }
-
-        .sync-card.cloud { border-left: 4px solid #6366F1; }
-        .sync-card.offline { border-left: 4px solid #10B981; }
-
-        .sync-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }
-
-        .sync-card.cloud .sync-badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; }
-        .sync-card.offline .sync-badge { background: rgba(16, 185, 129, 0.15); color: #34D399; }
-
-        .sync-card h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .sync-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.55;
-            margin-bottom: 16px;
-        }
-
-        .sync-flow {
-            padding: 14px 16px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 13px;
-            color: #A5B4FC;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        /* ─── BENEFITS ─── */
-        .benefits-section {
-            padding: 80px 0;
-            background: var(--bg-alt);
-            text-align: center;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-            text-align: left;
-        }
-
-        .benefit-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-        }
-
-        .benefit-card h4 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 15.5px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .benefit-card p {
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        /* ─── PRICING PREVIEW ─── */
-        .pricing-section {
-            padding: 80px 0;
-            text-align: center;
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            text-align: left;
-        }
-
-        .price-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .price-card.featured {
-            border-color: #6366F1;
-            box-shadow: 0 0 24px rgba(99, 102, 241, 0.25);
-            background: linear-gradient(180deg, #18224B 0%, #131A35 100%);
-        }
-
-        .featured-tag {
-            position: absolute;
-            top: -11px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #6366F1;
-            color: #fff;
-            font-size: 10.5px;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 3px 12px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .plan-name {
-            font-family: 'Outfit', sans-serif;
-            font-size: 19px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .plan-price {
-            font-family: 'Outfit', sans-serif;
-            font-size: 36px;
-            font-weight: 900;
-            color: #fff;
-            margin-bottom: 14px;
-        }
-
-        .plan-price span {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .plan-features {
-            list-style: none;
-            margin-bottom: 24px;
-            flex: 1;
-        }
-
-        .plan-features li {
-            font-size: 13.5px;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .plan-features li i {
-            color: #10B981;
-            font-size: 13px;
-        }
-
-        /* ─── FAQ ─── */
-        .faq-section {
-            padding: 80px 0;
-            background: var(--bg-alt);
-            text-align: center;
-        }
-
-        .faq-list {
-            max-width: 760px;
-            margin: 0 auto;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .faq-item {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-        }
-
-        .faq-item h4 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .faq-item p {
-            font-size: 13.5px;
-            color: var(--text-secondary);
-            line-height: 1.55;
-        }
-
-        /* ─── CTA BANNER ─── */
-        .cta-banner {
-            padding: 70px 0;
-            text-align: center;
-            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.16) 0%, rgba(9, 13, 26, 0) 70%);
-        }
-
-        .cta-box {
-            background: linear-gradient(135deg, #18224B, #131A35);
-            border: 1px solid var(--border-glow);
-            border-radius: 20px;
-            padding: 48px 30px;
-            max-width: 860px;
-            margin: 0 auto;
-        }
-
-        .cta-box h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(24px, 3.2vw, 34px);
-            font-weight: 900;
-            color: #fff;
-            margin-bottom: 12px;
-        }
-
-        .cta-box p {
-            font-size: 15px;
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-            max-width: 560px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* ─── FOOTER ─── */
-        .footer {
-            padding: 50px 0 24px;
-            background: #060913;
-            border-top: 1px solid var(--border);
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 32px;
-            margin-bottom: 40px;
-        }
-
-        .footer-brand p {
-            font-size: 13.5px;
-            color: var(--text-muted);
-            margin-top: 10px;
-            max-width: 300px;
-            line-height: 1.5;
-        }
-
-        .footer-col h5 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 14.5px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 14px;
-        }
-
-        .footer-col ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .footer-col a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 13px;
-            transition: color 0.2s ease;
-        }
-
-        .footer-col a:hover {
-            color: #fff;
-        }
-
-        .footer-bottom {
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12.5px;
-            color: var(--text-muted);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        /* ─── RESPONSIVE BREAKPOINTS (320px - 1280px) ─── */
-        @media (max-width: 1280px) {
-            .wa-text { display: none; }
-            .nav-links { gap: 16px; }
-            .nav-links a { font-size: 13.5px; }
-        }
-
-        @media (max-width: 1100px) {
-            .nav-links { gap: 12px; }
-            .nav-links a { font-size: 13px; }
-            .btn-header-demo span { font-size: 12px; }
-            .wa-text { display: none; }
-        }
-
-        @media (max-width: 960px) {
-            .nav-links { display: none; }
-            .desktop-auth-btns { display: none !important; }
-            .mobile-menu-btn { display: flex; }
-            .btn-header-demo { display: none; }
-            .floating-badge { display: none !important; }
-            .hero-mockup { grid-template-columns: 1fr; }
-            .features-grid { grid-template-columns: repeat(2, 1fr); }
-            .steps-grid { grid-template-columns: repeat(2, 1fr); }
-            .benefits-grid { grid-template-columns: repeat(3, 1fr); }
-            .trust-grid { grid-template-columns: repeat(3, 1fr); }
-            .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
-        }
-
-        @media (max-width: 640px) {
-            .navbar { height: 64px; }
-            .mobile-drawer { top: 64px; }
-            .hero-section { padding: 90px 0 50px; }
-            .features-grid { grid-template-columns: 1fr; }
-            .steps-grid { grid-template-columns: 1fr; }
-            .sync-grid { grid-template-columns: 1fr; }
-            .benefits-grid { grid-template-columns: 1fr; }
-            .trust-grid { grid-template-columns: repeat(2, 1fr); }
-            .footer-grid { grid-template-columns: 1fr; }
-            .hero-ctas { flex-direction: column; width: 100%; }
-            .hero-ctas .btn-primary,
-            .hero-ctas .btn-ghost { width: 100%; justify-content: center; }
-            .cta-box { padding: 36px 18px; }
-        }
-    </style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #334155;
+      background-color: #FAFAFC;
+      overflow-x: hidden;
+    }
+
+    /* Brand Header Adjustments */
+    .cs-site_branding img {
+      max-height: 44px;
+      width: auto;
+      object-fit: contain;
+    }
+    
+    .cs-site_header.cs-sticky-active {
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      background-color: #ffffff;
+    }
+    
+    .cs-nav_list > li > a {
+      font-weight: 600;
+      font-size: 15px;
+      color: #1E293B;
+      transition: color 0.25s ease;
+    }
+    .cs-nav_list > li > a:hover {
+      color: #6366F1;
+    }
+
+    /* Badge & Micro Elements */
+    .df-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.08);
+      color: #4F46E5;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 9999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .df-badge-whatsapp {
+      background: #25D366;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+    }
+    .df-badge-whatsapp:hover {
+      background: #128C7E;
+      color: #ffffff;
+    }
+
+    /* Hero Banner Frame */
+    .df-hero-mockup-wrapper {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      border-radius: 20px;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,244,255,0.7));
+      box-shadow: 0 25px 60px -15px rgba(99, 102, 241, 0.35);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+    }
+    .df-hero-mockup-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    /* Floating Metric Pill */
+    .df-stat-pill {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      padding: 10px 18px;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 5;
+    }
+    .df-stat-pill.pill-1 {
+      bottom: -20px;
+      left: -20px;
+    }
+    .df-stat-pill.pill-2 {
+      top: 20px;
+      right: -20px;
+    }
+    .df-stat-pill-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* Primary Accent Buttons */
+    .cs-btn {
+      background-color: #6366F1;
+      border-color: #6366F1;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .cs-btn:before {
+      border-color: #6366F1;
+    }
+    .cs-btn.cs-color1 {
+      background-color: #52C8C4;
+      border-color: #52C8C4;
+    }
+    .cs-btn.cs-btn-outline {
+      background-color: transparent;
+      border: 2px solid #6366F1;
+      color: #6366F1;
+    }
+    .cs-btn.cs-btn-outline:hover {
+      background-color: #6366F1;
+      color: #ffffff;
+    }
+    .cs-btn.cs-btn-outline:before, .cs-btn.cs-btn-outline:after {
+      display: none;
+    }
+
+    /* Pricing Card Glow on Featured */
+    .cs-pricing_table.featured-plan {
+      border: 2px solid #6366F1;
+      position: relative;
+      transform: translateY(-8px);
+      box-shadow: 0 20px 45px rgba(99, 102, 241, 0.2);
+    }
+    .cs-pricing_featured_badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 16px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Hardware Thermal Badge */
+    .df-printer-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      padding: 24px;
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+    .df-printer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+      border-color: #6366F1;
+    }
+
+    @media (max-width: 991px) {
+      .df-stat-pill {
+        display: none;
+      }
+      .cs-pricing_table.featured-plan {
+        transform: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
-
-    <!-- DYNAMIC FLOATING AMBIENT GLOW ORBS -->
-    <div class="ambient-orb orb-1"></div>
-    <div class="ambient-orb orb-2"></div>
-    <div class="ambient-orb orb-3"></div>
-
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container nav-inner">
-            <!-- Brand Logo -->
-            <a href="/" class="brand-logo">
-                <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
-                <div class="brand-name">
-                    <span>DineFlow</span>
-                    <span class="brand-badge">POS</span>
-                </div>
-            </a>
-
-            <!-- Desktop Navigation Links -->
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#workflow">Online + Offline</a></li>
-                <li><a href="/pricing">Pricing</a></li>
-                <li><a href="#faq">FAQ</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-
-            <!-- Header Actions -->
-            <div class="nav-actions">
-                <!-- Buy Source Code Pill -->
-                <a href="/buy-source-code" class="btn-header-demo btn-source-glow" style="border-color: rgba(236, 72, 153, 0.5); color: #fff; font-weight: 800;" title="Buy Complete Unencrypted Source Code">
-                    <i class="fa-solid fa-fire" style="font-size: 11px; color: #fff;"></i>
-                    <span>Buy Source Code</span>
-                </a>
-
-                <!-- Live Demo Pill -->
-                <a href="/demo" class="btn-header-demo" title="Try Live Sandbox Demo">
-                    <i class="fa-solid fa-play" style="font-size: 11px; color: #818CF8;"></i>
-                    <span>Live Demo</span>
-                </a>
-
-                <!-- WhatsApp Click to Chat -->
-                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" class="btn-wa-header" title="Chat on WhatsApp (+91 7777938338)">
-                    <i class="fa-brands fa-whatsapp" style="font-size: 16px; color: #25D366;"></i>
-                    <span class="wa-text">+91 7777938338</span>
-                </a>
-
-                <div class="desktop-auth-btns" style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                @auth
-                    @if(Auth::user()->role === 'superadmin')
-                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost"><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i> Super Admin</a>
-                    @elseif(Auth::user()->role === 'kitchen')
-                        <a href="/kitchen" class="btn-ghost"><i class="fa-solid fa-fire-burner" style="margin-right: 6px;"></i> Kitchen KDS</a>
-                    @elseif(in_array(Auth::user()->role, ['cashier', 'waiter']))
-                        <a href="/pos" class="btn-ghost"><i class="fa-solid fa-cash-register" style="margin-right: 6px;"></i> POS</a>
-                    @else
-                        <a href="/dashboard" class="btn-ghost"><i class="fa-solid fa-gauge" style="margin-right: 6px;"></i> Dashboard</a>
-                    @endif
-                    <a href="{{ route('register') }}" class="btn-primary">
-                        <span>+ Register</span>
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="btn-ghost">Login</a>
-                    <a href="{{ route('register') }}" class="btn-primary">
-                        <span>Start Free</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                @endauth
-                </div>
-
-                <!-- Mobile Hamburger Button -->
-                <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu">
-                    <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- MOBILE MENU DRAWER & BACKDROP -->
-    <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="toggleMobileNav()"></div>
-    <div class="mobile-drawer" id="mobileDrawer">
-        <ul>
-            <li><a href="/buy-source-code" onclick="toggleMobileNav()" style="color: #F472B6; font-weight: 800;"><i class="fa-solid fa-fire" style="color: #EC4899;"></i> Buy Source Code ($2,499)</a></li>
-            <li><a href="/demo" onclick="toggleMobileNav()" style="color: #A5B4FC; font-weight: 700;"><i class="fa-solid fa-play" style="color: #818CF8;"></i> Live Sandbox Demo</a></li>
-            <li><a href="#features" onclick="toggleMobileNav()"><i class="fa-solid fa-wand-magic-sparkles"></i> Features</a></li>
-            <li><a href="#how-it-works" onclick="toggleMobileNav()"><i class="fa-solid fa-compass"></i> How It Works</a></li>
-            <li><a href="#workflow" onclick="toggleMobileNav()"><i class="fa-solid fa-arrows-rotate"></i> Online + Offline</a></li>
-            <li><a href="/pricing"><i class="fa-solid fa-gem"></i> Pricing Plans</a></li>
-            <li><a href="#faq" onclick="toggleMobileNav()"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
-            <li><a href="/contact"><i class="fa-solid fa-headset"></i> Contact Support</a></li>
-            <li>
-                <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" style="color: #4ADE80; font-weight: 700;">
-                    <i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 18px;"></i> WhatsApp (+91 7777938338)
-                </a>
-            </li>
-            <li style="padding-top: 8px; display: flex; gap: 10px;">
-                @auth
-                    @if(Auth::user()->role === 'superadmin')
-                        <a href="{{ route('superadmin.dashboard') }}" class="btn-ghost" style="flex: 1; justify-content: center;">Super Admin</a>
-                    @else
-                        <a href="/dashboard" class="btn-ghost" style="flex: 1; justify-content: center;">Dashboard</a>
-                    @endif
-                    <a href="{{ route('register') }}" class="btn-primary" style="flex: 1; justify-content: center;">+ Register</a>
-                @else
-                    <a href="{{ route('login') }}" class="btn-ghost" style="flex: 1; justify-content: center;">Login</a>
-                    <a href="{{ route('register') }}" class="btn-primary" style="flex: 1; justify-content: center;">Start Free</a>
-                @endauth
-            </li>
-        </ul>
+  <!-- Preloader -->
+  <div class="cs-preloader cs-white_bg cs-center">
+    <div class="cs-preloader_in">
+      <img src="/favicon.svg" alt="DineFlow AI Logo" style="width: 50px; height: 50px;">
     </div>
+  </div>
 
-    <!-- 1. HERO SECTION -->
-    <section class="hero-section">
-        <div class="container hero-content">
-            <!-- Commercial Code Sale Announcement Banner -->
-            <a href="/buy-source-code" style="text-decoration:none; display:inline-block; margin-bottom: 20px;">
-                <div style="display:inline-flex; align-items:center; gap:10px; padding:8px 22px; background: linear-gradient(135deg, rgba(236,72,153,0.18), rgba(99,102,241,0.18)); border: 1.5px solid rgba(236,72,153,0.45); border-radius:30px; color:#F472B6; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; box-shadow: 0 0 22px rgba(236,72,153,0.3); transition: all 0.3s ease;">
-                    <span style="width:8px; height:8px; background:#EC4899; border-radius:50%; display:inline-block; box-shadow:0 0 10px #EC4899;"></span>
-                    <span>🔥 Commercial Source Code &amp; White-Label Sale Active • 50% Off</span>
-                    <i class="fa-solid fa-arrow-right" style="font-size:11px; margin-left:4px;"></i>
-                </div>
+  <!-- Start Header Section -->
+  <header class="cs-site_header cs-style1 cs-sticky-header cs-primary_color cs-white_bg">
+    <div class="cs-main_header">
+      <div class="container">
+        <div class="cs-main_header_in">
+          <!-- Left Logo -->
+          <div class="cs-main_header_left">
+            <a class="cs-site_branding cs-accent_color" href="/">
+              <img src="/images/dineflow_logo.png" alt="DineFlow AI">
             </a>
+          </div>
 
-            <div class="section-tag"><i class="fa-solid fa-bolt"></i> Complete Restaurant Platform</div>
-            <h1 class="hero-title">Complete Restaurant Management, POS, QR Ordering & Kitchen in One Platform.</h1>
-            <p class="hero-desc">
-                DineFlow empowers restaurants, cafés, and food businesses with instant contactless table QR ordering, real-time Kitchen Display (KDS), lightning-fast POS billing, and intelligent inventory tracking.
-            </p>
-
-            <div class="hero-ctas">
-                <a href="/buy-source-code" class="btn-primary btn-source-glow" style="font-weight: 800; padding: 12px 26px;">
-                    <i class="fa-solid fa-fire" style="margin-right: 6px;"></i>
-                    <span>Buy Source Code ($2,499)</span>
-                </a>
-                @auth
-                    @if(Auth::user()->role === 'superadmin')
-                        <a href="{{ route('superadmin.dashboard') }}" class="btn-primary">
-                            <span>Open Super Admin</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    @elseif(Auth::user()->role === 'kitchen')
-                        <a href="/kitchen" class="btn-primary">
-                            <span>Open Kitchen KDS</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    @elseif(in_array(Auth::user()->role, ['cashier', 'waiter']))
-                        <a href="/pos" class="btn-primary">
-                            <span>Open POS Billing</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    @else
-                        <a href="/dashboard" class="btn-primary">
-                            <span>Go to Dashboard</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    @endif
-                @else
-                    <a href="{{ route('register') }}" class="btn-primary">
-                        <span>START FREE</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                @endauth
-                <a href="/demo" class="btn-ghost" style="border: 1px solid #6366F1; color: #A5B4FC; background: rgba(99, 102, 241, 0.1);">
-                    <i class="fa-solid fa-play" style="margin-right: 6px; color: #818CF8;"></i> Try Live Demo
-                </a>
-                @guest
-                <a href="{{ route('login') }}" class="btn-ghost">
-                    <i class="fa-solid fa-right-to-bracket" style="margin-right: 6px;"></i> Login
-                </a>
-                @endguest
+          <!-- Center Nav -->
+          <div class="cs-main_header_center">
+            <div class="cs-nav">
+              <ul class="cs-nav_list">
+                <li><a href="#home" class="cs-smoth_scroll">Home</a></li>
+                <li><a href="#features" class="cs-smoth_scroll">Features</a></li>
+                <li><a href="#operations" class="cs-smoth_scroll">Operations</a></li>
+                <li><a href="#hardware" class="cs-smoth_scroll">Hardware</a></li>
+                <li><a href="#formats" class="cs-smoth_scroll">Formats</a></li>
+                <li><a href="#pricing" class="cs-smoth_scroll">Pricing</a></li>
+                <li><a href="#faq" class="cs-smoth_scroll">FAQ</a></li>
+                <li><a href="#contact" class="cs-smoth_scroll">Contact</a></li>
+              </ul>
             </div>
+          </div>
 
-            <div class="hero-pill-badge">
-                <i class="fa-solid fa-circle-check" style="color: #10B981;"></i> Free Starter Plan • No Credit Card Required • Setup in 2 Minutes
+          <!-- Right Toolbox -->
+          <div class="cs-main_header_right">
+            <div class="cs-toolbox d-flex align-items-center">
+              <a href="/demo" class="cs-link d-none d-sm-inline-flex align-items-center me-3" style="color: #6366F1; font-weight: 700; text-decoration: none;">
+                <i class="fa-solid fa-play-circle me-1"></i> Live Demo
+              </a>
+              <a href="{{ route('login') }}" class="cs-link me-3" style="font-weight: 600; text-decoration: none; color: #1E293B;">
+                Sign In
+              </a>
+              <a href="{{ route('register') }}" class="cs-btn cs-color1" style="text-decoration: none;">
+                <span>Start Free Trial</span>
+              </a>
             </div>
-
-            <!-- Visual Showcase Mockup -->
-            <div class="hero-mockup-wrapper">
-                <div class="floating-badge badge-top-left">
-                    <span class="pulse-dot-green"></span>
-                    <span>⚡ 0.8s Ultra-Fast Billing</span>
-                </div>
-                <div class="floating-badge badge-top-right">
-                    <i class="fa-solid fa-code" style="color: #EC4899;"></i>
-                    <span>⭐ 100% Full Source Code</span>
-                </div>
-                <div class="floating-badge badge-bottom-left">
-                    <i class="fa-solid fa-qrcode" style="color: #818CF8;"></i>
-                    <span>📱 Contactless UPI QR Menu</span>
-                </div>
-
-                <div class="hero-mockup">
-                    <div class="mock-card">
-                        <div class="mock-icon" style="color: #818CF8;"><i class="fa-solid fa-qrcode"></i></div>
-                        <div class="mock-title">Smart QR Ordering</div>
-                        <div class="mock-sub">Instant contactless guest ordering from dining tables with multi-language voice search and UPI QR payments.</div>
-                    </div>
-                    <div class="mock-card">
-                        <div class="mock-icon" style="color: #34D399;"><i class="fa-solid fa-fire-burner"></i></div>
-                        <div class="mock-title">Live Kitchen Display (KDS)</div>
-                        <div class="mock-sub">Zero lost tickets. Color-coded order aging, audio chime alerts, and instant chef completion transitions.</div>
-                    </div>
-                    <div class="mock-card">
-                        <div class="mock-icon" style="color: #F472B6;"><i class="fa-solid fa-cash-register"></i></div>
-                        <div class="mock-title">POS Billing & Soundbox</div>
-                        <div class="mock-sub">Dynamic UPI QR payments, split bills, multi-language soundbox announcements, and thermal receipt printing.</div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </header>
+  <!-- End Header Section -->
 
-    <!-- TRUST / VALUE SECTION -->
-    <section class="trust-section">
-        <div class="container">
-            <div class="trust-grid">
-                <div class="trust-item">
-                    <h3>Free Starter</h3>
-                    <p>₹0 / Forever Free Plan</p>
-                </div>
-                <div class="trust-item">
-                    <h3>No Credit Card</h3>
-                    <p>Instant Onboarding</p>
-                </div>
-                <div class="trust-item">
-                    <h3>2 Min Setup</h3>
-                    <p>Ready Out of the Box</p>
-                </div>
-                <div class="trust-item">
-                    <h3>Cloud + Offline</h3>
-                    <p>Works Without Internet</p>
-                </div>
-                <div class="trust-item">
-                    <h3>Multi-Tenant</h3>
-                    <p>Strict Data Isolation</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 2. FEATURES SECTION -->
-    <section class="features-section" id="features">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> Everything You Need</div>
-            <h2 class="section-title">Built for Modern High-Volume Restaurants</h2>
-            <p class="section-subtitle">A comprehensive suite designed to eliminate wait times and maximize table turnover.</p>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feat-icon-wrap"><i class="fa-solid fa-cash-register"></i></div>
-                    <h3>POS Billing</h3>
-                    <p>Lightning-fast touch terminal with quick item search, modifiers, combo deals, discounts, and one-click receipt printing.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(16, 185, 129, 0.12); color: #34D399;"><i class="fa-solid fa-qrcode"></i></div>
-                    <h3>QR Digital Menu</h3>
-                    <p>Dynamic contactless menu ordering with veg/non-veg filters, dietary badges, live order tracking, and voice recognition.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(236, 72, 153, 0.12); color: #F472B6;"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>Kitchen KDS</h3>
-                    <p>Paperless kitchen display system with order aging timers, sound alerts, preparation stages, and single-tap item completions.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(245, 158, 11, 0.12); color: #FBBF24;"><i class="fa-solid fa-chair"></i></div>
-                    <h3>Table Management</h3>
-                    <p>Real-time visual table floor layout with live occupancy status, occupied order amounts, bill settlement, and auto-release.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(59, 130, 246, 0.12); color: #60A5FA;"><i class="fa-solid fa-user-shield"></i></div>
-                    <h3>Staff & Roles (RBAC)</h3>
-                    <p>Strict role boundaries for Admin, Manager, Cashier, Kitchen Chef, Waiter, and Customer with fast numeric PIN switching.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(139, 92, 246, 0.12); color: #A78BFA;"><i class="fa-solid fa-boxes-stacked"></i></div>
-                    <h3>Inventory Control</h3>
-                    <p>Real-time stock deduction on menu item orders, reorder level alerts, supplier tracking, and waste management.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(20, 184, 166, 0.12); color: #2DD4BF;"><i class="fa-solid fa-receipt"></i></div>
-                    <h3>Expense Management</h3>
-                    <p>Record daily operational expenses (groceries, utilities, salaries, maintenance) categorized per restaurant tenant.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(244, 63, 94, 0.12); color: #FB7185;"><i class="fa-solid fa-tags"></i></div>
-                    <h3>Offers & Coupons</h3>
-                    <p>Create percentage and flat discount coupons with expiry dates, minimum bill thresholds, and auto-apply logic.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feat-icon-wrap" style="background: rgba(16, 185, 129, 0.12); color: #10B981;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                    <h3>Offline Desktop Sync</h3>
-                    <p>Windows Desktop POS continues running offline during internet outages and auto-syncs with cloud MySQL when reconnected.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 3. HOW IT WORKS -->
-    <section class="steps-section" id="how-it-works">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-compass"></i> Simple Onboarding</div>
-            <h2 class="section-title">How DineFlow Works</h2>
-            <p class="section-subtitle">Get your restaurant up and running in 4 quick steps.</p>
-
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-num">01</div>
-                    <h3>Create Account</h3>
-                    <p>Sign up for your free restaurant account with your restaurant name, contact, and preferred currency.</p>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">02</div>
-                    <h3>Add Menu & Tables</h3>
-                    <p>Easily input your food categories, dishes, prices, and configure your dining floor tables.</p>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">03</div>
-                    <h3>Generate QR Codes</h3>
-                    <p>Print high-resolution table QR codes that direct guests to your live digital menu.</p>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">04</div>
-                    <h3>Start Taking Orders</h3>
-                    <p>Receive orders on POS and Kitchen KDS in real-time, collect payments, and track revenue.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. ONLINE + OFFLINE ARCHITECTURE -->
-    <section class="sync-section" id="workflow">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-arrows-rotate"></i> Hybrid Reliability</div>
-            <h2 class="section-title">Uninterrupted Operations: Online + Offline</h2>
-            <p class="section-subtitle">Never lose an order, even if your restaurant internet connection drops.</p>
-
-            <div class="sync-grid">
-                <div class="sync-card cloud">
-                    <span class="sync-badge">Cloud Mode (Online)</span>
-                    <h3>Real-Time Cloud Workflow</h3>
-                    <p>Orders flow instantly from guest table QR scans to POS and Kitchen displays over high-speed cloud infrastructure.</p>
-                    <div class="sync-flow">
-                        <span>1. Customer scans QR &amp; submits order</span>
-                        <span>2. Order saves to Cloud Database</span>
-                        <span>3. POS &amp; KDS notify kitchen staff</span>
-                        <span>4. Instant UPI payment verification</span>
-                    </div>
-                </div>
-
-                <div class="sync-card offline">
-                    <span class="sync-badge">Offline Mode (Desktop POS)</span>
-                    <h3>Local Desktop Resiliency</h3>
-                    <p>When internet disconnects, the Windows Desktop POS continues billing locally into SQLite and auto-syncs when back online.</p>
-                    <div class="sync-flow">
-                        <span>1. POS creates local order in SQLite</span>
-                        <span>2. Receipts print via local thermal printer</span>
-                        <span>3. Internet returns ➔ Auto-Sync queue fires</span>
-                        <span>4. Reconciled with Cloud MySQL (Zero Duplicates)</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. RESTAURANT BENEFITS -->
-    <section class="benefits-section">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-users"></i> Tailored Experience</div>
-            <h2 class="section-title">Benefits for Your Entire Team</h2>
-            <p class="section-subtitle">Designed specifically for every restaurant stakeholder.</p>
-
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div style="font-size: 22px; margin-bottom: 8px;">👔</div>
-                    <h4>Restaurant Owner</h4>
-                    <p>Live sales analytics, expense tracking, menu engineering matrix, and multi-branch control.</p>
-                </div>
-                <div class="benefit-card">
-                    <div style="font-size: 22px; margin-bottom: 8px;">💳</div>
-                    <h4>Cashier</h4>
-                    <p>Speedy billing, split bills, UPI QR soundbox confirmation, and instant thermal receipt printing.</p>
-                </div>
-                <div class="benefit-card">
-                    <div style="font-size: 22px; margin-bottom: 8px;">🏃</div>
-                    <h4>Waiter</h4>
-                    <p>Digital waiter calls with table numbers, mobile table ordering, and instant dish ready notifications.</p>
-                </div>
-                <div class="benefit-card">
-                    <div style="font-size: 22px; margin-bottom: 8px;">👨‍🍳</div>
-                    <h4>Kitchen Chef</h4>
-                    <p>Color-coded KDS screen, zero missed paper tickets, preparation countdown, and single-click completion.</p>
-                </div>
-                <div class="benefit-card">
-                    <div style="font-size: 22px; margin-bottom: 8px;">📱</div>
-                    <h4>Customer</h4>
-                    <p>Zero wait time, contactless digital menu with voice ordering, live order tracker, and easy UPI payment.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 6. PRICING -->
-    <section class="pricing-section" id="pricing">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-gem"></i> Transparent Pricing</div>
-            <h2 class="section-title">Simple Plans for Restaurants of Any Size</h2>
-            <p class="section-subtitle">Start 100% free with no credit card required. Upgrade as your restaurant expands.</p>
-
-            <div class="pricing-grid">
-                <!-- Free Plan -->
-                <div class="price-card">
-                    <div class="plan-name">Free Starter</div>
-                    <div class="plan-price">₹0 <span>/ forever</span></div>
-                    <ul class="plan-features">
-                        <li><i class="fa-solid fa-check"></i> Up to 10 Dining Tables</li>
-                        <li><i class="fa-solid fa-check"></i> Up to 5 Staff Accounts</li>
-                        <li><i class="fa-solid fa-check"></i> Up to 100 Menu Items</li>
-                        <li><i class="fa-solid fa-check"></i> 500 Orders / Month</li>
-                        <li><i class="fa-solid fa-check"></i> QR Code Menus &amp; KDS</li>
-                        <li><i class="fa-solid fa-check"></i> Standard POS Billing</li>
-                    </ul>
-                    <a href="{{ route('register') }}" class="btn-primary" style="width: 100%;">Get Started Free</a>
-                </div>
-
-                <!-- Pro Plan -->
-                <div class="price-card featured">
-                    <div class="featured-tag">Most Popular</div>
-                    <div class="plan-name">Pro Growth</div>
-                    <div class="plan-price">₹1,499 <span>/ month</span></div>
-                    <ul class="plan-features">
-                        <li><i class="fa-solid fa-check"></i> Up to 50 Dining Tables</li>
-                        <li><i class="fa-solid fa-check"></i> Up to 20 Staff Accounts</li>
-                        <li><i class="fa-solid fa-check"></i> Up to 500 Menu Items</li>
-                        <li><i class="fa-solid fa-check"></i> 5,000 Orders / Month</li>
-                        <li><i class="fa-solid fa-check"></i> Offline Desktop Sync</li>
-                        <li><i class="fa-solid fa-check"></i> Advanced Sales Analytics</li>
-                    </ul>
-                    <a href="{{ route('register') }}" class="btn-primary" style="width: 100%;">Start 14-Day Trial</a>
-                </div>
-
-                <!-- Enterprise Plan -->
-                <div class="price-card">
-                    <div class="plan-name">Enterprise</div>
-                    <div class="plan-price">₹3,999 <span>/ month</span></div>
-                    <ul class="plan-features">
-                        <li><i class="fa-solid fa-check"></i> Unlimited Tables &amp; Staff</li>
-                        <li><i class="fa-solid fa-check"></i> Unlimited Menu Items</li>
-                        <li><i class="fa-solid fa-check"></i> Unlimited Monthly Orders</li>
-                        <li><i class="fa-solid fa-check"></i> Multi-Branch Management</li>
-                        <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
-                        <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone Support</li>
-                    </ul>
-                    <a href="/contact" class="btn-ghost" style="width: 100%; justify-content: center;">Contact Sales</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 7. FAQ -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <div class="section-tag"><i class="fa-solid fa-circle-question"></i> Questions &amp; Answers</div>
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <p class="section-subtitle">Everything you need to know about DineFlow.</p>
-
-            <div class="faq-list">
-                <div class="faq-item">
-                    <h4>Is DineFlow free to use?</h4>
-                    <p>Yes! Our Free Starter Plan is 100% free forever with no credit card required. It includes up to 10 tables, 5 staff accounts, 100 menu items, POS billing, and QR ordering.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h4>Do customers need to download an application to order?</h4>
-                    <p>No. Customers simply scan the QR code on their dining table with their phone camera. The digital menu opens instantly in any mobile browser.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h4>Can POS work offline when internet is down?</h4>
-                    <p>Yes. Our Windows Desktop POS app saves orders locally in an offline SQLite database. When internet connection returns, all orders automatically synchronize to the cloud.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h4>Can I connect standard thermal receipt printers?</h4>
-                    <p>Yes. DineFlow supports standard 58mm and 80mm ESC/POS thermal printers, network printers, and standard A4 tax invoices.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h4>Can multiple independent restaurants use the platform?</h4>
-                    <p>Yes. DineFlow features strict multi-tenant data isolation. Each restaurant has its own private menu, customer base, orders, inventory, and staff.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 8. FINAL CTA -->
-    <section class="cta-banner">
-        <div class="container">
-            <div class="cta-box">
-                <h2>Start Your Restaurant Free Today</h2>
-                <p>Join hundreds of modern restaurants accelerating their table turnover and kitchen speed with DineFlow.</p>
-                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                    <a href="{{ route('register') }}" class="btn-primary" style="padding: 13px 28px; font-size: 15px; border-radius: 10px;">
-                        <span>START FREE TODAY</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20Team%2C%20I%20would%20like%20to%20know%20more%20about%20DineFlow%20for%20my%20restaurant." target="_blank" class="btn-primary" style="padding: 13px 24px; font-size: 15px; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);">
-                        <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i>
-                        <span>Chat on WhatsApp</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="/" class="brand-logo">
-                        <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
-                        <div class="brand-name">
-                            <span>DineFlow</span>
-                            <span class="brand-badge">POS</span>
-                        </div>
-                    </a>
-                    <p>Complete restaurant management platform, smart table QR ordering, kitchen display system, and POS billing.</p>
-                </div>
-
-                <div class="footer-col">
-                    <h5>Product</h5>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#workflow">Online + Offline</a></li>
-                        <li><a href="/pricing">Pricing</a></li>
-                        <li><a href="/buy-source-code" style="color: #F472B6; font-weight: 700;">Buy Source Code</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h5>Account &amp; Auth</h5>
-                    <ul>
-                        <li><a href="{{ route('register') }}">Start Free</a></li>
-                        <li><a href="{{ route('login') }}">Login</a></li>
-                        <li><a href="{{ route('auth.pin-login') }}">Quick PIN Login</a></li>
-                        <li><a href="/contact">Support</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h5>Legal &amp; Info</h5>
-                    <ul>
-                        <li><a href="/terms">Terms of Service</a></li>
-                        <li><a href="/privacy">Privacy Policy</a></li>
-                        <li><a href="/contact">Contact Sales</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <div>&copy; 2026 DineFlow. All rights reserved.</div>
-                <div>Designed for High-Performance Restaurant Operations</div>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        function toggleMobileNav() {
-            const drawer = document.getElementById('mobileDrawer');
-            const backdrop = document.getElementById('mobileDrawerBackdrop');
-            const icon = document.getElementById('mobileMenuIcon');
+  <!-- Start Hero -->
+  <div id="home">
+    <div class="cs-height_80 cs-height_lg_80"></div>
+    <section class="cs-hero cs-style1 cs-bg" data-src="/vendor/posing/img/hero_bg.svg">
+      <div class="container">
+        <!-- Hero Graphic (Right / Center) -->
+        <div class="cs-hero_img">
+          <div class="cs-hero_img_bg cs-bg" data-src="/vendor/posing/img/hero_img_bg.png"></div>
+          
+          <div class="df-hero-mockup-wrapper wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
+            <img src="/images/dineflow_banner.jpg" alt="DineFlow AI Restaurant Cloud POS & ERP" class="df-hero-mockup-img">
             
-            if (drawer && backdrop) {
-                const isActive = drawer.classList.contains('active');
-                if (isActive) {
-                    drawer.classList.remove('active');
-                    backdrop.classList.remove('active');
-                    if (icon) icon.className = 'fa-solid fa-bars';
-                } else {
-                    drawer.classList.add('active');
-                    backdrop.classList.add('active');
-                    if (icon) icon.className = 'fa-solid fa-xmark';
-                }
-            }
-        }
-    </script>
+            <!-- Floating Stat Pill 1 -->
+            <div class="df-stat-pill pill-1">
+              <div class="df-stat-pill-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366F1;">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #64748B; font-weight: 600;">Fast Checkout</div>
+                <div style="font-size: 15px; font-weight: 800; color: #0F172A;">3-Sec Billing Speed</div>
+              </div>
+            </div>
+
+            <!-- Floating Stat Pill 2 -->
+            <div class="df-stat-pill pill-2">
+              <div class="df-stat-pill-icon" style="background: rgba(82, 200, 196, 0.15); color: #0D9488;">
+                <i class="fa-solid fa-print"></i>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #64748B; font-weight: 600;">Silent Printing</div>
+                <div style="font-size: 15px; font-weight: 800; color: #0F172A;">Direct ESC/POS Cut</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Content (Left) -->
+        <div class="cs-hero_text">
+          <div class="df-badge">
+            <i class="fa-solid fa-sparkles"></i> 100% Cloud + Offline Local Sync
+          </div>
+          <h1 class="cs-hero_title">
+            Next-Gen Restaurant <br>
+            <span style="color: #6366F1;">Cloud POS &amp; ERP</span>
+          </h1>
+          <div class="cs-hero_subtitle">
+            Accelerate table turnover with 3-second billing, contactless QR table ordering, real-time Kitchen Display (KDS), silent ESC/POS thermal printing, and recipe inventory management.
+          </div>
+
+          <div class="cs-btn_group mt-4 d-flex align-items-center flex-wrap" style="gap: 12px;">
+            <a href="{{ route('register') }}" class="cs-btn" style="text-decoration: none;">
+              <span>Start 14-Day Free Trial</span>
+            </a>
+            <a href="/demo" class="cs-btn cs-btn-outline" style="text-decoration: none;">
+              <span><i class="fa-solid fa-desktop me-2"></i> Explore Sandbox Demo</span>
+            </a>
+            <a href="/buy-source-code" class="cs-btn cs-color1" style="text-decoration: none;">
+              <span><i class="fa-solid fa-code me-2"></i> Buy Source Code</span>
+            </a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="mt-4 pt-2 d-flex align-items-center flex-wrap" style="gap: 20px; font-size: 13px; color: #64748B; font-weight: 600;">
+            <span><i class="fa-solid fa-circle-check text-success me-1"></i> No Credit Card Required</span>
+            <span><i class="fa-solid fa-circle-check text-success me-1"></i> GST Ready (GSTR-1 &amp; 3B)</span>
+            <span><i class="fa-solid fa-circle-check text-success me-1"></i> Windows, Mac, iPad &amp; Android</span>
+          </div>
+        </div>
+
+        <!-- Floating Background Shapes -->
+        <div class="cs-hero_shapes">
+          <div class="cs-shape cs-shape_position1">
+            <img src="/vendor/posing/img/shape/shape_1.svg" alt="Shape">
+          </div>
+          <div class="cs-shape cs-shape_position2">
+            <img src="/vendor/posing/img/shape/shape_2.svg" alt="Shape">
+          </div>
+          <div class="cs-shape cs-shape_position3">
+            <img src="/vendor/posing/img/shape/shape_3.svg" alt="Shape">
+          </div>
+          <div class="cs-shape cs-shape_position4">
+            <img src="/vendor/posing/img/shape/shape_4.svg" alt="Shape">
+          </div>
+          <div class="cs-shape cs-shape_position5">
+            <img src="/vendor/posing/img/shape/shape_5.svg" alt="Shape">
+          </div>
+          <div class="cs-shape cs-shape_position6">
+            <img src="/vendor/posing/img/shape/shape_6.svg" alt="Shape">
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- End Hero -->
+
+  <!-- Start Main Feature Pillars -->
+  <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="cs-seciton_heading cs-style1 text-center">
+        <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Engineered For High Volume</div>
+        <div class="cs-height_10 cs-height_lg_10"></div>
+        <h3 class="cs-section_title">Core Pillars of DineFlow AI</h3>
+      </div>
+      <div class="cs-height_50 cs-height_lg_40"></div>
+      
+      <div class="row">
+        <!-- 01 Fast POS -->
+        <div class="col-md-6 col-xl-3">
+          <div class="cs-height_25 cs-height_lg_0"></div>
+          <div class="cs-iconbox cs-style1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_1.svg" alt="Fast POS Billing">     
+            </div>
+            <div class="cs-iconbox_in">
+              <div class="cs-iconbox_number cs-primary_font">01</div>
+              <h3 class="cs-iconbox_title">3-Sec POS Billing</h3>
+              <div class="cs-iconbox_subtitle">Touchscreen-optimized POS, instant table billing, split checks, token generators, and UPI QR codes.</div>
+            </div>
+          </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
+
+        <!-- 02 QR Table Ordering -->
+        <div class="col-md-6 col-xl-3">
+          <div class="cs-iconbox cs-style1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_2.svg" alt="QR Digital Ordering">               
+            </div>
+            <div class="cs-iconbox_in">
+              <div class="cs-iconbox_number cs-primary_font">02</div>
+              <h3 class="cs-iconbox_title">QR Table Ordering</h3>
+              <div class="cs-iconbox_subtitle">Zero app download required. Diners scan table QR, browse rich visual menus, customize modifiers, and place orders.</div>
+            </div>
+          </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
+
+        <!-- 03 Live KDS -->
+        <div class="col-md-6 col-xl-3">
+          <div class="cs-height_25 cs-height_lg_0"></div>
+          <div class="cs-iconbox cs-style1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_3.svg" alt="Kitchen Display System">   
+            </div>
+            <div class="cs-iconbox_in">
+              <div class="cs-iconbox_number cs-primary_font">03</div>
+              <h3 class="cs-iconbox_title">Real-Time KDS</h3>
+              <div class="cs-iconbox_subtitle">Color-coded prep timers, station routing, and one-tap bump bar for head chefs to eliminate paper KOT confusion.</div>
+            </div>
+          </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
+
+        <!-- 04 Silent Printing -->
+        <div class="col-md-6 col-xl-3">
+          <div class="cs-iconbox cs-style1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_4.svg" alt="Silent Thermal Printing"> 
+            </div>
+            <div class="cs-iconbox_in">
+              <div class="cs-iconbox_number cs-primary_font">04</div>
+              <h3 class="cs-iconbox_title">Silent ESC/POS Print</h3>
+              <div class="cs-iconbox_subtitle">Direct background thermal printing via USB, Bluetooth, or LAN with auto-cut and cash drawer trigger without popups.</div>
+            </div>
+          </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
+      </div>
+      <div class="cs-height_75 cs-height_lg_45"></div>
+    </div>
+  </section>
+  <!-- End Main Feature Pillars -->
+
+  <!-- Start About / Operations Showcase -->
+  <section id="operations" class="cs-gradient_bg_1">
+    <div class="cs-height_100 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="row align-items-center flex-column-reverse-lg">
+        <div class="col-xl-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
+          <div class="cs-left_full_width cs-space110">
+            <div class="cs-left_sided_img">
+              <img src="/vendor/posing/img/about_img_1.png" alt="DineFlow AI Restaurant Operations">
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6">
+          <div class="cs-height_0 cs-height_lg_40"></div>
+          <div class="cs-seciton_heading cs-style1">
+            <div class="cs-section_subtitle">End-To-End Restaurant ERP</div>
+            <div class="cs-height_10 cs-height_lg_10"></div>
+            <h3 class="cs-section_title">Control Every Detail of Your Kitchen &amp; Floor</h3>
+          </div>
+          <div class="cs-height_20 cs-height_lg_20"></div>
+          <p>
+            DineFlow AI bridges the gap between customer experience and kitchen execution. Every transaction triggers automated stock deductions, real-time table state updates, and precise staff audit trails.
+          </p>
+          <div class="cs-height_15 cs-height_lg_15"></div>
+          <div class="cs-list_1_wrap">
+            <ul class="cs-list cs-style1 cs-mp0">
+              <li>
+                <span class="cs-list_icon">
+                  <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
+                </span>
+                <div class="cs-list_right">
+                  <h3>Interactive Floor &amp; Table Management</h3>
+                  <p>Visual floor plan with real-time dining timers, table merging, seat transfers, and reservation scheduling.</p>
+                </div>
+              </li>
+              <li>
+                <span class="cs-list_icon">
+                  <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
+                </span>
+                <div class="cs-list_right">
+                  <h3>Recipe Costing &amp; Auto-Depletion</h3>
+                  <p>Link raw ingredients to menu items. When a burger sells, the exact grams of cheese, patty, and buns are deducted automatically.</p>
+                </div>
+              </li>
+              <li>
+                <span class="cs-list_icon">
+                  <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
+                </span>
+                <div class="cs-list_right">
+                  <h3>Shift Controls &amp; Cash Drawer Reconciliation</h3>
+                  <p>Manager PIN verification, petty cash entries, blind end-of-shift cash counts, and Day-End Z-reports.</p>
+                </div>
+              </li>
+            </ul>
+            <div class="cs-list_img wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s">
+              <img src="/vendor/posing/img/about_img_2.png" alt="POS Floor & Kitchen Management">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_100 cs-height_lg_70"></div>
+    <div class="cs-height_135 cs-height_lg_0"></div>
+  </section>
+  <!-- End About / Operations Showcase -->
+
+  <!-- Start Fun Fact Counters -->
+  <div class="container-fluid">
+    <div class="cs-funfact_1_wrap cs-type1">
+      <div class="cs-funfact cs-style1">
+        <div class="cs-funfact_icon cs-center"><img src="/vendor/posing/img/icons/funfact_icon_1.svg" alt="Restaurants"></div>
+        <div class="cs-funfact_right">
+          <div class="cs-funfact_number cs-primary_font"><span data-count-to="500" class="odometer">500</span>+</div>
+          <h2 class="cs-funfact_title">Active Restaurants</h2>
+        </div>
+      </div>
+      <div class="cs-funfact cs-style1">
+        <div class="cs-funfact_icon cs-center"><img src="/vendor/posing/img/icons/funfact_icon_2.svg" alt="Orders"></div>
+        <div class="cs-funfact_right">
+          <div class="cs-funfact_number cs-primary_font"><span data-count-to="1200" class="odometer">1200</span>k+</div>
+          <h2 class="cs-funfact_title">Orders Processed</h2>
+        </div>
+      </div>
+      <div class="cs-funfact cs-style1">
+        <div class="cs-funfact_icon cs-center"><img src="/vendor/posing/img/icons/funfact_icon_3.svg" alt="Rating"></div>
+        <div class="cs-funfact_right">
+          <div class="cs-funfact_number cs-primary_font"><span data-count-to="99" class="odometer">99</span>.99%</div>
+          <h2 class="cs-funfact_title">Cloud &amp; Offline Uptime</h2>
+        </div>
+      </div>
+      <div class="cs-funfact cs-style1">
+        <div class="cs-funfact_icon cs-center"><img src="/vendor/posing/img/icons/funfact_icon_4.svg" alt="Rating"></div>
+        <div class="cs-funfact_right">
+          <div class="cs-funfact_number cs-primary_font"><span data-count-to="5" class="odometer">5</span>.0★</div>
+          <h2 class="cs-funfact_title">Restaurateur Rating</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Fun Fact Counters -->
+
+  <!-- Start All Features Grid -->
+  <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg" id="features">
+    <div class="cs-height_135 cs-height_lg_0"></div>
+    <div>
+      <div class="cs-height_95 cs-height_lg_70"></div>
+      <div class="container">
+        <div class="cs-seciton_heading cs-style1 text-center">
+          <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Enterprise Capabilities</div>
+          <div class="cs-height_10 cs-height_lg_10"></div>
+          <h3 class="cs-section_title">Everything Required to Run a Food Empire</h3>
+        </div>
+        <div class="cs-height_50 cs-height_lg_40"></div>
+        <div class="row">
+          <!-- Feat 1 -->
+          <div class="col-xl-4 col-md-6">
+            <div class="cs-iconbox cs-style1 cs-type1">
+              <div class="cs-iconbox_icon cs-center">
+                <img src="/vendor/posing/img/icons/icon_box_5.svg" alt="Menu Modifiers & Combos">               
+              </div>
+              <div class="cs-iconbox_in">
+                <h3 class="cs-iconbox_title">Menu Modifiers &amp; Combos</h3>
+                <div class="cs-iconbox_subtitle">Configure multi-variant sizes, optional add-ons, mandatory selections, crust options, and spice level choices.</div>
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+          </div>
+
+          <!-- Feat 2 -->
+          <div class="col-xl-4 col-md-6">
+            <div class="cs-iconbox cs-style1 cs-type1">
+              <div class="cs-iconbox_icon cs-center">
+                <img src="/vendor/posing/img/icons/icon_box_6.svg" alt="Procurement & Vendors">
+              </div>
+              <div class="cs-iconbox_in">
+                <h3 class="cs-iconbox_title">Procurement &amp; Vendor ERP</h3>
+                <div class="cs-iconbox_subtitle">Generate purchase orders (PO), track goods received (GRN), calculate food wastage, and automate vendor payments.</div>
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+          </div>
+
+          <!-- Feat 3 -->
+          <div class="col-xl-4 col-md-6">
+            <div class="cs-iconbox cs-style1 cs-type1">
+              <div class="cs-iconbox_icon cs-center">
+                <img src="/vendor/posing/img/icons/icon_box_7.svg" alt="Staff Attendance & Payroll">                          
+              </div>
+              <div class="cs-iconbox_in">
+                <h3 class="cs-iconbox_title">Staff Attendance &amp; Payroll</h3>
+                <div class="cs-iconbox_subtitle">Role-based security (Cashier, Waiter, Captain, Manager), biometric/PIN check-in, shift history, and salary slips.</div>
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+          </div>
+
+          <!-- Feat 4 -->
+          <div class="col-xl-4 col-md-6">
+            <div class="cs-iconbox cs-style1 cs-type1">
+              <div class="cs-iconbox_icon cs-center">
+                <img src="/vendor/posing/img/icons/icon_box_8.svg" alt="Customer CRM & Loyalty">
+              </div>
+              <div class="cs-iconbox_in">
+                <h3 class="cs-iconbox_title">Customer CRM &amp; Loyalty</h3>
+                <div class="cs-iconbox_subtitle">Maintain guest dining history, favorite items, reward loyalty points, and send automated promotional WhatsApp messages.</div>
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+          </div>
+
+          <!-- Feat 5 -->
+          <div class="col-xl-4 col-md-6">
+            <div class="cs-iconbox cs-style1 cs-type1">
+              <div class="cs-iconbox_icon cs-center">
+                <img src="/vendor/posing/img/icons/icon_box_9.svg" alt="GST & Tax Invoicing"> 
+              </div>
+              <div class="cs-iconbox_in">
+                <h3 class="cs-iconbox_title">GST Tax Ready (India)</h3>
+                <div class="cs-iconbox_subtitle">Compliant with Indian GST laws: CGST, SGST, IGST calculations, SAC codes, B2B tax invoices, and one-click GSTR reports.</div>
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+          </div>
+
+          <!-- Feat 6 -->
+          <div class="col-xl-4 col-md-6">
+            <div class="cs-iconbox cs-style1 cs-type1">
+              <div class="cs-iconbox_icon cs-center">
+                <img src="/vendor/posing/img/icons/icon_box_10.svg" alt="Multi-Branch Central Cloud"> 
+              </div>
+              <div class="cs-iconbox_in">
+                <h3 class="cs-iconbox_title">Multi-Branch Chain Sync</h3>
+                <div class="cs-iconbox_subtitle">Control 1 to 100+ restaurant outlets from a single master dashboard. Synchronize centralized menus and view consolidated revenues.</div>
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cs-height_75 cs-height_lg_45"></div>
+    </div>
+  </section>
+  <!-- End All Features Grid -->
+
+  <!-- Start Silent Thermal Printing Hardware Section -->
+  <section id="hardware" class="cs-gradient_bg_1">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="cs-seciton_heading cs-style1 text-center">
+        <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Hardware &amp; Printing</div>
+        <div class="cs-height_10 cs-height_lg_10"></div>
+        <h3 class="cs-section_title">Direct Silent ESC/POS Thermal Printing</h3>
+        <p class="cs-section_desc text-muted mx-auto" style="max-width: 650px;">
+          Say goodbye to annoying Windows browser print dialogs. DineFlow AI prints directly to kitchen &amp; billing printers in milliseconds.
+        </p>
+      </div>
+      <div class="cs-height_50 cs-height_lg_40"></div>
+
+      <div class="row align-items-center">
+        <div class="col-lg-5 mb-4 mb-lg-0 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
+          <div style="background: #ffffff; border-radius: 20px; padding: 24px; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08); border: 1px solid #E2E8F0;">
+            <img src="/images/pos_thermal_printer.jpg" alt="Thermal Receipt Printer" style="border-radius: 12px; width: 100%; height: auto;">
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+              <span class="badge bg-success px-3 py-2" style="font-size: 13px;"><i class="fa-solid fa-check me-1"></i> Tested &amp; Certified</span>
+              <span class="text-muted fw-bold" style="font-size: 13px;">58mm &amp; 80mm ESC/POS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.4s">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="df-printer-card">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                  <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(99, 102, 241, 0.1); color: #6366F1; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-usb"></i>
+                  </div>
+                  <h4 class="m-0 fs-6 fw-bold">USB &amp; RawBT Silent Cut</h4>
+                </div>
+                <p class="text-muted small m-0">Zero browser prompts. Single-click print fires immediate cut command to high-speed thermal heads.</p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="df-printer-card">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                  <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(82, 200, 196, 0.1); color: #0D9488; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-network-wired"></i>
+                  </div>
+                  <h4 class="m-0 fs-6 fw-bold">LAN &amp; Wi-Fi Kitchen Routing</h4>
+                </div>
+                <p class="text-muted small m-0">Route bar items to Bar Printer (Port 9100) and food orders to Kitchen Printer automatically.</p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="df-printer-card">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                  <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(236, 72, 153, 0.1); color: #EC4899; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-brands fa-bluetooth-b"></i>
+                  </div>
+                  <h4 class="m-0 fs-6 fw-bold">Bluetooth Mobile Printing</h4>
+                </div>
+                <p class="text-muted small m-0">Captains and delivery staff can print receipts on-the-go using compact handheld Bluetooth printers.</p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="df-printer-card">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                  <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fa-solid fa-cash-register"></i>
+                  </div>
+                  <h4 class="m-0 fs-6 fw-bold">RJ11 Cash Drawer Kick</h4>
+                </div>
+                <p class="text-muted small m-0">Sends electronic 24V pulse to automatically pop open the physical cash drawer upon bill settlement.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 p-3 rounded-3" style="background: #ffffff; border-left: 4px solid #6366F1;">
+            <small class="text-dark fw-bold">Compatible Printer Brands:</small>
+            <div class="d-flex flex-wrap gap-3 mt-1 text-muted" style="font-size: 13px;">
+              <span>• EPSON TM-T82 / T88</span>
+              <span>• TVS RP-3160 / 3200</span>
+              <span>• NGX Technologies</span>
+              <span>• Posiflex</span>
+              <span>• Sunmi T2 / V2</span>
+              <span>• Citizen &amp; Xprinter</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_95 cs-height_lg_70"></div>
+  </section>
+  <!-- End Silent Thermal Printing Hardware Section -->
+
+  <!-- Start Restaurant Formats Section -->
+  <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg" id="formats">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="cs-seciton_heading cs-style1 text-center">
+        <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Universal Architecture</div>
+        <div class="cs-height_10 cs-height_lg_10"></div>
+        <h3 class="cs-section_title">Tailored For Every Food &amp; Beverage Model</h3>
+      </div>
+      <div class="cs-height_50 cs-height_lg_40"></div>
+      
+      <div class="row align-items-center flex-column-reverse-lg">
+        <div class="col-xl-6">
+          <div class="cs-left_full_width cs-space40">
+            <div class="cs-left_sided_img">
+              <img src="/vendor/posing/img/retail-store.png" alt="DineFlow AI Restaurant Types">
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-xl-6">
+          <div class="cs-height_25 cs-height_lg_40"></div>
+          <!-- Row 1 -->
+          <div class="row wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
+            <div class="col-lg-11 offset-lg-1">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="cs-iconbox cs-style2 text-center">
+                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_1.svg" alt="Fine Dine"></div>
+                    <h2 class="cs-iconbox_title">Fine Dine &amp; Casual</h2>
+                    <small class="text-muted d-block mt-1">Table reservations, captain tablets &amp; multi-course KOTs.</small>
+                  </div>
+                  <div class="cs-height_25 cs-height_lg_25"></div>
+                </div>
+                <div class="col-md-6">
+                  <div class="cs-iconbox cs-style2 text-center">
+                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_2.svg" alt="QSR"></div>
+                    <h2 class="cs-iconbox_title">QSR &amp; Fast Food</h2>
+                    <small class="text-muted d-block mt-1">High-velocity counter billing, token screens &amp; combos.</small>
+                  </div>
+                  <div class="cs-height_25 cs-height_lg_25"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Row 2 -->
+          <div class="row wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.4s">
+            <div class="col-lg-11">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="cs-iconbox cs-style2 text-center">
+                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_6.svg" alt="Cafe & Bakery"></div>
+                    <h2 class="cs-iconbox_title">Cafes &amp; Bakeries</h2>
+                    <small class="text-muted d-block mt-1">Milk/syrup barista modifiers, advance cake pre-orders.</small>
+                  </div>
+                  <div class="cs-height_25 cs-height_lg_25"></div>
+                </div>
+                <div class="col-md-6">
+                  <div class="cs-iconbox cs-style2 text-center">
+                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_3.svg" alt="Cloud Kitchen"></div>
+                    <h2 class="cs-iconbox_title">Cloud Kitchens</h2>
+                    <small class="text-muted d-block mt-1">Single kitchen cooking for multiple virtual food brands.</small>
+                  </div>
+                  <div class="cs-height_25 cs-height_lg_25"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Row 3 -->
+          <div class="row wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
+            <div class="col-lg-11 offset-lg-1">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="cs-iconbox cs-style2 text-center">
+                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_4.svg" alt="Bars & Pubs"></div>
+                    <h2 class="cs-iconbox_title">Bars &amp; Breweries</h2>
+                    <small class="text-muted d-block mt-1">Running guest bar tabs, liquor peg stock &amp; happy hours.</small>
+                  </div>
+                  <div class="cs-height_25 cs-height_lg_25"></div>
+                </div>
+                <div class="col-md-6">
+                  <div class="cs-iconbox cs-style2 text-center">
+                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_5.svg" alt="Food Trucks"></div>
+                    <h2 class="cs-iconbox_title">Food Trucks &amp; Kiosks</h2>
+                    <small class="text-muted d-block mt-1">Runs 100% on battery tablets and mobile thermal printers.</small>
+                  </div>
+                  <div class="cs-height_25 cs-height_lg_25"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_75 cs-height_lg_70"></div>
+  </section>
+  <!-- End Restaurant Formats Section -->
+
+  <!-- Start Price Section -->
+  <section class="cs-gradient_bg_1" id="pricing">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="cs-seciton_heading cs-style1 text-center">
+        <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">Transparent Investment</div>
+        <div class="cs-height_10 cs-height_lg_10"></div>
+        <h3 class="cs-section_title">Simple Plans That Grow With Your Business</h3>
+      </div>
+      <div class="cs-height_50 cs-height_lg_40"></div>
+      
+      <div class="row align-items-stretch">
+        <!-- Starter Plan -->
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <div class="cs-pricing_table cs-style1 h-100 d-flex flex-column justify-content-between">
+            <div class="cs-pricing_head">
+              <div class="cs-pricing_heading">
+                <div class="cs-pricing_icon cs-center"><img src="/vendor/posing/img/icons/pricing_icon_1.svg" alt="Starter Plan"></div>
+                <h2 class="cs-pricing_title cs-m0">Starter Plan</h2>
+              </div>
+              <div class="cs-price cs-primary_font">
+                <b class="cs-accent_color">₹999</b>
+                <span>/ month</span>
+              </div>
+              <div class="cs-pricing_lable">Ideal For Single Outlets &amp; Cafes</div>
+            </div>
+            
+            <div class="cs-pricing_body flex-grow-1">
+              <ul class="cs-mp0 cs-pricing_feature">
+                <li><i class="fa-solid fa-check text-success me-2"></i> 1 Active POS Billing Counter</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Unlimited Orders &amp; Menu Items</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Dynamic QR Table Ordering</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Up to 15 Dining Tables</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Standard Daily Sales &amp; GST Reports</li>
+                <li class="cs-inactive"><i class="fa-solid fa-xmark text-muted me-2"></i> Multi-Station KDS Screens</li>
+                <li class="cs-inactive"><i class="fa-solid fa-xmark text-muted me-2"></i> Raw Material Recipe ERP</li>
+              </ul>
+            </div>
+            
+            <div class="cs-pricing_footer mt-4">
+              <a href="{{ route('register') }}?plan=starter" class="cs-btn w-100 text-center" style="text-decoration: none;">
+                <span>Start 14-Day Free Trial</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Restaurant Pro Suite (FEATURED) -->
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <div class="cs-pricing_table cs-style1 featured-plan h-100 d-flex flex-column justify-content-between">
+            <span class="cs-pricing_featured_badge"><i class="fa-solid fa-fire me-1"></i> Most Popular</span>
+            
+            <div class="cs-pricing_head">
+              <div class="cs-pricing_heading">
+                <div class="cs-pricing_icon cs-center"><img src="/vendor/posing/img/icons/pricing_icon_2.svg" alt="Restaurant Pro"></div>
+                <h2 class="cs-pricing_title cs-m0">Restaurant Pro</h2>
+              </div>
+              <div class="cs-price cs-primary_font">
+                <b style="color: #6366F1;">₹2,499</b>
+                <span>/ month</span>
+              </div>
+              <div class="cs-pricing_lable" style="background: rgba(99, 102, 241, 0.1); color: #4F46E5;">Full Kitchen &amp; ERP Automation</div>
+            </div>
+            
+            <div class="cs-pricing_body flex-grow-1">
+              <ul class="cs-mp0 cs-pricing_feature">
+                <li><i class="fa-solid fa-check text-success me-2"></i> <strong>3 POS Billing Counters</strong></li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> <strong>Real-time Kitchen Display (KDS)</strong></li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> <strong>Silent ESC/POS Thermal Printing</strong></li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Unlimited Tables &amp; Floor Map Editor</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Recipe Costing &amp; Auto-Depletion ERP</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Shift Controls &amp; Petty Cash Management</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Staff Attendance, Biometrics &amp; Payroll</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> WhatsApp Bill &amp; Loyalty Automation</li>
+              </ul>
+            </div>
+            
+            <div class="cs-pricing_footer mt-4">
+              <a href="{{ route('register') }}?plan=pro" class="cs-btn w-100 text-center" style="background-color: #6366F1; text-decoration: none;">
+                <span>Start Free Trial</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enterprise / Full Source Code -->
+        <div class="col-lg-4">
+          <div class="cs-pricing_table cs-style1 h-100 d-flex flex-column justify-content-between">
+            <div class="cs-pricing_head">
+              <div class="cs-pricing_heading">
+                <div class="cs-pricing_icon cs-center"><img src="/vendor/posing/img/icons/pricing_icon_3.svg" alt="Source Code License"></div>
+                <h2 class="cs-pricing_title cs-m0">Lifetime License</h2>
+              </div>
+              <div class="cs-price cs-primary_font">
+                <b class="cs-accent_color">₹49,999</b>
+                <span>/ One-Time</span>
+              </div>
+              <div class="cs-pricing_lable">100% Commercial Source Code Ownership</div>
+            </div>
+            
+            <div class="cs-pricing_body flex-grow-1">
+              <ul class="cs-mp0 cs-pricing_feature">
+                <li><i class="fa-solid fa-check text-success me-2"></i> <strong>100% Unencrypted Laravel 11 Code</strong></li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Self-Host On Your Own AWS / DigitalOcean</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> <strong>Zero Monthly Subscription Fees Forever</strong></li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Unlimited Restaurant Outlets &amp; Brands</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Full Database Schemas &amp; Migrations</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> White-Labeling &amp; Custom Rebranding Rights</li>
+                <li><i class="fa-solid fa-check text-success me-2"></i> Direct Deployment Assistance by Shubh Patel</li>
+              </ul>
+            </div>
+            
+            <div class="cs-pricing_footer mt-4">
+              <a href="/buy-source-code" class="cs-btn cs-color1 w-100 text-center" style="text-decoration: none;">
+                <span>Acquire Full Source Code</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_95 cs-height_lg_70"></div>
+  </section>
+  <!-- End Price Section -->
+
+  <!-- Start Testimonials Section -->
+  <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="cs-seciton_heading cs-style1 text-center">
+        <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">Client Reviews</div>
+        <div class="cs-height_10 cs-height_lg_10"></div>
+        <h3 class="cs-section_title">Loved by Restaurant Owners Across India</h3>
+      </div>
+      <div class="cs-height_50 cs-height_lg_40"></div>
+      
+      <div class="cs-slider cs-style1 cs-gap-24">
+        <div class="cs-slider_container" data-autoplay="0" data-loop="1" data-speed="600" data-fade-slide="0" data-slides-per-view="responsive" data-xs-slides="1" data-sm-slides="1" data-md-slides="2" data-lg-slides="3" data-add-slides="3">
+          <div class="cs-slider_wrapper">
+            <!-- Review 1 -->
+            <div class="cs-slide">
+              <div class="cs-testimonial cs-style1">
+                <div class="cs-testimonial_text">"DineFlow AI completely eliminated our weekend dinner rush chaos. QR ordering cut waiter delays by 70%, and the silent thermal printing never misses an order!"</div>
+                <div class="cs-testimonial_meta">
+                  <div class="cs-avatar">
+                    <img src="/vendor/posing/img/avatar_1.png" alt="Chef Rajesh Patel">
+                  </div>
+                  <div class="cs-testimonial_meta_right">
+                    <h3 class="cs-testimonial_title">Rajesh Patel</h3>
+                    <div class="cs-testimonial_subtitle">Founder, Spice Symphony Fine Dine (Ahmedabad)</div>
+                    <div class="cs-review" data-review="5">
+                      <div class="cs-review_in"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="cs-slide">
+              <div class="cs-testimonial cs-style1">
+                <div class="cs-testimonial_text">"We run 3 cloud kitchen brands under one roof. The station-wise KDS and automatic ingredient depletion saved us over ₹45,000 every month in food wastage."</div>
+                <div class="cs-testimonial_meta">
+                  <div class="cs-avatar">
+                    <img src="/vendor/posing/img/avatar_2.png" alt="Ananya Sharma">
+                  </div>
+                  <div class="cs-testimonial_meta_right">
+                    <h3 class="cs-testimonial_title">Ananya Sharma</h3>
+                    <div class="cs-testimonial_subtitle">Operations Head, CraveBox Cloud Kitchen (Mumbai)</div>
+                    <div class="cs-review" data-review="5">
+                      <div class="cs-review_in"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="cs-slide">
+              <div class="cs-testimonial cs-style1">
+                <div class="cs-testimonial_text">"We purchased the full Laravel source code and self-hosted on AWS. The codebase is remarkably clean, modern, and perfectly documented. Best investment for our brand."</div>
+                <div class="cs-testimonial_meta">
+                  <div class="cs-avatar">
+                    <img src="/vendor/posing/img/avatar_3.png" alt="Vikram Malhotra">
+                  </div>
+                  <div class="cs-testimonial_meta_right">
+                    <h3 class="cs-testimonial_title">Vikram Malhotra</h3>
+                    <div class="cs-testimonial_subtitle">Director, Urban Cafe Chain (Bangalore)</div>
+                    <div class="cs-review" data-review="5">
+                      <div class="cs-review_in"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_95 cs-height_lg_70"></div>
+  </section>
+  <!-- End Testimonials Section -->
+
+  <!-- Start FAQ Section -->
+  <section id="faq" class="cs-gradient_bg_1">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="cs-seciton_heading cs-style1 text-center">
+      <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">Common Questions</div>
+      <div class="cs-height_10 cs-height_lg_10"></div>
+      <h3 class="cs-section_title">Frequently Asked Questions</h3>
+    </div>
+    <div class="cs-height_50 cs-height_lg_40"></div>
+    <div class="container">
+      <div class="row align-items-center flex-column-reverse-lg">
+        <div class="col-xl-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.4s">
+          <div class="cs-left_full_width cs-space110">
+            <div class="cs-left_sided_img">
+              <img src="/vendor/posing/img/faq_img.png" alt="DineFlow AI FAQ">
+            </div>
+          </div>
+          <div class="cs-height_0 cs-height_lg_40"></div>
+        </div>
+        <div class="col-xl-6">
+          <div class="cs-accordians cs-style1 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.4s">
+            <!-- Q1 -->
+            <div class="cs-accordian cs-white_bg active">
+              <div class="cs-accordian_head">
+                <h2 class="cs-accordian_title"><span>Q1.</span> Do I need to purchase expensive proprietary POS hardware?</h2>
+                <span class="cs-accordian_toggle">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0ZM15 20L7.875 14.5587C7.46452 13.6689 8.23667 12.4769 9.21659 12.4876L15 17.5L20.7834 12.4876C21.7633 12.4769 22.5355 13.6689 22.125 14.5587L15 20Z" fill="currentColor"/>
+                  </svg>                 
+                </span>
+              </div>
+              <div class="cs-accordian-body">
+                No! DineFlow AI operates seamlessly on any existing hardware — Windows PCs, MacBooks, iPads, Android tablets, touch monitors, or smartphones. You can plug in standard 58mm or 80mm ESC/POS USB or LAN thermal printers.
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+
+            <!-- Q2 -->
+            <div class="cs-accordian cs-white_bg">
+              <div class="cs-accordian_head">
+                <h2 class="cs-accordian_title"><span>Q2.</span> How does silent thermal receipt printing work without popups?</h2>
+                <span class="cs-accordian_toggle">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0ZM15 20L7.875 14.5587C7.46452 13.6689 8.23667 12.4769 9.21659 12.4876L15 17.5L20.7834 12.4876C21.7633 12.4769 22.5355 13.6689 22.125 14.5587L15 20Z" fill="currentColor"/>
+                  </svg>                 
+                </span>
+              </div>
+              <div class="cs-accordian-body">
+                DineFlow AI connects directly to ESC/POS print streams via WebUSB, local network raw sockets (Port 9100), or Android RawBT drivers. It transmits raw hex bytes directly to your printer, triggering instant cutting and cash drawer ejection with zero browser dialog delays.
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+
+            <!-- Q3 -->
+            <div class="cs-accordian cs-white_bg">
+              <div class="cs-accordian_head">
+                <h2 class="cs-accordian_title"><span>Q3.</span> Do customers have to download an app to order via QR?</h2>
+                <span class="cs-accordian_toggle">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0ZM15 20L7.875 14.5587C7.46452 13.6689 8.23667 12.4769 9.21659 12.4876L15 17.5L20.7834 12.4876C21.7633 12.4769 22.5355 13.6689 22.125 14.5587L15 20Z" fill="currentColor"/>
+                  </svg>                 
+                </span>
+              </div>
+              <div class="cs-accordian-body">
+                Zero app downloads or logins! Customers open their native phone camera, scan the QR code placed on their dining table, and a rich, interactive menu loads instantaneously in Safari, Chrome, or any mobile browser.
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+
+            <!-- Q4 -->
+            <div class="cs-accordian cs-white_bg">
+              <div class="cs-accordian_head">
+                <h2 class="cs-accordian_title"><span>Q4.</span> Is DineFlow AI compliant with Indian GST laws?</h2>
+                <span class="cs-accordian_toggle">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0ZM15 20L7.875 14.5587C7.46452 13.6689 8.23667 12.4769 9.21659 12.4876L15 17.5L20.7834 12.4876C21.7633 12.4769 22.5355 13.6689 22.125 14.5587L15 20Z" fill="currentColor"/>
+                  </svg>                 
+                </span>
+              </div>
+              <div class="cs-accordian-body">
+                100% GST ready. Configure CGST, SGST, IGST rates (5%, 12%, 18%), service charges, round-offs, restaurant GSTIN, SAC codes, and generate one-click Excel exports for GSTR-1 and GSTR-3B filings.
+              </div>
+            </div>
+            <div class="cs-height_25 cs-height_lg_25"></div>
+
+            <!-- Q5 -->
+            <div class="cs-accordian cs-white_bg">
+              <div class="cs-accordian_head">
+                <h2 class="cs-accordian_title"><span>Q5.</span> What is included with the Lifetime Source Code license?</h2>
+                <span class="cs-accordian_toggle">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0ZM15 20L7.875 14.5587C7.46452 13.6689 8.23667 12.4769 9.21659 12.4876L15 17.5L20.7834 12.4876C21.7633 12.4769 22.5355 13.6689 22.125 14.5587L15 20Z" fill="currentColor"/>
+                  </svg>                 
+                </span>
+              </div>
+              <div class="cs-accordian-body">
+                You receive the complete, unencrypted, production-ready Laravel 11 + Blade + Alpine.js codebase, MySQL database schemas, and documentation. You can host on your own server, rebrand with your logo, and never pay monthly subscription fees or aggregator commissions again.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_95 cs-height_lg_70"></div>
+  </section>
+  <!-- End FAQ Section -->
+
+  <!-- Start Contact Section -->
+  <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg" id="contact">
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="row">
+        <!-- Contact Info Left -->
+        <div class="col-xl-5 col-lg-8">
+          <div class="cs-seciton_heading cs-style1">
+            <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">Direct Contact</div>
+            <div class="cs-height_10 cs-height_lg_10"></div>
+            <h3 class="cs-section_title">Book a 1-on-1 Personalized Live Demo</h3>
+          </div>
+          <div class="cs-height_20 cs-height_lg_20"></div>
+          <p>
+            Experience how DineFlow AI transforms dining room efficiency, kitchen throughput, and inventory control. Our restaurant solutions team will answer all your questions.
+          </p>
+          <div class="cs-height_15 cs-height_lg_15"></div>
+          
+          <!-- Address -->
+          <div class="cs-iconbox cs-style3">
+            <div class="cs-iconbox_icon">
+              <img src="/vendor/posing/img/icons/contact_icon_1.svg" alt="Location">
+            </div>
+            <div class="cs-iconbox_right">
+              <h2 class="cs-iconbox_title">Headquarters</h2>
+              <div class="cs-iconbox_subtitle">Gujarat &amp; Bangalore, India</div>
+            </div>
+          </div>
+          <div class="cs-height_30 cs-height_lg_30"></div>
+
+          <!-- Phone -->
+          <div class="cs-iconbox cs-style3">
+            <div class="cs-iconbox_icon">
+              <img src="/vendor/posing/img/icons/contact_icon_2.svg" alt="Phone">
+            </div>
+            <div class="cs-iconbox_right">
+              <h2 class="cs-iconbox_title">Direct Phone / WhatsApp</h2>
+              <div class="cs-iconbox_subtitle">
+                <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20want%20a%20DineFlow%20AI%20Demo" target="_blank" style="color: #6366F1; text-decoration: none; font-weight: 700;">
+                  +91 77779 38338
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="cs-height_30 cs-height_lg_30"></div>
+
+          <!-- Email -->
+          <div class="cs-iconbox cs-style3">
+            <div class="cs-iconbox_icon">
+              <img src="/vendor/posing/img/icons/contact_icon_3.svg" alt="Email">
+            </div>
+            <div class="cs-iconbox_right">
+              <h2 class="cs-iconbox_title">Official Support Email</h2>
+              <div class="cs-iconbox_subtitle">support@dineflowai.com</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form Right -->
+        <div class="col-xl-6 offset-xl-1">
+          <div class="cs-height_40 cs-height_lg_40"></div>
+          
+          <form action="{{ route('contact.submit') }}" method="POST" class="cs-contact_form" style="background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08); border: 1px solid #E2E8F0;">
+            @csrf
+            <!-- Anti-bot Honeypot -->
+            <input type="text" name="website_hp" style="display:none;" tabindex="-1" autocomplete="off">
+            <input type="hidden" name="source" value="landing_page_lead">
+
+            <h2 class="cs-contact_form_title mb-2" style="font-size: 24px; font-weight: 800; color: #0F172A;">Request Demo &amp; Pricing</h2>
+            <p class="text-muted small mb-4">Fill in your restaurant details and we will reach out within 30 minutes.</p>
+
+            @if(session('success'))
+              <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+                <i class="fa-solid fa-circle-check me-2 fs-5"></i>
+                <div>{{ session('success') }}</div>
+              </div>
+            @endif
+
+            @if(isset($errors) && $errors->any())
+              <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2 fs-5"></i>
+                <div>{{ $errors->first() }}</div>
+              </div>
+            @endif
+
+            <div class="row">
+              <div class="col-lg-6 mb-3">
+                <label class="form-label small fw-bold text-dark">Your Name *</label>
+                <input type="text" name="name" class="cs-form_field" placeholder="e.g. Shubh Patel" value="{{ old('name') }}" required>
+              </div>
+              <div class="col-lg-6 mb-3">
+                <label class="form-label small fw-bold text-dark">Restaurant Name *</label>
+                <input type="text" name="restaurant_name" class="cs-form_field" placeholder="e.g. Royal Dine &amp; Cafe" value="{{ old('restaurant_name') }}" required>
+              </div>
+              <div class="col-lg-6 mb-3">
+                <label class="form-label small fw-bold text-dark">Phone / WhatsApp Number *</label>
+                <input type="text" name="phone" class="cs-form_field" placeholder="e.g. +91 98765 43210" value="{{ old('phone') }}" required>
+              </div>
+              <div class="col-lg-6 mb-3">
+                <label class="form-label small fw-bold text-dark">Email Address</label>
+                <input type="email" name="email" class="cs-form_field" placeholder="e.g. contact@restaurant.com" value="{{ old('email') }}">
+              </div>
+              <div class="col-lg-12 mb-3">
+                <label class="form-label small fw-bold text-dark">City &amp; Outlets</label>
+                <input type="text" name="city" class="cs-form_field" placeholder="e.g. Ahmedabad (2 Outlets)" value="{{ old('city') }}">
+              </div>
+              <div class="col-lg-12 mb-4">
+                <label class="form-label small fw-bold text-dark">Tell Us About Your Requirements</label>
+                <textarea name="message" cols="30" rows="3" class="cs-form_field" placeholder="Mention any specific needs: QR Ordering, KDS, Thermal Printers, Multi-branch, etc.">{{ old('message') }}</textarea>
+              </div>
+              <div class="col-lg-12">
+                <button type="submit" class="cs-btn cs-size_md w-100" style="background-color: #6366F1;">
+                  <span>Book Free Live Demo</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_95 cs-height_lg_70"></div>
+  </section>
+  <!-- End Contact Section -->
+
+  <!-- Start Footer -->
+  <footer class="cs-footer" style="background-color: #0F172A; color: #94A3B8;">
+    <div class="cs-height_75 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="row">
+        <!-- Brand Info -->
+        <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+          <div class="cs-footer_item">
+            <div class="cs-footer_widget_text">
+              <a href="/">
+                <img src="/images/dineflow_logo.png" alt="DineFlow AI" style="max-height: 48px; width: auto; filter: brightness(0) invert(1);">
+              </a>
+              <p class="mt-3" style="color: #94A3B8; font-size: 14px; line-height: 1.7;">
+                Next-generation restaurant cloud POS, contactless QR ordering, real-time KDS, and raw material recipe costing ERP. Engineered for reliability, speed, and profitability.
+              </p>
+            </div>
+            <div class="cs-height_20 cs-height_lg_20"></div>
+            <div class="d-flex align-items-center gap-3">
+              <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20AI" target="_blank" class="df-badge df-badge-whatsapp text-decoration-none">
+                <i class="fa-brands fa-whatsapp fs-5"></i> Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+          <div class="cs-footer_item widget_nav_menu">
+            <h2 class="cs-widget_title text-white" style="font-size: 17px; font-weight: 700;">Platform</h2>
+            <ul class="menu list-unstyled p-0 m-0" style="font-size: 14px; line-height: 2.2;">
+              <li><a href="#features" class="text-decoration-none" style="color: #94A3B8;">Core Features</a></li>
+              <li><a href="#operations" class="text-decoration-none" style="color: #94A3B8;">Kitchen Operations</a></li>
+              <li><a href="#hardware" class="text-decoration-none" style="color: #94A3B8;">Thermal Printing</a></li>
+              <li><a href="/demo" class="text-decoration-none" style="color: #94A3B8;">Interactive Sandbox</a></li>
+              <li><a href="/buy-source-code" class="text-decoration-none" style="color: #F472B6; font-weight: 700;">Buy Source Code</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Solutions -->
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <div class="cs-footer_item widget_nav_menu">
+            <h2 class="cs-widget_title text-white" style="font-size: 17px; font-weight: 700;">Restaurant Models</h2>
+            <ul class="menu list-unstyled p-0 m-0" style="font-size: 14px; line-height: 2.2;">
+              <li><a href="#formats" class="text-decoration-none" style="color: #94A3B8;">Fine Dine &amp; Casual</a></li>
+              <li><a href="#formats" class="text-decoration-none" style="color: #94A3B8;">QSR &amp; Fast Food Counters</a></li>
+              <li><a href="#formats" class="text-decoration-none" style="color: #94A3B8;">Cafes &amp; Bakeries</a></li>
+              <li><a href="#formats" class="text-decoration-none" style="color: #94A3B8;">Cloud Kitchens &amp; Multi-Brands</a></li>
+              <li><a href="#formats" class="text-decoration-none" style="color: #94A3B8;">Bars, Pubs &amp; Breweries</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Account & Legal -->
+        <div class="col-lg-3 col-md-6">
+          <div class="cs-footer_item widget_nav_menu">
+            <h2 class="cs-widget_title text-white" style="font-size: 17px; font-weight: 700;">Account &amp; Legal</h2>
+            <ul class="menu list-unstyled p-0 m-0" style="font-size: 14px; line-height: 2.2;">
+              <li><a href="{{ route('login') }}" class="text-decoration-none" style="color: #94A3B8;">Restaurant Login</a></li>
+              <li><a href="{{ route('register') }}" class="text-decoration-none" style="color: #94A3B8;">Start Free Trial</a></li>
+              <li><a href="{{ route('auth.pin-login') }}" class="text-decoration-none" style="color: #94A3B8;">Staff Quick PIN Login</a></li>
+              <li><a href="/terms" class="text-decoration-none" style="color: #94A3B8;">Terms of Service</a></li>
+              <li><a href="/privacy" class="text-decoration-none" style="color: #94A3B8;">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Sub-Footer -->
+      <div class="pt-4 mt-5 border-top d-flex justify-content-between align-items-center flex-wrap" style="border-color: rgba(255,255,255,0.1) !important; font-size: 13px;">
+        <div style="color: #64748B;">
+          &copy; {{ date('Y') }} <strong>DineFlow AI</strong>. Developed &amp; Owned by <strong>Shubh Patel</strong>. All Rights Reserved.
+        </div>
+        <div style="color: #64748B;">
+          Engineered for Ultra-High Performance Restaurant Cloud Operations
+        </div>
+      </div>
+    </div>
+    <div class="cs-height_50 cs-height_lg_40"></div>
+  </footer>
+  <!-- End Footer -->
+
+  <!-- JavaScript Plugins -->
+  <script src="/vendor/posing/js/plugins/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/posing/js/plugins/jquery.slick.min.js"></script>
+  <script src="/vendor/posing/js/plugins/jquery.counter.min.js"></script>
+  <script src="/vendor/posing/js/plugins/wow.min.js"></script>
+  <script src="/vendor/posing/js/main.js"></script>
 </body>
 </html>
