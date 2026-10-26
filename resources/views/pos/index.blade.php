@@ -2738,7 +2738,7 @@
   </div>
 
 @if(Auth::user()?->restaurant?->is_demo)
-<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 4px 16px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 99999; border-bottom: 1px solid rgba(0,0,0,0.15);">
+<div id="demoSandboxBanner" style="position: fixed; top: 0; left: 0; right: 0; height: 32px; background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 4px 16px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 8px; z-index: 999999; border-bottom: 1px solid rgba(0,0,0,0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.25);">
   <div style="display:flex; align-items:center; gap:8px;">
     <span style="background:#000; color:#FBBF24; padding:1px 6px; border-radius:4px; font-size:9.5px; font-weight:900;">DEMO POS</span>
     <span>Isolated sandbox terminal. Real restaurant orders are not affected.</span>
@@ -2752,6 +2752,9 @@
     </a>
   </div>
 </div>
+<style>
+  body { padding-top: 32px !important; }
+</style>
 @endif
 
   <!-- POS Body -->

@@ -27,6 +27,9 @@ class DemoSandboxController extends Controller
             if ($currentRest && $currentRest->is_demo && !$request->has('fresh')) {
                 // Return to active demo session
                 $target = $request->query('destination', '/dashboard');
+                if ($target === 'pos') $target = '/pos';
+                if ($target === 'kitchen') $target = '/kitchen';
+                if ($target === 'qr') $target = "/customer/menu?restaurantId={$currentRest->id}&tableId=1";
                 return redirect($target);
             }
             if ($currentRest && $currentRest->is_demo && $request->has('fresh')) {
@@ -50,11 +53,11 @@ class DemoSandboxController extends Controller
         ]);
 
         $destination = $request->query('destination', '/dashboard');
-        if ($destination === 'pos') {
+        if ($destination === 'pos' || $destination === '/pos') {
             return redirect('/pos')->with('info', '⚡ Welcome to the Live Demo POS Terminal Sandbox!');
-        } elseif ($destination === 'kitchen') {
+        } elseif ($destination === 'kitchen' || $destination === '/kitchen') {
             return redirect('/kitchen')->with('info', '⚡ Welcome to the Live Demo Kitchen KDS Sandbox!');
-        } elseif ($destination === 'qr') {
+        } elseif ($destination === 'qr' || $destination === '/qr') {
             return redirect("/customer/menu?restaurantId={$sandbox['restaurant']->id}&tableId=1");
         }
 

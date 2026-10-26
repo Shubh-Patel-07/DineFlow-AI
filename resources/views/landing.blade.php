@@ -1437,8 +1437,8 @@
             </div>
             <div class="d-flex flex-column gap-2 text-muted" style="font-size: 14px;">
               <div><i class="fa-brands fa-whatsapp text-success me-2 fs-6"></i> <strong>WhatsApp:</strong> <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20am%20interested%20in%20DineFlow%20AI" target="_blank" class="text-dark fw-bold text-decoration-none">+91 77779 38338</a></div>
-              <div><i class="fa-solid fa-envelope text-primary me-2 fs-6"></i> <strong>Email:</strong> <a href="mailto:shubhpatel07@gmail.com" class="text-dark fw-semibold text-decoration-none">shubhpatel07@gmail.com</a></div>
-              <div><i class="fa-solid fa-location-dot text-danger me-2 fs-6"></i> <strong>Location:</strong> Ahmedabad &amp; Bangalore, India</div>
+              <div><i class="fa-solid fa-envelope text-primary me-2 fs-6"></i> <strong>Email:</strong> <a href="mailto:shubhmpatel77@gmail.com" class="text-dark fw-semibold text-decoration-none">shubhmpatel77@gmail.com</a></div>
+              <div><i class="fa-solid fa-location-dot text-danger me-2 fs-6"></i> <strong>Location:</strong> Ahmedabad, Gujarat, India</div>
               <div><i class="fa-solid fa-clock text-warning me-2 fs-6"></i> <strong>Availability:</strong> Mon - Sun (9:00 AM - 11:00 PM IST)</div>
             </div>
           </div>
@@ -1524,10 +1524,18 @@
               </p>
             </div>
             <div class="cs-height_20 cs-height_lg_20"></div>
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex flex-column gap-2">
               <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20am%20interested%20in%20DineFlow%20AI" target="_blank" class="df-badge df-badge-whatsapp text-decoration-none">
                 <i class="fa-brands fa-whatsapp fs-5"></i> +91 77779 38338
               </a>
+              <div class="mt-2" style="font-size: 13.5px;">
+                <a href="mailto:shubhmpatel77@gmail.com" class="text-decoration-none d-flex align-items-center gap-2" style="color: #94A3B8;">
+                  <i class="fa-solid fa-envelope text-primary"></i> shubhmpatel77@gmail.com
+                </a>
+              </div>
+              <div style="font-size: 13.5px; color: #94A3B8;">
+                <i class="fa-solid fa-location-dot text-danger me-2"></i> Ahmedabad, Gujarat, India
+              </div>
             </div>
           </div>
         </div>

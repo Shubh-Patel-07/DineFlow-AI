@@ -337,7 +337,7 @@
 @include('partials.impersonate-banner')
 
 @if(Auth::user()?->restaurant?->is_demo)
-<div id="demoSandboxBanner" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 7px 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 9999;">
+<div id="demoSandboxBanner" style="position: fixed; top: 0; left: 0; right: 0; height: 34px; background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); color: #000; padding: 4px 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 8px; z-index: 999999; box-shadow: 0 2px 8px rgba(0,0,0,0.25);">
   <div style="display:flex; align-items:center; gap:8px;">
     <span style="background:#000; color:#FBBF24; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:900;">DEMO MODE</span>
     <span>Your changes are temporary and strictly isolated in your personal sandbox. Production data is safe.</span>
@@ -351,6 +351,9 @@
     </a>
   </div>
 </div>
+<style>
+  body { padding-top: 34px !important; }
+</style>
 @endif
 
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
