@@ -178,77 +178,14 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
             $categorySales = [];
         }
 
-        // DashDine KPI Extra Metrics
-        $avgOrderValue = $todayOrdersCount > 0 ? round($todayRevenue / $todayOrdersCount, 2) : 0;
-        $cancellationsCount = \App\Models\Order::where('restaurant_id', $restaurantId)
-            ->whereBetween('created_at', [$todayStart, $todayEnd])
-            ->where('status', 'cancelled')
-            ->count();
-
-        // Live Floor Tables
-        $floorTables = \App\Models\Table::where('restaurant_id', $restaurantId)
-            ->orderBy('table_number')
-            ->take(12)
-            ->get();
-        $occupiedTableIds = \App\Models\Order::where('restaurant_id', $restaurantId)
-            ->where('payment_status', 'pending')
-            ->whereNotIn('status', ['completed', 'cancelled', 'served'])
-            ->pluck('table_id')
-            ->toArray();
-
-        // Recent Orders with relations
-        $recentOrdersList = collect();
-        try {
-            $recentOrdersList = \App\Models\Order::where('restaurant_id', $restaurantId)
-                ->with(['table', 'items.menuItem'])
-                ->orderByDesc('id')
-                ->take(6)
-                ->get();
-        } catch (\Throwable $e) {}
-
-        // Top Selling Menu Items
-        $topMenuItems = collect();
-        try {
-            $topMenuItems = \DB::table('order_items')
-                ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
-                ->where('orders.restaurant_id', $restaurantId)
-                ->select('menu_items.name', 'menu_items.category', \DB::raw('SUM(order_items.quantity) as total_sold'))
-                ->groupBy('menu_items.id', 'menu_items.name', 'menu_items.category')
-                ->orderByDesc('total_sold')
-                ->take(5)
-                ->get();
-        } catch (\Throwable $e) {}
-
-        // Staff on Duty
-        $staffOnDuty = collect();
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('staff_attendances')) {
-                $staffOnDuty = \App\Models\StaffAttendance::where('restaurant_id', $restaurantId)
-                    ->whereDate('date', \Carbon\Carbon::today())
-                    ->where('status', 'present')
-                    ->whereNull('clock_out')
-                    ->with('user')
-                    ->take(4)
-                    ->get();
-            }
-        } catch (\Throwable $e) {}
-
         return view('dashboard', [
             'todayOrdersCount' => $todayOrdersCount,
             'ordersDiffText' => $ordersDiffText,
             'todayRevenue' => $todayRevenue,
             'revenueDiffText' => $revenueDiffText,
-            'avgOrderValue' => $avgOrderValue,
-            'cancellationsCount' => $cancellationsCount,
             'occupiedTablesCount' => $occupiedTablesCount,
             'totalTablesCount' => $totalTablesCount,
             'activeCustomers' => $activeCustomers,
-            'floorTables' => $floorTables,
-            'occupiedTableIds' => $occupiedTableIds,
-            'recentOrdersList' => $recentOrdersList,
-            'topMenuItems' => $topMenuItems,
-            'staffOnDuty' => $staffOnDuty,
             'weeklySalesLabels' => $weeklySalesLabels,
             'weeklySalesData' => $weeklySalesData,
             'categorySalesLabels' => array_keys($categorySales),

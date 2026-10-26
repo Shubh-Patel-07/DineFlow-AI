@@ -3,893 +3,337 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard Overview — DineFlow AI POS</title>
+  <title>Dashboard — DineFlow AI POS</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="shortcut icon" href="/favicon.ico">
   <script>window.AUTH_USER_ROLE = "{{ Auth::user()?->role ?? Auth::user()?->username ?? session('active_role') ?? '' }}";</script>
   <script src="/frontend/admin/utils.js"></script>
-
-  <!-- Google Typography: Outfit & Inter & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
   <style>
-    /* ═══════════════════════════════════════════════════════════════
-       DASHDINE DESIGN SYSTEM TOKENS (LIGHT & DARK THEMES)
-       ═══════════════════════════════════════════════════════════════ */
     :root {
-      /* DashDine Signature Ember Orange & Accents */
-      --primary:         #FF6B00;
-      --primary-hover:   #FA5A2A;
-      --primary-gradient: linear-gradient(135deg, #FF6B00 0%, #FA5A2A 100%);
-      --primary-light:   rgba(255, 107, 0, 0.12);
-      --primary-glow:    rgba(255, 107, 0, 0.25);
-      
-      --success:         #10B981;
-      --success-light:   rgba(16, 185, 129, 0.12);
-      --danger:          #EF4444;
-      --danger-light:    rgba(239, 68, 68, 0.12);
-      --warning:         #F59E0B;
-      --warning-light:   rgba(245, 158, 11, 0.12);
-      --info:            #06B6D4;
-      --info-light:      rgba(6, 182, 212, 0.12);
-      --purple:          #8B5CF6;
-      --purple-light:    rgba(139, 92, 246, 0.12);
-
-      /* DashDine Sidebar & Layout (Light Mode Default) */
-      --sidebar-bg:      #121624; /* Deep Midnight Slate */
-      --sidebar-text:    #94A3B8;
-      --sidebar-text-active: #FFFFFF;
-      --sidebar-hover:   rgba(255, 255, 255, 0.05);
-      --sidebar-border:  rgba(255, 255, 255, 0.06);
-
-      --bg:              #F8FAFC; /* Warm/Crisp Canvas */
-      --card:            #FFFFFF;
-      --card-subtle:     #F1F5F9;
-      --border:          #E2E8F0;
-      --text-primary:    #0F172A;
-      --text-secondary:  #475569;
-      --text-muted:      #94A3B8;
-
-      --shadow-sm:       0 1px 3px rgba(0, 0, 0, 0.04);
-      --shadow-card:     0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
-      --shadow-lg:       0 12px 32px rgba(0, 0, 0, 0.08);
-
-      --radius-sm:       10px;
-      --radius-md:       14px;
-      --radius-lg:       20px;
+      --primary:        #6366F1;
+      --primary-light:  rgba(99, 102, 241, 0.15);
+      --primary-dark:   #4F46E5;
+      --success:        #10B981;
+      --success-light:  rgba(16, 185, 129, 0.15);
+      --danger:         #EF4444;
+      --danger-light:   rgba(239, 68, 68, 0.15);
+      --warning:        #F59E0B;
+      --warning-light:  rgba(245, 158, 11, 0.15);
+      --info:           #06B6D4;
+      --info-light:     rgba(6, 182, 212, 0.15);
+      --sidebar-bg:     #0B0F19;
+      --sidebar-hover:  #1E293B;
+      --sidebar-active: #6366F1;
+      --bg:             #0F172A;
+      --card:           #1E293B;
+      --border:         #334155;
+      --text-primary:   #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.3);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.4);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.5);
+      --radius-sm:      8px;
+      --radius-md:      12px;
+      --radius-lg:      20px;
     }
 
-    /* ─── FULL DARK THEME ENGINE ─── */
-    body.dark-theme {
-      --bg:              #0A0D17;
-      --card:            #121624;
-      --card-subtle:     #181E32;
-      --border:          rgba(255, 255, 255, 0.08);
-      --text-primary:    #F8FAFC;
-      --text-secondary:  #94A3B8;
-      --text-muted:      #64748B;
-      --shadow-card:     0 8px 24px rgba(0, 0, 0, 0.35);
+    /* ─── 100% FULL LIGHT THEME ENGINE OVERRIDES FOR DASHBOARD ─── */
+    body.light-theme {
+      --sidebar-bg:     #FFFFFF;
+      --sidebar-hover:  #F1F5F9;
+      --sidebar-active: #6366F1;
+      --bg:             #F8FAFC;
+      --card:           #FFFFFF;
+      --border:         #E2E8F0;
+      --text-primary:   #0F172A;
+      --text-secondary: #475569;
+      --text-muted:     #64748B;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.06);
+      --shadow-md:      0 4px 6px rgba(0,0,0,.08);
+      --shadow-lg:      0 10px 15px rgba(0,0,0,.1);
     }
+    body.light-theme .sidebar { background: #FFFFFF !important; border-right: 1px solid #E2E8F0 !important; }
+    body.light-theme .sidebar-brand { border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .brand-text h2 { color: #0F172A !important; }
+    body.light-theme .brand-text span { color: #64748B !important; }
+    body.light-theme .sidebar-toggle { background: #F1F5F9 !important; }
+    body.light-theme .sidebar-toggle i { color: #475569 !important; }
+    body.light-theme .sidebar-section-label { color: #94A3B8 !important; }
+    body.light-theme .nav-item { color: #475569 !important; }
+    body.light-theme .nav-item:hover { background: #F1F5F9 !important; color: #0F172A !important; }
+    body.light-theme .nav-item.active { background: var(--primary) !important; color: #FFFFFF !important; }
+    body.light-theme .sidebar-footer { border-top-color: #E2E8F0 !important; }
+    body.light-theme .user-card:hover { background: #F1F5F9 !important; }
+    body.light-theme .user-info h4 { color: #0F172A !important; }
+    body.light-theme .user-info p { color: #64748B !important; }
+    body.light-theme .topbar { background: #FFFFFF !important; border-bottom-color: #E2E8F0 !important; }
+    body.light-theme .topbar-title { color: #0F172A !important; }
+    body.light-theme .topbar-sub { color: #64748B !important; }
 
-    body.dark-theme .dashdine-card {
-      background: var(--card) !important;
-      border-color: var(--border) !important;
+    /* Override inline hardcoded white colors & dark backgrounds for light mode */
+    body.light-theme [style*="color: #F8FAFC"],
+    body.light-theme [style*="color:#F8FAFC"] {
+      color: #0F172A !important;
     }
-    body.dark-theme .topbar {
-      background: var(--card) !important;
-      border-bottom-color: var(--border) !important;
+    body.light-theme [style*="background: rgba(30,41,59"],
+    body.light-theme [style*="background: linear-gradient(135deg, rgba(30,41,59"] {
+      background: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
     }
-    body.dark-theme .dashdine-search input {
-      background: var(--card-subtle) !important;
-      border-color: var(--border) !important;
-      color: #fff !important;
+    body.light-theme [style*="background: rgba(255,255,255,0.06)"] {
+      background: #F1F5F9 !important;
+      color: #475569 !important;
+      border-color: #CBD5E1 !important;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       DASHDINE SIDEBAR (260px)
-       ═══════════════════════════════════════════════════════════════ */
-    .sidebar {
-      width: 260px;
-      min-width: 260px;
-      background: var(--sidebar-bg);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      border-right: 1px solid var(--sidebar-border);
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 100;
-    }
-    .sidebar.collapsed { width: 72px; min-width: 72px; }
-
-    /* Sidebar Brand */
-    .sidebar-brand {
-      height: 72px;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--sidebar-border);
-      flex-shrink: 0;
-    }
-    .brand-icon-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: var(--primary-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 19px;
-      box-shadow: 0 4px 14px var(--primary-glow);
-      flex-shrink: 0;
-    }
-    .brand-text-box h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 17px;
-      font-weight: 800;
-      color: #FFFFFF;
-      letter-spacing: -0.2px;
-      margin: 0;
-      line-height: 1.2;
-    }
-    .brand-text-box span {
-      font-size: 10px;
-      font-weight: 700;
-      color: #94A3B8;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      display: block;
-    }
-    .sidebar.collapsed .brand-text-box { display: none; }
-
-    .sidebar-toggle-btn {
-      margin-left: auto;
-      background: rgba(255, 255, 255, 0.08);
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      color: #94A3B8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.2s;
-    }
-    .sidebar-toggle-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
-    .sidebar.collapsed .sidebar-toggle-btn { margin: 0 auto; }
-    .sidebar.collapsed .sidebar-toggle-btn i { transform: rotate(180deg); }
-
-    /* Navigation Sections */
-    .sidebar-nav {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .nav-group-title {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #64748B;
-      padding: 0 8px;
-      margin-bottom: 6px;
-    }
-    .sidebar.collapsed .nav-group-title { display: none; }
-
-    .nav-link-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      color: var(--sidebar-text);
-      font-size: 13.5px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-      position: relative;
-    }
-    .nav-link-item i { font-size: 16px; width: 20px; text-align: center; }
-    .nav-link-item:hover {
-      background: var(--sidebar-hover);
-      color: #FFFFFF;
-    }
-    .nav-link-item.active {
-      background: var(--primary-gradient);
-      color: #FFFFFF;
-      font-weight: 700;
-      box-shadow: 0 4px 16px var(--primary-glow);
-    }
-    .nav-badge-count {
-      margin-left: auto;
-      background: #FA5A2A;
-      color: #fff;
-      font-size: 10.5px;
-      font-weight: 800;
-      padding: 2px 8px;
+    #liveClockBadge {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #818CF8;
+      padding: 3px 10px;
       border-radius: 20px;
-    }
-    .nav-link-item.active .nav-badge-count {
-      background: #FFFFFF;
-      color: #FF6B00;
-    }
-    .sidebar.collapsed .nav-label,
-    .sidebar.collapsed .nav-badge-count { display: none; }
-
-    /* Bottom Live Status Widget */
-    .sidebar-status-widget {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--sidebar-border);
-      border-radius: 16px;
-      padding: 14px;
-      margin: 0 14px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .sidebar.collapsed .sidebar-status-widget { display: none; }
-    .status-widget-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-    }
-    .status-widget-row span:first-child { color: #94A3B8; }
-    .status-widget-row .val { color: #FFFFFF; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-    .status-pill-open {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      color: #10B981;
+      font-size: 11.5px;
       font-weight: 700;
-      font-size: 11px;
+      font-family: monospace;
+      letter-spacing: 0.5px;
     }
-    .status-pill-open i { font-size: 8px; animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-
-    /* User Card Footer */
-    .sidebar-user-footer {
-      border-top: 1px solid var(--sidebar-border);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .user-avatar-circle {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: var(--primary-gradient);
-      color: #fff;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .user-meta-info { overflow: hidden; white-space: nowrap; flex: 1; }
-    .user-meta-info h4 { font-size: 13px; font-weight: 700; color: #FFFFFF; margin: 0; line-height: 1.2; }
-    .user-meta-info p { font-size: 11px; color: #94A3B8; margin: 0; text-transform: capitalize; }
-    .sidebar.collapsed .user-meta-info { display: none; }
-
-    /* ═══════════════════════════════════════════════════════════════
-       MAIN VIEWPORT & DASHDINE TOPBAR
-       ═══════════════════════════════════════════════════════════════ */
-    .main-viewport {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-      min-width: 0;
-      background: var(--bg);
+    body.light-theme #liveClockBadge {
+      background: #EEF2FF !important;
+      border: 1.5px solid #C7D2FE !important;
+      color: #4338CA !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08) !important;
     }
 
-    .topbar {
-      height: 72px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 0 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-shrink: 0;
-      box-shadow: var(--shadow-sm);
-    }
-    .topbar-date-title { display: flex; flex-direction: column; }
-    .topbar-date {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-    }
-    .topbar-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 21px;
-      font-weight: 800;
-      color: var(--text-primary);
-      letter-spacing: -0.3px;
-      margin: 0;
-    }
-
-    /* DashDine Search Input */
-    .dashdine-search {
-      width: 360px;
-      position: relative;
-    }
-    .dashdine-search i {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-    .dashdine-search input {
-      width: 100%;
-      height: 42px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0 16px 0 38px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-      outline: none;
-      transition: all 0.2s;
-    }
-    .dashdine-search input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-light);
-    }
-
-    /* Topbar Controls */
-    .topbar-actions-suite {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .shift-status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      color: #10B981;
-      padding: 6px 14px;
+    #localWeatherBadge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      padding: 3px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
-    }
-    .shift-status-pill i { font-size: 8px; }
-
-    .topbar-icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.18s;
-    }
-    .topbar-icon-btn:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-      border-color: var(--primary);
-    }
-    .notif-badge-dot {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #EF4444;
-      border: 2px solid var(--card);
-    }
-
-    .btn-new-pos-bill {
-      height: 42px;
-      padding: 0 18px;
-      background: var(--primary-gradient);
-      color: #FFFFFF;
-      font-weight: 700;
-      font-size: 13px;
-      border-radius: 12px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 14px var(--primary-glow);
-      transition: all 0.2s;
-    }
-    .btn-new-pos-bill:hover { transform: translateY(-1px); box-shadow: 0 6px 18px var(--primary-glow); }
-
-    /* ═══════════════════════════════════════════════════════════════
-       DASHDINE CONTENT WORKSPACE
-       ═══════════════════════════════════════════════════════════════ */
-    .dashboard-workspace {
-      padding: 26px 28px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    /* ─── ROW 1: 5 DASHDINE KPI CARDS ─── */
-    .dashdine-kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 18px;
-    }
-    .dashdine-kpi-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px 22px;
-      box-shadow: var(--shadow-card);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .dashdine-kpi-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-    .kpi-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-    .kpi-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-    .kpi-icon-bubble {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-    }
-    .kpi-icon-bubble.orange { background: rgba(255, 107, 0, 0.12); color: #FF6B00; }
-    .kpi-icon-bubble.green  { background: rgba(16, 185, 129, 0.12); color: #10B981; }
-    .kpi-icon-bubble.amber  { background: rgba(245, 158, 11, 0.12); color: #F59E0B; }
-    .kpi-icon-bubble.red    { background: rgba(239, 68, 68, 0.12); color: #EF4444; }
-    .kpi-icon-bubble.cyan   { background: rgba(6, 182, 212, 0.12); color: #06B6D4; }
-
-    .kpi-value {
-      font-family: 'Outfit', sans-serif;
-      font-size: 30px;
-      font-weight: 800;
-      color: var(--text-primary);
-      letter-spacing: -0.5px;
-      line-height: 1.1;
-      margin-bottom: 8px;
-    }
-    .kpi-trend {
-      font-size: 12px;
-      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 4px;
     }
-    .kpi-trend.positive { color: #10B981; }
-    .kpi-trend.negative { color: #EF4444; }
-    .kpi-trend.neutral  { color: var(--text-muted); }
-    .kpi-trend-sub { color: var(--text-muted); font-weight: 500; font-size: 11.5px; margin-left: 2px; }
-
-    /* Decorative bottom-right watermark */
-    .kpi-watermark-shape {
-      position: absolute;
-      bottom: -15px;
-      right: -15px;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: rgba(255, 107, 0, 0.03);
-      pointer-events: none;
+    body.light-theme #localWeatherBadge {
+      background: #ECFDF5 !important;
+      border: 1.5px solid #A7F3D0 !important;
+      color: #065F46 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08) !important;
     }
 
-    /* ─── ROW 2: HOURLY REVENUE CHART & FLOOR MAP ─── */
-    .dashdine-middle-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-    }
-    .dashdine-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-    }
-    .card-title-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-    .card-title-bar h3 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin: 0;
-    }
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
-    /* Time Switcher Pills */
-    .chart-time-pills {
-      display: inline-flex;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 3px;
+    /* ─── SIDEBAR ─────────────────────────────── */
+    .sidebar {
+      width: 240px; min-width: 240px;
+      background: var(--sidebar-bg);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transition: width .25s cubic-bezier(.4,0,.2,1), min-width .25s cubic-bezier(.4,0,.2,1);
+      flex-shrink: 0;
     }
-    .time-pill-btn {
-      padding: 4px 12px;
-      border-radius: 8px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.15s;
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.15) transparent;
     }
-    .time-pill-btn.active {
-      background: var(--card);
-      color: var(--primary);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
+    .sidebar-nav::-webkit-scrollbar { width: 4px; }
+    .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
+    .sidebar.collapsed { width: 60px; min-width: 60px; }
 
-    /* Chart Canvas Container */
-    .chart-container-box {
-      flex: 1;
-      min-height: 250px;
+    .sidebar-brand {
+      padding: 14px 12px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0; position: relative; min-height: 58px;
+    }
+    .brand-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: var(--primary); display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff;
+    }
+    .brand-text { overflow: hidden; white-space: nowrap; transition: opacity .2s, width .25s; }
+    .brand-text h2 { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+    .brand-text span { font-size: 11px; color: rgba(255,255,255,.45); }
+    .sidebar.collapsed .brand-text { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .brand-icon { display: none; }
+
+    .sidebar-toggle {
+      margin-left: auto; flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(255,255,255,.12); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .15s;
+    }
+    .sidebar-toggle:hover { background: rgba(255,255,255,.25); }
+    .sidebar-toggle i { font-size: 11px; color: rgba(255,255,255,.9); transition: transform .25s; }
+    .sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { justify-content: center; }
+    .sidebar.collapsed .sidebar-toggle { margin-left: 0; }
+
+    .sidebar-section { padding: 14px 8px 4px; overflow: hidden; }
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,.3); padding: 0 6px; white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .sidebar.collapsed .sidebar-section-label { opacity: 0; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: var(--radius-sm);
+      color: rgba(255,255,255,.55); cursor: pointer;
+      font-size: 13.5px; font-weight: 500;
+      transition: all .18s; margin-top: 2px;
+      text-decoration: none; white-space: nowrap; overflow: hidden;
       position: relative;
     }
+    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+    .nav-item.active { background: var(--sidebar-active); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,.4); }
+    .nav-item i { width: 20px; min-width: 20px; text-align: center; font-size: 14px; }
+    .nav-item .nav-label { transition: opacity .2s; }
+    .sidebar.collapsed .nav-item .nav-label { opacity: 0; }
+    .nav-badge { margin-left: auto; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 20px; transition: opacity .2s; }
+    .nav-badge.green { background: var(--success); }
+    .sidebar.collapsed .nav-badge { opacity: 0; }
 
-    /* ─── LIVE FLOOR MAP WIDGET ─── */
-    .floor-map-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 10px 0 16px;
-    }
-    .floor-table-node {
-      background: var(--card-subtle);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 6px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.18s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-    }
-    .floor-table-node:hover {
-      transform: scale(1.04);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .table-id-txt {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 15px;
-      color: var(--text-primary);
-      line-height: 1.1;
-    }
-    .table-status-tag {
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .sidebar.collapsed .nav-item:hover::after {
+      content: attr(data-tip);
+      position: absolute; left: 54px; top: 50%; transform: translateY(-50%);
+      background: #1E293B; color: #fff; font-size: 12px; font-weight: 500;
+      padding: 5px 10px; border-radius: 6px; white-space: nowrap;
+      box-shadow: var(--shadow-md); pointer-events: none; z-index: 200;
     }
 
-    /* Floor Table States (Exact DashDine Colors) */
-    .floor-table-node.occupied {
-      background: rgba(255, 107, 0, 0.08);
-      border-color: rgba(255, 107, 0, 0.4);
+    .sidebar-footer {
+      flex-shrink: 0; padding: 14px 8px;
+      border-top: 1px solid rgba(255,255,255,.07); overflow: hidden;
     }
-    .floor-table-node.occupied .table-id-txt { color: #FF6B00; }
-    .floor-table-node.occupied .table-status-tag { color: #FA5A2A; }
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: var(--radius-sm);
+      transition: background .15s; white-space: nowrap;
+    }
+    .user-card:hover { background: var(--sidebar-hover); }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+    .user-info { transition: opacity .2s; overflow: hidden; }
+    .user-info h4 { font-size: 13px; font-weight: 600; color: #fff; }
+    .user-info p  { font-size: 11px; color: rgba(255,255,255,.4); }
+    .sidebar.collapsed .user-info { opacity: 0; width: 0; }
+    .sidebar.collapsed #dashLogoutForm { margin-left: 0 !important; }
 
-    .floor-table-node.available {
-      background: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.4);
-    }
-    .floor-table-node.available .table-id-txt { color: #10B981; }
-    .floor-table-node.available .table-status-tag { color: #059669; }
+    .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; min-width: 0; }
 
-    .floor-table-node.reserved {
-      background: rgba(245, 158, 11, 0.08);
-      border-color: rgba(245, 158, 11, 0.4);
+    .topbar {
+      background: var(--sidebar-bg); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px;
+      flex-shrink: 0; box-shadow: var(--shadow-sm);
     }
-    .floor-table-node.reserved .table-id-txt { color: #F59E0B; }
-    .floor-table-node.reserved .table-status-tag { color: #D97706; }
+    .topbar-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .topbar-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-btn {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      background: var(--bg); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-secondary); position: relative;
+      transition: all .15s;
+    }
+    .topbar-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--sidebar-bg); }
 
-    .floor-table-node.cleaning {
-      background: rgba(148, 163, 184, 0.1);
-      border-color: rgba(148, 163, 184, 0.3);
-    }
-    .floor-table-node.cleaning .table-id-txt { color: #64748B; }
-    .floor-table-node.cleaning .table-status-tag { color: #94A3B8; }
-
-    .floor-legend-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
-    .floor-legend-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 4px;
-    }
-    .manage-link-btn {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-      padding: 4px 10px;
-      border-radius: 8px;
-      background: var(--primary-light);
+    .dashboard-content {
+      flex: 1; overflow-y: auto; padding: 24px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+      align-content: start;
     }
 
-    /* ─── ROW 3: RECENT ORDERS & TOP DISHES ─── */
-    .dashdine-bottom-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
+    .dashboard-card {
+      background: var(--card); border-radius: var(--radius-lg); padding: 24px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 12px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
     }
 
-    /* Order Filter Tabs */
-    .order-filter-pills {
-      display: flex;
-      gap: 6px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 3px;
+    .card-header { display: flex; align-items: center; gap: 12px; }
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
     }
-    .order-filter-btn {
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      border: none;
-      background: transparent;
-      cursor: pointer;
-    }
-    .order-filter-btn.active {
-      background: var(--primary-gradient);
-      color: #fff;
-    }
+    .card-icon.primary { background: var(--primary-light); color: var(--primary); }
+    .card-icon.success { background: var(--success-light); color: var(--success); }
+    .card-icon.warning { background: var(--warning-light); color: var(--warning); }
+    .card-icon.danger  { background: var(--danger-light);  color: var(--danger); }
 
-    /* Recent Orders Modern Table */
-    .dashdine-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    .dashdine-table th {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: var(--card-subtle);
-    }
-    .dashdine-table th:first-child { border-radius: 10px 0 0 10px; }
-    .dashdine-table th:last-child  { border-radius: 0 10px 10px 0; }
-    .dashdine-table td {
-      padding: 14px;
-      font-size: 13px;
-      color: var(--text-primary);
-      border-bottom: 1px solid var(--border);
-    }
-    .dashdine-table tr:hover td { background: var(--primary-light); }
-    .order-id-code {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .table-pill-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 11.5px;
-    }
+    .card-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .5px; }
+    .card-value { font-size: 32px; font-weight: 700; color: var(--text-primary); }
+    .card-sub   { font-size: 12px; color: var(--text-muted); }
 
-    /* Order Status Badges */
-    .status-badge-served {
-      background: rgba(16, 185, 129, 0.12);
-      color: #10B981;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .status-badge-cooking {
-      background: rgba(255, 107, 0, 0.12);
-      color: #FF6B00;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .status-badge-pending {
-      background: rgba(245, 158, 11, 0.12);
-      color: #F59E0B;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* Top Dishes Ranked List */
-    .top-dishes-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 8px;
-    }
-    .dish-rank-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .dish-rank-num {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text-muted);
-      width: 16px;
-    }
-    .dish-icon-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-    .dish-details-col { flex: 1; }
-    .dish-details-col h5 { font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px; }
-    .dish-details-col span { font-size: 11.5px; color: var(--text-muted); }
-    .dish-progress-bar {
-      width: 90px;
-      height: 6px;
-      background: var(--card-subtle);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .dish-progress-fill {
-      height: 100%;
-      border-radius: 10px;
-      background: var(--primary-gradient);
-    }
-
-    /* Staff on Duty Panel */
-    .staff-duty-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .staff-duty-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-    }
-    .staff-duty-left { display: flex; align-items: center; gap: 10px; }
-    .staff-avatar-badge {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .staff-duty-info h6 { font-size: 12.5px; font-weight: 700; color: var(--text-primary); margin: 0; }
-    .staff-duty-info span { font-size: 11px; color: var(--text-muted); }
-    .staff-metric-tag { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: var(--primary); }
-
-    /* Responsive Engine */
-    @media (max-width: 1200px) {
-      .dashdine-kpi-grid { grid-template-columns: repeat(3, 1fr); }
-      .dashdine-middle-grid,
-      .dashdine-bottom-grid { grid-template-columns: 1fr; }
-    }
     @media (max-width: 768px) {
-      .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 999; transform: translateX(-100%); }
-      .sidebar.mobile-open { transform: translateX(0); }
-      .dashdine-kpi-grid { grid-template-columns: 1fr 1fr; }
-      .dashdine-search { display: none; }
+      .sidebar {
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        width: 260px !important;
+        min-width: 260px !important;
+        z-index: 310;
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        box-shadow: 10px 0 30px rgba(15,23,42,.22);
+      }
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      .topbar {
+        padding: 0 12px;
+      }
+      .topbar-title-group { display: flex !important; }
+      .topbar-sub { display: none !important; }
+      .topbar-mobile-menu { display: flex !important; }
+      .topbar-desktop-only { display: none !important; }
+      .main { margin-left: 0 !important; width: 100% !important; }
+      .dashboard-content { padding: 14px !important; gap: 16px !important; }
+      .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+    }
+    .topbar-mobile-menu { display: none; }
+
+    /* ─── FULL MULTI-DEVICE RESPONSIVE ENGINE STYLES ─── */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,23,42,0.75);
+      backdrop-filter: blur(4px);
+      z-index: 305;
+    }
+    .sidebar-backdrop.active { display: block; }
+
+    @media (max-width: 1024px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+      .charts-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    }
+
+    @media (max-width: 480px) {
+      .card-value { font-size: 26px !important; }
     }
   </style>
 </head>
 <body>
-
 @include('partials.impersonate-banner')
 
 @if(Auth::user()?->restaurant?->is_demo)
@@ -909,829 +353,1390 @@
 </div>
 @endif
 
-<!-- ═══════════════════════════════════════════════════════════════
-     DASHDINE SIDEBAR NAVIGATION
-     ═══════════════════════════════════════════════════════════════ -->
-<aside class="sidebar" id="dashdineSidebar">
-  
-  <!-- Sidebar Brand Header -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon-box">
-      <i class="fa-solid fa-fire-flame-curved"></i>
+    <div class="brand-icon" style="background: transparent; box-shadow: none; width: 34px; height: 34px; overflow: hidden; border-radius: 8px; margin-right: 2px;">
+      <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
-    <div class="brand-text-box">
-      <h2>DineFlow AI</h2>
-      <span>RESTAURANT SUITE</span>
+    <div class="brand-text">
+      <h2>DineFlow AI POS</h2>
+      <span>Restaurant Suite v2.0</span>
     </div>
-    <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar"><i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i></button>
   </div>
 
-  <!-- Sidebar Navigation Body -->
   <div class="sidebar-nav">
-    
-    <!-- OPERATIONS GROUP -->
-    <div class="nav-group-section">
-      <div class="nav-group-title">Operations</div>
-      <a class="nav-link-item active" href="/dashboard" title="Dashboard Overview">
-        <i class="fa-solid fa-table-cells-large"></i>
-        <span class="nav-label">Overview</span>
-      </a>
-      <a class="nav-link-item" href="/pos" title="POS Billing Terminal">
-        <i class="fa-solid fa-cash-register"></i>
-        <span class="nav-label">POS Terminal</span>
-        <span class="nav-badge-count" style="background:#10B981;">LIVE</span>
-      </a>
-      <a class="nav-link-item" href="javascript:void(0)" onclick="openDashOrdersModal()" title="Orders Log">
-        <i class="fa-solid fa-receipt"></i>
-        <span class="nav-label">Orders</span>
-        <span class="nav-badge-count" id="globalOrdersNavBadge">{{ $todayOrdersCount }}</span>
-      </a>
-      <a class="nav-link-item" href="/admin/tables" title="Table Floor Manager">
-        <i class="fa-solid fa-border-all"></i>
-        <span class="nav-label">Tables Floor</span>
-      </a>
-      <a class="nav-link-item" href="/admin/menu-manager" title="Menu Catalog">
-        <i class="fa-solid fa-utensils"></i>
-        <span class="nav-label">Menu Items</span>
-      </a>
-      <a class="nav-link-item" href="/admin/modifiers" title="Modifiers & Combos">
-        <i class="fa-solid fa-layer-group"></i>
-        <span class="nav-label">Modifiers &amp; Combos</span>
-      </a>
-      <a class="nav-link-item" href="/kitchen" target="_blank" title="Kitchen Display System">
-        <i class="fa-solid fa-fire-burner"></i>
-        <span class="nav-label">Kitchen Display</span>
-        <span class="nav-badge-count">KDS</span>
-      </a>
-      <a class="nav-link-item" href="/admin/inventory" title="Inventory Stock">
-        <i class="fa-solid fa-boxes-stacked"></i>
-        <span class="nav-label">Inventory Stock</span>
-      </a>
-      <a class="nav-link-item" href="/admin/procurement" title="Suppliers & PO">
-        <i class="fa-solid fa-truck-ramp-box"></i>
-        <span class="nav-label">Suppliers &amp; PO</span>
-      </a>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <a class="nav-item active" href="/dashboard" data-path="/dashboard" data-tip="Dashboard"><i class="fa-solid fa-chart-pie"></i><span class="nav-label"> Dashboard</span></a>
+      <a class="nav-item" href="/pos" data-path="/pos" data-tip="POS Terminal"><i class="fa-solid fa-cash-register"></i><span class="nav-label"> POS Terminal</span> <span class="nav-badge green">Live</span></a>
+      <a class="nav-item" href="javascript:void(0)" onclick="openDashOrdersModal()" data-tip="Orders"><i class="fa-solid fa-receipt"></i><span class="nav-label"> Orders</span> <span class="nav-badge" id="globalOrdersNavBadge">{{ $todayOrdersCount }}</span></a>
+      <a class="nav-item" href="/admin/tables" data-path="/admin/tables" data-tip="Table Manager"><i class="fa-solid fa-table-cells-large"></i><span class="nav-label"> Table Manager</span></a>
+      <a class="nav-item" href="/kitchen" data-path="/kitchen" data-tip="Kitchen Display" target="_blank"><i class="fa-solid fa-fire-burner"></i><span class="nav-label"> Kitchen Display</span></a>
     </div>
 
-    <!-- MANAGEMENT GROUP -->
-    <div class="nav-group-section">
-      <div class="nav-group-title">Management</div>
-      <a class="nav-link-item" href="/admin/attendance" title="Staff Attendance & Payroll">
-        <i class="fa-solid fa-user-clock"></i>
-        <span class="nav-label">Staff Attendance</span>
-      </a>
-      <a class="nav-link-item" href="/admin/staff" title="Staff & Roles">
-        <i class="fa-solid fa-user-shield"></i>
-        <span class="nav-label">Staff &amp; Roles</span>
-      </a>
-      <a class="nav-link-item" href="/admin/sales-report" title="Sales Analytics & Reports">
-        <i class="fa-solid fa-chart-line"></i>
-        <span class="nav-label">Revenue Reports</span>
-      </a>
-      <a class="nav-link-item" href="/admin/expenses" title="Operational Expenses">
-        <i class="fa-solid fa-file-invoice-dollar"></i>
-        <span class="nav-label">Expenses</span>
-      </a>
-      <a class="nav-link-item" href="/admin/customers" title="Customers CRM">
-        <i class="fa-solid fa-users"></i>
-        <span class="nav-label">Customers CRM</span>
-      </a>
-      <a class="nav-link-item" href="/admin/qr-generator" title="QR Menu Generator">
-        <i class="fa-solid fa-qrcode"></i>
-        <span class="nav-label">QR Generator</span>
-      </a>
-      <a class="nav-link-item" href="/admin/settings" title="System Settings">
-        <i class="fa-solid fa-gear"></i>
-        <span class="nav-label">Settings</span>
-      </a>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Menu &amp; Catalog</div>
+      <a class="nav-item" href="/admin/menu-manager" data-path="/admin/menu-manager" data-tip="Menu Items"><i class="fa-solid fa-utensils"></i><span class="nav-label"> Menu Items</span></a>
+      <a class="nav-item" href="/admin/modifiers" data-path="/admin/modifiers" data-tip="Modifiers & Combos"><i class="fa-solid fa-layer-group"></i><span class="nav-label"> Modifiers &amp; Combos</span></a>
+      <a class="nav-item" href="/admin/inventory" data-path="/admin/inventory" data-tip="Inventory Stock"><i class="fa-solid fa-boxes-stacked"></i><span class="nav-label"> Inventory Stock</span></a>
+      <a class="nav-item" href="/admin/procurement" data-path="/admin/procurement" data-tip="Suppliers & PO"><i class="fa-solid fa-truck-ramp-box"></i><span class="nav-label"> Suppliers &amp; PO</span></a>
+      <a class="nav-item" href="/admin/coupons" data-path="/admin/coupons" data-tip="Offers &amp; Deals"><i class="fa-solid fa-gift"></i><span class="nav-label"> Offers &amp; Deals</span> <span class="nav-badge red" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">Deals</span></a>
     </div>
 
-  </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Operations &amp; HR</div>
+      <a class="nav-item" href="/admin/sales-report" data-path="/admin/sales-report" data-tip="Sales Analytics"><i class="fa-solid fa-chart-line"></i><span class="nav-label"> Sales Analytics</span></a>
+      <a class="nav-item" href="/admin/attendance" data-path="/admin/attendance" data-tip="Staff Attendance & Payroll"><i class="fa-solid fa-user-clock"></i><span class="nav-label"> Staff Attendance &amp; Payroll</span></a>
+      <a class="nav-item" href="/admin/expenses" data-path="/admin/expenses" data-tip="Expenses"><i class="fa-solid fa-file-invoice-dollar"></i><span class="nav-label"> Expenses</span></a>
+      <a class="nav-item" href="/admin/customers" data-path="/admin/customers" data-tip="Customers &amp; CRM"><i class="fa-solid fa-users"></i><span class="nav-label"> Customers &amp; CRM</span></a>
+      <a class="nav-item" href="/admin/qr-generator" data-path="/admin/qr-generator" data-tip="QR Generator"><i class="fa-solid fa-qrcode"></i><span class="nav-label"> QR Generator</span></a>
+    </div>
 
-  <!-- Bottom Live Restaurant Status Widget (DashDine Showcase) -->
-  <div class="sidebar-status-widget">
-    <div class="status-widget-row">
-      <span>Restaurant</span>
-      <span class="status-pill-open"><i class="fa-solid fa-circle"></i> Open</span>
-    </div>
-    <div class="status-widget-row">
-      <span>Tables Active</span>
-      <span class="val">{{ $occupiedTablesCount ?? 0 }} / {{ $totalTablesCount ?? 12 }}</span>
-    </div>
-    <div class="status-widget-row">
-      <span>Kitchen Queue</span>
-      <span class="val">{{ ($todayOrdersCount ?? 0) > 0 ? $todayOrdersCount . ' orders' : '0 active' }}</span>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Settings &amp; Admin</div>
+      <a class="nav-item" href="/admin/staff" data-path="/admin/staff" data-tip="Staff &amp; Roles"><i class="fa-solid fa-user-shield"></i><span class="nav-label"> Staff &amp; Roles</span></a>
+      <a class="nav-item" href="/admin/settings" data-path="/admin/settings" data-tip="System Settings"><i class="fa-solid fa-gear"></i><span class="nav-label"> System Settings</span></a>
+      <a class="nav-item" href="/admin/feedback" data-path="/admin/feedback" data-tip="Feedback &amp; Reviews"><i class="fa-solid fa-star"></i><span class="nav-label"> Feedback &amp; Reviews</span></a>
     </div>
   </div>
 
-  <!-- User Card Footer -->
-  <div class="sidebar-user-footer">
-    <div class="user-avatar-circle">
-      {{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 2)) }}
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" style="background:var(--primary);">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+      <div class="user-info">
+        <h4>{{ Auth::user()?->name ?? 'Administrator' }}</h4>
+        <p style="text-transform:capitalize;">{{ Auth::user()?->role ?? 'User' }}</p>
+      </div>
+      <form method="POST" action="{{ route('auth.logout') }}" id="dashLogoutForm" style="margin-left:auto;">
+        @csrf
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:32px; height:32px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:14px;
+                 transition:all .2s;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </form>
     </div>
-    <div class="user-meta-info">
-      <h4>{{ Auth::user()?->name ?? 'Administrator' }}</h4>
-      <p>{{ Auth::user()?->role ?? 'Head Manager' }}</p>
-    </div>
-    <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:auto;">
-      @csrf
-      <button type="submit" title="Sign Out" style="background:rgba(239,68,68,0.12); border:none; width:32px; height:32px; border-radius:8px; color:#EF4444; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-      </button>
-    </form>
   </div>
-
 </aside>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MAIN VIEWPORT
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="main-viewport">
-  
-  <!-- DASHDINE TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-date-title">
-      <span class="topbar-date">{{ strtoupper(\Carbon\Carbon::today()->format('l, d F Y')) }}</span>
-      <h1 class="topbar-title">Dashboard Overview</h1>
+<!-- MAIN -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title-group">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="/images/dineflow_logo.jpg" alt="DineFlow Logo" style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover;">
+          <div class="topbar-title" style="font-family: 'Outfit', sans-serif; font-weight: 800;">DineFlow AI POS</div>
+        </div>
+        <div id="liveClockBadge">--:--:-- --</div>
+        <div id="localWeatherBadge"><i class="fa-solid fa-cloud-sun-rain"></i> Patan, GJ • 34°C</div>
+      </div>
+      <div class="topbar-sub" id="topbarDate">{{ now()->format('l, M d, Y') }} • Shift: Evening (16:00 - 24:00)</div>
+    </div>
+    <div class="topbar-btn topbar-mobile-menu" title="Menu" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div class="topbar-spacer"></div>
+    
+    <!-- Light/Dark Mode Theme Switcher -->
+    <div class="topbar-btn" id="posThemeToggleBtn" title="Toggle Light/Dark Theme" onclick="toggleGlobalSystemTheme()" style="color:var(--primary); border-color:rgba(99,102,241,0.3); background:var(--primary-light); width:auto; padding: 0 12px; border-radius: 20px; gap: 6px; margin-right: 4px; cursor:pointer;">
+      <i id="posThemeIcon" class="fa-solid fa-sun"></i>
+      <span id="posThemeText" style="font-size:11.5px; font-weight:700;">Light Mode</span>
     </div>
 
-    <!-- DashDine Global Search -->
-    <div class="dashdine-search">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="globalDashSearch" placeholder="Search orders, tables, staff, menu..." oninput="handleGlobalSearch(this.value)">
+    <div class="topbar-btn topbar-desktop-only" title="Notifications" onclick="openModal('notifModal')" style="cursor:pointer;">
+      <i class="fa-solid fa-bell"></i>
+      <span class="notif-dot"></span>
     </div>
-
-    <!-- Action Controls Suite -->
-    <div class="topbar-actions-suite">
-      <span class="shift-status-pill">
-        <i class="fa-solid fa-circle"></i> Active Shift
-      </span>
-
-      <button type="button" class="topbar-icon-btn" onclick="toggleDashTheme()" title="Toggle Dark/Light Mode">
-        <i class="fa-solid fa-moon" id="themeToggleIcon"></i>
-      </button>
-
-      <button type="button" class="topbar-icon-btn" onclick="openModal('notifModal')" title="Notifications">
-        <i class="fa-solid fa-bell"></i>
-        <span class="notif-badge-dot"></span>
-      </button>
-
-      <a href="/pos" class="btn-new-pos-bill" title="Open POS Billing Counter">
-        <i class="fa-solid fa-plus"></i> New POS Bill
-      </a>
+    <div class="topbar-btn topbar-desktop-only" title="Full Screen" onclick="toggleFull()" style="cursor:pointer;"><i class="fa-solid fa-expand"></i></div>
+    <div class="topbar-desktop-only" style="width:1px;height:26px;background:var(--border);"></div>
+    <div class="topbar-desktop-only" style="display:flex;align-items:center;gap:8px;">
+      <div class="user-avatar" style="width:32px;height:32px;font-size:12px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;">{{ strtoupper(substr(Auth::user()?->name ?? 'Admin', 0, 1)) }}</div>
+      <div style="display:flex;flex-direction:column;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ Auth::user()?->name ?? 'Administrator' }}</span>
+        <span style="font-size:10px;color:var(--text-muted);text-transform:capitalize;">{{ Auth::user()?->role ?? 'staff' }}</span>
+      </div>
+      <form method="POST" action="{{ route('auth.logout') }}" style="margin-left:4px;">
+        @csrf
+        <button type="submit" title="Logout"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#F87171;
+                 width:30px; height:30px; border-radius:8px; cursor:pointer;
+                 display:flex; align-items:center; justify-content:center; font-size:13px;"
+          onmouseover="this.style.background='rgba(239,68,68,0.35)'"
+          onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </form>
     </div>
-  </header>
+  </div>
 
-  <!-- DASHDINE WORKSPACE CONTENT -->
-  <main class="dashboard-workspace">
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
 
-    <!-- ═══════════════════════════════════════════════════════════
-         ROW 1: THE 5 DASHDINE KPI METRIC CARDS
-         ═══════════════════════════════════════════════════════════ -->
-    <section class="dashdine-kpi-grid">
-      
-      <!-- Card 1: Today's Revenue -->
-      <div class="dashdine-kpi-card">
-        <div>
-          <div class="kpi-card-header">
-            <span class="kpi-title">Today's Revenue</span>
-            <div class="kpi-icon-bubble orange"><i class="fa-solid fa-dollar-sign"></i></div>
+    @php
+      $currentRest = \App\Models\Restaurant::find(Auth::user()?->restaurant_id);
+      $restStatus = strtolower(trim($currentRest?->subscription_status ?? 'active'));
+      $expiryDate = $currentRest?->subscription_expires_at ?? $currentRest?->trial_ends_at;
+      $daysRemaining = $expiryDate ? \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($expiryDate), false) : null;
+    @endphp
+
+    @if($restStatus === 'grace_period')
+      <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 18px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
           </div>
-          <div class="kpi-value">₹ {{ number_format($todayRevenue ?? 0, 2) }}</div>
-        </div>
-        <div class="kpi-trend positive">
-          <i class="fa-solid fa-arrow-trend-up"></i> {{ $revenueDiffText ?? '+0%' }}
-        </div>
-        <div class="kpi-watermark-shape"></div>
-      </div>
-
-      <!-- Card 2: Orders Served -->
-      <div class="dashdine-kpi-card">
-        <div>
-          <div class="kpi-card-header">
-            <span class="kpi-title">Orders Served</span>
-            <div class="kpi-icon-bubble green"><i class="fa-solid fa-receipt"></i></div>
-          </div>
-          <div class="kpi-value">{{ $todayOrdersCount ?? 0 }}</div>
-        </div>
-        <div class="kpi-trend positive">
-          <i class="fa-solid fa-arrow-trend-up"></i> {{ $ordersDiffText ?? '+0' }}
-        </div>
-        <div class="kpi-watermark-shape" style="background:rgba(16,185,129,0.03);"></div>
-      </div>
-
-      <!-- Card 3: Avg. Order Value -->
-      <div class="dashdine-kpi-card">
-        <div>
-          <div class="kpi-card-header">
-            <span class="kpi-title">Avg. Order Value</span>
-            <div class="kpi-icon-bubble amber"><i class="fa-solid fa-chart-line"></i></div>
-          </div>
-          <div class="kpi-value">₹ {{ number_format($avgOrderValue ?? ((($todayOrdersCount ?? 0) > 0) ? (($todayRevenue ?? 0) / $todayOrdersCount) : 0), 2) }}</div>
-        </div>
-        <div class="kpi-trend positive">
-          <i class="fa-solid fa-arrow-trend-up"></i> +4.2% <span class="kpi-trend-sub">vs last week</span>
-        </div>
-        <div class="kpi-watermark-shape" style="background:rgba(245,158,11,0.03);"></div>
-      </div>
-
-      <!-- Card 4: Cancellations -->
-      <div class="dashdine-kpi-card">
-        <div>
-          <div class="kpi-card-header">
-            <span class="kpi-title">Cancellations</span>
-            <div class="kpi-icon-bubble red"><i class="fa-solid fa-circle-xmark"></i></div>
-          </div>
-          <div class="kpi-value">{{ $cancellationsCount ?? 0 }}</div>
-        </div>
-        <div class="kpi-trend {{ ($cancellationsCount ?? 0) > 0 ? 'negative' : 'neutral' }}">
-          <i class="fa-solid {{ ($cancellationsCount ?? 0) > 0 ? 'fa-arrow-trend-down' : 'fa-check' }}"></i> {{ ($cancellationsCount ?? 0) > 0 ? ($cancellationsCount . ' today') : 'Zero refunds' }}
-        </div>
-        <div class="kpi-watermark-shape" style="background:rgba(239,68,68,0.03);"></div>
-      </div>
-
-      <!-- Card 5: Guest Covers -->
-      <div class="dashdine-kpi-card">
-        <div>
-          <div class="kpi-card-header">
-            <span class="kpi-title">Guest Covers</span>
-            <div class="kpi-icon-bubble cyan"><i class="fa-solid fa-users"></i></div>
-          </div>
-          <div class="kpi-value">{{ $activeCustomers ?? ($occupiedTablesCount * 3) }}</div>
-        </div>
-        <div class="kpi-trend positive">
-          <i class="fa-solid fa-arrow-trend-up"></i> +12.4% <span class="kpi-trend-sub">active diners</span>
-        </div>
-        <div class="kpi-watermark-shape" style="background:rgba(6,182,212,0.03);"></div>
-      </div>
-
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         ROW 2: HOURLY REVENUE CHART & LIVE FLOOR MAP
-         ═══════════════════════════════════════════════════════════ -->
-    <section class="dashdine-middle-grid">
-      
-      <!-- Hourly Revenue Chart -->
-      <div class="dashdine-card">
-        <div class="card-title-bar">
           <div>
-            <h3>Hourly Revenue</h3>
-            <p class="card-subtitle">Dine-in vs Takeaway &bull; Today's performance</p>
-          </div>
-          <div style="display:flex; align-items:center; gap:16px;">
-            <div style="display:flex; align-items:center; gap:12px; font-size:12px; font-weight:600;">
-              <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:3px; background:#FF6B00;"></span> Dine-in</span>
-              <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:3px; background:#FBBF24;"></span> Takeaway</span>
-            </div>
-            <div class="chart-time-pills">
-              <button class="time-pill-btn active" onclick="switchChartTime('day')">Day</button>
-              <button class="time-pill-btn" onclick="switchChartTime('week')">Week</button>
-              <button class="time-pill-btn" onclick="switchChartTime('month')">Month</button>
-            </div>
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 800; color: #F59E0B;">Subscription in Grace Period</h4>
+            <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">{{ $currentRest->getCustomerFacingGracePeriodMessage() }}</p>
           </div>
         </div>
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I need to renew my restaurant subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
+        </a>
+      </div>
+    @elseif($restStatus === 'expiring' || ($daysRemaining !== null && $daysRemaining >= 0 && $daysRemaining <= 3))
+      <div style="background: rgba(249, 115, 22, 0.12); border: 1.5px solid rgba(249, 115, 22, 0.4); border-radius: 18px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(249, 115, 22, 0.2); border: 1px solid rgba(249, 115, 22, 0.5); color: #FB923C; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div>
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 800; color: #FB923C;">Subscription Expiring Soon</h4>
+            <p style="margin: 0; font-size: 12.5px; color: #D1D5DB;">Your restaurant subscription will expire in {{ max(0, intval($daysRemaining)) }} day(s). Renew now to avoid any disruption.</p>
+          </div>
+        </div>
+        <a href="https://wa.me/917777938338?text={{ urlencode('Hello DineFlow Team, I want to renew/extend subscription for ' . ($currentRest->name ?? '')) }}" target="_blank" style="padding: 10px 18px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <i class="fa-brands fa-whatsapp"></i> Renew on WhatsApp
+        </a>
+      </div>
+    @endif
 
-        <div class="chart-container-box">
-          <canvas id="dashHourlyRevenueChart"></canvas>
+    <!-- Welcome Hero Banner -->
+    <div style="background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 24px; padding: 24px 28px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <img src="/images/dineflow_logo.jpg" alt="Logo" style="width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 20px rgba(99,102,241,0.4); border: 2px solid rgba(99,102,241,0.5);">
+        <div>
+          <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:800; color:var(--text-primary); margin:0 0 4px; display:flex; align-items:center; gap:8px;">
+            Welcome back, {{ Auth::user()?->name ?? 'Administrator' }}! <span style="font-size:18px;">👋</span>
+          </h2>
+          <p style="margin:0; color:var(--text-muted); font-size:13px; font-weight:500;">DineFlow AI POS Operations Center • Live Real-Time Analytics & Soundbox Enabled</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="/pos" style="padding: 10px 18px; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff; text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(99,102,241,0.4);"><i class="fa-solid fa-cash-register"></i> + New POS Bill</a>
+        <button type="button" onclick="openDashOrdersModal('all')" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-receipt"></i> Orders</button>
+        <button type="button" onclick="openDashOffersModal()" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor:pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-tags"></i> Offers</button>
+        <a href="/admin/tables" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-table-cells-large"></i> Table Floor</a>
+        <a href="/admin/menu-manager" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-utensils"></i> Menu Items</a>
+        <a href="/admin/procurement" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-truck-ramp-box"></i> Suppliers &amp; PO</a>
+        <a href="/admin/attendance" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-user-clock"></i> Attendance</a>
+        <a href="/admin/sales-report" style="padding: 10px 16px; background: var(--primary-light); border: 1px solid var(--border); color: var(--primary); text-decoration: none; border-radius: 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-chart-line"></i> Sales Reports</a>
+      </div>
+    </div>
+
+    @if(isset($usageStats))
+    <!-- SaaS Free Plan Usage Bar -->
+    <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #818CF8; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid fa-bolt"></i> {{ strtoupper($usageStats['plan_type'] ?? 'FREE') }} PLAN
+        </span>
+        <span style="font-size: 12.5px; color: var(--text-secondary); font-weight: 600;">Resource Quotas:</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['tables']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['tables']['limit'] ?? 10 }} Tables
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['staff']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['staff']['limit'] ?? 5 }} Staff
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['menu_items']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['menu_items']['limit'] ?? 100 }} Menu Items
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color: var(--text-primary); font-size: 13px;">{{ $usageStats['usage']['monthly_orders']['current'] ?? 0 }}</strong> / {{ $usageStats['usage']['monthly_orders']['limit'] ?? 500 }} Monthly Orders
+        </div>
+        <button type="button" onclick="alert('Pro & Enterprise paid plans are coming soon! View upcoming features on our pricing page.'); window.location.href='/pricing';" style="padding: 6px 14px; background: linear-gradient(135deg, #6366F1, #818CF8); color: #fff; border: none; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(99,102,241,0.3);">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Upgrade
+        </button>
+      </div>
+    </div>
+    @endif
+
+    <!-- 4 Stats Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px;">
+      <!-- Card 1 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #818CF8; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-receipt"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Today's Orders</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ $todayOrdersCount }}</div>
+            <div style="font-size: 11.5px; color: #34D399; font-weight: 600;">{{ $ordersDiffText }}</div>
+          </div>
         </div>
       </div>
 
-      <!-- Live Floor Map Widget (DashDine Showcase) -->
-      <div class="dashdine-card">
-        <div class="card-title-bar">
+      <!-- Card 2 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-indian-rupee-sign"></i></div>
           <div>
-            <h3>Floor Map</h3>
-            <p class="card-subtitle">Real-time table occupancy</p>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Revenue</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">₹ {{ number_format($todayRevenue) }}</div>
+            <div style="font-size: 11.5px; color: #34D399; font-weight: 600;">{{ $revenueDiffText }}</div>
           </div>
-          <a href="/admin/tables" class="manage-link-btn" title="Manage Tables Layout">Manage &rarr;</a>
         </div>
+      </div>
 
-        <!-- 12 Interactive Tables Grid -->
-        <div class="floor-map-grid" id="dashdineFloorMapGrid">
-          @php
-            $displayTables = [
-              ['id' => 'T1',  'name' => 'T1',  'status' => 'occupied'],
-              ['id' => 'T2',  'name' => 'T2',  'status' => 'occupied'],
-              ['id' => 'T3',  'name' => 'T3',  'status' => 'available'],
-              ['id' => 'T4',  'name' => 'T4',  'status' => 'reserved'],
-              ['id' => 'T5',  'name' => 'T5',  'status' => 'available'],
-              ['id' => 'T6',  'name' => 'T6',  'status' => 'occupied'],
-              ['id' => 'T7',  'name' => 'T7',  'status' => 'occupied'],
-              ['id' => 'T8',  'name' => 'T8',  'status' => 'cleaning'],
-              ['id' => 'T9',  'name' => 'T9',  'status' => 'reserved'],
-              ['id' => 'T10', 'name' => 'T10', 'status' => 'occupied'],
-              ['id' => 'T11', 'name' => 'T11', 'status' => 'available'],
-              ['id' => 'T12', 'name' => 'T12', 'status' => 'available'],
-            ];
-            if (isset($floorTables) && count($floorTables) > 0) {
-              $displayTables = [];
-              foreach ($floorTables as $idx => $ft) {
-                $isOcc = in_array($ft->id, $occupiedTableIds ?? []);
-                $displayTables[] = [
-                  'id' => $ft->id,
-                  'name' => $ft->table_number ?? ('T' . ($idx + 1)),
-                  'status' => $isOcc ? 'occupied' : 'available'
-                ];
+      <!-- Card 3 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #FBBF24; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-users"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Active Customers</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ $activeCustomers }}</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;">Currently dining at tables</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; transition: transform 0.25s, box-shadow 0.25s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #F87171; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;"><i class="fa-solid fa-table-cells-large"></i></div>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Tables Occupied</div>
+            <div style="font-family:'Outfit',sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ $occupiedTablesCount }} / {{ $totalTablesCount }}</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;">Real-time floor occupancy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-line" style="color:#818CF8;"></i> Last 7 Days Revenue Trend
+        </h3>
+        <div style="height: 280px; position: relative;">
+          <canvas id="salesTrendChart"></canvas>
+        </div>
+      </div>
+
+      <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-pie" style="color:#34D399;"></i> Sales Category Distribution
+        </h3>
+        <div style="height: 280px; position: relative;">
+          <canvas id="categorySalesChart"></canvas>
+          <div id="dashCatEmptyState" style="display:none; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:var(--text-muted); gap:8px;">
+            <i class="fa-solid fa-chart-pie" style="font-size:36px; opacity:0.3; color:#34D399;"></i>
+            <span style="font-weight:700; font-size:13.5px; color:var(--text-primary);">No sales data yet</span>
+            <span style="font-size:11.5px; max-width:220px; line-height:1.4;">Sales category distribution will appear once orders are completed.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📊 BCG Menu Engineering & Profitability Matrix -->
+    <div style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+            <span>📊</span> <span>AI Menu Engineering & Profitability Matrix</span>
+          </h3>
+          <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Classifies dishes into 4 BCG quadrants (Popularity vs Profit Margin) to maximize restaurant profit</p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">⭐ Stars (High Profit & Pop)</span>
+          <span style="background: rgba(99,102,241,0.12); color: #818CF8; border: 1px solid rgba(99,102,241,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🐎 Plowhorses (High Pop)</span>
+          <span style="background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🧩 Puzzles (High Profit)</span>
+          <span style="background: rgba(239,68,68,0.12); color: #F87171; border: 1px solid rgba(239,68,68,0.25); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;">🐕 Dogs (Low Pop & Profit)</span>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+              <th style="padding: 12px 14px;">Dish Name</th>
+              <th style="padding: 12px 14px;">Category</th>
+              <th style="padding: 12px 14px;">Price</th>
+              <th style="padding: 12px 14px;">Profit Margin</th>
+              <th style="padding: 12px 14px;">Qty Sold</th>
+              <th style="padding: 12px 14px;">BCG Quadrant</th>
+              <th style="padding: 12px 14px;">AI Recommendation</th>
+            </tr>
+          </thead>
+          <tbody id="menuMatrixBody">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">Loading Menu Engineering Matrix...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- Load Chart.js -->
+<script>
+// Run live clock ticker immediately
+function updateLiveClock() {
+  const now = new Date();
+  const clockEl = document.getElementById('liveClockBadge');
+  if (clockEl) {
+    clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+}
+updateLiveClock();
+setInterval(updateLiveClock, 1000);
+
+let salesTrendChartInstance = null;
+let categorySalesChartInstance = null;
+
+function initDashboardCharts() {
+  if (typeof Chart === 'undefined') {
+    setTimeout(initDashboardCharts, 250);
+    return;
+  }
+
+  try {
+    const isLight = document.body.classList.contains('light-theme') || document.documentElement.classList.contains('light-theme');
+    const tickColor = isLight ? '#475569' : '#94A3B8';
+    const gridColor = isLight ? '#E2E8F0' : 'rgba(255, 255, 255, 0.06)';
+    const legendColor = isLight ? '#0F172A' : '#F8FAFC';
+
+    // 1. Sales Trend Chart (Authoritative & Zero-Start)
+    const trendEl = document.getElementById('salesTrendChart');
+    if (trendEl) {
+      const ctxTrend = trendEl.getContext('2d');
+      const trendGrad = ctxTrend.createLinearGradient(0, 0, 0, 280);
+      trendGrad.addColorStop(0, isLight ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.35)');
+      trendGrad.addColorStop(1, isLight ? 'rgba(99, 102, 241, 0.01)' : 'rgba(99, 102, 241, 0.01)');
+
+      const weeklyLabels = {!! json_encode($weeklySalesLabels) !!};
+      let weeklyData = {!! json_encode($weeklySalesData) !!};
+
+      if (!weeklyData || !Array.isArray(weeklyData) || weeklyData.length === 0) {
+        weeklyData = [0, 0, 0, 0, 0, 0, 0];
+      }
+
+      if (salesTrendChartInstance) {
+        salesTrendChartInstance.destroy();
+      }
+
+      salesTrendChartInstance = new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: weeklyLabels && weeklyLabels.length ? weeklyLabels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Revenue (₹)',
+            data: weeklyData,
+            borderColor: '#6366F1',
+            borderWidth: 3,
+            backgroundColor: trendGrad,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#818CF8',
+            pointBorderColor: isLight ? '#FFFFFF' : '#1E293B',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 7
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: isLight ? '#FFFFFF' : '#1E293B',
+              titleColor: isLight ? '#0F172A' : '#F8FAFC',
+              bodyColor: isLight ? '#475569' : '#94A3B8',
+              borderColor: isLight ? '#CBD5E1' : '#334155',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                label: function(context) {
+                  return ' Revenue: ₹' + Number(context.parsed.y).toLocaleString('en-IN');
+                }
               }
             }
-          @endphp
-
-          @foreach($displayTables as $tbl)
-            <div class="floor-table-node {{ $tbl['status'] }}" onclick="handleTableClick('{{ $tbl['name'] }}', '{{ $tbl['status'] }}')" title="Table {{ $tbl['name'] }} ({{ ucfirst($tbl['status']) }})">
-              <span class="table-id-txt">{{ $tbl['name'] }}</span>
-              <span class="table-status-tag">{{ $tbl['status'] }}</span>
-            </div>
-          @endforeach
-        </div>
-
-        <!-- Floor Legend Summary -->
-        <div class="floor-legend-bar">
-          <span><span class="floor-legend-dot" style="background:#FF6B00;"></span> Occupied ({{ $occupiedTablesCount ?? 5 }})</span>
-          <span><span class="floor-legend-dot" style="background:#10B981;"></span> Available ({{ max(1, ($totalTablesCount ?? 12) - ($occupiedTablesCount ?? 0)) }})</span>
-          <span><span class="floor-legend-dot" style="background:#F59E0B;"></span> Reserved (2)</span>
-          <span><span class="floor-legend-dot" style="background:#94A3B8;"></span> Cleaning (1)</span>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         ROW 3: RECENT ORDERS & TOP DISHES / STAFF ON DUTY
-         ═══════════════════════════════════════════════════════════ -->
-    <section class="dashdine-bottom-grid">
-      
-      <!-- Recent Orders Log -->
-      <div class="dashdine-card">
-        <div class="card-title-bar">
-          <div>
-            <h3>Recent Orders</h3>
-            <p class="card-subtitle">Live order stream &bull; Updating in real-time</p>
-          </div>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="order-filter-pills">
-              <button class="order-filter-btn active" onclick="filterRecentOrders('all', this)">All</button>
-              <button class="order-filter-btn" onclick="filterRecentOrders('dine_in', this)">Dine-in</button>
-              <button class="order-filter-btn" onclick="filterRecentOrders('takeaway', this)">Takeaway</button>
-              <button class="order-filter-btn" onclick="filterRecentOrders('delivery', this)">Delivery</button>
-            </div>
-            <button type="button" class="manage-link-btn" onclick="openDashOrdersModal('all')" style="border:none; cursor:pointer;">
-              <i class="fa-solid fa-list-check"></i> View All
-            </button>
-          </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table class="dashdine-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Table</th>
-                <th>Items Summary</th>
-                <th>Amount</th>
-                <th>Type</th>
-                <th>Time</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="dashRecentOrdersTbody">
-              @if(isset($recentOrdersList) && count($recentOrdersList) > 0)
-                @foreach($recentOrdersList as $ro)
-                  @php
-                    $itemsTxt = ($ro->items && count($ro->items) > 0)
-                      ? $ro->items->map(fn($oi) => ($oi->quantity . 'x ' . ($oi->menuItem->name ?? 'Dish')))->join(', ')
-                      : 'Special Chef Course';
-                    $statusBadge = '<span class="status-badge-served"><i class="fa-solid fa-circle-check"></i> ' . ucfirst($ro->status ?? 'Served') . '</span>';
-                    if (($ro->status ?? '') === 'cooking' || ($ro->status ?? '') === 'preparing') {
-                      $statusBadge = '<span class="status-badge-cooking"><i class="fa-solid fa-fire"></i> Cooking</span>';
-                    } elseif (($ro->status ?? '') === 'pending') {
-                      $statusBadge = '<span class="status-badge-pending"><i class="fa-solid fa-clock"></i> Pending</span>';
-                    }
-                  @endphp
-                  <tr data-type="{{ $ro->order_type ?? 'dine_in' }}">
-                    <td class="order-id-code">#{{ str_pad($ro->id ?? 1, 4, '0', STR_PAD_LEFT) }}</td>
-                    <td><span class="table-pill-badge">{{ $ro->table->table_number ?? 'T1' }}</span></td>
-                    <td style="max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $itemsTxt }}</td>
-                    <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ {{ number_format($ro->total_amount ?? 0, 2) }}</td>
-                    <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">{{ $ro->order_type ?? 'dine-in' }}</span></td>
-                    <td style="color:var(--text-muted); font-size:12px;">{{ $ro->created_at ? \Carbon\Carbon::parse($ro->created_at)->format('h:i A') : 'Just now' }}</td>
-                    <td>{!! $statusBadge !!}</td>
-                  </tr>
-                @endforeach
-              @else
-                <!-- High-Fidelity DashDine Sample Orders -->
-                <tr data-type="dine_in">
-                  <td class="order-id-code">#0841</td>
-                  <td><span class="table-pill-badge">T6</span></td>
-                  <td>Truffle Risotto, Tiramisu, House Wine</td>
-                  <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ 685.00</td>
-                  <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Dine-in</span></td>
-                  <td style="color:var(--text-muted); font-size:12px;">07:42 PM</td>
-                  <td><span class="status-badge-served"><i class="fa-solid fa-circle-check"></i> Served</span></td>
-                </tr>
-                <tr data-type="dine_in">
-                  <td class="order-id-code">#0842</td>
-                  <td><span class="table-pill-badge">T2</span></td>
-                  <td>Grilled Salmon, Caesar Salad, Espresso</td>
-                  <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ 540.00</td>
-                  <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Dine-in</span></td>
-                  <td style="color:var(--text-muted); font-size:12px;">07:51 PM</td>
-                  <td><span class="status-badge-cooking"><i class="fa-solid fa-fire"></i> Cooking</span></td>
-                </tr>
-                <tr data-type="takeaway">
-                  <td class="order-id-code">#0843</td>
-                  <td><span class="table-pill-badge">TAK</span></td>
-                  <td>Margherita Pizza, Garlic Bread x2</td>
-                  <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ 317.50</td>
-                  <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Takeaway</span></td>
-                  <td style="color:var(--text-muted); font-size:12px;">07:55 PM</td>
-                  <td><span class="status-badge-pending"><i class="fa-solid fa-clock"></i> Pending</span></td>
-                </tr>
-                <tr data-type="dine_in">
-                  <td class="order-id-code">#0844</td>
-                  <td><span class="table-pill-badge">T10</span></td>
-                  <td>Beef Tenderloin, Red Wine, Panna Cotta</td>
-                  <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ 920.00</td>
-                  <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Dine-in</span></td>
-                  <td style="color:var(--text-muted); font-size:12px;">08:03 PM</td>
-                  <td><span class="status-badge-cooking"><i class="fa-solid fa-fire"></i> Cooking</span></td>
-                </tr>
-                <tr data-type="delivery">
-                  <td class="order-id-code">#0845</td>
-                  <td><span class="table-pill-badge">DEL</span></td>
-                  <td>BBQ Chicken Burger, Peri Fries, Shake</td>
-                  <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ 284.00</td>
-                  <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Delivery</span></td>
-                  <td style="color:var(--text-muted); font-size:12px;">08:07 PM</td>
-                  <td><span class="status-badge-pending"><i class="fa-solid fa-clock"></i> Pending</span></td>
-                </tr>
-              @endif
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Top Menu Items & Staff on Duty -->
-      <div style="display:flex; flex-direction:column; gap:20px;">
-        
-        <!-- Top Menu Items -->
-        <div class="dashdine-card">
-          <div class="card-title-bar">
-            <div>
-              <h3>Top Menu Items</h3>
-              <p class="card-subtitle">Highest volume dishes</p>
-            </div>
-            <span style="font-size:11px; font-weight:800; color:#10B981; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px;">TODAY</span>
-          </div>
-
-          <div class="top-dishes-list">
-            <div class="dish-rank-item">
-              <span class="dish-rank-num">1</span>
-              <div class="dish-icon-box">🍝</div>
-              <div class="dish-details-col">
-                <h5>Pasta Carbonara</h5>
-                <span>48 orders</span>
-              </div>
-              <div class="dish-progress-bar"><div class="dish-progress-fill" style="width: 88%;"></div></div>
-            </div>
-
-            <div class="dish-rank-item">
-              <span class="dish-rank-num">2</span>
-              <div class="dish-icon-box">🍕</div>
-              <div class="dish-details-col">
-                <h5>Margherita Pizza</h5>
-                <span>41 orders</span>
-              </div>
-              <div class="dish-progress-bar"><div class="dish-progress-fill" style="width: 74%;"></div></div>
-            </div>
-
-            <div class="dish-rank-item">
-              <span class="dish-rank-num">3</span>
-              <div class="dish-icon-box">🥩</div>
-              <div class="dish-details-col">
-                <h5>Paneer Butter Masala</h5>
-                <span>34 orders</span>
-              </div>
-              <div class="dish-progress-bar"><div class="dish-progress-fill" style="width: 62%;"></div></div>
-            </div>
-
-            <div class="dish-rank-item">
-              <span class="dish-rank-num">4</span>
-              <div class="dish-icon-box">🍹</div>
-              <div class="dish-details-col">
-                <h5>Virgin Mojito Mocktail</h5>
-                <span>29 orders</span>
-              </div>
-              <div class="dish-progress-bar"><div class="dish-progress-fill" style="width: 50%;"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Staff on Duty Panel (Attendance ERP Integration) -->
-        <div class="dashdine-card">
-          <div class="card-title-bar">
-            <div>
-              <h3>Staff on Duty</h3>
-              <p class="card-subtitle">Shift clock-in attendance</p>
-            </div>
-            <a href="/admin/attendance" class="manage-link-btn" title="View Shift Payroll">Payroll &rarr;</a>
-          </div>
-
-          <div class="staff-duty-list">
-            <div class="staff-duty-card">
-              <div class="staff-duty-left">
-                <div class="staff-avatar-badge" style="background:#FF6B00;">LC</div>
-                <div class="staff-duty-info">
-                  <h6>Lucia Chen</h6>
-                  <span>Head Waiter</span>
-                </div>
-              </div>
-              <span class="staff-metric-tag">34 <span style="font-size:10px; color:var(--text-muted);">orders</span></span>
-            </div>
-
-            <div class="staff-duty-card">
-              <div class="staff-duty-left">
-                <div class="staff-avatar-badge" style="background:#10B981;">JM</div>
-                <div class="staff-duty-info">
-                  <h6>James Moore</h6>
-                  <span>Chef de Partie</span>
-                </div>
-              </div>
-              <span class="staff-metric-tag">52 <span style="font-size:10px; color:var(--text-muted);">dishes</span></span>
-            </div>
-
-            <div class="staff-duty-card">
-              <div class="staff-duty-left">
-                <div class="staff-avatar-badge" style="background:#8B5CF6;">SR</div>
-                <div class="staff-duty-info">
-                  <h6>Sofia Rossi</h6>
-                  <span>Cashier Desk</span>
-                </div>
-              </div>
-              <span class="staff-metric-tag">28 <span style="font-size:10px; color:var(--text-muted);">bills</span></span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     PRESERVED OPERATIONAL MODALS (ORDERS, DEALS, DISPATCH, NOTIFS)
-     ═══════════════════════════════════════════════════════════════ -->
-
-<!-- NOTIFICATION MODAL -->
-<div class="modal-overlay" id="notifModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:10000;">
-  <div class="modal" style="width:480px; max-width:92vw; background:var(--card); border:1px solid var(--border); border-radius:20px; box-shadow:var(--shadow-lg); overflow:hidden;">
-    <div style="padding:18px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="font-family:'Outfit',sans-serif; font-size:16px; font-weight:800; color:var(--text-primary); margin:0;">Notifications</h3>
-      <button onclick="closeModal('notifModal')" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">&times;</button>
-    </div>
-    <div style="padding:20px 24px; max-height:60vh; overflow-y:auto;" id="notifListContainer">
-      <div style="text-align:center; padding:30px; color:var(--text-muted); font-size:13px;">
-        <i class="fa-solid fa-bell-slash" style="font-size:28px; margin-bottom:8px; display:block; opacity:0.4;"></i>
-        All clear! No pending urgent notifications.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FULL ORDERS DETAIL MODAL -->
-<div class="modal-overlay" id="dashOrdersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
-  <div class="modal" style="width:980px; max-width:95vw; height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
-    <div style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:16px 24px; display:flex; justify-content:space-between; align-items:center;">
-      <div id="dashOrdersModalTitle" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
-        <i class="fa-solid fa-receipt"></i> Active Order Log
-      </div>
-      <button onclick="closeDashOrdersModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
-    </div>
-    <div style="padding:20px 24px; overflow-y:auto; flex:1;" id="dashOrdersModalBody">
-      <div style="text-align:center; padding:50px; color:var(--text-muted);">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>
-        Loading live orders...
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     CLIENT-SIDE CHART & INTERACTIVITY SCRIPTS
-     ═══════════════════════════════════════════════════════════════ -->
-<script>
-const DASHBOARD_RESTAURANT_ID = {{ Auth::user()?->restaurant_id ?? 1 }};
-let hourlyChartInstance = null;
-
-// Initialize DashDine Stacked Revenue Chart
-document.addEventListener('DOMContentLoaded', () => {
-  initDashHourlyChart();
-  initThemeState();
-});
-
-function initDashHourlyChart() {
-  const ctx = document.getElementById('dashHourlyRevenueChart');
-  if (!ctx) return;
-
-  const labels = ['10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
-  const dineInData = [420, 780, 1420, 1380, 1250, 1100, 1340, 1180, 1450, 890];
-  const takeawayData = [210, 340, 580, 520, 480, 430, 510, 620, 540, 310];
-
-  hourlyChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Takeaway',
-          data: takeawayData,
-          backgroundColor: '#FBBF24',
-          borderRadius: 6,
-          borderSkipped: false
-        },
-        {
-          label: 'Dine-in',
-          data: dineInData,
-          backgroundColor: '#FF6B00',
-          borderRadius: 6,
-          borderSkipped: false
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#121624',
-          titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
-          bodyFont: { family: 'Inter', size: 12 },
-          padding: 12,
-          cornerRadius: 10,
-          callbacks: {
-            label: (ctx) => `${ctx.dataset.label}: ₹ ${ctx.raw}`
+          },
+          scales: {
+            y: {
+              grid: { color: gridColor },
+              ticks: {
+                color: tickColor,
+                font: { family: 'Outfit', size: 11, weight: '600' },
+                callback: function(val) { return '₹' + val; }
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: tickColor, font: { family: 'Outfit', size: 11, weight: '600' } }
+            }
           }
         }
-      },
-      scales: {
-        x: {
-          stacked: true,
-          grid: { display: false },
-          ticks: { color: '#94A3B8', font: { family: 'Inter', size: 11, weight: '600' } }
-        },
-        y: {
-          stacked: true,
-          grid: { color: 'rgba(226, 232, 240, 0.4)', drawBorder: false },
-          ticks: {
-            color: '#94A3B8',
-            font: { family: 'JetBrains Mono', size: 10.5 },
-            callback: (v) => '₹' + v
+      });
+    }
+
+    // 2. Category Sales Chart (Authoritative & Zero-Start)
+    const catEl = document.getElementById('categorySalesChart');
+    const dashCatEmpty = document.getElementById('dashCatEmptyState');
+    if (catEl) {
+      const catLabels = {!! json_encode($categorySalesLabels) !!};
+      let catData = {!! json_encode($categorySalesData) !!};
+      const totalCatSales = (catData || []).reduce((a, b) => a + Number(b || 0), 0);
+
+      if (categorySalesChartInstance) {
+        categorySalesChartInstance.destroy();
+        categorySalesChartInstance = null;
+      }
+
+      if (totalCatSales === 0 || !catLabels || !catLabels.length) {
+        catEl.style.display = 'none';
+        if (dashCatEmpty) dashCatEmpty.style.display = 'flex';
+      } else {
+        catEl.style.display = 'block';
+        if (dashCatEmpty) dashCatEmpty.style.display = 'none';
+        const ctxCat = catEl.getContext('2d');
+
+        categorySalesChartInstance = new Chart(ctxCat, {
+          type: 'doughnut',
+          data: {
+            labels: catLabels,
+            datasets: [{
+              data: catData,
+              backgroundColor: ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#8B5CF6'],
+              borderColor: isLight ? '#FFFFFF' : '#1E293B',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  color: legendColor,
+                  font: { family: 'Outfit', size: 12, weight: '700' },
+                  padding: 12,
+                  usePointStyle: true,
+                  pointStyle: 'circle'
+                }
+              },
+              tooltip: {
+                backgroundColor: isLight ? '#FFFFFF' : '#1E293B',
+                titleColor: isLight ? '#0F172A' : '#F8FAFC',
+                bodyColor: isLight ? '#475569' : '#94A3B8',
+                borderColor: isLight ? '#CBD5E1' : '#334155',
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: function(context) {
+                    return ' ' + context.label + ': ₹' + Number(context.parsed).toLocaleString('en-IN');
+                  }
+                }
+              }
+            },
+            cutout: '68%'
           }
-        }
+        });
       }
     }
-  });
-}
-
-function switchChartTime(timeframe) {
-  document.querySelectorAll('.time-pill-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-
-  if (!hourlyChartInstance) return;
-  if (timeframe === 'week') {
-    hourlyChartInstance.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    hourlyChartInstance.data.datasets[1].data = [4800, 5200, 6100, 5800, 7400, 9200, 8400];
-    hourlyChartInstance.data.datasets[0].data = [1200, 1400, 1800, 1600, 2200, 3100, 2900];
-  } else if (timeframe === 'month') {
-    hourlyChartInstance.data.labels = ['W1', 'W2', 'W3', 'W4'];
-    hourlyChartInstance.data.datasets[1].data = [28000, 34000, 39000, 42000];
-    hourlyChartInstance.data.datasets[0].data = [9000, 11000, 13000, 14500];
-  } else {
-    hourlyChartInstance.data.labels = ['10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
-    hourlyChartInstance.data.datasets[1].data = [420, 780, 1420, 1380, 1250, 1100, 1340, 1180, 1450, 890];
-    hourlyChartInstance.data.datasets[0].data = [210, 340, 580, 520, 480, 430, 510, 620, 540, 310];
+  } catch (err) {
+    console.error('Error initializing charts:', err);
   }
-  hourlyChartInstance.update();
 }
 
-function filterRecentOrders(type, btn) {
-  document.querySelectorAll('.order-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+async function loadMenuMatrix() {
+  const tbody = document.getElementById('menuMatrixBody');
+  if (!tbody) return;
 
-  const rows = document.querySelectorAll('#dashRecentOrdersTbody tr');
-  rows.forEach(r => {
-    if (type === 'all' || r.getAttribute('data-type') === type) {
-      r.style.display = '';
+  try {
+    const res = await fetch('/api/analytics/menu-engineering/1');
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      renderMenuMatrix(json.data);
     } else {
-      r.style.display = 'none';
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-muted);">No sales data available yet to categorize items into BCG quadrants.</td></tr>`;
     }
-  });
-}
-
-function handleTableClick(tableName, status) {
-  if (status === 'occupied') {
-    openDashOrdersModal(tableName);
-  } else {
-    window.location.href = `/pos?table=${encodeURIComponent(tableName)}`;
+  } catch (err) {
+    console.warn('Matrix fetch error:', err);
   }
 }
 
-function handleGlobalSearch(query) {
-  const q = query.toLowerCase().trim();
-  const rows = document.querySelectorAll('#dashRecentOrdersTbody tr');
-  rows.forEach(r => {
-    const text = r.textContent.toLowerCase();
-    r.style.display = text.includes(q) ? '' : 'none';
-  });
+function renderMenuMatrix(items) {
+  const tbody = document.getElementById('menuMatrixBody');
+  if (!tbody) return;
+
+  const quadConfig = {
+    'Star':      { badge: '⭐ STAR',       color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+    'Plowhorse': { badge: '🐎 PLOWHORSE', color: '#818CF8', bg: 'rgba(99,102,241,0.15)' },
+    'Puzzle':    { badge: '🧩 PUZZLE',    color: '#34D399', bg: 'rgba(16,185,129,0.15)' },
+    'Dog':       { badge: '🐕 DOG',       color: '#F87171', bg: 'rgba(239,68,68,0.15)' }
+  };
+
+  tbody.innerHTML = items.map(item => {
+    const q = quadConfig[item.matrix_quad] || { badge: item.matrix_quad, color: '#94A3B8', bg: 'rgba(148,163,184,0.15)' };
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+        <td style="padding: 12px 14px; font-weight: 700; color: var(--text-primary);">${item.name}</td>
+        <td style="padding: 12px 14px; color: var(--text-secondary);">${item.category_name || 'General'}</td>
+        <td style="padding: 12px 14px; font-weight: 700; color: var(--text-primary);">₹${item.price}</td>
+        <td style="padding: 12px 14px; color: #10B981; font-weight: 700;">₹${item.margin} <span style="font-size:11px; color:var(--text-muted);">(${item.margin_pct}%)</span></td>
+        <td style="padding: 12px 14px; font-weight: 700; color: #818CF8;">${item.qty_sold} sold</td>
+        <td style="padding: 12px 14px;">
+          <span style="background: ${q.bg}; color: ${q.color}; border: 1px solid ${q.color}40; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800;">
+            ${q.badge}
+          </span>
+        </td>
+        <td style="padding: 12px 14px; font-size: 12px; color: var(--text-muted);">${item.action_hint}</td>
+      </tr>
+    `;
+  }).join('');
 }
 
-// Sidebar Toggle
+document.addEventListener("DOMContentLoaded", function() {
+  initDashboardCharts();
+  loadMenuMatrix();
+});
+
+window.addEventListener('themechange', () => {
+  setTimeout(initDashboardCharts, 50);
+});
+</script>
+
+<script>
+const DASHBOARD_RESTAURANT_ID = '{{ Auth::user()->restaurant_id ?? '' }}';
 function toggleSidebar() {
-  const sb = document.getElementById('dashdineSidebar');
-  if (sb) sb.classList.toggle('collapsed');
-}
-
-// Dark / Light Theme Toggle
-function toggleDashTheme() {
-  const isDark = document.body.classList.toggle('dark-theme');
-  localStorage.setItem('dineflow_theme', isDark ? 'dark' : 'light');
-  updateThemeIcon(isDark);
-}
-
-function initThemeState() {
-  const saved = localStorage.getItem('dineflow_theme');
-  const isDark = saved === 'dark';
-  if (isDark) {
-    document.body.classList.add('dark-theme');
-  }
-  updateThemeIcon(isDark);
-}
-
-function updateThemeIcon(isDark) {
-  const icon = document.getElementById('themeToggleIcon');
-  if (icon) {
-    icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const isMobile = window.innerWidth <= 768;
+  
+  if (isMobile) {
+    sidebar.classList.toggle('mobile-open');
+    if (backdrop) backdrop.classList.toggle('active');
+  } else {
+    sidebar.classList.toggle('collapsed');
   }
 }
 
-// Preserved Modal Helpers
+let isPosVoiceMuted = localStorage.getItem('dineflow_voice_muted') === 'true';
+
+
+function toggleFull() {
+  const doc = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+    if (doc.requestFullscreen) {
+      doc.requestFullscreen();
+    } else if (doc.webkitRequestFullscreen) {
+      doc.webkitRequestFullscreen();
+    } else if (doc.msRequestFullscreen) {
+      doc.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
+
+
+
+function announcePaymentVoice(tableNumber, amount, method = 'online') {
+
+  if (isPosVoiceMuted) return;
+
+  if (!('speechSynthesis' in window)) {
+    console.log('Text-to-speech not supported in this browser.');
+    return;
+  }
+  
+  window.speechSynthesis.cancel();
+  
+  let cleanTableNum = String(tableNumber).replace(/table/gi, '').replace(/#/g, '').replace(/T-/gi, '').trim();
+  if (!cleanTableNum || cleanTableNum === 'Walk-In') cleanTableNum = '1';
+
+  let msgText = "";
+  if (tableNumber === 'Test') {
+    msgText = "ડાઇનફ્લો એઆઇ સ્માર્ટ સાઉન્ડબોક્સ સફળતાપૂર્વક સક્રિય છે.";
+  } else {
+    const cashOrOnline = (method === 'cash') ? 'રોકડા' : 'ઓનલાઇન';
+    msgText = `ડાઇનફ્લો એઆઇ પર ટેબલ નંબર ${cleanTableNum} ના ${amount} રૂપિયા ${cashOrOnline} સફળતાપૂર્વક પ્રાપ્ત થયા છે.`;
+  }
+  
+  const utterance = new SpeechSynthesisUtterance(msgText);
+  utterance.lang = 'gu-IN';
+  utterance.rate = 0.95;
+  utterance.pitch = 1.0;
+  
+  let guVoice = window.speechSynthesis.getVoices().find(v => v.lang.includes('gu') || v.name.includes('Gujarati') || v.lang.includes('hi') || v.lang.includes('IN'));
+  if (guVoice) utterance.voice = guVoice;
+  
+  window.speechSynthesis.speak(utterance);
+}
+
+
+
 function openModal(id) {
-  const m = document.getElementById(id);
-  if (m) m.style.display = 'flex';
-}
-function closeModal(id) {
-  const m = document.getElementById(id);
-  if (m) m.style.display = 'none';
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.style.display = 'flex';
+    setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  }
 }
 
-function openDashOrdersModal(filter) {
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.style.opacity = '0';
+    setTimeout(() => { modal.style.display = 'none'; }, 200);
+  }
+}
+
+function showToast(msg, type = 'success') {
+  const existing = document.getElementById('dineflow-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'dineflow-toast';
+  const bgMap = { success: 'linear-gradient(135deg,#059669,#10B981)', error: 'linear-gradient(135deg,#DC2626,#EF4444)', info: 'linear-gradient(135deg,#2563EB,#3B82F6)', warning: 'linear-gradient(135deg,#D97706,#F59E0B)' };
+  const bg = bgMap[type] || bgMap.success;
+  toast.style.cssText = `position:fixed; top:20px; right:20px; z-index:99999; background:${bg}; color:#fff; padding:14px 22px; border-radius:14px; font-family:'Outfit',sans-serif; font-size:13.5px; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,0.35); display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-12px) scale(0.95); transition:all 0.35s cubic-bezier(0.4,0,0.2,1); max-width:420px;`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0) scale(1)';
+  });
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-12px) scale(0.95)';
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
+}
+
+function markAllNotificationsAsRead() {
+  const body = document.querySelector('#notifModal .modal-body');
+  if (body) {
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Caught Up!</div>
+        <div style="font-size:12px; color:#94A3B8;">All notifications have been marked as read.</div>
+      </div>
+    `;
+  }
+
+  document.querySelectorAll('.notif-dot').forEach(dot => {
+    dot.style.display = 'none';
+  });
+
+  const badge = document.getElementById('notifCountBadge');
+  if (badge) badge.style.display = 'none';
+
+  dashNotifDismissedIds = [...dashNotifAllIds];
+  localStorage.setItem('dineflow_dismissed_notifs', JSON.stringify(dashNotifDismissedIds));
+
+  showToast('✅ All notifications cleared & marked as read!', 'success');
+
+  setTimeout(() => {
+    closeModal('notifModal');
+  }, 400);
+}
+
+/* ─── LIVE NOTIFICATION POLLING SYSTEM ─── */
+let dashNotifDismissedIds = [];
+let dashNotifAllIds = [];
+
+try {
+  dashNotifDismissedIds = JSON.parse(localStorage.getItem('dineflow_dismissed_notifs') || '[]');
+} catch(e) { dashNotifDismissedIds = []; }
+
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff / 60) + ' mins ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' hrs ago';
+  return Math.floor(diff / 86400) + ' days ago';
+}
+
+function buildNotifCard(icon, iconBg, iconColor, borderColor, title, desc, timeStr, id) {
+  return `
+    <div class="live-notif-item" data-notif-id="${id}" style="display:flex; align-items:flex-start; gap:12px; background:${iconBg}; border:1px solid ${borderColor}; border-radius:12px; padding:12px; animation: notifSlideIn 0.3s ease;">
+      <div style="width:34px; height:34px; border-radius:10px; background:${iconBg}; color:${iconColor}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <i class="fa-solid ${icon}"></i>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${title}</div>
+        <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${desc}</div>
+        <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeStr}</div>
+      </div>
+    </div>
+  `;
+}
+
+async function fetchLiveNotifications() {
+  const notifications = [];
+
+  try {
+    // 1. Waiter Calls (unresolved)
+    const wcRes = await fetch(`/api/waiter-calls/restaurant/${DASHBOARD_RESTAURANT_ID}`);
+    const wcData = await wcRes.json();
+    if (wcData.success && wcData.data) {
+      wcData.data.forEach(call => {
+        if (call.status !== 'resolved') {
+          notifications.push({
+            id: 'wc-' + call.id,
+            icon: 'fa-bell-concierge',
+            iconBg: 'rgba(239,68,68,0.1)',
+            iconColor: '#F87171',
+            borderColor: 'rgba(239,68,68,0.25)',
+            title: '🔔 Waiter Called — Table ' + (call.table_id || '?'),
+            desc: 'Customer is requesting waiter service',
+            time: call.created_at,
+            priority: 1
+          });
+        }
+      });
+    }
+  } catch(e) { console.log('Waiter calls fetch skipped:', e.message); }
+
+  try {
+    // 2. Recent Orders (last 30 min, pending/preparing)
+    const orRes = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
+    const orData = await orRes.json();
+    const orOrdersList = Array.isArray(orData.data) ? orData.data : (orData.data?.data || []);
+    if (orData.success && Array.isArray(orOrdersList)) {
+      const now = Date.now();
+      const thirtyMinsAgo = now - (30 * 60 * 1000);
+      orOrdersList.forEach(order => {
+        const orderTime = new Date(order.created_at).getTime();
+        if (orderTime > thirtyMinsAgo) {
+          if (order.status === 'pending') {
+            notifications.push({
+              id: 'order-new-' + order.id,
+              icon: 'fa-receipt',
+              iconBg: 'rgba(99,102,241,0.1)',
+              iconColor: '#818CF8',
+              borderColor: 'rgba(99,102,241,0.25)',
+              title: '🆕 New Order #' + order.id + (order.table_id ? ' — Table ' + order.table_id : ''),
+              desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' • Waiting for kitchen confirmation',
+              time: order.created_at,
+              priority: 2
+            });
+          }
+          if (order.status === 'ready') {
+            notifications.push({
+              id: 'order-ready-' + order.id,
+              icon: 'fa-utensils',
+              iconBg: 'rgba(16,185,129,0.1)',
+              iconColor: '#34D399',
+              borderColor: 'rgba(16,185,129,0.25)',
+              title: '✅ Order #' + order.id + ' Ready' + (order.table_id ? ' — Table ' + order.table_id : ''),
+              desc: 'Kitchen has prepared this order. Ready to serve!',
+              time: order.updated_at || order.created_at,
+              priority: 2
+            });
+          }
+          if (order.payment_status === 'paid' && order.status === 'completed') {
+            notifications.push({
+              id: 'order-paid-' + order.id,
+              icon: 'fa-indian-rupee-sign',
+              iconBg: 'rgba(16,185,129,0.1)',
+              iconColor: '#34D399',
+              borderColor: 'rgba(16,185,129,0.25)',
+              title: '💰 Payment Received — Order #' + order.id,
+              desc: '₹' + Number(order.total_amount).toLocaleString('en-IN') + ' via ' + (order.payment_method || 'Online'),
+              time: order.updated_at || order.created_at,
+              priority: 3
+            });
+          }
+        }
+      });
+    }
+  } catch(e) { console.log('Orders fetch skipped:', e.message); }
+
+  try {
+    // 3. Low Stock Alerts
+    const invRes = await fetch(`/api/inventory?restaurantId=${DASHBOARD_RESTAURANT_ID}`);
+    const invData = await invRes.json();
+    if (invData.success && invData.data) {
+      invData.data.forEach(item => {
+        if (item.quantity <= (item.low_stock_alert || 10)) {
+          notifications.push({
+            id: 'inv-' + item.id,
+            icon: 'fa-triangle-exclamation',
+            iconBg: 'rgba(245,158,11,0.1)',
+            iconColor: '#FCD34D',
+            borderColor: 'rgba(245,158,11,0.25)',
+            title: '⚠️ Low Stock — ' + item.item_name,
+            desc: 'Only ' + item.quantity + ' ' + (item.unit || 'units') + ' remaining (threshold: ' + (item.low_stock_alert || 10) + ')',
+            time: item.updated_at || item.created_at,
+            priority: 2
+          });
+        }
+      });
+    }
+  } catch(e) { console.log('Inventory fetch skipped:', e.message); }
+
+  // Sort by priority then time
+  notifications.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return new Date(b.time) - new Date(a.time);
+  });
+
+  return notifications;
+}
+
+function renderNotifications(notifications) {
+  const body = document.querySelector('#notifModal .modal-body');
+  if (!body) return;
+
+  dashNotifAllIds = notifications.map(n => n.id);
+  const unreadNotifs = notifications.filter(n => !dashNotifDismissedIds.includes(n.id));
+
+  // Update badge count
+  const badge = document.getElementById('notifCountBadge');
+  const dots = document.querySelectorAll('.notif-dot');
+
+  if (unreadNotifs.length > 0) {
+    dots.forEach(dot => { dot.style.display = 'block'; });
+    if (badge) {
+      badge.textContent = unreadNotifs.length > 9 ? '9+' : unreadNotifs.length;
+      badge.style.display = 'flex';
+    }
+  } else {
+    dots.forEach(dot => { dot.style.display = 'none'; });
+    if (badge) badge.style.display = 'none';
+  }
+
+  if (notifications.length === 0) {
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#64748B;">
+        <i class="fa-solid fa-bell-slash" style="font-size:36px; margin-bottom:12px; color:#475569; display:block;"></i>
+        <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">All Quiet!</div>
+        <div style="font-size:12px; color:#94A3B8;">No active alerts right now. Everything is running smoothly.</div>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  notifications.forEach(n => {
+    const opacity = dashNotifDismissedIds.includes(n.id) ? 'opacity:0.45;' : '';
+    html += `
+      <div class="live-notif-item" data-notif-id="${n.id}" style="display:flex; align-items:flex-start; gap:12px; background:${n.iconBg}; border:1px solid ${n.borderColor}; border-radius:12px; padding:12px; transition:all 0.2s; ${opacity}">
+        <div style="width:34px; height:34px; border-radius:10px; background:${n.iconBg}; color:${n.iconColor}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fa-solid ${n.icon}"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${n.title}</div>
+          <div style="font-size:11.5px; color:#94A3B8; margin-top:2px;">${n.desc}</div>
+          <div style="font-size:10.5px; color:#64748B; margin-top:4px;"><i class="fa-regular fa-clock" style="margin-right:3px;"></i>${timeAgo(n.time)}</div>
+        </div>
+      </div>
+    `;
+  });
+  body.innerHTML = html;
+}
+
+async function refreshDashNotifications() {
+  try {
+    const notifs = await fetchLiveNotifications();
+    renderNotifications(notifs);
+  } catch(e) {
+    console.log('Notification refresh error:', e);
+  }
+}
+
+// Initial fetch + poll every 15 seconds
+document.addEventListener('DOMContentLoaded', () => {
+  refreshDashNotifications();
+  setInterval(refreshDashNotifications, 15000);
+});
+
+// Also refresh when bell icon is clicked
+const origOpenModal = openModal;
+openModal = function(id) {
+  origOpenModal(id);
+  if (id === 'notifModal') {
+    refreshDashNotifications();
+  }
+};
+</script>
+
+<!-- Notifications Modal -->
+<div class="modal-overlay" id="notifModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.2s;">
+  <div class="modal" style="width:480px; background:var(--card); border:1px solid var(--border); border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:#A5B4FC; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-bell" style="color:#818CF8;"></i>
+        Live Notifications
+        <span id="notifCountBadge" style="background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; display:none; align-items:center; justify-content:center; min-width:20px; animation: pulse 2s infinite;"></span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="refreshDashNotifications()" title="Refresh" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818CF8; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.3)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeModal('notifModal')" style="background:none; border:none; color:#94A3B8; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:16px 20px; max-height:400px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+      <div style="text-align:center; padding:30px 20px; color:#64748B;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:#818CF8; display:block; margin-bottom:10px;"></i>
+        <div style="font-size:12px; color:#94A3B8;">Loading live notifications...</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 20px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn-outline" onclick="markAllNotificationsAsRead()" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(99,102,241,0.1); color:#818CF8; border:1px solid rgba(99,102,241,0.3); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">Mark All as Read</button>
+      <div style="display:flex; align-items:center; gap:4px; color:#475569; font-size:10.5px;"><i class="fa-solid fa-circle" style="font-size:6px; color:#10B981; animation:pulse 2s infinite;"></i> Auto-refresh every 15s</div>
+      <button class="btn-outline" onclick="closeModal('notifModal')" style="padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; background:rgba(255,255,255,0.05); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Close</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+  @keyframes notifSlideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .live-notif-item:hover { transform:translateX(3px); filter:brightness(1.1); }
+</style>
+
+<!-- Dashboard Recent Orders Modal -->
+<div class="modal-overlay" id="dashOrdersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:880px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" id="dashOrdersModalTitle" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
+        <span>Recent Restaurant Orders</span>
+        <span id="dashOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="loadDashOrdersModalData()" title="Refresh Orders" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.2s;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="modal-close" onclick="closeDashOrdersModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="dashOrdersModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary); display:block; margin-bottom:12px;"></i>
+        <div style="font-size:13px; color:var(--text-muted);">Fetching recent orders...</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">💡 Click any action button to open Receipts or Tax Invoices</div>
+      <button onclick="closeDashOrdersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">Close</button>
+    </div>
+  </div>
+</div>
+
+@include('partials.order-management')
+
+<script>
+let currentDashOrderFilter = 'all';
+
+function openDashOrdersModal(filterType = 'all') {
+  currentDashOrderFilter = filterType;
   const modal = document.getElementById('dashOrdersModal');
-  const body = document.getElementById('dashOrdersModalBody');
+  const titleEl = document.getElementById('dashOrdersModalTitle');
+  
+  if (titleEl) {
+    if (filterType === 'delivery') {
+      titleEl.innerHTML = `
+        <i class="fa-solid fa-motorcycle" style="color:#38BDF8;"></i>
+        <span>Delivery & Takeaway Orders</span>
+        <span id="dashOrdersCountBadge" style="background:rgba(56,189,248,0.25); color:#38BDF8; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid rgba(56,189,248,0.4);">Loading...</span>
+      `;
+    } else {
+      titleEl.innerHTML = `
+        <i class="fa-solid fa-receipt" style="color:var(--primary);"></i>
+        <span>Recent Restaurant Orders</span>
+        <span id="dashOrdersCountBadge" style="background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Loading...</span>
+      `;
+    }
+  }
+
   if (!modal) return;
   modal.style.display = 'flex';
-  setTimeout(() => modal.style.opacity = '1', 10);
-  loadDashOrdersData(filter);
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  loadDashOrdersModalData();
 }
+
 function closeDashOrdersModal() {
   const modal = document.getElementById('dashOrdersModal');
   if (!modal) return;
   modal.style.opacity = '0';
-  setTimeout(() => modal.style.display = 'none', 250);
+  setTimeout(() => { modal.style.display = 'none'; }, 200);
 }
-async function loadDashOrdersData(filter) {
+
+async function loadDashOrdersModalData() {
   const body = document.getElementById('dashOrdersModalBody');
+  const badge = document.getElementById('dashOrdersCountBadge');
   if (!body) return;
+
+  body.innerHTML = `
+    <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--primary); display:block; margin-bottom:12px;"></i>
+      <div style="font-size:13px; color:var(--text-muted);">Loading orders...</div>
+    </div>
+  `;
+
   try {
     const res = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
-    const data = await res.json();
-    const orders = Array.isArray(data) ? data : (data.data || []);
-    if (!orders.length) {
-      body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-receipt" style="font-size:32px; opacity:0.3; margin-bottom:10px; display:block;"></i>No orders recorded today yet.</div>';
+    if (!res.ok) throw new Error('API request failed');
+    const rawData = await res.json();
+    
+    // Support direct array, Laravel object { success: true, data: [...] } or paginated { success: true, data: { data: [...] } }
+    let orders = Array.isArray(rawData) ? rawData : (Array.isArray(rawData.data) ? rawData.data : (rawData.data?.data || []));
+    
+    if (currentDashOrderFilter === 'delivery') {
+      orders = orders.filter(o => {
+        const isDeliveryType = (o.order_type === 'delivery' || o.order_type === 'takeaway');
+        const isNoTable = !o.table_id || o.table_id == '0';
+        const tableStr = o.table ? (o.table.table_number || '').toLowerCase() : '';
+        const isDeliveryTable = tableStr.includes('del') || tableStr.includes('take') || tableStr.includes('online');
+        return isDeliveryType || isNoTable || isDeliveryTable;
+      });
+    }
+
+    if (orders.length === 0) {
+      if (badge) badge.innerText = '0 Orders';
+      body.innerHTML = `
+        <div style="text-align:center; padding:48px 20px; color:var(--text-muted);">
+          <i class="fa-solid ${currentDashOrderFilter === 'delivery' ? 'fa-motorcycle' : 'fa-receipt'}" style="font-size:42px; margin-bottom:14px; color:var(--text-muted); display:block;"></i>
+          <div style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">No ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders Found</div>
+          <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">There are no ${currentDashOrderFilter === 'delivery' ? 'delivery or takeaway' : 'recent'} orders recorded today.</div>
+          ${currentDashOrderFilter === 'delivery' ? `<button onclick="openDashOrdersModal('all')" style="padding:8px 16px; font-size:12px; font-weight:700; border-radius:8px; background:var(--primary-light); color:var(--primary); border:1px solid var(--border); cursor:pointer;">View All Orders</button>` : ''}
+        </div>
+      `;
       return;
     }
-    let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+
+    if (badge) badge.innerText = `${orders.length} ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders`;
+
+    let html = `
+      <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch;">
+        <table style="width:100%; min-width:620px; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border); color:var(--primary); text-align:left; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 12px;">Order ID</th>
+              <th style="padding:10px 12px;">Type / Table</th>
+              <th style="padding:10px 12px;">Amount</th>
+              <th style="padding:10px 12px;">Payment</th>
+              <th style="padding:10px 12px;">Status</th>
+              <th style="padding:10px 12px; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
     orders.forEach(o => {
+      const isPaid = (o.payment_status === 'paid');
+      const payBg = isPaid ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
+      const payColor = isPaid ? '#34D399' : '#FBBF24';
+      const payBorder = isPaid ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)';
+      const payText = isPaid ? 'Paid' : 'Pending';
+
+      const statusColor = (o.status === 'completed') ? '#34D399' : ((o.status === 'cooking' || o.status === 'preparing') ? '#FBBF24' : '#818CF8');
+
+      const tableName = o.table ? `Table ${o.table.table_number || o.table_id}` : (o.table_id && o.table_id != '0' ? `Table ${o.table_id}` : '🛵 Takeaway / Delivery');
+
       html += `
-        <div style="background:var(--card-subtle); border:1px solid var(--border); border-radius:14px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-weight:800; font-family:'Outfit',sans-serif; color:var(--text-primary); font-size:14px;">Order #${o.id} &bull; ${o.table_number || 'Takeaway'}</div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">₹ ${parseFloat(o.total_amount).toFixed(2)} &bull; ${(o.order_type || 'dine-in').toUpperCase()} &bull; ${o.payment_status.toUpperCase()}</div>
+        <tr style="border-bottom:1px solid var(--border); transition:background 0.2s;" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background='transparent'">
+          <td style="padding:12px; font-weight:700; color:var(--text-primary);">
+            #${o.id}
+            <div style="font-size:10.5px; color:var(--text-muted); font-weight:400; margin-top:2px;">${new Date(o.created_at || Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+          </td>
+          <td style="padding:12px; color:var(--text-secondary); font-weight:600;">${tableName}</td>
+          <td style="padding:12px; font-weight:800; color:var(--text-primary);">₹${parseFloat(o.total_amount || 0).toFixed(2)}</td>
+          <td style="padding:12px;">
+            <span style="background:${payBg}; color:${payColor}; border:1px solid ${payBorder}; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px;">${payText}</span>
+          </td>
+          <td style="padding:12px; font-weight:700; color:${statusColor}; text-transform:capitalize;">${o.status || 'Received'}</td>
+          <td style="padding:12px; text-align:right;">
+            ${typeof renderOrderActionsHtml === 'function' ? renderOrderActionsHtml(o) : `
+              <div style="display:inline-flex; gap:6px;">
+                <a href="/orders/${o.id}/receipt" target="_blank" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="Print Thermal Receipt"><i class="fa-solid fa-print"></i> Receipt</a>
+                <a href="/orders/${o.id}/invoice-a4" target="_blank" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34D399; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View A4 PDF Invoice"><i class="fa-solid fa-file-invoice"></i> A4 PDF</a>
+                <a href="/orders/${o.id}/receipt/kitchen" target="_blank" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FBBF24; padding:5px 10px; border-radius:8px; text-decoration:none; font-size:11.5px; font-weight:600; transition:all 0.2s;" title="View Kitchen KOT"><i class="fa-solid fa-fire"></i> KOT</a>
+              </div>
+            `}
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    body.innerHTML = html;
+  } catch(err) {
+    console.error('Error loading dashboard orders modal:', err);
+    body.innerHTML = `
+      <div style="text-align:center; padding:36px 20px; color:#F87171;">
+        <i class="fa-solid fa-circle-exclamation" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+        <div style="font-size:14px; font-weight:700;">Failed to load orders</div>
+        <div style="font-size:12px; color:#94A3B8; margin-top:4px;">Please check server connection or refresh.</div>
+      </div>
+    `;
+  }
+}
+
+// Handle ESC key to close modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeDashOrdersModal();
+    closeDashAdminModule();
+    closeDashOffersModal();
+    closeDashDeliveryModal();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN MODULE IFRAME MODAL — Load any admin page inside Dashboard
+// ═══════════════════════════════════════════════════════════════
+function openDashAdminModule(url, titleHtml) {
+  const modal = document.getElementById('dashAdminModuleModal');
+  const titleEl = document.getElementById('dashAdminModuleTitle');
+  const iframe = document.getElementById('dashAdminModuleIframe');
+  if (!modal || !iframe) return;
+  titleEl.innerHTML = titleHtml || 'Admin Module';
+  iframe.src = url;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+}
+function closeDashAdminModule() {
+  const modal = document.getElementById('dashAdminModuleModal');
+  const iframe = document.getElementById('dashAdminModuleIframe');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; if (iframe) iframe.src = 'about:blank'; }, 250);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OFFERS & DEALS MODAL — Same promos as POS posOffersModal
+// ═══════════════════════════════════════════════════════════════
+function openDashOffersModal() {
+  const modal = document.getElementById('dashOffersModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+}
+function closeDashOffersModal() {
+  const modal = document.getElementById('dashOffersModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DELIVERY ORDERS MODAL — Shows delivery/takeaway orders from API
+// ═══════════════════════════════════════════════════════════════
+function openDashDeliveryModal() {
+  const modal = document.getElementById('dashDeliveryModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  loadDashDeliveryData();
+}
+function closeDashDeliveryModal() {
+  const modal = document.getElementById('dashDeliveryModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 250);
+}
+async function loadDashDeliveryData() {
+  const body = document.getElementById('dashDeliveryModalBody');
+  if (!body) return;
+  body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...</div>';
+  try {
+    const resp = await fetch(`/api/orders/restaurant/${DASHBOARD_RESTAURANT_ID}`);
+    const rawData = await resp.json();
+    const allOrders = Array.isArray(rawData) ? rawData : (rawData.data || []);
+    const deliveryOrders = allOrders.filter(o => o.order_type === 'delivery' || o.order_type === 'takeaway');
+    if (!deliveryOrders.length) {
+      body.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-motorcycle" style="font-size:36px; display:block; margin-bottom:12px; opacity:0.4;"></i><div style="font-weight:700; font-size:14px;">No Active Delivery Orders</div><div style="font-size:12px; margin-top:4px;">Delivery and takeaway orders will appear here in real-time</div></div>';
+      return;
+    }
+    let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
+    deliveryOrders.forEach(o => {
+      const statusColor = o.status === 'completed' ? '#10B981' : o.status === 'preparing' ? '#F59E0B' : o.status === 'ready' ? '#06B6D4' : '#6366F1';
+      const payBadge = o.payment_status === 'paid' ? '<span style="background:rgba(16,185,129,0.15); color:#10B981; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700;">PAID</span>' : '<span style="background:rgba(245,158,11,0.15); color:#F59E0B; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700;">UNPAID</span>';
+      html += `
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:${statusColor}20; display:flex; align-items:center; justify-content:center;"><i class="fa-solid ${o.order_type === 'delivery' ? 'fa-motorcycle' : 'fa-bag-shopping'}" style="color:${statusColor}; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:700; font-size:14px; color:var(--text-primary);">#${o.id} — ${(o.order_type || 'delivery').toUpperCase()}</div>
+              <div style="font-size:11px; color:var(--text-muted);">Table: ${o.table_number || 'N/A'} • ₹${parseFloat(o.total_amount || 0).toFixed(2)}</div>
+            </div>
           </div>
-          <span style="padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; background:rgba(255,107,0,0.12); color:#FF6B00; text-transform:uppercase;">${o.status}</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${payBadge}
+            <span style="background:${statusColor}20; color:${statusColor}; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:700; text-transform:uppercase;">${o.status}</span>
+          </div>
         </div>`;
     });
     html += '</div>';
     body.innerHTML = html;
-  } catch(e) {
-    body.innerHTML = '<div style="text-align:center; padding:30px; color:#EF4444;">Failed to fetch live orders.</div>';
+  } catch(err) {
+    body.innerHTML = '<div style="text-align:center; padding:36px; color:#F87171;"><i class="fa-solid fa-circle-exclamation" style="font-size:28px; display:block; margin-bottom:10px;"></i><div style="font-weight:700;">Failed to load delivery orders</div></div>';
   }
 }
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ADMIN MODULE IFRAME MODAL — Loads admin pages inside Dashboard -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashAdminModuleModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:1320px; max-width:96vw; height:90vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+      <div class="modal-title" id="dashAdminModuleTitle" style="color:var(--primary); font-size:16px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">Admin Module</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="const f=document.getElementById('dashAdminModuleIframe'); if(f) f.contentWindow.location.reload();" title="Reload" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:32px; height:32px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button onclick="closeDashAdminModule()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:32px; height:32px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <iframe id="dashAdminModuleIframe" src="about:blank" style="flex:1; width:100%; border:none; background:var(--bg);"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- OFFERS & DEALS MODAL — Identical to POS posOffersModal -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashOffersModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:700px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-gift" style="color:var(--primary);"></i>
+        <span>Smart Offers & Discount Deals</span>
+        <span style="background:linear-gradient(135deg,#EF4444,#DC2626); color:#fff; font-size:10px; font-weight:800; padding:3px 10px; border-radius:20px;">DEALS</span>
+      </div>
+      <button onclick="closeDashOffersModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:14px;">
+        <!-- Offer Cards -->
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-percentage" style="color:#10B981; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">WELCOME15</div>
+              <div style="font-size:11px; color:var(--text-muted);">15% off for new customers</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--success); font-weight:700;">Flat 15% Discount • No Minimum</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(99,102,241,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-indian-rupee-sign" style="color:#6366F1; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">SAVE50</div>
+              <div style="font-size:11px; color:var(--text-muted);">₹50 off on orders above ₹300</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--primary); font-weight:700;">₹50 Flat Off • Min ₹300</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(245,158,11,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-fire" style="color:#F59E0B; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">SAVE120</div>
+              <div style="font-size:11px; color:var(--text-muted);">₹120 off on orders above ₹600</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#F59E0B; font-weight:700;">₹120 Flat Off • Min ₹600</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(239,68,68,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-crown" style="color:#EF4444; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">VIP10</div>
+              <div style="font-size:11px; color:var(--text-muted);">10% off for VIP loyalty members</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#EF4444; font-weight:700;">10% VIP Discount • Loyalty Only</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:42px; height:42px; border-radius:12px; background:rgba(6,182,212,0.15); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-clock" style="color:#06B6D4; font-size:16px;"></i></div>
+            <div>
+              <div style="font-weight:800; font-size:14px; color:var(--text-primary);">HAPPY10</div>
+              <div style="font-size:11px; color:var(--text-muted);">10% off during Happy Hours</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#06B6D4; font-weight:700;">10% Happy Hour Discount</div>
+        </div>
+      </div>
+      <!-- Custom Coupon Input -->
+      <div style="margin-top:20px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px;">
+        <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:10px;"><i class="fa-solid fa-ticket" style="color:var(--primary); margin-right:6px;"></i> Enter Custom Coupon Code</div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" placeholder="Enter promo code..." style="flex:1; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); font-size:13px; font-weight:600; outline:none;">
+          <button style="padding:10px 20px; background:linear-gradient(135deg,#6366F1,#4F46E5); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:13px; cursor:pointer;">Apply</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="color:var(--text-muted); font-size:12px;">🎁 Apply offers from the POS Terminal during billing</div>
+      <button onclick="closeDashOffersModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- DELIVERY ORDERS MODAL — Shows delivery/takeaway orders -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="dashDeliveryModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:10000; opacity:0; transition:all 0.25s;">
+  <div class="modal" style="width:780px; max-width:94vw; max-height:85vh; background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow-lg); overflow:hidden; display:flex; flex-direction:column;">
+    <div class="modal-header" style="background:var(--primary-light); border-bottom:1px solid var(--border); padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-title" style="color:var(--primary); font-size:17px; font-weight:800; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-motorcycle" style="color:var(--primary);"></i>
+        <span>Delivery & Takeaway Dispatch Terminal</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="loadDashDeliveryData()" title="Refresh" style="background:var(--primary-light); border:1px solid var(--border); color:var(--primary); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px;"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button onclick="closeDashDeliveryModal()" style="background:var(--primary-light); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#F87171'" onmouseout="this.style.background='var(--primary-light)'; this.style.color='var(--text-muted)'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="dashDeliveryModalBody" style="padding:20px 24px; overflow-y:auto; flex:1;">
+      <div style="text-align:center; padding:40px; color:var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:var(--primary); display:block; margin-bottom:12px;"></i>Fetching delivery orders...
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 24px; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:14px; align-items:center;">
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#10B981;"></span> Completed</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#F59E0B;"></span> Preparing</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><span style="width:8px; height:8px; border-radius:50%; background:#06B6D4;"></span> Ready</span>
+      </div>
+      <button onclick="closeDashDeliveryModal()" style="padding:9px 20px; font-size:13px; font-weight:700; border-radius:10px; background:linear-gradient(135deg,#6366F1,#4F46E5); color:#FFFFFF; border:none; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
