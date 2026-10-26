@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="/vendor/posing/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- Custom DineFlow Overrides -->
+  <!-- Custom DineFlow Design Refinements -->
   <style>
     :root {
       --df-primary: #6366F1;
@@ -50,26 +50,105 @@
       overflow-x: hidden;
     }
 
-    /* Brand Header Adjustments */
+    /* Fixed & Polished Navigation Header */
+    .cs-site_header.cs-style1 {
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+      background-color: #ffffff;
+      z-index: 1000;
+    }
+    .cs-site_header.cs-sticky-active {
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.09);
+      background-color: #ffffff;
+    }
+    .cs-site_header.cs-style1 .cs-main_header_in {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: nowrap !important;
+      height: 80px;
+    }
     .cs-site_branding img {
       max-height: 44px;
       width: auto;
       object-fit: contain;
     }
     
-    .cs-site_header.cs-sticky-active {
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      background-color: #ffffff;
+    /* Clean Desktop Nav Links with no wrapping */
+    .cs-nav .cs-nav_list {
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+      gap: 22px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
     }
-    
-    .cs-nav_list > li > a {
-      font-weight: 600;
-      font-size: 15px;
-      color: #1E293B;
-      transition: color 0.25s ease;
+    .cs-nav .cs-nav_list > li {
+      margin: 0 !important;
+      padding: 0 !important;
+      white-space: nowrap !important;
     }
-    .cs-nav_list > li > a:hover {
-      color: #6366F1;
+    .cs-nav .cs-nav_list > li > a {
+      font-weight: 600 !important;
+      font-size: 14.5px !important;
+      color: #1E293B !important;
+      padding: 8px 2px !important;
+      transition: color 0.2s ease !important;
+      text-decoration: none !important;
+    }
+    .cs-nav .cs-nav_list > li > a:hover {
+      color: #6366F1 !important;
+    }
+
+    .cs-toolbox {
+      display: flex !important;
+      align-items: center !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      gap: 16px !important;
+    }
+    .cs-toolbox .cs-btn span {
+      padding: 9px 20px !important;
+      font-size: 14px !important;
+    }
+
+    /* Hero Section: 2-Column Clean Grid (NO OVERLAPPING) */
+    .df-hero-section {
+      position: relative;
+      padding: 50px 0 90px 0 !important;
+      min-height: auto !important;
+      display: block !important;
+      overflow: hidden;
+      background-color: #F8FAFC;
+    }
+
+    /* Reset Posing template absolute position on hero image */
+    .df-hero-section .cs-hero_img {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      transform: none !important;
+      width: 100% !important;
+      height: auto !important;
+      margin: 0 !important;
+      display: block !important;
+    }
+
+    .df-hero-heading {
+      font-size: 50px !important;
+      line-height: 1.15 !important;
+      font-weight: 800 !important;
+      color: #0F172A !important;
+      margin-bottom: 18px !important;
+      letter-spacing: -0.5px;
+    }
+
+    .df-hero-sub {
+      font-size: 16.5px !important;
+      line-height: 1.65 !important;
+      color: #475569 !important;
+      max-width: 530px !important;
+      margin-bottom: 28px !important;
     }
 
     /* Badge & Micro Elements */
@@ -82,7 +161,7 @@
       border: 1px solid rgba(99, 102, 241, 0.2);
       border-radius: 9999px;
       padding: 6px 16px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
@@ -103,12 +182,13 @@
     .df-hero-mockup-wrapper {
       position: relative;
       display: inline-block;
-      max-width: 100%;
+      width: 100%;
+      max-width: 600px;
       border-radius: 20px;
-      padding: 10px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,244,255,0.7));
-      box-shadow: 0 25px 60px -15px rgba(99, 102, 241, 0.35);
-      border: 1px solid rgba(99, 102, 241, 0.15);
+      padding: 8px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,244,255,0.85));
+      box-shadow: 0 25px 60px -15px rgba(99, 102, 241, 0.28);
+      border: 1px solid rgba(99, 102, 241, 0.2);
     }
     .df-hero-mockup-img {
       display: block;
@@ -118,36 +198,36 @@
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
     }
 
-    /* Floating Metric Pill */
+    /* Floating Metric Badges on Mockup */
     .df-stat-pill {
       position: absolute;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(99, 102, 241, 0.15);
-      padding: 10px 18px;
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      padding: 8px 14px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.14);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       z-index: 5;
     }
     .df-stat-pill.pill-1 {
-      bottom: -20px;
-      left: -20px;
+      bottom: -15px;
+      left: 15px;
     }
     .df-stat-pill.pill-2 {
-      top: 20px;
-      right: -20px;
+      top: 15px;
+      right: 15px;
     }
     .df-stat-pill-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     /* Primary Accent Buttons */
@@ -215,12 +295,24 @@
       border-color: #6366F1;
     }
 
+    @media (max-width: 1200px) {
+      .df-hero-heading {
+        font-size: 42px !important;
+      }
+      .cs-nav .cs-nav_list {
+        gap: 14px !important;
+      }
+    }
+
     @media (max-width: 991px) {
       .df-stat-pill {
         display: none;
       }
       .cs-pricing_table.featured-plan {
         transform: none;
+      }
+      .df-hero-heading {
+        font-size: 36px !important;
       }
     }
   </style>
@@ -237,7 +329,7 @@
   <!-- Start Header Section -->
   <header class="cs-site_header cs-style1 cs-sticky-header cs-primary_color cs-white_bg">
     <div class="cs-main_header">
-      <div class="container">
+      <div class="container-fluid px-xl-5 px-lg-4 px-3">
         <div class="cs-main_header_in">
           <!-- Left Logo -->
           <div class="cs-main_header_left">
@@ -250,7 +342,6 @@
           <div class="cs-main_header_center">
             <div class="cs-nav">
               <ul class="cs-nav_list">
-                <li><a href="#home" class="cs-smoth_scroll">Home</a></li>
                 <li><a href="#features" class="cs-smoth_scroll">Features</a></li>
                 <li><a href="#operations" class="cs-smoth_scroll">Operations</a></li>
                 <li><a href="#hardware" class="cs-smoth_scroll">Hardware</a></li>
@@ -264,14 +355,14 @@
 
           <!-- Right Toolbox -->
           <div class="cs-main_header_right">
-            <div class="cs-toolbox d-flex align-items-center">
-              <a href="/demo" class="cs-link d-none d-sm-inline-flex align-items-center me-3" style="color: #6366F1; font-weight: 700; text-decoration: none;">
+            <div class="cs-toolbox">
+              <a href="/demo" class="cs-link d-none d-md-inline-flex align-items-center text-decoration-none" style="color: #6366F1; font-weight: 700;">
                 <i class="fa-solid fa-play-circle me-1"></i> Live Demo
               </a>
-              <a href="{{ route('login') }}" class="cs-link me-3" style="font-weight: 600; text-decoration: none; color: #1E293B;">
+              <a href="{{ route('login') }}" class="cs-link text-decoration-none" style="font-weight: 600; color: #1E293B;">
                 Sign In
               </a>
-              <a href="{{ route('register') }}" class="cs-btn cs-color1" style="text-decoration: none;">
+              <a href="{{ route('register') }}" class="cs-btn cs-color1 text-decoration-none">
                 <span>Start Free Trial</span>
               </a>
             </div>
@@ -282,72 +373,74 @@
   </header>
   <!-- End Header Section -->
 
-  <!-- Start Hero -->
+  <!-- Start Hero Section (Rock-Solid 2-Column Grid) -->
   <div id="home">
     <div class="cs-height_80 cs-height_lg_80"></div>
-    <section class="cs-hero cs-style1 cs-bg" data-src="/vendor/posing/img/hero_bg.svg">
-      <div class="container">
-        <!-- Hero Graphic (Right / Center) -->
-        <div class="cs-hero_img">
-          <div class="cs-hero_img_bg cs-bg" data-src="/vendor/posing/img/hero_img_bg.png"></div>
-          
-          <div class="df-hero-mockup-wrapper wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
-            <img src="/images/dineflow_banner.jpg" alt="DineFlow AI Restaurant Cloud POS & ERP" class="df-hero-mockup-img">
-            
-            <!-- Floating Stat Pill 1 -->
-            <div class="df-stat-pill pill-1">
-              <div class="df-stat-pill-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366F1;">
-                <i class="fa-solid fa-bolt"></i>
-              </div>
-              <div>
-                <div style="font-size: 12px; color: #64748B; font-weight: 600;">Fast Checkout</div>
-                <div style="font-size: 15px; font-weight: 800; color: #0F172A;">3-Sec Billing Speed</div>
-              </div>
+    <section class="cs-hero cs-style1 cs-bg df-hero-section" data-src="/vendor/posing/img/hero_bg.svg">
+      <div class="container py-lg-4">
+        <div class="row align-items-center g-4 g-xl-5">
+          <!-- Hero Content (Left Column) -->
+          <div class="col-lg-6 cs-hero_text">
+            <div class="df-badge">
+              <i class="fa-solid fa-sparkles"></i> 100% Cloud + Offline Local Sync
+            </div>
+            <h1 class="df-hero-heading">
+              Next-Gen Restaurant <br>
+              <span style="color: #6366F1;">Cloud POS &amp; ERP</span>
+            </h1>
+            <div class="df-hero-sub">
+              Accelerate table turnover with 3-second billing, contactless QR table ordering, real-time Kitchen Display (KDS), silent ESC/POS thermal printing, and recipe inventory management.
             </div>
 
-            <!-- Floating Stat Pill 2 -->
-            <div class="df-stat-pill pill-2">
-              <div class="df-stat-pill-icon" style="background: rgba(82, 200, 196, 0.15); color: #0D9488;">
-                <i class="fa-solid fa-print"></i>
-              </div>
-              <div>
-                <div style="font-size: 12px; color: #64748B; font-weight: 600;">Silent Printing</div>
-                <div style="font-size: 15px; font-weight: 800; color: #0F172A;">Direct ESC/POS Cut</div>
-              </div>
+            <div class="cs-btn_group d-flex align-items-center flex-wrap" style="gap: 12px;">
+              <a href="{{ route('register') }}" class="cs-btn text-decoration-none">
+                <span>Start 14-Day Free Trial</span>
+              </a>
+              <a href="/demo" class="cs-btn cs-btn-outline text-decoration-none">
+                <span><i class="fa-solid fa-desktop me-2"></i> Explore Sandbox Demo</span>
+              </a>
+              <a href="/buy-source-code" class="cs-btn cs-color1 text-decoration-none">
+                <span><i class="fa-solid fa-code me-2"></i> Buy Source Code</span>
+              </a>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="mt-4 pt-2 d-flex align-items-center flex-wrap" style="gap: 18px; font-size: 13px; color: #64748B; font-weight: 600;">
+              <span><i class="fa-solid fa-circle-check text-success me-1"></i> No Credit Card Required</span>
+              <span><i class="fa-solid fa-circle-check text-success me-1"></i> GST Ready (GSTR-1 &amp; 3B)</span>
+              <span><i class="fa-solid fa-circle-check text-success me-1"></i> Windows, Mac, iPad &amp; Android</span>
             </div>
           </div>
-        </div>
 
-        <!-- Hero Content (Left) -->
-        <div class="cs-hero_text">
-          <div class="df-badge">
-            <i class="fa-solid fa-sparkles"></i> 100% Cloud + Offline Local Sync
-          </div>
-          <h1 class="cs-hero_title">
-            Next-Gen Restaurant <br>
-            <span style="color: #6366F1;">Cloud POS &amp; ERP</span>
-          </h1>
-          <div class="cs-hero_subtitle">
-            Accelerate table turnover with 3-second billing, contactless QR table ordering, real-time Kitchen Display (KDS), silent ESC/POS thermal printing, and recipe inventory management.
-          </div>
+          <!-- Hero Graphic (Right Column) -->
+          <div class="col-lg-6 text-center">
+            <div class="cs-hero_img">
+              <div class="df-hero-mockup-wrapper wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
+                <img src="/images/dineflow_banner.jpg" alt="DineFlow AI Restaurant Cloud POS & ERP" class="df-hero-mockup-img">
+                
+                <!-- Floating Stat Pill 1 -->
+                <div class="df-stat-pill pill-1">
+                  <div class="df-stat-pill-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366F1;">
+                    <i class="fa-solid fa-bolt"></i>
+                  </div>
+                  <div class="text-start">
+                    <div style="font-size: 11px; color: #64748B; font-weight: 600;">Fast Checkout</div>
+                    <div style="font-size: 14px; font-weight: 800; color: #0F172A;">3-Sec Billing Speed</div>
+                  </div>
+                </div>
 
-          <div class="cs-btn_group mt-4 d-flex align-items-center flex-wrap" style="gap: 12px;">
-            <a href="{{ route('register') }}" class="cs-btn" style="text-decoration: none;">
-              <span>Start 14-Day Free Trial</span>
-            </a>
-            <a href="/demo" class="cs-btn cs-btn-outline" style="text-decoration: none;">
-              <span><i class="fa-solid fa-desktop me-2"></i> Explore Sandbox Demo</span>
-            </a>
-            <a href="/buy-source-code" class="cs-btn cs-color1" style="text-decoration: none;">
-              <span><i class="fa-solid fa-code me-2"></i> Buy Source Code</span>
-            </a>
-          </div>
-
-          <!-- Trust Badges -->
-          <div class="mt-4 pt-2 d-flex align-items-center flex-wrap" style="gap: 20px; font-size: 13px; color: #64748B; font-weight: 600;">
-            <span><i class="fa-solid fa-circle-check text-success me-1"></i> No Credit Card Required</span>
-            <span><i class="fa-solid fa-circle-check text-success me-1"></i> GST Ready (GSTR-1 &amp; 3B)</span>
-            <span><i class="fa-solid fa-circle-check text-success me-1"></i> Windows, Mac, iPad &amp; Android</span>
+                <!-- Floating Stat Pill 2 -->
+                <div class="df-stat-pill pill-2">
+                  <div class="df-stat-pill-icon" style="background: rgba(82, 200, 196, 0.15); color: #0D9488;">
+                    <i class="fa-solid fa-print"></i>
+                  </div>
+                  <div class="text-start">
+                    <div style="font-size: 11px; color: #64748B; font-weight: 600;">Silent Printing</div>
+                    <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Direct ESC/POS Cut</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -375,7 +468,7 @@
       </div>
     </section>
   </div>
-  <!-- End Hero -->
+  <!-- End Hero Section -->
 
   <!-- Start Main Feature Pillars -->
   <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg">
