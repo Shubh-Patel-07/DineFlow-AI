@@ -1018,11 +1018,11 @@
     </div>
     <div class="status-widget-row">
       <span>Tables Active</span>
-      <span class="val">{{ $occupiedTablesCount }} / {{ $totalTablesCount }}</span>
+      <span class="val">{{ $occupiedTablesCount ?? 0 }} / {{ $totalTablesCount ?? 12 }}</span>
     </div>
     <div class="status-widget-row">
       <span>Kitchen Queue</span>
-      <span class="val">{{ $todayOrdersCount > 0 ? $todayOrdersCount . ' orders' : '0 active' }}</span>
+      <span class="val">{{ ($todayOrdersCount ?? 0) > 0 ? $todayOrdersCount . ' orders' : '0 active' }}</span>
     </div>
   </div>
 
@@ -1099,10 +1099,10 @@
             <span class="kpi-title">Today's Revenue</span>
             <div class="kpi-icon-bubble orange"><i class="fa-solid fa-dollar-sign"></i></div>
           </div>
-          <div class="kpi-value">₹ {{ number_format($todayRevenue, 2) }}</div>
+          <div class="kpi-value">₹ {{ number_format($todayRevenue ?? 0, 2) }}</div>
         </div>
         <div class="kpi-trend positive">
-          <i class="fa-solid fa-arrow-trend-up"></i> {{ $revenueDiffText }}
+          <i class="fa-solid fa-arrow-trend-up"></i> {{ $revenueDiffText ?? '+0%' }}
         </div>
         <div class="kpi-watermark-shape"></div>
       </div>
@@ -1114,10 +1114,10 @@
             <span class="kpi-title">Orders Served</span>
             <div class="kpi-icon-bubble green"><i class="fa-solid fa-receipt"></i></div>
           </div>
-          <div class="kpi-value">{{ $todayOrdersCount }}</div>
+          <div class="kpi-value">{{ $todayOrdersCount ?? 0 }}</div>
         </div>
         <div class="kpi-trend positive">
-          <i class="fa-solid fa-arrow-trend-up"></i> {{ $ordersDiffText }}
+          <i class="fa-solid fa-arrow-trend-up"></i> {{ $ordersDiffText ?? '+0' }}
         </div>
         <div class="kpi-watermark-shape" style="background:rgba(16,185,129,0.03);"></div>
       </div>
@@ -1129,7 +1129,7 @@
             <span class="kpi-title">Avg. Order Value</span>
             <div class="kpi-icon-bubble amber"><i class="fa-solid fa-chart-line"></i></div>
           </div>
-          <div class="kpi-value">₹ {{ number_format($avgOrderValue ?? ($todayOrdersCount > 0 ? $todayRevenue / $todayOrdersCount : 0), 2) }}</div>
+          <div class="kpi-value">₹ {{ number_format($avgOrderValue ?? ((($todayOrdersCount ?? 0) > 0) ? (($todayRevenue ?? 0) / $todayOrdersCount) : 0), 2) }}</div>
         </div>
         <div class="kpi-trend positive">
           <i class="fa-solid fa-arrow-trend-up"></i> +4.2% <span class="kpi-trend-sub">vs last week</span>
@@ -1249,8 +1249,8 @@
 
         <!-- Floor Legend Summary -->
         <div class="floor-legend-bar">
-          <span><span class="floor-legend-dot" style="background:#FF6B00;"></span> Occupied ({{ $occupiedTablesCount ?: 5 }})</span>
-          <span><span class="floor-legend-dot" style="background:#10B981;"></span> Available ({{ max(1, $totalTablesCount - $occupiedTablesCount) }})</span>
+          <span><span class="floor-legend-dot" style="background:#FF6B00;"></span> Occupied ({{ $occupiedTablesCount ?? 5 }})</span>
+          <span><span class="floor-legend-dot" style="background:#10B981;"></span> Available ({{ max(1, ($totalTablesCount ?? 12) - ($occupiedTablesCount ?? 0)) }})</span>
           <span><span class="floor-legend-dot" style="background:#F59E0B;"></span> Reserved (2)</span>
           <span><span class="floor-legend-dot" style="background:#94A3B8;"></span> Cleaning (1)</span>
         </div>
@@ -1300,22 +1300,23 @@
               @if(isset($recentOrdersList) && count($recentOrdersList) > 0)
                 @foreach($recentOrdersList as $ro)
                   @php
-                    $itemsTxt = $ro->orderItems->map(fn($oi) => ($oi->quantity . 'x ' . ($oi->menuItem->name ?? 'Dish')))->join(', ');
-                    if (!$itemsTxt) $itemsTxt = 'Special Chef Course';
-                    $statusBadge = '<span class="status-badge-served"><i class="fa-solid fa-circle-check"></i> ' . ucfirst($ro->status) . '</span>';
-                    if ($ro->status === 'cooking' || $ro->status === 'preparing') {
+                    $itemsTxt = ($ro->items && count($ro->items) > 0)
+                      ? $ro->items->map(fn($oi) => ($oi->quantity . 'x ' . ($oi->menuItem->name ?? 'Dish')))->join(', ')
+                      : 'Special Chef Course';
+                    $statusBadge = '<span class="status-badge-served"><i class="fa-solid fa-circle-check"></i> ' . ucfirst($ro->status ?? 'Served') . '</span>';
+                    if (($ro->status ?? '') === 'cooking' || ($ro->status ?? '') === 'preparing') {
                       $statusBadge = '<span class="status-badge-cooking"><i class="fa-solid fa-fire"></i> Cooking</span>';
-                    } elseif ($ro->status === 'pending') {
+                    } elseif (($ro->status ?? '') === 'pending') {
                       $statusBadge = '<span class="status-badge-pending"><i class="fa-solid fa-clock"></i> Pending</span>';
                     }
                   @endphp
                   <tr data-type="{{ $ro->order_type ?? 'dine_in' }}">
-                    <td class="order-id-code">#{{ str_pad($ro->id, 4, '0', STR_PAD_LEFT) }}</td>
+                    <td class="order-id-code">#{{ str_pad($ro->id ?? 1, 4, '0', STR_PAD_LEFT) }}</td>
                     <td><span class="table-pill-badge">{{ $ro->table->table_number ?? 'T1' }}</span></td>
                     <td style="max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $itemsTxt }}</td>
-                    <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ {{ number_format($ro->total_amount, 2) }}</td>
+                    <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">₹ {{ number_format($ro->total_amount ?? 0, 2) }}</td>
                     <td><span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">{{ $ro->order_type ?? 'dine-in' }}</span></td>
-                    <td style="color:var(--text-muted); font-size:12px;">{{ $ro->created_at->format('h:i A') }}</td>
+                    <td style="color:var(--text-muted); font-size:12px;">{{ $ro->created_at ? \Carbon\Carbon::parse($ro->created_at)->format('h:i A') : 'Just now' }}</td>
                     <td>{!! $statusBadge !!}</td>
                   </tr>
                 @endforeach

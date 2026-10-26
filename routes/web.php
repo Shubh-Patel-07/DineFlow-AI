@@ -197,25 +197,31 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
             ->toArray();
 
         // Recent Orders with relations
-        $recentOrdersList = \App\Models\Order::where('restaurant_id', $restaurantId)
-            ->with(['table', 'orderItems.menuItem'])
-            ->orderByDesc('id')
-            ->take(6)
-            ->get();
+        $recentOrdersList = collect();
+        try {
+            $recentOrdersList = \App\Models\Order::where('restaurant_id', $restaurantId)
+                ->with(['table', 'items.menuItem'])
+                ->orderByDesc('id')
+                ->take(6)
+                ->get();
+        } catch (\Throwable $e) {}
 
         // Top Selling Menu Items
-        $topMenuItems = \DB::table('order_items')
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
-            ->where('orders.restaurant_id', $restaurantId)
-            ->select('menu_items.name', 'menu_items.category', \DB::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('menu_items.id', 'menu_items.name', 'menu_items.category')
-            ->orderByDesc('total_sold')
-            ->take(5)
-            ->get();
+        $topMenuItems = collect();
+        try {
+            $topMenuItems = \DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->join('menu_items', 'order_items.menu_item_id', '=', 'menu_items.id')
+                ->where('orders.restaurant_id', $restaurantId)
+                ->select('menu_items.name', 'menu_items.category', \DB::raw('SUM(order_items.quantity) as total_sold'))
+                ->groupBy('menu_items.id', 'menu_items.name', 'menu_items.category')
+                ->orderByDesc('total_sold')
+                ->take(5)
+                ->get();
+        } catch (\Throwable $e) {}
 
         // Staff on Duty
-        $staffOnDuty = [];
+        $staffOnDuty = collect();
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('staff_attendances')) {
                 $staffOnDuty = \App\Models\StaffAttendance::where('restaurant_id', $restaurantId)
@@ -226,7 +232,7 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
                     ->take(4)
                     ->get();
             }
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         return view('dashboard', [
             'todayOrdersCount' => $todayOrdersCount,
