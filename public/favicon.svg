@@ -1,57 +1,203 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-    <defs>
-        <!-- Background Gradient -->
-        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#4F46E5"/>
-            <stop offset="50%" stop-color="#6366F1"/>
-            <stop offset="100%" stop-color="#8B5CF6"/>
-        </linearGradient>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- 3D Spherical Radial Lighting for Dome -->
+    <radialGradient id="dome3D" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="25%" stop-color="#E0E7FF"/>
+      <stop offset="60%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#312E81"/>
+    </radialGradient>
 
-        <!-- Golden Sparkle Gradient -->
-        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#FDE047"/>
-            <stop offset="100%" stop-color="#F59E0B"/>
-        </linearGradient>
+    <!-- 3D Golden Chrome for Cloche Handle & Base -->
+    <linearGradient id="gold3D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="20%" stop-color="#FCD34D"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="80%" stop-color="#B45309"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
 
-        <!-- Cloche Platter Gradient -->
-        <linearGradient id="platterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#E0E7FF"/>
-            <stop offset="50%" stop-color="#FFFFFF"/>
-            <stop offset="100%" stop-color="#C7D2FE"/>
-        </linearGradient>
+    <!-- Outer Squircle 3D Body -->
+    <linearGradient id="squircle3D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
 
-        <!-- Drop Shadow -->
-        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1E1B4B" flood-opacity="0.4"/>
-        </filter>
-    </defs>
+    <!-- Cyan Neon Energy Ribbon -->
+    <linearGradient id="cyanNeon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
 
-    <!-- Outer Squircle Container -->
-    <rect x="6" y="6" width="116" height="116" rx="30" fill="url(#bgGrad)" stroke="#A5B4FC" stroke-width="2.5" filter="url(#glow)"/>
+    <!-- Deep 3D Shadow Filter -->
+    <filter id="shadow3D" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4F46E5" flood-opacity="0.35"/>
+    </filter>
 
-    <!-- Dynamic Flow Rings / Sonic Dining Waves -->
-    <path d="M 28 88 C 44 80 84 80 100 88" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round" fill="none"/>
-    <path d="M 36 94 C 48 88 80 88 92 94" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
 
-    <!-- Modern Chef Cloche Dome (Dine) -->
-    <!-- Cloche Top Handle -->
-    <circle cx="64" cy="40" r="5" fill="url(#goldGrad)"/>
-    <path d="M 64 45 L 64 48" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
+    <!-- CSS Embedded Animations for Automatic 3D Playback -->
+    <style>
+      @keyframes floatAnim {
+        0%, 100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-6px) rotate(1.5deg);
+        }
+      }
+      @keyframes pulseGlow {
+        0%, 100% {
+          opacity: 0.85;
+          filter: drop-shadow(0 0 4px #6366F1);
+        }
+        50% {
+          opacity: 1;
+          filter: drop-shadow(0 0 14px #38BDF8);
+        }
+      }
+      @keyframes starTwinkle {
+        0%, 100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 0.9;
+        }
+        50% {
+          transform: scale(1.3) rotate(45deg);
+          opacity: 1;
+        }
+      }
+      @keyframes shimmerSweep {
+        0% {
+          transform: translateX(-180px) skewX(-25deg);
+          opacity: 0;
+        }
+        20% {
+          opacity: 0.6;
+        }
+        50% {
+          transform: translateX(220px) skewX(-25deg);
+          opacity: 0;
+        }
+        100% {
+          transform: translateX(220px) skewX(-25deg);
+          opacity: 0;
+        }
+      }
 
-    <!-- Cloche Main Dome -->
-    <path d="M 32 76 C 32 50 46 48 64 48 C 82 48 96 50 96 76 Z" 
-          fill="url(#platterGrad)" 
+      .logo-float-group {
+        animation: floatAnim 4s ease-in-out infinite;
+        transform-origin: center center;
+      }
+      .neon-pulse-ribbon {
+        animation: pulseGlow 3s ease-in-out infinite;
+      }
+      .star-ai-1 {
+        animation: starTwinkle 2.5s ease-in-out infinite;
+        transform-origin: 152px 42px;
+      }
+      .star-ai-2 {
+        animation: starTwinkle 3s ease-in-out infinite 0.7s;
+        transform-origin: 46px 54px;
+      }
+      .shimmer-rect {
+        animation: shimmerSweep 4s ease-in-out infinite 1s;
+      }
+    </style>
+  </defs>
+
+  <!-- Group with 3D Floating Animation -->
+  <g class="logo-float-group">
+    <!-- Outer 3D Beveled Squircle Badge -->
+    <rect x="14" y="14" width="172" height="172" rx="44" 
+          fill="url(#squircle3D)" 
+          stroke="rgba(255,255,255,0.4)" 
+          stroke-width="3" 
+          filter="url(#shadow3D)"/>
+
+    <!-- 3D Bevel Top Inner Rim Light -->
+    <rect x="17" y="17" width="166" height="166" rx="41" 
+          fill="none" 
+          stroke="url(#cyanNeon)" 
+          stroke-width="1.5" 
+          opacity="0.6"/>
+
+    <!-- Shimmer Light Sweep (Clip to Squircle) -->
+    <g clip-path="url(#squircleClip)">
+      <clipPath id="squircleClip">
+        <rect x="14" y="14" width="172" height="172" rx="44"/>
+      </clipPath>
+      <rect class="shimmer-rect" x="-40" y="0" width="60" height="200" fill="url(#shimmerGrad)" opacity="0"/>
+      <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+      </linearGradient>
+    </g>
+
+    <!-- Dynamic Depth Flow Sonic Waves (Bottom) -->
+    <path d="M 46 138 C 72 126 128 126 154 138" stroke="rgba(255,255,255,0.2)" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M 58 146 C 78 138 122 138 142 146" stroke="rgba(255,255,255,0.12)" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+    <!-- 3D Cloche Base Drop Shadow -->
+    <ellipse cx="100" cy="126" rx="60" ry="8" fill="#090D1A" opacity="0.45"/>
+
+    <!-- 3D Cloche Main Dome with Spherical Lighting -->
+    <path d="M 50 120 C 50 78 72 72 100 72 C 128 72 150 78 150 120 Z" 
+          fill="url(#dome3D)" 
           stroke="#FFFFFF" 
-          stroke-width="1.5"/>
+          stroke-width="2" 
+          filter="url(#shadow3D)"/>
 
-    <!-- Cloche Platter Base -->
-    <rect x="24" y="77" width="80" height="6.5" rx="3.25" fill="url(#goldGrad)"/>
+    <!-- Specular Dome Highlight (3D Glass Sheen) -->
+    <path d="M 58 116 C 58 84 76 77 100 77 C 104 77 96 82 82 88 C 68 94 62 104 58 116 Z" 
+          fill="#FFFFFF" 
+          opacity="0.5"/>
 
-    <!-- Streamlined "Flow" Ribbon Accent inside Cloche -->
-    <path d="M 44 67 C 54 60 74 60 84 67" stroke="#6366F1" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <!-- 3D Cloche Top Crown Handle -->
+    <ellipse cx="100" cy="64" rx="14" ry="7" fill="#1E1B4B" opacity="0.4"/>
+    <circle cx="100" cy="60" r="9" fill="url(#gold3D)" stroke="#FEF08A" stroke-width="1.5" filter="url(#shadow3D)"/>
+    <circle cx="97" cy="57" r="3" fill="#FFFFFF" opacity="0.8"/> <!-- Specular dot -->
 
-    <!-- AI Magic Sparkle 4-point Star (AI) -->
-    <path d="M 96 26 Q 96 34 104 34 Q 96 34 96 42 Q 96 34 88 34 Q 96 34 96 26 Z" fill="url(#goldGrad)"/>
-    <!-- Small secondary sparkle -->
-    <path d="M 32 34 Q 32 38 36 38 Q 32 38 32 42 Q 32 38 28 38 Q 32 38 32 34 Z" fill="#FDE047"/>
+    <!-- 3D Cloche Platter Rim (Gold Chrome) -->
+    <rect x="38" y="120" width="124" height="11" rx="5.5" 
+          fill="url(#gold3D)" 
+          stroke="#FEF08A" 
+          stroke-width="1.5" 
+          filter="url(#shadow3D)"/>
+
+    <!-- Interactive AI Cybernetic Flow Ribbon (Glowing Inside Cloche) -->
+    <path class="neon-pulse-ribbon" 
+          d="M 68 106 C 84 94 116 94 132 106" 
+          stroke="url(#cyanNeon)" 
+          stroke-width="4.5" 
+          stroke-linecap="round" 
+          fill="none" 
+          filter="url(#neonGlow)"/>
+
+    <!-- 3D AI Magic Diamond Sparkle 1 (Top-Right) -->
+    <g class="star-ai-1">
+      <path d="M 152 30 Q 152 42 164 42 Q 152 42 152 54 Q 152 42 140 42 Q 152 42 152 30 Z" 
+            fill="url(#gold3D)" 
+            stroke="#FEF08A" 
+            stroke-width="1" 
+            filter="url(#neonGlow)"/>
+    </g>
+
+    <!-- 3D AI Magic Diamond Sparkle 2 (Top-Left Small) -->
+    <g class="star-ai-2">
+      <path d="M 46 46 Q 46 54 54 54 Q 46 54 46 62 Q 46 54 38 54 Q 46 54 46 46 Z" 
+            fill="#FDE047" 
+            opacity="0.9" 
+            filter="url(#neonGlow)"/>
+    </g>
+  </g>
 </svg>

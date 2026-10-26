@@ -18,7 +18,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="robots" content="index, follow">
 
-  <!-- Favicon -->
+  <!-- 3D Animated Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" href="/favicon.png">
@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="/vendor/posing/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- Custom DineFlow Design Refinements -->
+  <!-- Custom DineFlow 3D Animated System -->
   <style>
     :root {
       --df-primary: #6366F1;
@@ -51,6 +51,128 @@
       overflow-x: hidden;
     }
 
+    /* ==============================================================
+       🔥 3D ANIMATED LOGO ENGINE (Header, Hero, Preloader, Footer)
+       ============================================================== */
+    @keyframes df3dLevitate {
+      0%, 100% {
+        transform: perspective(600px) rotateY(-8deg) rotateX(5deg) translateY(0px);
+        filter: drop-shadow(0 6px 14px rgba(99, 102, 241, 0.4));
+      }
+      50% {
+        transform: perspective(600px) rotateY(8deg) rotateX(-5deg) translateY(-5px);
+        filter: drop-shadow(0 14px 25px rgba(99, 102, 241, 0.65));
+      }
+    }
+
+    @keyframes dfNeonHaloSpin {
+      0% {
+        background-position: 0% 50%;
+        transform: rotate(0deg);
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes dfPreloaderSpin3D {
+      0% {
+        transform: perspective(500px) rotateY(0deg) scale(0.95);
+        filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+      }
+      50% {
+        transform: perspective(500px) rotateY(180deg) scale(1.1);
+        filter: drop-shadow(0 0 25px rgba(45, 212, 191, 0.8));
+      }
+      100% {
+        transform: perspective(500px) rotateY(360deg) scale(0.95);
+        filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+      }
+    }
+
+    .df-logo-3d-box {
+      perspective: 1000px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none !important;
+      cursor: pointer;
+    }
+
+    .df-logo-emblem-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      transform-style: preserve-3d;
+      animation: df3dLevitate 4s ease-in-out infinite;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .df-logo-3d-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.15));
+    }
+
+    .df-logo-glow-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6366F1, #2DD4BF, #EC4899, #6366F1);
+      background-size: 300% 300%;
+      animation: dfNeonHaloSpin 5s linear infinite;
+      z-index: -1;
+      opacity: 0.5;
+      filter: blur(6px);
+      transition: opacity 0.3s ease;
+    }
+
+    .df-logo-3d-box:hover .df-logo-emblem-wrap {
+      transform: perspective(800px) rotateY(20deg) rotateX(-15deg) scale(1.18) translateZ(12px);
+      filter: drop-shadow(0 15px 30px rgba(99, 102, 241, 0.75));
+    }
+    .df-logo-3d-box:hover .df-logo-glow-ring {
+      opacity: 0.9;
+      filter: blur(8px);
+    }
+
+    .df-logo-brand {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .df-logo-badge-3d {
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      letter-spacing: 0.5px;
+      margin-left: 2px;
+    }
+
+    /* Preloader 3D Animation */
+    .df-preloader-3d-emblem {
+      display: inline-block;
+      animation: dfPreloaderSpin3D 3s ease-in-out infinite;
+      transform-style: preserve-3d;
+    }
+
     /* Fixed & Polished Navigation Header */
     .cs-site_header.cs-style1 {
       box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
@@ -68,18 +190,13 @@
       flex-wrap: nowrap !important;
       height: 80px;
     }
-    .cs-site_branding img {
-      max-height: 44px;
-      width: auto;
-      object-fit: contain;
-    }
     
     /* Clean Desktop Nav Links with no wrapping */
     .cs-nav .cs-nav_list {
       display: flex !important;
       align-items: center !important;
       flex-wrap: nowrap !important;
-      gap: 24px !important;
+      gap: 22px !important;
       margin: 0 !important;
       padding: 0 !important;
       list-style: none !important;
@@ -373,10 +490,15 @@
 </head>
 
 <body>
-  <!-- Preloader -->
+  <!-- 3D Animated Preloader -->
   <div class="cs-preloader cs-white_bg cs-center">
-    <div class="cs-preloader_in">
-      <img src="/favicon.svg" alt="DineFlow AI Logo" style="width: 50px; height: 50px;">
+    <div class="cs-preloader_in text-center">
+      <div class="df-preloader-3d-emblem">
+        <img src="/images/dineflow_3d_logo.svg" alt="DineFlow AI 3D Logo" style="width: 76px; height: 76px;">
+      </div>
+      <div class="mt-3 fw-bold" style="font-size: 19px; color: #0F172A; letter-spacing: -0.5px;">
+        DineFlow <span style="color: #6366F1;">AI</span>
+      </div>
     </div>
   </div>
 
@@ -385,10 +507,17 @@
     <div class="cs-main_header">
       <div class="container-fluid px-xl-5 px-lg-4 px-3">
         <div class="cs-main_header_in">
-          <!-- Left Logo -->
+          <!-- 3D Animated Left Logo -->
           <div class="cs-main_header_left">
-            <a class="cs-site_branding cs-accent_color" href="/">
-              <img src="/images/dineflow_logo.png" alt="DineFlow AI">
+            <a class="df-logo-3d-box" href="/">
+              <div class="df-logo-emblem-wrap">
+                <img src="/images/dineflow_3d_logo.svg" alt="DineFlow AI 3D" class="df-logo-3d-img">
+                <span class="df-logo-glow-ring"></span>
+              </div>
+              <div class="df-logo-text-wrap d-flex align-items-center">
+                <span class="df-logo-brand">DineFlow</span>
+                <span class="df-logo-badge-3d">AI</span>
+              </div>
             </a>
           </div>
 
@@ -436,7 +565,8 @@
           <!-- Hero Content (Left Column) -->
           <div class="col-lg-6 cs-hero_text">
             <div class="df-badge">
-              <i class="fa-solid fa-sparkles"></i> 100% Cloud + Offline Local Sync
+              <img src="/images/dineflow_3d_logo.svg" alt="3D Logo" style="width: 20px; height: 20px;">
+              <span>100% Cloud + Offline Local Sync</span>
             </div>
             <h1 class="df-hero-heading">
               Next-Gen Restaurant <br>
@@ -1293,11 +1423,12 @@
           </p>
           <div class="cs-height_25 cs-height_lg_25"></div>
           
-          <!-- Founder Info Card -->
+          <!-- Founder Info Card with 3D Animated Emblem -->
           <div class="p-4 rounded-4 mb-4" style="background: #ffffff; border: 1px solid #E2E8F0; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);">
             <div class="d-flex align-items-center gap-3 mb-3">
-              <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;">
-                SP
+              <div class="df-logo-emblem-wrap" style="width: 50px; height: 50px;">
+                <img src="/images/dineflow_3d_logo.svg" alt="DineFlow AI 3D" class="df-logo-3d-img" style="width: 50px; height: 50px;">
+                <span class="df-logo-glow-ring"></span>
               </div>
               <div>
                 <h4 class="m-0 fw-bold fs-5 text-dark">Shubh Patel</h4>
@@ -1368,7 +1499,7 @@
   </section>
   <!-- End Direct WhatsApp Connect Section -->
 
-  <!-- Start Footer (CLEAN VECTOR LOGO - NO BROKEN INVERT FILTER) -->
+  <!-- Start Footer (WITH 3D ANIMATED LOGO EMBLEM) -->
   <footer class="cs-footer" style="background-color: #0F172A; color: #94A3B8;">
     <div class="cs-height_75 cs-height_lg_70"></div>
     <div class="container">
@@ -1377,9 +1508,16 @@
         <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
           <div class="cs-footer_item">
             <div class="cs-footer_widget_text">
-              <a href="/" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-2">
-                <img src="/favicon.svg" alt="DineFlow AI" style="width: 36px; height: 36px;">
-                <span style="font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">DineFlow <span style="color: #6366F1;">AI</span></span>
+              <!-- 3D Animated Logo in Footer -->
+              <a href="/" class="df-logo-3d-box mb-3">
+                <div class="df-logo-emblem-wrap" style="width: 44px; height: 44px;">
+                  <img src="/images/dineflow_3d_logo.svg" alt="DineFlow AI 3D" class="df-logo-3d-img">
+                  <span class="df-logo-glow-ring"></span>
+                </div>
+                <div class="df-logo-text-wrap d-flex align-items-center">
+                  <span class="df-logo-brand" style="color: #ffffff;">DineFlow</span>
+                  <span class="df-logo-badge-3d">AI</span>
+                </div>
               </a>
               <p class="mt-2" style="color: #94A3B8; font-size: 14px; line-height: 1.7;">
                 Next-generation restaurant cloud POS, contactless QR ordering, real-time KDS, and raw material recipe costing ERP. Engineered for reliability, speed, and profitability.
