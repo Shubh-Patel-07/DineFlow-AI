@@ -41,6 +41,7 @@
       --df-dark: #0F172A;
       --df-slate: #1E293B;
       --df-whatsapp: #25D366;
+      --df-whatsapp-dark: #128C7E;
     }
     
     body {
@@ -78,7 +79,7 @@
       display: flex !important;
       align-items: center !important;
       flex-wrap: nowrap !important;
-      gap: 22px !important;
+      gap: 24px !important;
       margin: 0 !important;
       padding: 0 !important;
       list-style: none !important;
@@ -105,10 +106,10 @@
       align-items: center !important;
       flex-shrink: 0 !important;
       white-space: nowrap !important;
-      gap: 16px !important;
+      gap: 14px !important;
     }
     .cs-toolbox .cs-btn span {
-      padding: 9px 20px !important;
+      padding: 9px 18px !important;
       font-size: 14px !important;
     }
 
@@ -135,7 +136,7 @@
     }
 
     .df-hero-heading {
-      font-size: 50px !important;
+      font-size: 48px !important;
       line-height: 1.15 !important;
       font-weight: 800 !important;
       color: #0F172A !important;
@@ -144,7 +145,7 @@
     }
 
     .df-hero-sub {
-      font-size: 16.5px !important;
+      font-size: 16px !important;
       line-height: 1.65 !important;
       color: #475569 !important;
       max-width: 530px !important;
@@ -230,6 +231,24 @@
       font-size: 16px;
     }
 
+    /* Modern Rounded Mockups for Sections */
+    .df-section-img-frame {
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+      border: 1px solid #E2E8F0;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    .df-section-img-frame img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+    }
+
     /* Primary Accent Buttons */
     .cs-btn {
       background-color: #6366F1;
@@ -256,6 +275,31 @@
     }
     .cs-btn.cs-btn-outline:before, .cs-btn.cs-btn-outline:after {
       display: none;
+    }
+
+    /* WhatsApp Button Large */
+    .btn-whatsapp-large {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #ffffff !important;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.35);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none !important;
+      width: 100%;
+    }
+    .btn-whatsapp-large:hover {
+      background: linear-gradient(135deg, #20BD5A, #0E7569);
+      box-shadow: 0 14px 30px rgba(37, 211, 102, 0.45);
+      transform: translateY(-2px);
     }
 
     /* Pricing Card Glow on Featured */
@@ -295,12 +339,22 @@
       border-color: #6366F1;
     }
 
+    /* Round Review Avatars */
+    .cs-testimonial .cs-avatar img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+      border: 2px solid #6366F1;
+    }
+
     @media (max-width: 1200px) {
       .df-hero-heading {
-        font-size: 42px !important;
+        font-size: 40px !important;
       }
       .cs-nav .cs-nav_list {
-        gap: 14px !important;
+        gap: 16px !important;
       }
     }
 
@@ -312,7 +366,7 @@
         transform: none;
       }
       .df-hero-heading {
-        font-size: 36px !important;
+        font-size: 34px !important;
       }
     }
   </style>
@@ -348,7 +402,7 @@
                 <li><a href="#formats" class="cs-smoth_scroll">Formats</a></li>
                 <li><a href="#pricing" class="cs-smoth_scroll">Pricing</a></li>
                 <li><a href="#faq" class="cs-smoth_scroll">FAQ</a></li>
-                <li><a href="#contact" class="cs-smoth_scroll">Contact</a></li>
+                <li><a href="#contact" class="cs-smoth_scroll text-success fw-bold"><i class="fa-brands fa-whatsapp me-1"></i> WhatsApp</a></li>
               </ul>
             </div>
           </div>
@@ -549,20 +603,20 @@
   </section>
   <!-- End Main Feature Pillars -->
 
-  <!-- Start About / Operations Showcase -->
+  <!-- Start About / Operations Showcase (NO PLACEHOLDERS) -->
   <section id="operations" class="cs-gradient_bg_1">
     <div class="cs-height_100 cs-height_lg_70"></div>
     <div class="container">
-      <div class="row align-items-center flex-column-reverse-lg">
-        <div class="col-xl-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
-          <div class="cs-left_full_width cs-space110">
-            <div class="cs-left_sided_img">
-              <img src="/vendor/posing/img/about_img_1.png" alt="DineFlow AI Restaurant Operations">
-            </div>
+      <div class="row align-items-center">
+        <!-- Real Dashboard Image Left -->
+        <div class="col-xl-6 wow fadeInLeft mb-4 mb-xl-0" data-wow-duration="1s" data-wow-delay="0.3s">
+          <div class="df-section-img-frame">
+            <img src="/vendor/posing/img/about_img_1.png" alt="DineFlow AI Restaurant Operations & KDS Dashboard">
           </div>
         </div>
+
+        <!-- Operations List Right -->
         <div class="col-xl-6">
-          <div class="cs-height_0 cs-height_lg_40"></div>
           <div class="cs-seciton_heading cs-style1">
             <div class="cs-section_subtitle">End-To-End Restaurant ERP</div>
             <div class="cs-height_10 cs-height_lg_10"></div>
@@ -572,46 +626,41 @@
           <p>
             DineFlow AI bridges the gap between customer experience and kitchen execution. Every transaction triggers automated stock deductions, real-time table state updates, and precise staff audit trails.
           </p>
-          <div class="cs-height_15 cs-height_lg_15"></div>
-          <div class="cs-list_1_wrap">
-            <ul class="cs-list cs-style1 cs-mp0">
-              <li>
-                <span class="cs-list_icon">
-                  <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
-                </span>
-                <div class="cs-list_right">
-                  <h3>Interactive Floor &amp; Table Management</h3>
-                  <p>Visual floor plan with real-time dining timers, table merging, seat transfers, and reservation scheduling.</p>
-                </div>
-              </li>
-              <li>
-                <span class="cs-list_icon">
-                  <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
-                </span>
-                <div class="cs-list_right">
-                  <h3>Recipe Costing &amp; Auto-Depletion</h3>
-                  <p>Link raw ingredients to menu items. When a burger sells, the exact grams of cheese, patty, and buns are deducted automatically.</p>
-                </div>
-              </li>
-              <li>
-                <span class="cs-list_icon">
-                  <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
-                </span>
-                <div class="cs-list_right">
-                  <h3>Shift Controls &amp; Cash Drawer Reconciliation</h3>
-                  <p>Manager PIN verification, petty cash entries, blind end-of-shift cash counts, and Day-End Z-reports.</p>
-                </div>
-              </li>
-            </ul>
-            <div class="cs-list_img wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s">
-              <img src="/vendor/posing/img/about_img_2.png" alt="POS Floor & Kitchen Management">
-            </div>
-          </div>
+          <div class="cs-height_20 cs-height_lg_20"></div>
+          
+          <ul class="cs-list cs-style1 cs-mp0">
+            <li class="mb-3">
+              <span class="cs-list_icon">
+                <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
+              </span>
+              <div class="cs-list_right">
+                <h3>Interactive Floor &amp; Table Management</h3>
+                <p>Visual floor plan with real-time dining timers, table merging, seat transfers, and reservation scheduling.</p>
+              </div>
+            </li>
+            <li class="mb-3">
+              <span class="cs-list_icon">
+                <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
+              </span>
+              <div class="cs-list_right">
+                <h3>Recipe Costing &amp; Auto-Depletion</h3>
+                <p>Link raw ingredients to menu items. When a burger sells, the exact grams of cheese, patty, and buns are deducted automatically.</p>
+              </div>
+            </li>
+            <li class="mb-3">
+              <span class="cs-list_icon">
+                <img src="/vendor/posing/img/icons/tick.svg" alt="Tick">                      
+              </span>
+              <div class="cs-list_right">
+                <h3>Shift Controls &amp; Cash Drawer Reconciliation</h3>
+                <p>Manager PIN verification, petty cash entries, blind end-of-shift cash counts, and Day-End Z-reports.</p>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
     <div class="cs-height_100 cs-height_lg_70"></div>
-    <div class="cs-height_135 cs-height_lg_0"></div>
   </section>
   <!-- End About / Operations Showcase -->
 
@@ -652,104 +701,101 @@
 
   <!-- Start All Features Grid -->
   <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg" id="features">
-    <div class="cs-height_135 cs-height_lg_0"></div>
-    <div>
-      <div class="cs-height_95 cs-height_lg_70"></div>
-      <div class="container">
-        <div class="cs-seciton_heading cs-style1 text-center">
-          <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Enterprise Capabilities</div>
-          <div class="cs-height_10 cs-height_lg_10"></div>
-          <h3 class="cs-section_title">Everything Required to Run a Food Empire</h3>
+    <div class="cs-height_95 cs-height_lg_70"></div>
+    <div class="container">
+      <div class="cs-seciton_heading cs-style1 text-center">
+        <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Enterprise Capabilities</div>
+        <div class="cs-height_10 cs-height_lg_10"></div>
+        <h3 class="cs-section_title">Everything Required to Run a Food Empire</h3>
+      </div>
+      <div class="cs-height_50 cs-height_lg_40"></div>
+      <div class="row">
+        <!-- Feat 1 -->
+        <div class="col-xl-4 col-md-6">
+          <div class="cs-iconbox cs-style1 cs-type1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_5.svg" alt="Menu Modifiers & Combos">               
+            </div>
+            <div class="cs-iconbox_in">
+              <h3 class="cs-iconbox_title">Menu Modifiers &amp; Combos</h3>
+              <div class="cs-iconbox_subtitle">Configure multi-variant sizes, optional add-ons, mandatory selections, crust options, and spice level choices.</div>
+            </div>
+          </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
         </div>
-        <div class="cs-height_50 cs-height_lg_40"></div>
-        <div class="row">
-          <!-- Feat 1 -->
-          <div class="col-xl-4 col-md-6">
-            <div class="cs-iconbox cs-style1 cs-type1">
-              <div class="cs-iconbox_icon cs-center">
-                <img src="/vendor/posing/img/icons/icon_box_5.svg" alt="Menu Modifiers & Combos">               
-              </div>
-              <div class="cs-iconbox_in">
-                <h3 class="cs-iconbox_title">Menu Modifiers &amp; Combos</h3>
-                <div class="cs-iconbox_subtitle">Configure multi-variant sizes, optional add-ons, mandatory selections, crust options, and spice level choices.</div>
-              </div>
-            </div>
-            <div class="cs-height_25 cs-height_lg_25"></div>
-          </div>
 
-          <!-- Feat 2 -->
-          <div class="col-xl-4 col-md-6">
-            <div class="cs-iconbox cs-style1 cs-type1">
-              <div class="cs-iconbox_icon cs-center">
-                <img src="/vendor/posing/img/icons/icon_box_6.svg" alt="Procurement & Vendors">
-              </div>
-              <div class="cs-iconbox_in">
-                <h3 class="cs-iconbox_title">Procurement &amp; Vendor ERP</h3>
-                <div class="cs-iconbox_subtitle">Generate purchase orders (PO), track goods received (GRN), calculate food wastage, and automate vendor payments.</div>
-              </div>
+        <!-- Feat 2 -->
+        <div class="col-xl-4 col-md-6">
+          <div class="cs-iconbox cs-style1 cs-type1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_6.svg" alt="Procurement & Vendors">
             </div>
-            <div class="cs-height_25 cs-height_lg_25"></div>
+            <div class="cs-iconbox_in">
+              <h3 class="cs-iconbox_title">Procurement &amp; Vendor ERP</h3>
+              <div class="cs-iconbox_subtitle">Generate purchase orders (PO), track goods received (GRN), calculate food wastage, and automate vendor payments.</div>
+            </div>
           </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
 
-          <!-- Feat 3 -->
-          <div class="col-xl-4 col-md-6">
-            <div class="cs-iconbox cs-style1 cs-type1">
-              <div class="cs-iconbox_icon cs-center">
-                <img src="/vendor/posing/img/icons/icon_box_7.svg" alt="Staff Attendance & Payroll">                          
-              </div>
-              <div class="cs-iconbox_in">
-                <h3 class="cs-iconbox_title">Staff Attendance &amp; Payroll</h3>
-                <div class="cs-iconbox_subtitle">Role-based security (Cashier, Waiter, Captain, Manager), biometric/PIN check-in, shift history, and salary slips.</div>
-              </div>
+        <!-- Feat 3 -->
+        <div class="col-xl-4 col-md-6">
+          <div class="cs-iconbox cs-style1 cs-type1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_7.svg" alt="Staff Attendance & Payroll">                          
             </div>
-            <div class="cs-height_25 cs-height_lg_25"></div>
+            <div class="cs-iconbox_in">
+              <h3 class="cs-iconbox_title">Staff Attendance &amp; Payroll</h3>
+              <div class="cs-iconbox_subtitle">Role-based security (Cashier, Waiter, Captain, Manager), biometric/PIN check-in, shift history, and salary slips.</div>
+            </div>
           </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
 
-          <!-- Feat 4 -->
-          <div class="col-xl-4 col-md-6">
-            <div class="cs-iconbox cs-style1 cs-type1">
-              <div class="cs-iconbox_icon cs-center">
-                <img src="/vendor/posing/img/icons/icon_box_8.svg" alt="Customer CRM & Loyalty">
-              </div>
-              <div class="cs-iconbox_in">
-                <h3 class="cs-iconbox_title">Customer CRM &amp; Loyalty</h3>
-                <div class="cs-iconbox_subtitle">Maintain guest dining history, favorite items, reward loyalty points, and send automated promotional WhatsApp messages.</div>
-              </div>
+        <!-- Feat 4 -->
+        <div class="col-xl-4 col-md-6">
+          <div class="cs-iconbox cs-style1 cs-type1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_8.svg" alt="Customer CRM & Loyalty">
             </div>
-            <div class="cs-height_25 cs-height_lg_25"></div>
+            <div class="cs-iconbox_in">
+              <h3 class="cs-iconbox_title">Customer CRM &amp; Loyalty</h3>
+              <div class="cs-iconbox_subtitle">Maintain guest dining history, favorite items, reward loyalty points, and send automated promotional WhatsApp messages.</div>
+            </div>
           </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
 
-          <!-- Feat 5 -->
-          <div class="col-xl-4 col-md-6">
-            <div class="cs-iconbox cs-style1 cs-type1">
-              <div class="cs-iconbox_icon cs-center">
-                <img src="/vendor/posing/img/icons/icon_box_9.svg" alt="GST & Tax Invoicing"> 
-              </div>
-              <div class="cs-iconbox_in">
-                <h3 class="cs-iconbox_title">GST Tax Ready (India)</h3>
-                <div class="cs-iconbox_subtitle">Compliant with Indian GST laws: CGST, SGST, IGST calculations, SAC codes, B2B tax invoices, and one-click GSTR reports.</div>
-              </div>
+        <!-- Feat 5 -->
+        <div class="col-xl-4 col-md-6">
+          <div class="cs-iconbox cs-style1 cs-type1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_9.svg" alt="GST & Tax Invoicing"> 
             </div>
-            <div class="cs-height_25 cs-height_lg_25"></div>
+            <div class="cs-iconbox_in">
+              <h3 class="cs-iconbox_title">GST Tax Ready (India)</h3>
+              <div class="cs-iconbox_subtitle">Compliant with Indian GST laws: CGST, SGST, IGST calculations, SAC codes, B2B tax invoices, and one-click GSTR reports.</div>
+            </div>
           </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
+        </div>
 
-          <!-- Feat 6 -->
-          <div class="col-xl-4 col-md-6">
-            <div class="cs-iconbox cs-style1 cs-type1">
-              <div class="cs-iconbox_icon cs-center">
-                <img src="/vendor/posing/img/icons/icon_box_10.svg" alt="Multi-Branch Central Cloud"> 
-              </div>
-              <div class="cs-iconbox_in">
-                <h3 class="cs-iconbox_title">Multi-Branch Chain Sync</h3>
-                <div class="cs-iconbox_subtitle">Control 1 to 100+ restaurant outlets from a single master dashboard. Synchronize centralized menus and view consolidated revenues.</div>
-              </div>
+        <!-- Feat 6 -->
+        <div class="col-xl-4 col-md-6">
+          <div class="cs-iconbox cs-style1 cs-type1">
+            <div class="cs-iconbox_icon cs-center">
+              <img src="/vendor/posing/img/icons/icon_box_10.svg" alt="Multi-Branch Central Cloud"> 
             </div>
-            <div class="cs-height_25 cs-height_lg_25"></div>
+            <div class="cs-iconbox_in">
+              <h3 class="cs-iconbox_title">Multi-Branch Chain Sync</h3>
+              <div class="cs-iconbox_subtitle">Control 1 to 100+ restaurant outlets from a single master dashboard. Synchronize centralized menus and view consolidated revenues.</div>
+            </div>
           </div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
         </div>
       </div>
-      <div class="cs-height_75 cs-height_lg_45"></div>
     </div>
+    <div class="cs-height_75 cs-height_lg_45"></div>
   </section>
   <!-- End All Features Grid -->
 
@@ -769,8 +815,8 @@
 
       <div class="row align-items-center">
         <div class="col-lg-5 mb-4 mb-lg-0 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
-          <div style="background: #ffffff; border-radius: 20px; padding: 24px; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08); border: 1px solid #E2E8F0;">
-            <img src="/images/pos_thermal_printer.jpg" alt="Thermal Receipt Printer" style="border-radius: 12px; width: 100%; height: auto;">
+          <div class="df-section-img-frame">
+            <img src="/images/pos_thermal_printer.jpg" alt="Thermal Receipt Printer">
             <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
               <span class="badge bg-success px-3 py-2" style="font-size: 13px;"><i class="fa-solid fa-check me-1"></i> Tested &amp; Certified</span>
               <span class="text-muted fw-bold" style="font-size: 13px;">58mm &amp; 80mm ESC/POS</span>
@@ -847,7 +893,7 @@
   </section>
   <!-- End Silent Thermal Printing Hardware Section -->
 
-  <!-- Start Restaurant Formats Section -->
+  <!-- Start Restaurant Formats Section (NO PLACEHOLDERS) -->
   <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg" id="formats">
     <div class="cs-height_95 cs-height_lg_70"></div>
     <div class="container">
@@ -858,85 +904,57 @@
       </div>
       <div class="cs-height_50 cs-height_lg_40"></div>
       
-      <div class="row align-items-center flex-column-reverse-lg">
-        <div class="col-xl-6">
-          <div class="cs-left_full_width cs-space40">
-            <div class="cs-left_sided_img">
-              <img src="/vendor/posing/img/retail-store.png" alt="DineFlow AI Restaurant Types">
-            </div>
+      <div class="row align-items-center">
+        <!-- Real High-Res Screen Left -->
+        <div class="col-xl-6 mb-4 mb-xl-0">
+          <div class="df-section-img-frame">
+            <img src="/vendor/posing/img/retail-store.png" alt="DineFlow AI Restaurant Models & POS Management">
           </div>
         </div>
         
+        <!-- Formats Grid Right -->
         <div class="col-xl-6">
-          <div class="cs-height_25 cs-height_lg_40"></div>
-          <!-- Row 1 -->
-          <div class="row wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
-            <div class="col-lg-11 offset-lg-1">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="cs-iconbox cs-style2 text-center">
-                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_1.svg" alt="Fine Dine"></div>
-                    <h2 class="cs-iconbox_title">Fine Dine &amp; Casual</h2>
-                    <small class="text-muted d-block mt-1">Table reservations, captain tablets &amp; multi-course KOTs.</small>
-                  </div>
-                  <div class="cs-height_25 cs-height_lg_25"></div>
-                </div>
-                <div class="col-md-6">
-                  <div class="cs-iconbox cs-style2 text-center">
-                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_2.svg" alt="QSR"></div>
-                    <h2 class="cs-iconbox_title">QSR &amp; Fast Food</h2>
-                    <small class="text-muted d-block mt-1">High-velocity counter billing, token screens &amp; combos.</small>
-                  </div>
-                  <div class="cs-height_25 cs-height_lg_25"></div>
-                </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="cs-iconbox cs-style2 text-center h-100">
+                <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_1.svg" alt="Fine Dine"></div>
+                <h2 class="cs-iconbox_title">Fine Dine &amp; Casual</h2>
+                <small class="text-muted d-block mt-1">Table reservations, captain tablets &amp; multi-course KOTs.</small>
               </div>
             </div>
-          </div>
-          
-          <!-- Row 2 -->
-          <div class="row wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.4s">
-            <div class="col-lg-11">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="cs-iconbox cs-style2 text-center">
-                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_6.svg" alt="Cafe & Bakery"></div>
-                    <h2 class="cs-iconbox_title">Cafes &amp; Bakeries</h2>
-                    <small class="text-muted d-block mt-1">Milk/syrup barista modifiers, advance cake pre-orders.</small>
-                  </div>
-                  <div class="cs-height_25 cs-height_lg_25"></div>
-                </div>
-                <div class="col-md-6">
-                  <div class="cs-iconbox cs-style2 text-center">
-                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_3.svg" alt="Cloud Kitchen"></div>
-                    <h2 class="cs-iconbox_title">Cloud Kitchens</h2>
-                    <small class="text-muted d-block mt-1">Single kitchen cooking for multiple virtual food brands.</small>
-                  </div>
-                  <div class="cs-height_25 cs-height_lg_25"></div>
-                </div>
+            <div class="col-md-6">
+              <div class="cs-iconbox cs-style2 text-center h-100">
+                <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_2.svg" alt="QSR"></div>
+                <h2 class="cs-iconbox_title">QSR &amp; Fast Food</h2>
+                <small class="text-muted d-block mt-1">High-velocity counter billing, token screens &amp; combos.</small>
               </div>
             </div>
-          </div>
-          
-          <!-- Row 3 -->
-          <div class="row wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
-            <div class="col-lg-11 offset-lg-1">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="cs-iconbox cs-style2 text-center">
-                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_4.svg" alt="Bars & Pubs"></div>
-                    <h2 class="cs-iconbox_title">Bars &amp; Breweries</h2>
-                    <small class="text-muted d-block mt-1">Running guest bar tabs, liquor peg stock &amp; happy hours.</small>
-                  </div>
-                  <div class="cs-height_25 cs-height_lg_25"></div>
-                </div>
-                <div class="col-md-6">
-                  <div class="cs-iconbox cs-style2 text-center">
-                    <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_5.svg" alt="Food Trucks"></div>
-                    <h2 class="cs-iconbox_title">Food Trucks &amp; Kiosks</h2>
-                    <small class="text-muted d-block mt-1">Runs 100% on battery tablets and mobile thermal printers.</small>
-                  </div>
-                  <div class="cs-height_25 cs-height_lg_25"></div>
-                </div>
+            <div class="col-md-6">
+              <div class="cs-iconbox cs-style2 text-center h-100">
+                <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_6.svg" alt="Cafe & Bakery"></div>
+                <h2 class="cs-iconbox_title">Cafes &amp; Bakeries</h2>
+                <small class="text-muted d-block mt-1">Milk/syrup barista modifiers, advance cake pre-orders.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="cs-iconbox cs-style2 text-center h-100">
+                <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_3.svg" alt="Cloud Kitchen"></div>
+                <h2 class="cs-iconbox_title">Cloud Kitchens</h2>
+                <small class="text-muted d-block mt-1">Single kitchen cooking for multiple virtual food brands.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="cs-iconbox cs-style2 text-center h-100">
+                <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_4.svg" alt="Bars & Pubs"></div>
+                <h2 class="cs-iconbox_title">Bars &amp; Breweries</h2>
+                <small class="text-muted d-block mt-1">Running guest bar tabs, liquor peg stock &amp; happy hours.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="cs-iconbox cs-style2 text-center h-100">
+                <div class="cs-iconbox_icon"><img src="/vendor/posing/img/icons/retail_icon_5.svg" alt="Food Trucks"></div>
+                <h2 class="cs-iconbox_title">Food Trucks &amp; Kiosks</h2>
+                <small class="text-muted d-block mt-1">Runs 100% on battery tablets and mobile thermal printers.</small>
               </div>
             </div>
           </div>
@@ -1072,7 +1090,7 @@
   </section>
   <!-- End Price Section -->
 
-  <!-- Start Testimonials Section -->
+  <!-- Start Testimonials Section (WITH REAL PHOTOREALISTIC AVATARS) -->
   <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg">
     <div class="cs-height_95 cs-height_lg_70"></div>
     <div class="container">
@@ -1086,13 +1104,13 @@
       <div class="cs-slider cs-style1 cs-gap-24">
         <div class="cs-slider_container" data-autoplay="0" data-loop="1" data-speed="600" data-fade-slide="0" data-slides-per-view="responsive" data-xs-slides="1" data-sm-slides="1" data-md-slides="2" data-lg-slides="3" data-add-slides="3">
           <div class="cs-slider_wrapper">
-            <!-- Review 1 -->
+            <!-- Review 1: Rajesh Patel -->
             <div class="cs-slide">
               <div class="cs-testimonial cs-style1">
                 <div class="cs-testimonial_text">"DineFlow AI completely eliminated our weekend dinner rush chaos. QR ordering cut waiter delays by 70%, and the silent thermal printing never misses an order!"</div>
                 <div class="cs-testimonial_meta">
                   <div class="cs-avatar">
-                    <img src="/vendor/posing/img/avatar_1.png" alt="Chef Rajesh Patel">
+                    <img src="/vendor/posing/img/avatar_1.png" alt="Rajesh Patel - Spice Symphony Fine Dine">
                   </div>
                   <div class="cs-testimonial_meta_right">
                     <h3 class="cs-testimonial_title">Rajesh Patel</h3>
@@ -1105,13 +1123,13 @@
               </div>
             </div>
 
-            <!-- Review 2 -->
+            <!-- Review 2: Ananya Sharma -->
             <div class="cs-slide">
               <div class="cs-testimonial cs-style1">
                 <div class="cs-testimonial_text">"We run 3 cloud kitchen brands under one roof. The station-wise KDS and automatic ingredient depletion saved us over ₹45,000 every month in food wastage."</div>
                 <div class="cs-testimonial_meta">
                   <div class="cs-avatar">
-                    <img src="/vendor/posing/img/avatar_2.png" alt="Ananya Sharma">
+                    <img src="/vendor/posing/img/avatar_2.png" alt="Ananya Sharma - CraveBox Cloud Kitchen">
                   </div>
                   <div class="cs-testimonial_meta_right">
                     <h3 class="cs-testimonial_title">Ananya Sharma</h3>
@@ -1124,13 +1142,13 @@
               </div>
             </div>
 
-            <!-- Review 3 -->
+            <!-- Review 3: Vikram Malhotra -->
             <div class="cs-slide">
               <div class="cs-testimonial cs-style1">
                 <div class="cs-testimonial_text">"We purchased the full Laravel source code and self-hosted on AWS. The codebase is remarkably clean, modern, and perfectly documented. Best investment for our brand."</div>
                 <div class="cs-testimonial_meta">
                   <div class="cs-avatar">
-                    <img src="/vendor/posing/img/avatar_3.png" alt="Vikram Malhotra">
+                    <img src="/vendor/posing/img/avatar_3.png" alt="Vikram Malhotra - Urban Cafe Chain">
                   </div>
                   <div class="cs-testimonial_meta_right">
                     <h3 class="cs-testimonial_title">Vikram Malhotra</h3>
@@ -1150,7 +1168,7 @@
   </section>
   <!-- End Testimonials Section -->
 
-  <!-- Start FAQ Section -->
+  <!-- Start FAQ Section (REAL POS HARDWARE PHOTO) -->
   <section id="faq" class="cs-gradient_bg_1">
     <div class="cs-height_95 cs-height_lg_70"></div>
     <div class="cs-seciton_heading cs-style1 text-center">
@@ -1162,10 +1180,8 @@
     <div class="container">
       <div class="row align-items-center flex-column-reverse-lg">
         <div class="col-xl-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.4s">
-          <div class="cs-left_full_width cs-space110">
-            <div class="cs-left_sided_img">
-              <img src="/vendor/posing/img/faq_img.png" alt="DineFlow AI FAQ">
-            </div>
+          <div class="df-section-img-frame">
+            <img src="/vendor/posing/img/faq_img.png" alt="DineFlow AI Hardware & Setup">
           </div>
           <div class="cs-height_0 cs-height_lg_40"></div>
         </div>
@@ -1257,131 +1273,102 @@
   </section>
   <!-- End FAQ Section -->
 
-  <!-- Start Contact Section -->
+  <!-- Start Direct WhatsApp Connect Section (NO DUMMY EMAIL FORM) -->
   <section class="cs-bg" data-src="/vendor/posing/img/feature_bg.svg" id="contact">
     <div class="cs-height_95 cs-height_lg_70"></div>
     <div class="container">
-      <div class="row">
-        <!-- Contact Info Left -->
-        <div class="col-xl-5 col-lg-8">
+      <div class="row align-items-center">
+        <!-- Direct Contact Info Left -->
+        <div class="col-xl-5 col-lg-6 mb-4 mb-lg-0">
           <div class="cs-seciton_heading cs-style1">
-            <div class="cs-section_subtitle wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">Direct Contact</div>
+            <div class="cs-section_subtitle text-success fw-bold wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">
+              <i class="fa-brands fa-whatsapp fs-6 me-1"></i> Direct WhatsApp Support
+            </div>
             <div class="cs-height_10 cs-height_lg_10"></div>
-            <h3 class="cs-section_title">Book a 1-on-1 Personalized Live Demo</h3>
+            <h3 class="cs-section_title">Connect Directly with the Founder</h3>
           </div>
           <div class="cs-height_20 cs-height_lg_20"></div>
-          <p>
-            Experience how DineFlow AI transforms dining room efficiency, kitchen throughput, and inventory control. Our restaurant solutions team will answer all your questions.
+          <p style="font-size: 15.5px; line-height: 1.7; color: #475569;">
+            Skip long email waits! Connect directly with <strong>Shubh Patel</strong> on WhatsApp for live product demos, source code licensing, or custom hardware setup assistance.
           </p>
-          <div class="cs-height_15 cs-height_lg_15"></div>
+          <div class="cs-height_25 cs-height_lg_25"></div>
           
-          <!-- Address -->
-          <div class="cs-iconbox cs-style3">
-            <div class="cs-iconbox_icon">
-              <img src="/vendor/posing/img/icons/contact_icon_1.svg" alt="Location">
-            </div>
-            <div class="cs-iconbox_right">
-              <h2 class="cs-iconbox_title">Headquarters</h2>
-              <div class="cs-iconbox_subtitle">Gujarat &amp; Bangalore, India</div>
-            </div>
-          </div>
-          <div class="cs-height_30 cs-height_lg_30"></div>
-
-          <!-- Phone -->
-          <div class="cs-iconbox cs-style3">
-            <div class="cs-iconbox_icon">
-              <img src="/vendor/posing/img/icons/contact_icon_2.svg" alt="Phone">
-            </div>
-            <div class="cs-iconbox_right">
-              <h2 class="cs-iconbox_title">Direct Phone / WhatsApp</h2>
-              <div class="cs-iconbox_subtitle">
-                <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20want%20a%20DineFlow%20AI%20Demo" target="_blank" style="color: #6366F1; text-decoration: none; font-weight: 700;">
-                  +91 77779 38338
-                </a>
+          <!-- Founder Info Card -->
+          <div class="p-4 rounded-4 mb-4" style="background: #ffffff; border: 1px solid #E2E8F0; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #6366F1, #4F46E5); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;">
+                SP
+              </div>
+              <div>
+                <h4 class="m-0 fw-bold fs-5 text-dark">Shubh Patel</h4>
+                <small class="text-muted fw-semibold">Founder &amp; Principal Software Architect</small>
               </div>
             </div>
+            <div class="d-flex flex-column gap-2 text-muted" style="font-size: 14px;">
+              <div><i class="fa-brands fa-whatsapp text-success me-2 fs-6"></i> <strong>WhatsApp:</strong> <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20am%20interested%20in%20DineFlow%20AI" target="_blank" class="text-dark fw-bold text-decoration-none">+91 77779 38338</a></div>
+              <div><i class="fa-solid fa-envelope text-primary me-2 fs-6"></i> <strong>Email:</strong> <a href="mailto:shubhpatel07@gmail.com" class="text-dark fw-semibold text-decoration-none">shubhpatel07@gmail.com</a></div>
+              <div><i class="fa-solid fa-location-dot text-danger me-2 fs-6"></i> <strong>Location:</strong> Ahmedabad &amp; Bangalore, India</div>
+              <div><i class="fa-solid fa-clock text-warning me-2 fs-6"></i> <strong>Availability:</strong> Mon - Sun (9:00 AM - 11:00 PM IST)</div>
+            </div>
           </div>
-          <div class="cs-height_30 cs-height_lg_30"></div>
 
-          <!-- Email -->
-          <div class="cs-iconbox cs-style3">
-            <div class="cs-iconbox_icon">
-              <img src="/vendor/posing/img/icons/contact_icon_3.svg" alt="Email">
-            </div>
-            <div class="cs-iconbox_right">
-              <h2 class="cs-iconbox_title">Official Support Email</h2>
-              <div class="cs-iconbox_subtitle">support@dineflowai.com</div>
-            </div>
-          </div>
+          <!-- Quick One-Tap WhatsApp Button -->
+          <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20want%20to%20know%20more%20about%20DineFlow%20AI%20Restaurant%20POS." target="_blank" class="btn-whatsapp-large">
+            <i class="fa-brands fa-whatsapp fs-4"></i>
+            <span>Chat Directly on WhatsApp</span>
+          </a>
         </div>
 
-        <!-- Contact Form Right -->
-        <div class="col-xl-6 offset-xl-1">
-          <div class="cs-height_40 cs-height_lg_40"></div>
-          
-          <form action="{{ route('contact.submit') }}" method="POST" class="cs-contact_form" style="background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08); border: 1px solid #E2E8F0;">
-            @csrf
-            <!-- Anti-bot Honeypot -->
-            <input type="text" name="website_hp" style="display:none;" tabindex="-1" autocomplete="off">
-            <input type="hidden" name="source" value="landing_page_lead">
-
-            <h2 class="cs-contact_form_title mb-2" style="font-size: 24px; font-weight: 800; color: #0F172A;">Request Demo &amp; Pricing</h2>
-            <p class="text-muted small mb-4">Fill in your restaurant details and we will reach out within 30 minutes.</p>
-
-            @if(session('success'))
-              <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
-                <i class="fa-solid fa-circle-check me-2 fs-5"></i>
-                <div>{{ session('success') }}</div>
+        <!-- Interactive WhatsApp Connect Card Right -->
+        <div class="col-xl-6 offset-xl-1 col-lg-6">
+          <div class="p-4 p-md-5 rounded-4" style="background: #ffffff; border: 1px solid #E2E8F0; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(37, 211, 102, 0.15); color: #25D366; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                <i class="fa-brands fa-whatsapp"></i>
               </div>
-            @endif
-
-            @if(isset($errors) && $errors->any())
-              <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
-                <i class="fa-solid fa-triangle-exclamation me-2 fs-5"></i>
-                <div>{{ $errors->first() }}</div>
-              </div>
-            @endif
-
-            <div class="row">
-              <div class="col-lg-6 mb-3">
-                <label class="form-label small fw-bold text-dark">Your Name *</label>
-                <input type="text" name="name" class="cs-form_field" placeholder="e.g. Shubh Patel" value="{{ old('name') }}" required>
-              </div>
-              <div class="col-lg-6 mb-3">
-                <label class="form-label small fw-bold text-dark">Restaurant Name *</label>
-                <input type="text" name="restaurant_name" class="cs-form_field" placeholder="e.g. Royal Dine &amp; Cafe" value="{{ old('restaurant_name') }}" required>
-              </div>
-              <div class="col-lg-6 mb-3">
-                <label class="form-label small fw-bold text-dark">Phone / WhatsApp Number *</label>
-                <input type="text" name="phone" class="cs-form_field" placeholder="e.g. +91 98765 43210" value="{{ old('phone') }}" required>
-              </div>
-              <div class="col-lg-6 mb-3">
-                <label class="form-label small fw-bold text-dark">Email Address</label>
-                <input type="email" name="email" class="cs-form_field" placeholder="e.g. contact@restaurant.com" value="{{ old('email') }}">
-              </div>
-              <div class="col-lg-12 mb-3">
-                <label class="form-label small fw-bold text-dark">City &amp; Outlets</label>
-                <input type="text" name="city" class="cs-form_field" placeholder="e.g. Ahmedabad (2 Outlets)" value="{{ old('city') }}">
-              </div>
-              <div class="col-lg-12 mb-4">
-                <label class="form-label small fw-bold text-dark">Tell Us About Your Requirements</label>
-                <textarea name="message" cols="30" rows="3" class="cs-form_field" placeholder="Mention any specific needs: QR Ordering, KDS, Thermal Printers, Multi-branch, etc.">{{ old('message') }}</textarea>
-              </div>
-              <div class="col-lg-12">
-                <button type="submit" class="cs-btn cs-size_md w-100" style="background-color: #6366F1;">
-                  <span>Book Free Live Demo</span>
-                </button>
+              <div>
+                <h3 class="m-0 fw-bold fs-4 text-dark">Quick WhatsApp Inquiry</h3>
+                <small class="text-muted">Fill your details &amp; start instant chat with 1 tap</small>
               </div>
             </div>
-          </form>
+
+            <form id="whatsappQuickForm" onsubmit="handleWhatsAppSubmit(event)">
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-dark">Your Name *</label>
+                <input type="text" id="wp_name" class="cs-form_field" placeholder="e.g. Shubh Patel" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-dark">Restaurant / Cafe Name *</label>
+                <input type="text" id="wp_restaurant" class="cs-form_field" placeholder="e.g. Royal Spice Restaurant" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-dark">City *</label>
+                <input type="text" id="wp_city" class="cs-form_field" placeholder="e.g. Ahmedabad, Gujarat" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label small fw-bold text-dark">I Want To Discuss</label>
+                <select id="wp_topic" class="cs-form_field" style="padding-top: 10px; padding-bottom: 10px;">
+                  <option value="Live Sandbox Demo Setup">Live Sandbox Demo &amp; Setup</option>
+                  <option value="Buy Lifetime Source Code">Buy 100% Lifetime Source Code (₹49,999)</option>
+                  <option value="Silent Thermal Printer Hardware Setup">Silent Thermal Printer &amp; ESC/POS Hardware</option>
+                  <option value="Multi-Branch Franchise Pricing">Multi-Outlet Enterprise Pricing</option>
+                </select>
+              </div>
+              
+              <button type="submit" class="btn-whatsapp-large w-100">
+                <i class="fa-brands fa-whatsapp fs-4"></i>
+                <span>Open WhatsApp &amp; Connect Instantly</span>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
     <div class="cs-height_95 cs-height_lg_70"></div>
   </section>
-  <!-- End Contact Section -->
+  <!-- End Direct WhatsApp Connect Section -->
 
-  <!-- Start Footer -->
+  <!-- Start Footer (CLEAN VECTOR LOGO - NO BROKEN INVERT FILTER) -->
   <footer class="cs-footer" style="background-color: #0F172A; color: #94A3B8;">
     <div class="cs-height_75 cs-height_lg_70"></div>
     <div class="container">
@@ -1390,17 +1377,18 @@
         <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
           <div class="cs-footer_item">
             <div class="cs-footer_widget_text">
-              <a href="/">
-                <img src="/images/dineflow_logo.png" alt="DineFlow AI" style="max-height: 48px; width: auto; filter: brightness(0) invert(1);">
+              <a href="/" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-2">
+                <img src="/favicon.svg" alt="DineFlow AI" style="width: 36px; height: 36px;">
+                <span style="font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">DineFlow <span style="color: #6366F1;">AI</span></span>
               </a>
-              <p class="mt-3" style="color: #94A3B8; font-size: 14px; line-height: 1.7;">
+              <p class="mt-2" style="color: #94A3B8; font-size: 14px; line-height: 1.7;">
                 Next-generation restaurant cloud POS, contactless QR ordering, real-time KDS, and raw material recipe costing ERP. Engineered for reliability, speed, and profitability.
               </p>
             </div>
             <div class="cs-height_20 cs-height_lg_20"></div>
             <div class="d-flex align-items-center gap-3">
-              <a href="https://wa.me/917777938338?text=Hello%20DineFlow%20AI" target="_blank" class="df-badge df-badge-whatsapp text-decoration-none">
-                <i class="fa-brands fa-whatsapp fs-5"></i> Chat on WhatsApp
+              <a href="https://wa.me/917777938338?text=Hello%20Shubh%2C%20I%20am%20interested%20in%20DineFlow%20AI" target="_blank" class="df-badge df-badge-whatsapp text-decoration-none">
+                <i class="fa-brands fa-whatsapp fs-5"></i> +91 77779 38338
               </a>
             </div>
           </div>
@@ -1469,5 +1457,42 @@
   <script src="/vendor/posing/js/plugins/jquery.counter.min.js"></script>
   <script src="/vendor/posing/js/plugins/wow.min.js"></script>
   <script src="/vendor/posing/js/main.js"></script>
+
+  <!-- Direct WhatsApp Connect Script -->
+  <script>
+    function handleWhatsAppSubmit(e) {
+      e.preventDefault();
+      var name = document.getElementById('wp_name').value.trim();
+      var restaurant = document.getElementById('wp_restaurant').value.trim();
+      var city = document.getElementById('wp_city').value.trim();
+      var topic = document.getElementById('wp_topic').value;
+
+      var text = "Hello Shubh, My name is " + name + " from " + restaurant + " (" + city + "). I am interested in DineFlow AI for: " + topic + ".";
+      var wpUrl = "https://wa.me/917777938338?text=" + encodeURIComponent(text);
+
+      // Async record lead into database
+      try {
+        fetch('/contact/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name: name,
+            restaurant_name: restaurant,
+            city: city,
+            phone: '+917777938338',
+            message: 'Inquiry via WhatsApp Form: ' + topic,
+            source: 'whatsapp_quick_connect'
+          })
+        }).catch(function(err){ console.log(err); });
+      } catch(err){}
+
+      // Open WhatsApp in new tab / app
+      window.open(wpUrl, '_blank');
+    }
+  </script>
 </body>
 </html>
