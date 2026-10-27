@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="author" content="George_Fx" />
+        <title>Delisty Documentation</title>
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+        <link
+            rel="stylesheet"
+            href="assets/css/components/main-components.css"
+        />
+        <link rel="stylesheet" href="assets/css/style.css" />
+    </head>
+
+    <body>
+        <!-- Navigation -->
+        <nav>
+            <div class="container">
+                <div class="nav-contain">
+                    <a class="brand" href="#">Delisty Documentation</a>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#environment-setup"
+                                >Environment Setup</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#setup-app">Setup App</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#run-app">Run App</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#deploy">Deploy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Description -->
+        <header>
+            <div class="container">
+                <h1>Delisty – Food Delivery Mobile App</h1>
+                <p>
+                    This documentation is to help you regarding each step of
+                    customization. Please go through the documentation carefully
+                    to understand how this script is made and how to edit this
+                    properly. Basic Javscript knowledge is required to customize
+                    this template. You may learn basics
+                    <a
+                        target="__blank"
+                        href="https://www.w3schools.com/"
+                        target="_blank"
+                        >here</a
+                    >
+                    and
+                    <a
+                        target="__blank"
+                        href="https://developer.mozilla.org/ru/"
+                        target="_blank"
+                        >here</a
+                    >.
+                </p>
+                <div class="button-contain">
+                    <a
+                        href="https://themeforest.net/user/George_Fx"
+                        target="_blank"
+                        >My Envato Account</a
+                    >
+                </div>
+            </div>
+        </header>
+
+        <!-- 01. Environment Setup -->
+        <div class="intro p-70 bg-2" id="environment-setup">
+            <div class="container">
+                <h3>01. Environment Setup</h3>
+
+                <div
+                    class="alert alert-success"
+                    role="alert"
+                    style="margin-bottom: 25px"
+                >
+                    This is
+                    <a
+                        target="__blank"
+                        href="https://facebook.github.io/react-native/"
+                        target="_blank"
+                        >React Native</a
+                    >
+                    app that uses
+                    <a target="__blank" href="https://expo.io/" target="_blank"
+                        >Expo</a
+                    >, solution for easy development and management of your
+                    React Native app.&nbsp;
+                </div>
+
+                <p>
+                    You will need to setup your computer to prepare for
+                    configuring the Delisty React Native App.
+                </p>
+
+                <ol>
+                    <li>
+                        <a target="__blank" href="https://nodejs.org/en/"
+                            >Install Node
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            target="__blank"
+                            href="https://code.visualstudio.com/"
+                            >Install Visual Studio Code
+                        </a>
+                        (Will use it for text editing and terminal - You can use
+                        any text editor and terminal/cmd)
+                    </li>
+                    <li>
+                        <a
+                            target="__blank"
+                            href="https://docs.expo.dev/get-started/installation/?redirected"
+                            >Install Expo
+                        </a>
+                        (npm install -g expo-cli) - Follow instructions
+                    </li>
+                </ol>
+
+                <p class="environment-description">
+                    To verify your installation run:
+                </p>
+
+                <ol class="linenums" style="margin-bottom: 50px">
+                    <li class="L1">node --version</li>
+                    <li class="L1">npm --version</li>
+                    <li class="L1">expo --version</li>
+                </ol>
+
+                <h5 class="heading">Xcode</h5>
+                <div class="alert alert-success" role="alert">
+                    The easiest way to install Xcode is via the
+                    <a
+                        target="__blank"
+                        href="https://apps.apple.com/us/app/xcode/id497799835?mt=12"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        >Mac App Store.</a
+                    >
+                    Installing Xcode will also install the iOS Simulator and all
+                    the necessary tools to build your iOS app.
+                </div>
+
+                <h5 class="heading">Installing an iOS Simulator in Xcode</h5>
+                <div class="alert alert-success" role="alert">
+                    To install a simulator, open Xcode > Preferences... and
+                    select the Components tab. Select a simulator with the
+                    corresponding version of iOS you wish to use.
+                </div>
+
+                <h5 class="heading">Android development environment</h5>
+                <div class="alert alert-success" role="alert">
+                    Setting up your development environment can be somewhat
+                    tedious if you're new to Android development. If you're
+                    already familiar with Android development, there are a few
+                    things you may need to configure. In either case, please
+                    make sure to carefully follow the next few steps.
+                </div>
+                <div style="margin-bottom: 20px">
+                    <b>1. Install Android Studio</b>
+                </div>
+                <p>
+                    Download and install Android Studio. Choose a "Custom" setup
+                    when prompted to select an installation type. Make sure the
+                    boxes next to all of the following are checked:
+                </p>
+                <ul>
+                    <li>Android SDK</li>
+                    <li>Android SDK Platform</li>
+                    <li>
+                        Performance (Intel ® HAXM) 
+                        <a
+                            target="__blank"
+                            href="https://android-developers.googleblog.com/2018/07/android-emulator-amd-processor-hyper-v.html"
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            >(See here for AMD)</a
+                        >
+                    </li>
+                    <li>Android Virtual Device</li>
+                </ul>
+                <p>Then, click "Next" to install all of these components.</p>
+                <p>
+                    If the checkboxes are grayed out, you will have a chance to
+                    install these components later on. Once setup has finalized
+                    and you're presented with the Welcome screen, proceed to the
+                    next step.
+                </p>
+                <div style="margin-bottom: 20px">
+                    <b>2. Install the Android SDK</b>
+                </div>
+                <p>
+                    Android Studio installs the latest Android SDK by default.
+                    Building a React Native app with native code, however,
+                    requires the Android 9 (Pie) SDK in particular. Additional
+                    Android SDKs can be installed through the SDK Manager in
+                    Android Studio. The SDK Manager can be accessed from the
+                    "Welcome to Android Studio" screen. Click on "Configure",
+                    then select "SDK Manager".
+                </p>
+                <p>
+                    The SDK Manager can also be found within the Android Studio
+                    "Preferences" dialog, under Appearance & Behavior → System
+                    Settings → Android SDK.
+                </p>
+                <p>
+                    Select the "SDK Platforms" tab from within the SDK Manager,
+                    then check the box next to "Show Package Details" in the
+                    bottom right corner. Look for and expand the Android 9
+                    (Pie) entry, then make sure the following items are checked:
+                </p>
+                <ul>
+                    <li>Android SDK Platform 28</li>
+                    <li>
+                        Intel x86 Atom_64 System Image or Google APIs Intel x86
+                        Atom System Image
+                    </li>
+                </ul>
+                <p>
+                    Next, select the "SDK Tools" tab and check the box next to
+                    "Show Package Details" here as well. Look for and expand the
+                    "Android SDK Build-Tools" entry, then make sure
+                    that 29.0.2 is selected. Finally, click "Apply" to download
+                    and install the Android SDK and related build tools.
+                </p>
+                <div style="margin-bottom: 20px">
+                    <b>3. Configure the ANDROID_HOME environment variable</b>
+                </div>
+                <p>
+                    The React Native tools require some environment variables to
+                    be set up in order to build apps with native code.
+                </p>
+            </div>
+        </div>
+
+        <!-- 02. Setup App -->
+        <div class="code-s p-70" id="setup-app">
+            <div class="container">
+                <h3>02. Setup App</h3>
+                <div style="margin-bottom: 20px">
+                    <b>app.json - settings</b>
+                </div>
+                <ul>
+                    <li>name: your App Name</li>
+                    <li>slug: your App Slug</li>
+                    <li>icon: your App Icon</li>
+                    <li>splash > image: your App Splash Image</li>
+                </ul>
+                <img
+                    src="./assets/images/Screenshot_8.png"
+                    alt="альтернативный текст"
+                    style="border-radius: 8px; width: 1110px"
+                />
+            </div>
+        </div>
+
+        <!-- 03. Run App -->
+        <div class="code-s p-70" id="run-app">
+            <div class="container">
+                <h3>03. Run App</h3>
+                <p class="environment-description">
+                    This is React Native project, and depends on node modules
+                    that need to be installed. Try using these commands to
+                    install modules.
+                </p>
+                <ol class="linenums">
+                    <li class="L1">$ npm install</li>
+                    <li class="L1">$ npm install --legacy-peer-deps</li>
+                </ol>
+                <br />
+                <div class="alert alert-success" role="alert">
+                    This will install all required node modules. It can take
+                    some time. If you see some warning this is not a big issue.
+                    Even if you see red error messages try to run the project.
+                </div>
+                <p>Once node modules are installed, you can run the app.</p>
+                <ol class="linenums">
+                    <li class="L1">$ expo start</li>
+                </ol>
+                <br />
+                <div class="alert alert-success" role="alert">
+                    This will start the expo package manager. It will start a
+                    web browser session. From there you can preview the app on
+                    iOS simulator ( Mac Only ), Android Emulator and on iOS
+                    Device or Android device. On AppStore for iPhone and Google
+                    Play for Android, search for "Expo Client). There login with
+                    your Expo account.
+                </div>
+            </div>
+        </div>
+
+        <!-- 04. Deploy -->
+        <div class="code-s p-70" id="deploy">
+            <div class="container">
+                <h3>04. Deploy on Google Play and App Store</h3>
+                <p>
+                    Since this is an expo app, the complete up to date
+                    documentation for publishing your project can be found here.
+                </p>
+                <div class="alert alert-success" role="alert">
+                    <a
+                        target="__blank"
+                        class="link"
+                        href="https://docs.expo.io/distribution/building-standalone-apps/?redirected"
+                        >https://docs.expo.io/distribution/building-standalone-apps/?redirected</a
+                    >
+                </div>
+                <br />
+                <h5 class="heading">To publish Android App.</h5>
+                <div class="alert alert-success" role="alert">
+                    You will need Google Play developer account. 25$/once.
+                    Register
+                    <a href="https://play.google.com/console/about/">Here.</a>
+                    <br />
+                    In your project run:
+                </div>
+                <ol class="linenums" style="margin-bottom: 50px">
+                    <li class="L1">$ expo build:android</li>
+                </ol>
+                <h5>To publish in Apple App Store.</h5>
+                <div class="alert alert-success" role="alert">
+                    You will need Mac computer and Apple Developer account
+                    99$/year. Register
+                    <a href="https://developer.apple.com/">Here.</a> <br />
+                    In your project run:
+                </div>
+                <ol class="linenums" style="margin-bottom: 20px">
+                    <li class="L1">$ expo build:ios</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Start Scripts -->
+        <script
+            type="text/javascript"
+            src="assets/js/jquery-3.3.1.min.js"
+        ></script>
+        <script type="text/javascript" src="assets/js/popper.js"></script>
+        <script
+            type="text/javascript"
+            src="assets/js/bootstrap.min.js"
+        ></script>
+        <script type="text/javascript" src="assets/js/prettify.js"></script>
+        <script type="text/javascript" src="assets/js/javaScript.js"></script>
+        <!-- End Scripts -->
+    </body>
+</html>

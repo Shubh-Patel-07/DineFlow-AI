@@ -13,6 +13,9 @@
 /.zed
 /auth.json
 /node_modules
+node_modules/
+.expo/
+.expo-shared/
 /public/build
 /public/hot
 /public/storage
