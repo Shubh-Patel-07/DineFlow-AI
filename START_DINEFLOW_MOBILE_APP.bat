@@ -9,17 +9,24 @@ echo.
 echo [1/3] Navigating to React Native Expo project...
 cd /d "%~dp0delisty-food-delivery-react-native-template-2025-07-14-15-46-09-utc\App\delisty"
 
-echo [2/3] Configuring Node.js environment & OpenSSL support...
+echo [2/3] Detecting Wi-Fi IP for direct mobile connection...
 set NODE_OPTIONS=--openssl-legacy-provider
-node -v
+
+for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias 'Wi-Fi' -AddressFamily IPv4 -ErrorAction SilentlyContinue).IPAddress"') do set WIFI_IP=%%a
+if defined WIFI_IP (
+    echo Detected Wi-Fi IP: %WIFI_IP%
+    set REACT_NATIVE_PACKAGER_HOSTNAME=%WIFI_IP%
+) else (
+    echo Wi-Fi IP not found, using default network.
+)
 echo.
 
-echo [3/3] Starting Expo Development Server...
+echo [3/3] Starting Expo Server & Web App...
 echo.
 echo ======================================================================
-echo  SCAN THE QR CODE WITH EXPO GO ON YOUR ANDROID OR IPHONE TO TEST!
-echo  Press 'w' in terminal to open in Web Browser (http://localhost:19006)
-echo  Press 'a' in terminal to open in Android Emulator
+echo  1. OPEN IN PC BROWSER:       http://localhost:19006
+echo  2. OPEN IN PHONE BROWSER:    http://%WIFI_IP%:19006
+echo  3. SCAN QR CODE IN EXPO GO (Android / iPhone)
 echo ======================================================================
 echo.
 
