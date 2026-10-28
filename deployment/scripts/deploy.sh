@@ -5,14 +5,22 @@
 
 set -e
 
-APP_DIR="/var/www/tendorabuy"
+# Detect application directory dynamically
+if [ -d "/var/www/dineflow" ]; then
+    APP_DIR="/var/www/dineflow"
+elif [ -d "/var/www/tendorabuy" ]; then
+    APP_DIR="/var/www/tendorabuy"
+else
+    APP_DIR="/var/www/tendorabuy"
+fi
 
 # Detect installed PHP-FPM version dynamically (e.g. php8.5-fpm, php8.3-fpm, php8.2-fpm)
 PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.5")
 PHP_FPM_SERVICE="php${PHP_VER}-fpm"
 
 echo "=========================================================="
-echo " Starting Tendorabuy Production Deployment...             "
+echo " Starting DineFlow AI Production Deployment...            "
+echo " Target Directory: $APP_DIR                               "
 echo " Detected PHP Version: $PHP_VER (Service: $PHP_FPM_SERVICE)"
 echo "=========================================================="
 
@@ -22,9 +30,9 @@ cd $APP_DIR
 echo ">> Putting application in maintenance mode..."
 php artisan down --render="errors::503" --secret="tendorabuy-deploy-bypass" || true
 
-# 2. Pull latest code from GitHub main/production branch
+# 2. Pull latest code from GitHub
 echo ">> Pulling latest changes from Git..."
-git pull origin feature-teamlead
+git pull origin feature-teamlead || git pull origin main
 
 # 3. Install/Update Composer dependencies (no dev packages)
 echo ">> Installing optimized production PHP dependencies..."
@@ -48,7 +56,7 @@ php artisan event:cache
 
 # 7. Set Correct Permissions
 echo ">> Setting permissions for www-data..."
-chown -R www-data:www-data $APP_DIR/storage $APP_DIR/bootstrap/cache
+chown -R www-data:www-data $APP_DIR/storage $APP_DIR/bootstrap/cache $APP_DIR/public
 chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
 
 # 8. Reload PHP-FPM to flush opcache
