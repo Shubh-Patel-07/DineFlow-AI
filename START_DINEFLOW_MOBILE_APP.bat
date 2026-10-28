@@ -1,9 +1,9 @@
 @echo off
-title DineFlow AI - Mobile Application (Expo SDK 51)
+title DineFlow AI - Mobile Application (Expo SDK 58)
 color 0A
 
 echo ======================================================================
-echo           DINEFLOW AI : REACT NATIVE MOBILE APPLICATION (SDK 51)
+echo           DINEFLOW AI : REACT NATIVE MOBILE APPLICATION (SDK 58)
 echo ======================================================================
 echo.
 echo [1/3] Navigating to React Native Expo project...
@@ -20,14 +20,14 @@ if defined WIFI_IP (
 )
 echo.
 
-echo [3/3] Starting Modern Expo Metro Server for iPhone & Android...
+echo [3/3] Starting Modern Expo Metro Server for iPhone & Android (SDK 58)...
 echo.
 echo ======================================================================
-echo  1. IPHONE (EXPO GO APP / CAMERA): Scan terminal QR code OR enter:
-echo                                   exp://%WIFI_IP%:8081
+echo  1. IPHONE (EXPO GO SDK 58):    Scan terminal QR code OR enter:
+echo                                 exp://%WIFI_IP%:8081
 echo.
-echo  2. PHONE BROWSER (Safari/Chrome): http://%WIFI_IP%:8081
-echo  3. PC BROWSER (Mobile View):      http://localhost:8081
+echo  2. PHONE BROWSER (Safari):     http://%WIFI_IP%:8081
+echo  3. PC BROWSER (Mobile View):   http://localhost:8081
 echo ======================================================================
 echo.
 

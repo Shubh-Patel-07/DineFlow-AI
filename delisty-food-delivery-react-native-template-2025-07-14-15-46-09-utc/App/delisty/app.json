@@ -6,15 +6,16 @@
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
-        "splash": {
-            "image": "./assets/splash.png",
-            "resizeMode": "cover",
-            "backgroundColor": "#000000"
-        },
-        "updates": {
-            "fallbackToCacheTimeout": 0
-        },
-        "assetBundlePatterns": ["**/*"],
+        "plugins": [
+            [
+                "expo-splash-screen",
+                {
+                    "image": "./assets/splash.png",
+                    "resizeMode": "cover",
+                    "backgroundColor": "#000000"
+                }
+            ]
+        ],
         "ios": {
             "supportsTablet": true
         },
