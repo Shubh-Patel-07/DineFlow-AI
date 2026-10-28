@@ -48,16 +48,22 @@ sudo chown -R www-data:www-data "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
 sudo chmod -R 775 "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
 sudo chmod -R 777 "$APP_DIR/storage/logs" "$APP_DIR/storage/framework"
 
+# 4.1 Ensure valid APP_KEY
+if ! grep -q "APP_KEY=base64:" "$APP_DIR/.env"; then
+    echo ">> Generating missing APP_KEY..."
+    php artisan key:generate --force
+fi
+
 # 5. Clear and Cache Laravel Configuration
 echo ">> Refreshing Laravel config & routes..."
-php artisan config:clear
+php artisan config:clear || true
 php artisan cache:clear || true
-php artisan route:clear
-php artisan view:clear
+php artisan route:clear || true
+php artisan view:clear || true
 
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
 
 # 6. Ensure Nginx points to the active directory
 echo ">> Syncing Nginx root to $APP_DIR/public..."
