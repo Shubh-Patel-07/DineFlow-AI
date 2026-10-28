@@ -1894,12 +1894,12 @@ function recalculateSplit() {
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'dark');
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'light');
     applyLanguage();
     loadMenu();
   });
 } else {
-  applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'dark');
+  applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'light');
   applyLanguage();
   loadMenu();
 }
