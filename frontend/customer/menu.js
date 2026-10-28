@@ -3,6 +3,11 @@ const restaurantId = params.get('restaurantId') || params.get('restaurant_id') |
 let tableId = params.get('tableId') || params.get('table_id') || params.get('table') || '1';
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
+const mobileAppBtn = document.getElementById('mobileAppViewBtn');
+if (mobileAppBtn) {
+  mobileAppBtn.href = `/customer/app?restaurantId=${encodeURIComponent(restaurantId)}&tableId=${encodeURIComponent(tableId)}`;
+}
+
 const translations = {
   en: { welcome: 'Smart QR Restaurant Ordering', table: 'Table', all: 'All', veg: '🟢 Veg', nonveg: '🔴 Non-Veg', menu: 'Our Menu', subtitle: 'Freshly prepared, just for you', search: 'Search delicious food...', callWaiter: 'Call Waiter', loading: 'Loading menu…', unavailable: 'Out of stock', available: 'Available', empty: 'No dishes found', emptyHint: 'Try changing your search or filters.', waiterSent: 'Your waiter has been called.', waiterError: 'Could not call waiter. Please try again.', calling: 'Calling…' },
   hi: { welcome: 'स्मार्ट QR रेस्टोरेंट ऑर्डरिंग', table: 'टेबल', all: 'सभी', veg: '🟢 वेज', nonveg: '🔴 नॉन-वेज', menu: 'हमारा मेनू', subtitle: 'आपके लिए ताज़ा तैयार', search: 'खाना खोजें...', callWaiter: 'वेटर बुलाएँ', loading: 'मेनू लोड हो रहा है…', unavailable: 'स्टॉक में नहीं', available: 'उपलब्ध', empty: 'कोई डिश नहीं मिली', emptyHint: 'खोज या फ़िल्टर बदलकर देखें।', waiterSent: 'वेटर को बुला दिया गया है।', waiterError: 'वेटर को नहीं बुला सके। फिर कोशिश करें।', calling: 'बुलाया जा रहा है…' },

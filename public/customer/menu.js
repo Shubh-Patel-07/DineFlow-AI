@@ -3,6 +3,11 @@ const restaurantId = params.get('restaurantId') || params.get('restaurant_id') |
 let tableId = params.get('tableId') || params.get('table_id') || params.get('table') || '1';
 const API_BASE = window.DINEFLOW_API_BASE || `${window.location.origin}/api`;
 
+const mobileAppBtn = document.getElementById('mobileAppViewBtn');
+if (mobileAppBtn) {
+  mobileAppBtn.href = `/customer/app?restaurantId=${encodeURIComponent(restaurantId)}&tableId=${encodeURIComponent(tableId)}`;
+}
+
 const translations = {
   en: { welcome: 'Smart QR Restaurant Ordering', table: 'Table', all: 'All', veg: '🟢 Veg', nonveg: '🔴 Non-Veg', menu: 'Our Menu', subtitle: 'Freshly prepared, just for you', search: 'Search delicious food...', callWaiter: 'Call Waiter', loading: 'Loading menu…', unavailable: 'Out of stock', available: 'Available', empty: 'No dishes found', emptyHint: 'Try changing your search or filters.', waiterSent: 'Your waiter has been called.', waiterError: 'Could not call waiter. Please try again.', calling: 'Calling…' },
   hi: { welcome: 'स्मार्ट QR रेस्टोरेंट ऑर्डरिंग', table: 'टेबल', all: 'सभी', veg: '🟢 वेज', nonveg: '🔴 नॉन-वेज', menu: 'हमारा मेनू', subtitle: 'आपके लिए ताज़ा तैयार', search: 'खाना खोजें...', callWaiter: 'वेटर बुलाएँ', loading: 'मेनू लोड हो रहा है…', unavailable: 'स्टॉक में नहीं', available: 'उपलब्ध', empty: 'कोई डिश नहीं मिली', emptyHint: 'खोज या फ़िल्टर बदलकर देखें।', waiterSent: 'वेटर को बुला दिया गया है।', waiterError: 'वेटर को नहीं बुला सके। फिर कोशिश करें।', calling: 'बुलाया जा रहा है…' },
@@ -1344,6 +1349,26 @@ async function loadMenu() {
     if (restaurantResult.status === 'fulfilled' && restaurantResult.value) {
       const rData = restaurantResult.value;
       window.restaurant = rData;
+
+      // ── CHECK RESTAURANT OPERATIONAL STATUS ──
+      const subStatus = String(rData.subscription_status || 'active').toLowerCase().trim();
+      if (subStatus === 'suspended' || subStatus === 'expired' || subStatus === 'cancelled') {
+        const lockMsg = rData.suspension_message || 'This dining venue is temporarily closed or suspended by administration. Digital ordering is paused.';
+        document.body.innerHTML = `
+          <div style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#090D1A; color:#F8FAFC; text-align:center; padding:24px; font-family:'Inter',sans-serif;">
+            <div style="background:#131A35; border:1px solid rgba(239,68,68,0.4); border-radius:24px; padding:40px 24px; max-width:440px; width:100%; box-shadow:0 25px 60px rgba(0,0,0,0.6);">
+              <div style="font-size:56px; margin-bottom:16px;">🔒</div>
+              <h1 style="font-size:22px; font-weight:800; margin-bottom:12px; color:#EF4444; font-family:'Outfit',sans-serif;">Restaurant Temporarily Closed</h1>
+              <p style="color:#94A3B8; font-size:14px; line-height:1.6; margin-bottom:24px;">${escapeHtml(lockMsg)}</p>
+              <div style="padding:10px 16px; background:rgba(255,255,255,0.04); border-radius:12px; font-size:12px; color:#64748B;">
+                Venue: <strong>${escapeHtml(rData.name || 'Restaurant')}</strong>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
       const restName = rData.name || 'Restaurant';
       const nameEl = $('#restaurantName'); if (nameEl) nameEl.textContent = restName;
       const titleEl = $('#restaurantMainTitle'); if (titleEl) titleEl.textContent = restName;

@@ -422,7 +422,18 @@ Route::get('/customer/menu', function (Illuminate\Http\Request $request) {
         $validTableId = $firstTable ? $firstTable->id : '1';
     }
 
+    if ($request->query('mode') === 'app' || $request->query('view') === 'app') {
+        return redirect("/customer/app/index.html?restaurantId={$restaurant->id}&tableId={$validTableId}&restaurant_id={$restaurant->id}&table_id={$validTableId}");
+    }
+
     return redirect("/frontend/customer/menu.html?restaurantId={$restaurant->id}&tableId={$validTableId}&restaurant_id={$restaurant->id}&table_id={$validTableId}");
+});
+
+Route::get('/customer/app', function (Illuminate\Http\Request $request) {
+    $tableParam = $request->query('tableId') ?? $request->query('table_id') ?? $request->query('table');
+    $restaurantParam = $request->query('restaurantId') ?? $request->query('restaurant_id') ?? $request->query('restaurant') ?? 10;
+    $validTableId = $tableParam ?: 37;
+    return redirect("/customer/app/index.html?restaurantId={$restaurantParam}&tableId={$validTableId}&restaurant_id={$restaurantParam}&table_id={$validTableId}");
 });
 
 // Public SaaS Landing, Pricing & Legal Pages

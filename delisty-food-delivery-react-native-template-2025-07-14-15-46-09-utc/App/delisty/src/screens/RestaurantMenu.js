@@ -6,7 +6,8 @@ import {
     ImageBackground,
     Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { fetchLiveMenu, DEFAULT_RESTAURANT_ID } from "../services/dineflowApi";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Shadow } from "react-native-shadow-2";
 import Modal from "react-native-modal";
@@ -61,7 +62,13 @@ const categories = [
 export default function RestaurantMenu() {
     const navigation = useNavigation();
     const route = useRoute();
-    const { restaurant } = route.params;
+    const { restaurant = { name: "SMP Restaurant (DineFlow AI)", rating: "4.9", delivery: "Free", distance: "0.2 km" } } = route.params || {};
+    const [liveDishes, setLiveDishes] = useState(dishes);
+    useEffect(() => {
+        fetchLiveMenu(DEFAULT_RESTAURANT_ID).then(items => {
+            if (items && items.length > 0) setLiveDishes(items);
+        });
+    }, []);
     const [selectedTab, setSelectedTab] = useState("Home");
     const [showInfoModal, setShowInfoModal] = useState(false);
     const [category, setCategory] = useState("Most Popular");
@@ -359,7 +366,7 @@ export default function RestaurantMenu() {
                     top: -10,
                 }}
             >
-                {dishes.map((item, index) => {
+                {liveDishes.map((item, index) => {
                     return (
                         <Shadow
                             key={item.id}
@@ -731,7 +738,7 @@ export default function RestaurantMenu() {
                                 key={index}
                                 onPress={() =>
                                     item.screen === "CartIsEmpty" &&
-                                    dishes.length !== 0
+                                    liveDishes.length !== 0
                                         ? navigation.navigate("Order")
                                         : navigation.navigate("MainLayout", {
                                               screen: item.screen,
