@@ -48,11 +48,11 @@ php artisan storage:link || true
 
 # 6. Clear and Cache Laravel Configurations for Maximum Performance
 echo ">> Optimizing Laravel cache..."
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache
+php artisan optimize:clear || (php artisan config:clear && php artisan route:clear && php artisan view:clear) || true
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
+php artisan event:cache || true
 
 # 7. Set Correct Permissions
 echo ">> Setting permissions for www-data..."
