@@ -5,11 +5,17 @@
 
 set -e
 
-# Detect application directory dynamically
-if [ -d "/var/www/dineflow" ]; then
-    APP_DIR="/var/www/dineflow"
+# Detect application directory dynamically based on Nginx configuration
+NGINX_ROOT_DIR=$(grep -roh "root /var/www/[^;]*" /etc/nginx/sites-enabled/ 2>/dev/null | head -n 1 | awk '{print $2}' | sed 's|/public/?$||' | sed 's|/$||')
+
+if [ -n "$NGINX_ROOT_DIR" ] && [ -d "$NGINX_ROOT_DIR" ]; then
+    APP_DIR="$NGINX_ROOT_DIR"
+elif [ -f "$(pwd)/artisan" ]; then
+    APP_DIR="$(pwd)"
 elif [ -d "/var/www/tendorabuy" ]; then
     APP_DIR="/var/www/tendorabuy"
+elif [ -d "/var/www/dineflow" ]; then
+    APP_DIR="/var/www/dineflow"
 else
     APP_DIR="/var/www/tendorabuy"
 fi
