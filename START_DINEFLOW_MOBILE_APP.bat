@@ -24,12 +24,11 @@ echo.
 echo [3/3] Starting Expo Server & Web App...
 echo.
 echo ======================================================================
-echo  1. OPEN IN PC BROWSER:       http://localhost:19006
-echo  2. OPEN IN PHONE BROWSER:    http://%WIFI_IP%:19006
-echo  3. SCAN QR CODE IN EXPO GO (Android / iPhone)
+echo  1. PC BROWSER (Mobile View):  http://localhost:19006
+echo  2. PHONE BROWSER:             http://%WIFI_IP%:19006
 echo ======================================================================
 echo.
 
-npm.cmd start
+npx.cmd expo start --web --host lan
 
 pause
