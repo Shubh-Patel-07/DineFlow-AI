@@ -24,6 +24,33 @@ class RestaurantController extends Controller
 
         return response()->json(['success' => true, 'data' => $restaurant], 201);
     }
+    public function publicIndex(Request $request)
+    {
+        $restaurants = Restaurant::where('subscription_status', 'active')
+            ->select('id', 'name', 'slug', 'address', 'phone', 'logo', 'gst_rate')
+            ->get()
+            ->map(function ($r) {
+                $logoUrl = $r->getEffectiveLogoUrl() ?: ($r->logo ?? null);
+                return [
+                    'id' => $r->id,
+                    'name' => $r->name,
+                    'slug' => $r->slug ?? \Illuminate\Support\Str::slug($r->name),
+                    'address' => $r->address ?: 'Authentic Dining & Gourmet Cuisine',
+                    'phone' => $r->phone,
+                    'logo' => $logoUrl,
+                    'rating' => '4.8',
+                    'delivery_time' => '25-35 mins',
+                    'delivery_fee' => 'Free Delivery',
+                    'image' => $logoUrl ?: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80',
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $restaurants,
+        ]);
+    }
+
     public function show($id)
     {
         $restaurant = Restaurant::find($id);

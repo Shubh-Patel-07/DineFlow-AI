@@ -62,13 +62,14 @@ const categories = [
 export default function RestaurantMenu() {
     const navigation = useNavigation();
     const route = useRoute();
-    const { restaurant = { name: "SMP Restaurant (DineFlow AI)", rating: "4.9", delivery: "Free", distance: "0.2 km" } } = route.params || {};
+    const { restaurant = { id: 10, name: "SMP Restaurant (DineFlow AI)", rating: "4.9", delivery: "Free", distance: "0.2 km" } } = route.params || {};
     const [liveDishes, setLiveDishes] = useState(dishes);
+    const targetRestId = restaurant.id || DEFAULT_RESTAURANT_ID;
     useEffect(() => {
-        fetchLiveMenu(DEFAULT_RESTAURANT_ID).then(items => {
+        fetchLiveMenu(targetRestId).then(items => {
             if (items && items.length > 0) setLiveDishes(items);
         });
-    }, []);
+    }, [targetRestId]);
     const [selectedTab, setSelectedTab] = useState("Home");
     const [showInfoModal, setShowInfoModal] = useState(false);
     const [category, setCategory] = useState("Most Popular");

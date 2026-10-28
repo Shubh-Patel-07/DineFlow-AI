@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
+import { submitOrderToDineFlow } from "../services/dineflowApi";
 import { Platform } from "react-native";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
@@ -133,7 +134,21 @@ export default function Checkout() {
                     containerStyle={{
                         marginBottom: Platform.OS === "ios" ? 0 : 34,
                     }}
-                    onPress={() => navigation.navigate("CheckoutSuccess")}
+                    onPress={async () => {
+        try {
+            await submitOrderToDineFlow({
+                restaurantId: 10,
+                tableId: 37,
+                customerName: "Mobile App Customer",
+                items: [{ id: 1292, name: "Order Item", quantity: 1, price: 2333 }],
+                orderType: "dine_in",
+                notes: comment || "",
+            });
+        } catch (e) {
+            console.warn("Order sync:", e);
+        }
+        navigation.navigate("CheckoutSuccess");
+    }}
                 />
             </ScrollView>
         );

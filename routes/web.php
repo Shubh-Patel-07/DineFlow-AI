@@ -487,6 +487,7 @@ Route::post('/api/demo/request', [ContactController::class, 'submit'])->middlewa
 Route::prefix('api')->group(function () {
 
     // --- PUBLIC ENDPOINTS ---
+    Route::get('/restaurants', [RestaurantController::class, 'publicIndex']);
     Route::get('/restaurants/{id}', [RestaurantController::class, 'show']);
     Route::get('/restaurants/{id}/settings', [RestaurantController::class, 'getSettings']);
     Route::get('/tables/restaurant/{restaurantId}', [TableController::class, 'getRestaurantTables']);

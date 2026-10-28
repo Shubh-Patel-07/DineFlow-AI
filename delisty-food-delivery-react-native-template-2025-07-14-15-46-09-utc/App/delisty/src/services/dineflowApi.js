@@ -7,6 +7,61 @@ export const DEFAULT_RESTAURANT_ID = 10;
 export const DEFAULT_TABLE_ID = 37;
 
 /**
+ * Fetch All Active Restaurants from DineFlow AI (e.g. Asopalav, SMP)
+ */
+export async function fetchRestaurantsList() {
+    try {
+        const res = await fetch(`${BASE_URL}/restaurants`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            return data.data;
+        }
+        return [
+            {
+                id: 10,
+                name: "SMP Restaurant (DineFlow AI)",
+                address: "Station Road, Patan, Gujarat",
+                rating: "4.9",
+                delivery_time: "20-30 mins",
+                delivery_fee: "Free Delivery",
+                image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80",
+            },
+            {
+                id: 11,
+                name: "Asopalav Restaurant",
+                address: "Near Asopalav Circle, Gujarat",
+                rating: "4.8",
+                delivery_time: "25-35 mins",
+                delivery_fee: "Free Delivery",
+                image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80",
+            }
+        ];
+    } catch (err) {
+        console.warn("Error fetching restaurants list:", err);
+        return [
+            {
+                id: 10,
+                name: "SMP Restaurant (DineFlow AI)",
+                address: "Station Road, Patan, Gujarat",
+                rating: "4.9",
+                delivery_time: "20-30 mins",
+                delivery_fee: "Free Delivery",
+                image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80",
+            },
+            {
+                id: 11,
+                name: "Asopalav Restaurant",
+                address: "Near Asopalav Circle, Gujarat",
+                rating: "4.8",
+                delivery_time: "25-35 mins",
+                delivery_fee: "Free Delivery",
+                image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80",
+            }
+        ];
+    }
+}
+
+/**
  * Fetch Restaurant Profile
  */
 export async function fetchRestaurantDetails(restaurantId = DEFAULT_RESTAURANT_ID) {

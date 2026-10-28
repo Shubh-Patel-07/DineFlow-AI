@@ -9,7 +9,8 @@ import {
     Image,
     StatusBar,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { fetchRestaurantsList } from "../services/dineflowApi";
 import { useNavigation } from "@react-navigation/native";
 import { Shadow } from "react-native-shadow-2";
 
@@ -223,7 +224,7 @@ export default function Home() {
                 <Text style={{ ...FONTS.H2, marginBottom: 8 }}>
                     Popular Restaurants
                 </Text>
-                {dummyData.map((item, index) => {
+                {popularRestaurants.map((item, index) => {
                     return (
                         <View key={index}>
                             <Shadow

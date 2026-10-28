@@ -8,7 +8,8 @@ import {
     ImageBackground,
     FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { fetchRestaurantsList } from "../services/dineflowApi";
 import { useNavigation } from "@react-navigation/native";
 import { Shadow } from "react-native-shadow-2";
 
@@ -33,6 +34,22 @@ export default function Places() {
     const navigation = useNavigation();
 
     const [category, setCategory] = useState("All");
+    const [placesList, setPlacesList] = useState(placesList);
+    useEffect(() => {
+        fetchRestaurantsList().then(list => {
+            if (list && list.length > 0) {
+                setPlacesList(list.map((r, i) => ({
+                    id: String(r.id || i + 1),
+                    name: r.name,
+                    rating: r.rating || "4.8",
+                    type: r.address || "Dining & Restaurant",
+                    distance: r.delivery_time || "20-30 mins",
+                    freeDelivery: true,
+                    image: r.image || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=80",
+                })));
+            }
+        });
+    }, []);
 
     function renderSearch() {
         return (
