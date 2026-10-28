@@ -474,9 +474,13 @@ function renderMenu() {
     return;
   }
 
+  const cart = getCart();
   foodGrid.innerHTML = items.map(item => {
     const imageSrc = resolveImagePath(item.image);
     const isFavorite = favorites.has(String(item.id));
+    const cartIdx = cart.findIndex(c => String(c.id) === String(item.id) || (c.baseId && String(c.baseId) === String(item.id)) || (c.name && item.name && c.name.trim().toLowerCase() === item.name.trim().toLowerCase()));
+    const inCartQty = cartIdx > -1 ? (cart[cartIdx].quantity || 1) : 0;
+
     return `<article class="food-card ${item.available ? '' : 'unavailable'}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="View details for ${escapeHtml(item.name)}" style="position:relative;">
       ${!item.available ? `<div style="position:absolute; top:12px; left:12px; z-index:5; background:#EF4444; color:#fff; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; box-shadow:0 4px 10px rgba(239,68,68,0.4); letter-spacing:0.5px;">🚫 SOLD OUT</div>` : ''}
       <button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" data-favorite-toggle="${escapeHtml(item.id)}" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">♡</button>
@@ -484,13 +488,23 @@ function renderMenu() {
       <div class="food-content">
         <div class="food-topline">
           <span class="food-type ${item.isVeg ? 'veg' : 'nonveg'}">${item.isVeg ? '● Veg' : '● Non-Veg'}</span>
-          <span class="rating-tag">★ ${escapeHtml(item.rating)}</span>
+          <span class="rating-tag">★ ${escapeHtml(item.rating || '4.8')}</span>
         </div>
         <h3 style="${!item.available ? 'color:var(--text-muted); text-decoration:line-through;' : ''}">${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.description || '')}</p>
         <div class="food-footer">
-          <strong>₹${escapeHtml(item.price)}</strong>
-          ${item.available ? `<button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>` : `<button class="btn-add-to-order sold-out" type="button" disabled style="opacity:0.6;cursor:not-allowed;background:#EF4444;color:#fff;pointer-events:none;">Sold Out</button>`}
+          <strong class="app-food-price">₹${escapeHtml(item.price)}</strong>
+          ${!item.available ? `
+            <button class="btn-add-to-order sold-out" type="button" disabled style="opacity:0.6;cursor:not-allowed;background:#EF4444;color:#fff;pointer-events:none;">Sold Out</button>
+          ` : inCartQty > 0 ? `
+            <div class="app-card-stepper" onclick="event.stopPropagation();">
+              <button type="button" class="app-stepper-btn minus" onclick="changeCartQty(${cartIdx}, ${inCartQty - 1}); renderMenu();" aria-label="Decrease quantity">−</button>
+              <span class="app-stepper-qty">${inCartQty}</span>
+              <button type="button" class="app-stepper-btn plus" onclick="changeCartQty(${cartIdx}, ${inCartQty + 1}); renderMenu();" aria-label="Increase quantity">+</button>
+            </div>
+          ` : `
+            <button class="btn-add-to-order" type="button" data-add-cart="${escapeHtml(item.id)}">+ Add</button>
+          `}
         </div>
       </div>
     </article>`;
@@ -694,6 +708,7 @@ function addToCart(customizedItem) {
   saveCart(cart);
   showToast(`🛒 Added ${customizedItem.name || 'Item'} to basket!`);
   renderCart();
+  renderMenu();
   openCart();
 }
 
@@ -925,6 +940,7 @@ function changeCartQty(idx, newQty) {
   }
   saveCart(cart);
   renderCart();
+  renderMenu();
 }
 
 let selectedCartPayMethod = 'cash';
