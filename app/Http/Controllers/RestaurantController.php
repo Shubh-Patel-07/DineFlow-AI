@@ -24,9 +24,13 @@ class RestaurantController extends Controller
 
         return response()->json(['success' => true, 'data' => $restaurant], 201);
     }
-    public function publicIndex(Request $request)
+    public function publicIndex(?Request $request = null)
     {
-        $restaurants = Restaurant::where('subscription_status', 'active')
+        $restaurants = Restaurant::where(function ($q) {
+                $q->whereIn('subscription_status', ['active', 'trial', 'grace_period'])
+                  ->orWhereNull('subscription_status')
+                  ->orWhere('subscription_status', '!=', 'suspended');
+            })
             ->select('id', 'name', 'slug', 'address', 'phone', 'logo', 'gst_rate')
             ->get()
             ->map(function ($r) {
