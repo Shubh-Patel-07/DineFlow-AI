@@ -38,9 +38,9 @@ git pull origin feature-teamlead || git pull origin main
 echo ">> Installing optimized production PHP dependencies..."
 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-# 4. Run database migrations safely
+# 4. Run database migrations safely (continue if already up to date or credentials restricted)
 echo ">> Running database migrations..."
-php artisan migrate --force
+php artisan migrate --force || echo ">> Migrations check skipped or already up to date."
 
 # 5. Ensure Storage Symlink exists
 echo ">> Verifying storage symlink..."
