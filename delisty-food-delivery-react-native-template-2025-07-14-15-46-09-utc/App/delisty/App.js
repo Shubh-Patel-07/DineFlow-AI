@@ -12,16 +12,13 @@ import {
 } from "@expo-google-fonts/lato";
 
 export default function App() {
-    let [fontsLoaded, error] = useFonts({
+    let [fontsLoaded] = useFonts({
         Rancho_400Regular,
         Lato_400Regular,
         Lato_700Bold,
         Lato_900Black,
     });
 
-    if (fontsLoaded) {
-        return <AppNavigation />;
-    } else {
-        return error;
-    }
+    // On web or native, render navigation with fallback font while fonts load
+    return <AppNavigation />;
 }
