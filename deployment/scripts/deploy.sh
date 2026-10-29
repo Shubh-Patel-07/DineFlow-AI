@@ -6,13 +6,15 @@
 set -e
 
 # Detect application directory dynamically based on Nginx configuration
-NGINX_ROOT_DIR=$(grep -roh "root /var/www/[^;]*" /etc/nginx/sites-enabled/ 2>/dev/null | head -n 1 | awk '{print $2}' | sed 's|/public/?$||' | sed 's|/$||')
+NGINX_ROOT_DIR=$(grep -roh "root /var/www/[^;]*" /etc/nginx/sites-enabled/ 2>/dev/null | head -n 1 | awk '{print $2}' | sed -E 's|/public/?$||' | sed 's|/$||')
 
-if [ -n "$NGINX_ROOT_DIR" ] && [ -d "$NGINX_ROOT_DIR" ]; then
+if [ -n "$NGINX_ROOT_DIR" ] && [ -f "$NGINX_ROOT_DIR/artisan" ]; then
     APP_DIR="$NGINX_ROOT_DIR"
 elif [ -f "$(pwd)/artisan" ]; then
     APP_DIR="$(pwd)"
-elif [ -d "/var/www/tendorabuy" ]; then
+elif [ -f "/var/www/dineflow/artisan" ]; then
+    APP_DIR="/var/www/dineflow"
+elif [ -f "/var/www/tendorabuy/artisan" ]; then
     APP_DIR="/var/www/tendorabuy"
 elif [ -d "/var/www/dineflow" ]; then
     APP_DIR="/var/www/dineflow"
@@ -20,9 +22,10 @@ else
     APP_DIR="/var/www/tendorabuy"
 fi
 
-# Detect installed PHP-FPM version dynamically (e.g. php8.5-fpm, php8.3-fpm, php8.2-fpm)
-PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.5")
-PHP_FPM_SERVICE="php${PHP_VER}-fpm"
+# Detect installed PHP-FPM version dynamically
+RUNNING_FPM=$(systemctl list-units --type=service --state=running 2>/dev/null | grep -oE 'php[0-9.]*-fpm' | head -n 1 || echo "")
+PHP_VER=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo "8.3")
+PHP_FPM_SERVICE="${RUNNING_FPM:-php${PHP_VER}-fpm}"
 
 echo "=========================================================="
 echo " Starting DineFlow AI Production Deployment...            "
@@ -67,7 +70,10 @@ chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
 
 # 8. Reload PHP-FPM to flush opcache
 echo ">> Reloading PHP-FPM..."
-systemctl reload $PHP_FPM_SERVICE 2>/dev/null || systemctl restart $PHP_FPM_SERVICE 2>/dev/null || systemctl reload php8.5-fpm 2>/dev/null || systemctl reload php8.3-fpm 2>/dev/null || systemctl reload php8.2-fpm 2>/dev/null || true
+if [ -n "$RUNNING_FPM" ]; then
+    systemctl reload "$RUNNING_FPM" 2>/dev/null || systemctl restart "$RUNNING_FPM" 2>/dev/null || true
+fi
+systemctl reload $PHP_FPM_SERVICE 2>/dev/null || systemctl restart $PHP_FPM_SERVICE 2>/dev/null || systemctl reload php8.3-fpm 2>/dev/null || systemctl reload php8.2-fpm 2>/dev/null || systemctl reload php8.4-fpm 2>/dev/null || systemctl reload php8.5-fpm 2>/dev/null || true
 
 # 9. Reload Nginx
 echo ">> Reloading Nginx..."
