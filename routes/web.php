@@ -244,6 +244,7 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
     Route::get('/orders/{id}/receipt/kitchen', [OrderController::class, 'showKitchenKOT'])->name('orders.receipt.kitchen')->middleware('role:admin,manager,cashier,kitchen,waiter');
     Route::get('/orders/{id}/receipt/bar', [OrderController::class, 'showBarKOT'])->name('orders.receipt.bar')->middleware('role:admin,manager,cashier,kitchen,waiter');
     Route::get('/orders/{id}/receipt/kot-combined', [OrderController::class, 'showCombinedKOT'])->name('orders.receipt.kot-combined')->middleware('role:admin,manager,cashier,kitchen,waiter');
+    Route::get('/orders/restaurant/{restaurantId}', [OrderController::class, 'getRestaurantOrders'])->middleware('role:admin,manager,cashier,kitchen,waiter');
 
     Route::get('/z-report', function (Illuminate\Http\Request $request) {
         $user = auth()->user();

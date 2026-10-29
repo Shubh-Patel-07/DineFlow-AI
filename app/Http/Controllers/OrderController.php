@@ -236,42 +236,60 @@ class OrderController extends Controller
     public function getRestaurantOrders($restaurantId)
     {
         $user = auth()->user();
+        if (!$restaurantId || $restaurantId === '0' || $restaurantId === 'undefined') {
+            $restaurantId = $user ? $user->restaurant_id : null;
+        }
+        if (!$restaurantId) {
+            return response()->json(['success' => false, 'message' => 'No restaurant tenant specified.'], 400);
+        }
         if ($user && $user->role !== 'superadmin' && (int)$user->restaurant_id !== (int)$restaurantId) {
             return response()->json(['success' => false, 'message' => 'Unauthorized tenant orders access.'], 403);
         }
         $limit = min(max((int)request()->get('limit', 25), 5), 50);
-        $orders = Order::where('restaurant_id', $restaurantId)
-            ->with([
-                'items' => function ($q) {
-                    $q->select('id', 'order_id', 'menu_item_id', 'name', 'price', 'quantity', 'notes', 'kot_status', 'selected_modifiers');
-                },
-                'items.menuItem' => function ($q) {
-                    $q->select('id', 'name', 'price', 'category', 'image');
-                },
-                'table' => function ($q) {
-                    $q->select('id', 'table_number', 'capacity', 'status', 'floor');
-                }
-            ])
-            ->orderBy('created_at', 'desc')
-            ->paginate($limit);
 
-        $todayStart = \Carbon\Carbon::today()->startOfDay();
-        $todayEnd = \Carbon\Carbon::today()->endOfDay();
-        $todayCount = Order::where('restaurant_id', $restaurantId)
-            ->whereBetween('created_at', [$todayStart, $todayEnd])
-            ->count();
+        try {
+            $orders = Order::where('restaurant_id', $restaurantId)
+                ->with(['items.menuItem', 'table'])
+                ->orderBy('created_at', 'desc')
+                ->paginate($limit);
 
-        $activeCount = Order::where('restaurant_id', $restaurantId)
-            ->whereIn('status', ['pending', 'preparing', 'cooking', 'ready', 'served'])
-            ->count();
+            $todayStart = \Carbon\Carbon::today()->startOfDay();
+            $todayEnd = \Carbon\Carbon::today()->endOfDay();
+            $todayCount = Order::where('restaurant_id', $restaurantId)
+                ->whereBetween('created_at', [$todayStart, $todayEnd])
+                ->count();
 
-        return response()->json([
-            'success' => true,
-            'data' => $orders,
-            'today_count' => $todayCount,
-            'active_count' => $activeCount,
-            'total_count' => $orders->total(),
-        ]);
+            $activeCount = Order::where('restaurant_id', $restaurantId)
+                ->whereIn('status', ['pending', 'preparing', 'cooking', 'ready', 'served'])
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => $orders,
+                'today_count' => $todayCount,
+                'active_count' => $activeCount,
+                'total_count' => $orders->total(),
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('getRestaurantOrders error: ' . $e->getMessage());
+            try {
+                $orders = Order::where('restaurant_id', $restaurantId)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($limit);
+                return response()->json([
+                    'success' => true,
+                    'data' => $orders,
+                    'today_count' => $orders->total(),
+                    'active_count' => $orders->total(),
+                    'total_count' => $orders->total(),
+                ]);
+            } catch (\Throwable $fallbackEx) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to load restaurant orders: ' . $fallbackEx->getMessage()
+                ], 500);
+            }
+        }
     }
 
     public function showReceipt($id)

@@ -7835,13 +7835,34 @@
     const tbody = document.getElementById('ordersModalTableBody');
     const badge = document.getElementById('posOrdersCountBadge');
 
+    const restId = (typeof RESTAURANT_ID !== 'undefined' && RESTAURANT_ID) ? RESTAURANT_ID : (window.currentRestaurantId || '{{ Auth::user()?->restaurant_id ?? "" }}');
+    if (!restId) return;
+
+    if (tbody && !tbody.children.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="padding:28px; text-align:center; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="font-size:22px; margin-bottom:8px; display:block; color:var(--primary);"></i>Loading orders...</td></tr>`;
+    }
+
     try {
-      const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}?limit=25`);
+      const response = await fetch(`/api/orders/restaurant/${restId}?limit=25`);
+      if (!response.ok) {
+        throw new Error(`Server returned HTTP ${response.status}`);
+      }
       const data = await response.json();
-      const ordersList = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : (data.data?.data || []));
-      
+      if (!data || data.success === false) {
+        throw new Error(data?.message || 'Failed to retrieve orders');
+      }
+
+      let ordersList = [];
+      if (Array.isArray(data.data)) {
+        ordersList = data.data;
+      } else if (data.data && Array.isArray(data.data.data)) {
+        ordersList = data.data.data;
+      } else if (Array.isArray(data)) {
+        ordersList = data;
+      }
+
       allOrdersData = ordersList;
-      
+
       const countVal = (typeof data.today_count === 'number' && data.today_count > 0)
         ? data.today_count
         : ((typeof data.active_count === 'number' && data.active_count > 0)
@@ -7902,8 +7923,10 @@
         `;
       }).join('');
     } catch (err) {
-      console.log('Error loading orders:', err);
-      tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#F87171;"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px; margin-bottom:6px; display:block;"></i>Failed to load orders data.</td></tr>`;
+      console.error('Error loading orders:', err);
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#F87171;"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px; margin-bottom:6px; display:block;"></i>${escapeHtml(err.message || 'Failed to load orders data.')}</td></tr>`;
+      }
     }
   }
 
