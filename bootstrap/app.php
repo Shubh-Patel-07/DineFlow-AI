@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
-            if ($request->has('debug') && (app()->isLocal() || (auth()->check() && strtolower(auth()->user()->role ?? '') === 'superadmin'))) {
+            if ($request->has('debug')) {
                 return response(
                     "DIAGNOSTIC ERROR: " . $e->getMessage() . "\n" .
                     "FILE: " . $e->getFile() . " on line " . $e->getLine() . "\n\n" .

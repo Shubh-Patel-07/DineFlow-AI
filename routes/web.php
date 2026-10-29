@@ -207,16 +207,21 @@ Route::middleware(['auth', 'tenant'])->group(function () use ($serveAdminPage) {
         if (!$restaurantId) {
             return redirect()->route('onboarding.index');
         }
-        $todayStart = \Carbon\Carbon::today()->startOfDay();
-        $todayEnd = \Carbon\Carbon::today()->endOfDay();
-        $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)
-            ->whereBetween('created_at', [$todayStart, $todayEnd])
-            ->count();
-        if ($todayOrdersCount === 0) {
+        
+        $todayOrdersCount = 0;
+        try {
             $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)
-                ->whereIn('status', ['pending', 'preparing', 'cooking', 'ready', 'served'])
+                ->whereDate('created_at', \Carbon\Carbon::today())
                 ->count();
+            if ($todayOrdersCount === 0) {
+                $todayOrdersCount = \App\Models\Order::where('restaurant_id', $restaurantId)
+                    ->whereIn('status', ['pending', 'preparing', 'cooking', 'ready', 'served'])
+                    ->count();
+            }
+        } catch (\Throwable $qe) {
+            \Log::warning('POS orders count query notice: ' . $qe->getMessage());
         }
+
         $restaurant = \App\Models\Restaurant::find($restaurantId);
         $menuItems = \App\Models\MenuItem::where('restaurant_id', $restaurantId)->get();
         return view('pos.index', compact('todayOrdersCount', 'restaurantId', 'restaurant', 'menuItems'));

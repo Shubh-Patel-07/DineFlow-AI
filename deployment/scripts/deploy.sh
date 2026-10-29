@@ -8,12 +8,12 @@ set -e
 # Detect application directory dynamically based on Nginx configuration
 NGINX_ROOT_DIR=$(grep -roh "root /var/www/[^;]*" /etc/nginx/sites-enabled/ 2>/dev/null | head -n 1 | awk '{print $2}' | sed -E 's|/public/?$||' | sed 's|/$||')
 
-if [ -n "$NGINX_ROOT_DIR" ] && [ -f "$NGINX_ROOT_DIR/artisan" ]; then
-    APP_DIR="$NGINX_ROOT_DIR"
+if [ -f "/var/www/dineflow/artisan" ]; then
+    APP_DIR="/var/www/dineflow"
 elif [ -f "$(pwd)/artisan" ]; then
     APP_DIR="$(pwd)"
-elif [ -f "/var/www/dineflow/artisan" ]; then
-    APP_DIR="/var/www/dineflow"
+elif [ -n "$NGINX_ROOT_DIR" ] && [ -f "$NGINX_ROOT_DIR/artisan" ]; then
+    APP_DIR="$NGINX_ROOT_DIR"
 elif [ -f "/var/www/tendorabuy/artisan" ]; then
     APP_DIR="/var/www/tendorabuy"
 elif [ -d "/var/www/dineflow" ]; then
@@ -64,7 +64,8 @@ php artisan view:cache || true
 php artisan event:cache || true
 
 # 7. Set Correct Permissions
-echo ">> Setting permissions for www-data..."
+echo ">> Setting permissions for www-data and ubuntu..."
+chown -R ubuntu:ubuntu $APP_DIR
 chown -R www-data:www-data $APP_DIR/storage $APP_DIR/bootstrap/cache $APP_DIR/public
 chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
 
