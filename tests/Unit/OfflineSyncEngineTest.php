@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Services\OfflineSyncQueueService;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class OfflineSyncEngineTest extends TestCase
 {

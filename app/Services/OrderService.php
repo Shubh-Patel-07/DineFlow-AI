@@ -282,7 +282,7 @@ class OrderService
 
                 // Mark table occupied if table exists
                 if ($tableId && $tableId !== '0') {
-                    $table = Table::where('restaurant_id', $restaurantId)->find($tableId)
+                    $table = (is_numeric($tableId) ? Table::where('restaurant_id', $restaurantId)->find($tableId) : null)
                         ?: Table::where('restaurant_id', $restaurantId)->where('table_number', $tableId)->first();
                     if ($table && $table->status !== 'occupied') {
                         $table->update(['status' => 'occupied']);

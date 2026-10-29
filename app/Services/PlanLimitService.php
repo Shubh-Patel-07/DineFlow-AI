@@ -70,12 +70,12 @@ class PlanLimitService
         $maxTables = intval($limits['tables'] ?? 10);
         $currentTables = Table::where('restaurant_id', $restaurantId)->count();
 
-        if ($currentTables >= $maxTables) {
+        if ($maxTables > 0 && $currentTables >= $maxTables) {
             return [
                 'allowed' => false,
                 'current' => $currentTables,
                 'limit' => $maxTables,
-                'message' => "Free Plan limit reached (maximum {$maxTables} tables). Please upgrade your plan."
+                'message' => "Plan limit reached (maximum {$maxTables} tables). Please upgrade your plan."
             ];
         }
 
@@ -95,12 +95,12 @@ class PlanLimitService
             ->whereIn('role', ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'staff'])
             ->count();
 
-        if ($currentStaff >= $maxStaff) {
+        if ($maxStaff > 0 && $currentStaff >= $maxStaff) {
             return [
                 'allowed' => false,
                 'current' => $currentStaff,
                 'limit' => $maxStaff,
-                'message' => "Free Plan limit reached (maximum {$maxStaff} staff accounts). Please upgrade your plan."
+                'message' => "Plan limit reached (maximum {$maxStaff} staff accounts). Please upgrade your plan."
             ];
         }
 
@@ -118,12 +118,12 @@ class PlanLimitService
         $maxItems = intval($limits['menu_items'] ?? 100);
         $currentItems = MenuItem::where('restaurant_id', $restaurantId)->count();
 
-        if ($currentItems >= $maxItems) {
+        if ($maxItems > 0 && $currentItems >= $maxItems) {
             return [
                 'allowed' => false,
                 'current' => $currentItems,
                 'limit' => $maxItems,
-                'message' => "Free Plan limit reached (maximum {$maxItems} menu items). Please upgrade your plan."
+                'message' => "Plan limit reached (maximum {$maxItems} menu items). Please upgrade your plan."
             ];
         }
 
@@ -144,12 +144,12 @@ class PlanLimitService
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
-        if ($currentMonthOrders >= $maxMonthlyOrders) {
+        if ($maxMonthlyOrders > 0 && $currentMonthOrders >= $maxMonthlyOrders) {
             return [
                 'allowed' => false,
                 'current' => $currentMonthOrders,
                 'limit' => $maxMonthlyOrders,
-                'message' => "Monthly order limit reached ({$maxMonthlyOrders} orders/month on Free Plan). Please upgrade your plan."
+                'message' => "Monthly order limit reached ({$maxMonthlyOrders} orders/month). Please upgrade your plan."
             ];
         }
 

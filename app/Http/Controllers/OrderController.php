@@ -243,7 +243,7 @@ class OrderController extends Controller
         $orders = Order::where('restaurant_id', $restaurantId)
             ->with([
                 'items' => function ($q) {
-                    $q->select('id', 'order_id', 'menu_item_id', 'item_name', 'price', 'quantity', 'special_instructions', 'status');
+                    $q->select('id', 'order_id', 'menu_item_id', 'name', 'price', 'quantity', 'notes', 'kot_status', 'selected_modifiers');
                 },
                 'items.menuItem' => function ($q) {
                     $q->select('id', 'name', 'price', 'category', 'image');
