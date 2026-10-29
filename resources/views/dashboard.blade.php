@@ -1436,6 +1436,15 @@ async function loadDashOrdersModalData() {
     }
 
     if (badge) badge.innerText = `${orders.length} ${currentDashOrderFilter === 'delivery' ? 'Delivery' : ''} Orders`;
+    const globalNavBadge = document.getElementById('globalOrdersNavBadge');
+    if (globalNavBadge) {
+      const freshCount = (typeof rawData.today_count === 'number' && rawData.today_count > 0)
+        ? rawData.today_count
+        : ((typeof rawData.active_count === 'number' && rawData.active_count > 0)
+            ? rawData.active_count
+            : ((typeof rawData.total_count === 'number') ? rawData.total_count : orders.length));
+      globalNavBadge.innerText = freshCount;
+    }
 
     let html = `
       <div style="overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch;">

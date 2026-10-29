@@ -344,7 +344,11 @@ class CustomerController extends Controller
 
     public function getWaiterCalls($restaurantId)
     {
-        $calls = WaiterCall::where('restaurant_id', $restaurantId)->orderBy('created_at', 'desc')->get();
+        $calls = WaiterCall::where('restaurant_id', $restaurantId)
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
         return response()->json(['success' => true, 'data' => $calls]);
     }
 

@@ -1874,7 +1874,7 @@
       .pos-quick-tool-btn.online-btn span:not(#onlinePendingBadge),
       .pos-quick-tool-btn.hold-btn span:not(#holdCartsCountBadge),
       .pos-quick-tool-btn.stock-btn span:not(#topbarLowStockBadge),
-      .pos-quick-tool-btn.orders-btn span,
+      .pos-quick-tool-btn.orders-btn span:not(#topbarOrdersCountBadge),
       .pos-quick-tool-btn.kds-btn span {
         display: none !important;
       }
@@ -2575,6 +2575,7 @@
       <button type="button" class="pos-quick-tool-btn orders-btn" id="posOrdersModalBtn" title="View Today's Bills & Orders (F3)" onclick="openModal('ordersModal')">
         <i class="fa-solid fa-receipt"></i>
         <span>Orders</span>
+        <span class="nav-badge" id="topbarOrdersCountBadge" style="margin-left:5px; font-size:10px; background:#EF4444; color:#fff; padding:1px 6px; border-radius:10px; font-weight:800;">{{ $todayOrdersCount ?? 0 }}</span>
       </button>
 
       <!-- Kitchen Display System (KDS) Direct Link -->
@@ -5354,7 +5355,7 @@
           : `addQuickItem('${safeId}')`;
 
         return `
-          <div class="${cardClass}" onclick="${clickAction}">
+          <div class="${cardClass}" data-item-id="${safeId}" onclick="${clickAction}">
             <div class="item-img">
               ${hasImg ? `
                 <img src="${escapeAttr(item.image)}" alt="${safeName}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='flex';">
@@ -5366,7 +5367,7 @@
                 ? `<span class="item-badge out">SOLD OUT</span>`
                 : (item.badge === 'new' ? `<span class="item-badge new">NEW</span>` : (item.badge === 'best' ? `<span class="item-badge best">BEST</span>` : ''))
               }
-              ${item.qty > 0 ? `<span class="item-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
+              ${item.qty > 0 ? `<span class="item-badge item-cart-qty-badge" style="background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);"><i class="fa-solid fa-check"></i> ${item.qty} in cart</span>` : ''}
               ${isSoldOut ? `<div class="item-soldout-overlay">OUT OF STOCK</div>` : ''}
             </div>
             <div class="item-body">
@@ -5935,6 +5936,55 @@
     document.getElementById('checkoutAmount').textContent = `₹ ${grandTotal.toFixed(0)}`;
   }
 
+  function updateItemCardDom(item) {
+    if (!item) return false;
+    const card = document.querySelector(`.item-card[data-item-id="${item.id}"]`);
+    if (!card) return false;
+
+    if (item.qty > 0) {
+      card.classList.add('in-cart');
+    } else {
+      card.classList.remove('in-cart');
+    }
+
+    const imgBox = card.querySelector('.item-img');
+    let cartBadge = card.querySelector('.item-cart-qty-badge');
+    if (item.qty > 0) {
+      if (!cartBadge && imgBox) {
+        cartBadge = document.createElement('span');
+        cartBadge.className = 'item-badge item-cart-qty-badge';
+        cartBadge.style.cssText = 'background:#10B981; color:#fff; font-size:10px; font-weight:800; top:6px; left:6px; right:auto; padding:2px 8px; border-radius:12px; box-shadow:0 2px 8px rgba(16,185,129,0.4);';
+        imgBox.appendChild(cartBadge);
+      }
+      if (cartBadge) {
+        cartBadge.innerHTML = `<i class="fa-solid fa-check"></i> ${item.qty} in cart`;
+        cartBadge.style.display = 'inline-block';
+      }
+    } else if (cartBadge) {
+      cartBadge.style.display = 'none';
+    }
+
+    const footerActions = card.querySelector('.item-footer-actions');
+    const isSoldOut = !item.is_available;
+    if (footerActions && !isSoldOut) {
+      const safeId = escapeAttr(String(item.id || ''));
+      if (item.qty > 0) {
+        footerActions.innerHTML = `
+          <div class="item-card-stepper" onclick="event.stopPropagation()">
+            <button type="button" class="card-step-btn" onclick="updateQty('${safeId}', -1)" title="Decrease Qty">−</button>
+            <span class="card-step-qty">${item.qty}</span>
+            <button type="button" class="card-step-btn" onclick="updateQty('${safeId}', 1)" title="Increase Qty">+</button>
+          </div>
+        `;
+      } else {
+        footerActions.innerHTML = `
+          <button class="item-add-btn-pill" type="button" onclick="event.stopPropagation();addQuickItem('${safeId}')" title="Add to Cart"><i class="fa-solid fa-plus"></i> Add</button>
+        `;
+      }
+    }
+    return true;
+  }
+
   function addQuickItem(id) {
     const item = MENU.find(i => String(i.id) === String(id));
     if (item) {
@@ -5947,7 +5997,9 @@
         return;
       }
       item.qty += 1;
-      renderMenu();
+      if (!updateItemCardDom(item)) {
+        renderMenu();
+      }
       renderCart();
       showToast(item.name + ' added to cart', 'success');
     }
@@ -5962,7 +6014,9 @@
       }
       item.qty += delta;
       if (item.qty < 0) item.qty = 0;
-      renderMenu();
+      if (!updateItemCardDom(item)) {
+        renderMenu();
+      }
       renderCart();
     }
   }
@@ -5972,7 +6026,9 @@
     if (item) {
       showToast(item.name + ' removed', 'error');
       item.qty = 0;
-      renderMenu();
+      if (!updateItemCardDom(item)) {
+        renderMenu();
+      }
       renderCart();
     }
   }
@@ -6130,10 +6186,10 @@
   let filterDebounceTimer = null;
   function filterItems(val) {
     searchTerm = val || '';
-    if (filterDebounceTimer) cancelAnimationFrame(filterDebounceTimer);
-    filterDebounceTimer = requestAnimationFrame(() => {
+    if (filterDebounceTimer) clearTimeout(filterDebounceTimer);
+    filterDebounceTimer = setTimeout(() => {
       renderMenu();
-    });
+    }, 120);
   }
 
   function focusItemSearch() {
@@ -7759,18 +7815,42 @@
 
   let allOrdersData = [];
 
+  function updateOrderCountBadges(count) {
+    const numericCount = (count !== undefined && count !== null) ? Number(count) : 0;
+    const globalBadge = document.getElementById('globalOrdersNavBadge');
+    if (globalBadge) {
+      globalBadge.innerText = numericCount;
+    }
+    const topbarBadge = document.getElementById('topbarOrdersCountBadge');
+    if (topbarBadge) {
+      topbarBadge.innerText = numericCount;
+    }
+    const modalBadge = document.getElementById('posOrdersCountBadge');
+    if (modalBadge) {
+      modalBadge.innerText = `${numericCount} Orders`;
+    }
+  }
+
   async function loadOrdersData() {
     const tbody = document.getElementById('ordersModalTableBody');
     const badge = document.getElementById('posOrdersCountBadge');
-    if (!tbody) return;
 
     try {
-      const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
+      const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}?limit=25`);
       const data = await response.json();
       const ordersList = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : (data.data?.data || []));
       
       allOrdersData = ordersList;
-      if (badge) badge.innerText = `${ordersList.length} Orders`;
+      
+      const countVal = (typeof data.today_count === 'number' && data.today_count > 0)
+        ? data.today_count
+        : ((typeof data.active_count === 'number' && data.active_count > 0)
+            ? data.active_count
+            : ((typeof data.total_count === 'number') ? data.total_count : ordersList.length));
+
+      updateOrderCountBadges(countVal);
+
+      if (!tbody) return;
 
       if (ordersList.length === 0) {
         tbody.innerHTML = `
@@ -8254,6 +8334,8 @@
         showToast('🔥 KOT #' + lastPlacedOrderId + ' sent to Kitchen!', 'success');
         clearCart();
         closeModal('kotModal');
+        const curBadgeVal = parseInt(document.getElementById('globalOrdersNavBadge')?.innerText || '0', 10) || 0;
+        updateOrderCountBadges(curBadgeVal + 1);
         if (typeof loadOrdersData === 'function') loadOrdersData();
         if (typeof loadTablesData === 'function') loadTablesData();
         // Auto open KOT print slip
@@ -8768,6 +8850,8 @@
         appliedWalletDiscount = 0;
 
         clearCart();
+        const curBadgeVal = parseInt(document.getElementById('globalOrdersNavBadge')?.innerText || '0', 10) || 0;
+        updateOrderCountBadges(curBadgeVal + 1);
         if (typeof loadOrdersData === 'function') loadOrdersData();
         if (typeof loadTablesData === 'function') loadTablesData();
         
@@ -9310,8 +9394,8 @@
     showToast(`✅ Attached modifier "${modName}" to ${lastItem.name}!`, 'success');
   }
 
-  // Poll for waiter calls and live notifications (throttled to 15s to eliminate server lag)
-  setInterval(() => { if (document.visibilityState === 'hidden') return; checkWaiterCalls(); }, 15000);
+  // Poll for waiter calls and live notifications (throttled to 20s to eliminate server lag)
+  setInterval(() => { if (document.visibilityState === 'hidden') return; checkWaiterCalls(); }, 20000);
   checkWaiterCalls();
   loadTablesData(); // Populate allTablesData array immediately on page load!
 
@@ -9365,14 +9449,17 @@
   // ─── VOCAL SOUNDBOX ANNOUNCEMENTS ───
   let isCheckingNewPayments = false;
 
-  async function checkNewPayments() {
+  async function checkNewPayments(providedOrders = null) {
     if (isCheckingNewPayments) return;
     isCheckingNewPayments = true;
     try {
-      const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
-      const data = await response.json();
-      const ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
-      if (data.success && Array.isArray(ordersList)) {
+      let ordersList = providedOrders;
+      if (!ordersList) {
+        const response = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}?limit=25`);
+        const data = await response.json();
+        ordersList = Array.isArray(data.data) ? data.data : (data.data?.data || []);
+      }
+      if (Array.isArray(ordersList)) {
         // Initialize announced list on first run to avoid repeating old orders
         if (announcedOrderIds.length === 0) {
           announcedOrderIds = ordersList
@@ -9845,10 +9932,23 @@
     if (isSyncingLiveAlerts) return;
     isSyncingLiveAlerts = true;
     try {
-      const oRes = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}`);
+      const oRes = await fetch(`/api/orders/restaurant/${RESTAURANT_ID}?limit=25`);
       const oData = await oRes.json();
       const ordersList = Array.isArray(oData.data) ? oData.data : (oData.data?.data || []);
       if (oData.success && Array.isArray(ordersList)) {
+        // Live update all order count badges
+        const countVal = (typeof oData.today_count === 'number' && oData.today_count > 0)
+          ? oData.today_count
+          : ((typeof oData.active_count === 'number' && oData.active_count > 0)
+              ? oData.active_count
+              : ((typeof oData.total_count === 'number') ? oData.total_count : ordersList.length));
+        updateOrderCountBadges(countVal);
+
+        // Share order list with vocal soundbox without extra network fetch
+        if (typeof checkNewPayments === 'function') {
+          checkNewPayments(ordersList);
+        }
+
         ordersList.slice(0, 12).forEach(order => {
           if (!knownOrdersSet.has(order.id)) {
             knownOrdersSet.add(order.id);
@@ -10373,7 +10473,7 @@
     updateNetworkStatusDisplay(navigator.onLine);
     if (typeof renderPosCategoryRibbon === 'function') renderPosCategoryRibbon();
     syncRealTimeLiveAlerts();
-    setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 15000);
+    setInterval(() => { if (document.visibilityState === 'hidden') return; syncRealTimeLiveAlerts(); }, 20000);
   });
 </script>
 </body>
