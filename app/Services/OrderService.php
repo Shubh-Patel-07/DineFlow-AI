@@ -261,7 +261,7 @@ class OrderService
                     'sgst_amount' => $sgstVal,
                     'delivery_fee' => $deliveryFee,
                     'rider_id' => !empty($data['rider_id']) ? $data['rider_id'] : null,
-                    'delivery_status' => ($orderType === 'delivery') ? 'pending' : null,
+                    'delivery_status' => !empty($data['delivery_status']) ? $data['delivery_status'] : (in_array($orderType, ['delivery', 'zomato', 'swiggy']) ? 'pending' : 'none'),
                     'kot_language' => $kotLang,
                 ]);
 
