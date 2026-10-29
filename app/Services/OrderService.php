@@ -44,7 +44,7 @@ class OrderService
     public function createOrder(array $data, ?User $user = null): Order
     {
         $user = $user ?? auth()->user();
-        $restaurantId = $user ? (string)$user->restaurant_id : (string)($data['restaurant_id'] ?? '');
+        $restaurantId = (string)($data['restaurant_id'] ?? $data['restaurantId'] ?? ($user ? $user->restaurant_id : ''));
 
         if (!$restaurantId) {
             throw new ValidationException(validator([], []), ['restaurant_id' => ['Restaurant ID is required']]);
@@ -77,12 +77,14 @@ class OrderService
                 $menuItemId = $rawItem['menu_item_id'] ?? $rawItem['menuItemId'] ?? null;
                 $quantity = max(1, intval($rawItem['quantity'] ?? $rawItem['qty'] ?? 1));
 
-                if (!$menuItemId && !empty($rawItem['name'])) {
-                    $menuItem = MenuItem::where('name', $rawItem['name'])
-                        ->where('restaurant_id', $restaurantId)
-                        ->first();
-                } else {
+                $menuItem = null;
+                if ($menuItemId && is_numeric($menuItemId)) {
                     $menuItem = MenuItem::where('restaurant_id', $restaurantId)->find($menuItemId);
+                }
+                if (!$menuItem && !empty($rawItem['name'])) {
+                    $menuItem = MenuItem::where('restaurant_id', $restaurantId)
+                        ->where('name', $rawItem['name'])
+                        ->first();
                 }
 
                 if (!$menuItem) {
@@ -164,8 +166,8 @@ class OrderService
                 throw new ValidationException(validator([], []), ['items' => ['No available menu items could be ordered.']]);
             }
 
-            $tableId = $data['table_id'] ?? '1';
-            $orderType = $data['order_type'] ?? 'dinein';
+            $tableId = $data['table_id'] ?? $data['tableId'] ?? '1';
+            $orderType = $data['order_type'] ?? $data['orderType'] ?? 'dinein';
 
             // Check if there is already an active (unpaid) order for this table with pessimistic locking (only for dine-in tables)
             $order = null;
