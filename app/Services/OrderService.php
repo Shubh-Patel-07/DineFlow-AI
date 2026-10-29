@@ -215,6 +215,10 @@ class OrderService
                     }
                 }
 
+                if (isset($data['delivery_fee'])) {
+                    $order->delivery_fee = floatval($data['delivery_fee']);
+                }
+
                 $this->recalculateOrderTotal($order);
                 $order->save();
 
@@ -229,6 +233,7 @@ class OrderService
                 $kotLang = KotLanguageService::getRestaurantLanguage($restaurantId);
                 $walletDiscount = floatval($data['wallet_discount'] ?? 0);
                 $cashbackEarned = floatval($data['cashback_earned'] ?? 0);
+                $deliveryFee = floatval($data['delivery_fee'] ?? 0);
                 $orderTotalVal = max(0, $totalAmount + $deliveryFee - $walletDiscount);
                 $taxableVal = round($orderTotalVal / 1.05, 2);
                 $totalTaxVal = round($orderTotalVal - $taxableVal, 2);
@@ -704,7 +709,9 @@ class OrderService
         foreach ($order->items()->get() as $item) {
             $total += floatval($item->price) * intval($item->quantity);
         }
-        $order->total_amount = round($total, 2);
+        $deliveryFee = floatval($order->delivery_fee ?? 0);
+        $walletDiscount = floatval($order->wallet_discount ?? 0);
+        $order->total_amount = round(max(0, $total + $deliveryFee - $walletDiscount), 2);
         return $order->total_amount;
     }
 
@@ -716,12 +723,14 @@ class OrderService
         $subtotal = floatval($order->total_amount);
         $tax = round($subtotal * 0.05, 2); // 5% GST
         $service = $applyServiceCharge ? round($subtotal * 0.05, 2) : 0.00;
+        $deliveryFee = floatval($order->delivery_fee ?? 0);
         $grandTotal = round($subtotal + $tax + $service, 2);
 
         return [
             'subtotal' => $subtotal,
             'tax' => $tax,
             'service_charge' => $service,
+            'delivery_fee' => $deliveryFee,
             'grand_total' => $grandTotal,
             'rounded_total' => (int)round($grandTotal),
         ];
